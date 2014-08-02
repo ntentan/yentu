@@ -1,0 +1,14 @@
+{
+    "name": "ekowabaka/yentu",
+    "description": "A database migration tool",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ekow Abaka Ainooson",
+            "email": "jainooson@gmail.com"
+        }
+    ],
+    "require": {
+
+    }
+}
