@@ -9,6 +9,6 @@
         }
     ],
     "require": {
-
+        "ekowabaka/clearice": "0.2.4"
     }
 }

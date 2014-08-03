@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+require "vendor/autoload.php";
+
+ClearIce::addCommands('init', 'update', 'import');
+
+$options = ClearIce::parse();
+
+var_dump($options);
+
+
+
