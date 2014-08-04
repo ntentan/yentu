@@ -14,6 +14,6 @@
     "require": {
         "ekowabaka/clearice": "0.3.0-alpha"
     },
-    "bin" : ["bin/yentu"]
+    "bin" : ["bin/yentu"],
     "minimum-stability": "alpha"
 }
