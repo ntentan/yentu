@@ -8,7 +8,11 @@
             "email": "jainooson@gmail.com"
         }
     ],
+    "autoload" : {
+        "psr-4" : { "yentu\\" : "src/"}
+    },
     "require": {
-        "ekowabaka/clearice": "0.2.4"
-    }
+        "ekowabaka/clearice": "0.3.0-alpha"
+    },
+    "minimum-stability": "alpha"
 }

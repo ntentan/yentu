@@ -2,7 +2,7 @@
 
 namespace yentu\drivers;
 
-class Pdo extends \yentu\Driver
+abstract class Pdo extends \yentu\Driver
 {
     public function connect() {
         

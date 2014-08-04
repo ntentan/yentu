@@ -1,12 +1,72 @@
 #!/usr/bin/env php
 <?php
+error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
-ClearIce::addCommands('init', 'update', 'import');
+$cli = new ClearIce();
+$cli->addCommands('init', 'update', 'import');
+$cli->addOptions(
+    array(
+        'command' => 'init',
+        'short'
+    )
+);
 
-$options = ClearIce::parse();
+$options = $cli->parse();
 
-var_dump($options);
-
-
+switch($options['__command__'])
+{
+    case 'init':
+        if(!file_exists('yentu'))
+        {
+            mkdir('yentu');
+            mkdir('yentu/config');
+            mkdir('yentu/schema');
+        }
+        
+        $driver = $cli->getResponse(
+            "What type of database are we connecting to",
+            array(
+                'required' => true,
+                'answers' => array(
+                    'postgresql',
+                    'mysql',
+                    'sqlite'
+                )
+            )
+        );
+        
+        if($driver != 'sqlite')
+        {
+            $host = $cli->getResponse(
+                "What's the database's host address", 
+                array('required' => true, 'default' => 'localhost')
+            );            
+            $port = $cli->getResponse(
+                "What port is the database available on",
+                array('required' => true, 'default' => '5432')
+            );
+            $user = $cli->getResponse(
+                "Who is the database user",
+                array('required' => true)
+            );
+            $password = $cli->getResponse(
+                'Password for database user'
+            );
+        }
+        else 
+        {
+            $path = $cli->getResponse(
+                "Path to database file",
+                array('required' => true)
+            );
+        }
+        
+        file_put_contents(
+            "yentu/config/default.php", 
+            "<?php\n\$host = '$host'\n"
+        );
+        
+        break;
+}
 
