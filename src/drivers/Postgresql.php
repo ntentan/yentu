@@ -1,7 +1,7 @@
 <?php
 namespace yentu\drivers;
 
-class Postgresql extends Driver
+class Postgresql extends Pdo
 {
     
 }

@@ -1,6 +1,6 @@
 {
     "name": "ekowabaka/yentu",
-    "description": "A database migration tool",
+    "description": "A database migration tool with intimate integration with git",
     "license": "MIT",
     "authors": [
         {
