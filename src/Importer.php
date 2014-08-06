@@ -13,6 +13,6 @@ class Importer
     public function run()
     {
         $schema = $this->db->describe();
-        
+        print_r($schema);
     }
 }
