@@ -8,7 +8,7 @@ abstract class Pdo extends \yentu\DatabaseDriver
      *
      * @var \PDO
      */
-    protected $pdo;
+    private $pdo;
     
     protected function connect($params) 
     {
@@ -26,21 +26,42 @@ abstract class Pdo extends \yentu\DatabaseDriver
         );
     }
     
-    protected function query($query)
+    protected function quote($string)
+    {
+        return $this->pdo->quote($string);
+    }
+    
+    public function query($query, $bindData = false)
     {
         $return = array();
-        $result = $this->pdo->query($query, \PDO::FETCH_ASSOC);
         
-        if($result === false)
+        if(is_array($bindData))
         {
-            throw new \Exception(array_pop($this->pdo->errorInfo()));
+            $statement = $this->pdo->prepare($query);
+            if($statement->execute($bindData) === false)
+            {
+                $errorInfo = $this->pdo->errorInfo();
+                throw new \Exception($errorInfo[2]);                
+            }
+            else 
+            {
+                $return = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            }
         }
-
-        foreach($result as $row)
+        else
         {
-            $return[] = $row;
+            $result = $this->pdo->query($query, \PDO::FETCH_ASSOC);
+           if($result === false)
+            {
+                $errorInfo = $this->pdo->errorInfo();
+                throw new \Exception($errorInfo[2]);                
+            }
+            else 
+            {
+                $return = $result->fetchAll();
+            }
         }
-
+        
         return $return;
     }
     

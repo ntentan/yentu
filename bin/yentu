@@ -4,9 +4,10 @@ error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
 use yentu\Importer;
+use yentu\Migration;
 
 $cli = new ClearIce();
-$cli->addCommands('init', 'update', 'import');
+$cli->addCommands('import', 'migrate');
 $cli->addOptions(
     array(
         'command' => 'init',
@@ -22,7 +23,10 @@ switch($options['__command__'])
         $importer = new Importer();
         $importer->run();
         break;
-    case 'init':
+    
+    case 'migrate':
+        $migration = new Migration();
+        $migration->run();
         break;
 }
 
