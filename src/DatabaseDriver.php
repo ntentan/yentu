@@ -3,15 +3,16 @@ namespace yentu;
 
 abstract class DatabaseDriver
 {
-    abstract public function createTable();
     abstract public function describe();
     abstract protected function connect($params);
     
     abstract public function addSchema($name);
     abstract public function dropSchema($name);
-    abstract public function addTable($name, $schema);
-    abstract public function dropTable($name, $schema);
-    
+    abstract public function addTable($details);
+    abstract public function dropTable($details);
+    abstract public function addColumn($details);
+    abstract public function makeAutoPrimaryKey($details);
+
     public function __construct($params) 
     {
         unset($config['driver']);

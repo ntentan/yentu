@@ -10,11 +10,13 @@ $cli = new ClearIce();
 $cli->addCommands('import', 'migrate');
 $cli->addOptions(
     array(
-        'command' => 'init',
-        'short'
+        'command' => 'import',
+        'short' => 'd',
+        'long' => 'skip-defaults',
+        'help' => 'do not import the default values of the columns'
     )
 );
-
+$cli->addHelp();
 $options = $cli->parse();
 
 switch($options['__command__'])

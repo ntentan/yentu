@@ -36,11 +36,11 @@ class Importer
         {
             $this->code->addNoLn("->column('{$column['name']}')");
             $this->code->addNoIndent("->type('{$column['type']}')");
-            $this->code->addNoIndent("->null(" . ($column['nulls'] ? 'true' : 'false') . ")");
+            $this->code->addNoIndent("->nulls(" . ($column['nulls'] ? 'true' : 'false') . ")");
             
             if($column['default'] != '')
             {
-                $this->code->addNoIndent("->default(\"{$column['default']}\")");
+                $this->code->addNoIndent("->defaultValue(\"{$column['default']}\")");
             }
             
             $this->code->ln();
@@ -86,10 +86,10 @@ class Importer
     
     protected function importConstraints($type, $constraints)
     {
-        foreach($constraints as $name => $constraint)
+        foreach($constraints as $constraint)
         {
             $constraint = implode("','", $constraint);
-            $this->code->add("->$type('$constraint')->as('$name')");
+            $this->code->add("->$type('$constraint')");
         }
     }
 }

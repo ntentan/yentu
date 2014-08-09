@@ -158,11 +158,11 @@ class Postgresql extends \yentu\SchemaDescriptor
         
         foreach($tables as $table)
         {
-            $table['columns'] = $this->getColumns($table);
             $table['primary_key'] = $this->getConstraint($table, 'PRIMARY KEY');
             $table['unique_keys'] = $this->getConstraint($table, 'UNIQUE');
             $table['foreign_keys'] = $this->getForeignConstraints($table);
             $table['indices'] = $this->getIndices($table);
+            $table['columns'] = $this->getColumns($table);
             
             $description[] = $table;
         }        

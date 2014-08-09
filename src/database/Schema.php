@@ -16,7 +16,12 @@ class Schema
     
     public function table($name)
     {
-        return new Table($name, $this->driver, $this->name);
+        return new Table($name, $this->driver, $this);
+    }
+    
+    public function getName()
+    {
+        return $this->name;
     }
 }
 

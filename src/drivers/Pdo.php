@@ -33,6 +33,7 @@ abstract class Pdo extends \yentu\DatabaseDriver
     
     public function query($query, $bindData = false)
     {
+        print "$query\n";
         $return = array();
         
         if(is_array($bindData))
