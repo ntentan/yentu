@@ -6,6 +6,7 @@ class Importer
     private $db;
     private $code;
     private $hasSchema = false;
+    private $foreignKeys = array();
     
     public function __construct()
     {
@@ -27,7 +28,15 @@ class Importer
             $this->importTables($description['tables']);
         }
         
+        var_dump($this->foreignKeys);
+        
+        $this->importForeignKeys($description['foreign_keys']);
         file_put_contents('yentu/migrations/seed.php', $this->code);
+    }
+    
+    protected function importForeignKeys($foreignKeys)
+    {
+        var_dump($foreignKeys);
     }
     
     protected function importColumns($columns)
@@ -36,7 +45,7 @@ class Importer
         {
             $this->code->addNoLn("->column('{$column['name']}')");
             $this->code->addNoIndent("->type('{$column['type']}')");
-            $this->code->addNoIndent("->nulls(" . ($column['nulls'] ? 'true' : 'false') . ")");
+            $this->code->addNoIndent("->nulls(" . ($column['nulls'] === true ? 'true' : 'false') . ")");
             
             if($column['default'] != '')
             {
@@ -83,9 +92,15 @@ class Importer
             {
                 $this->code->add("->autoIncrement()");
             }
+            $this->importConstraints('unique', $table['unique_keys']);
             
             $this->code->decreaseIndent();
             $this->code->ln();
+            
+            if(count($table['foreign_keys']) > 0)
+            {
+                $this->foreignKeys[] = $table['foreign_keys'];
+            }
         }
     }
     

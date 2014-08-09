@@ -55,6 +55,19 @@ class Table extends DatabaseItem
         return $this;
     }
     
+    public function unique()
+    {
+        $columns = func_get_args();
+        $this->driver->addUniqueConstraint(
+            array(
+                'table' => $this->name,
+                'schema' => $this->schema->getName(),
+                'columns' => $columns
+            )
+        );
+        return $this;
+    }
+    
     public function autoIncrement()
     {
         if(count($this->primaryKeyColumns) > 1)

@@ -61,6 +61,19 @@ class Postgresql extends Pdo
         );
     }
     
+    public function addUniqueConstraint($details)
+    {
+        $name = "{$details['table']}_{$details['column']}_uk";
+        $this->query(
+            sprintf(
+                'ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)',
+                $this->buildTableName($details['table'], $details['schema']),
+                $name,
+                implode(',', $details['columns'])
+            )
+        );
+    }
+    
     public function makeAutoPrimaryKey($details) 
     {
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);

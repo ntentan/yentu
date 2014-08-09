@@ -87,6 +87,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         {
             $columns[$column['name']] = $column;
             $columns[$column['name']]['type'] = $this->convertTypes($columnDetails[$i]['type']);
+            $columns[$column['name']]['nulls'] = $columns[$column['name']]['nulls'] == 'YES' ? true : false;
         }
         
         return $columns;

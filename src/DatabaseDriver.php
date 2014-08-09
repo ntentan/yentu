@@ -11,6 +11,8 @@ abstract class DatabaseDriver
     abstract public function addTable($details);
     abstract public function dropTable($details);
     abstract public function addColumn($details);
+    abstract public function addPrimaryKey($details);
+    abstract public function addUniqueConstraint($details);    
     abstract public function makeAutoPrimaryKey($details);
 
     public function __construct($params) 
