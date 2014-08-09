@@ -79,6 +79,11 @@ class Importer
             $this->importColumns($table['columns']);
             $this->importConstraints('primaryKey', $table['primary_key']);
             
+            if($table['auto_increment'])
+            {
+                $this->code->add("->autoIncrement()");
+            }
+            
             $this->code->decreaseIndent();
             $this->code->ln();
         }

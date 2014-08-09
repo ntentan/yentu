@@ -73,6 +73,7 @@ class Postgresql extends \yentu\SchemaDescriptor
     
     protected function getColumns($table)
     {
+        $columns = array();
         $columnDetails = $this->driver->query(
             sprintf(
                 "select column_name as name, data_type as type, is_nullable as nulls, column_default as default
@@ -84,10 +85,11 @@ class Postgresql extends \yentu\SchemaDescriptor
         
         foreach($columnDetails as $i => $column)
         {
-            $columnDetails[$i]['type'] = $this->convertTypes($columnDetails[$i]['type']);
+            $columns[$column['name']] = $column;
+            $columns[$column['name']]['type'] = $this->convertTypes($columnDetails[$i]['type']);
         }
         
-        return $columnDetails;
+        return $columns;
     }
     
     /**
@@ -158,13 +160,20 @@ class Postgresql extends \yentu\SchemaDescriptor
         
         foreach($tables as $table)
         {
+            $table['columns'] = $this->getColumns($table);
             $table['primary_key'] = $this->getConstraint($table, 'PRIMARY KEY');
             $table['unique_keys'] = $this->getConstraint($table, 'UNIQUE');
             $table['foreign_keys'] = $this->getForeignConstraints($table);
             $table['indices'] = $this->getIndices($table);
-            $table['columns'] = $this->getColumns($table);
             
-            $description[] = $table;
+            $primaryKey = reset($table['primary_key']);
+            if(count($primaryKey) == 1 && substr_count($table['columns'][$primaryKey[0]]['default'], 'nextval'))
+            {
+                $table['auto_increment'] = true;
+                unset($table['columns'][$primaryKey[0]]['default']);
+            }
+            
+            $description[$table['name']] = $table;
         }        
         
         return $description;
