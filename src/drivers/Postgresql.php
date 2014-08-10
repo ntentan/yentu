@@ -63,7 +63,7 @@ class Postgresql extends Pdo
     
     public function addUniqueConstraint($details)
     {
-        $name = "{$details['table']}_{$details['column']}_uk";
+        $name = "{$details['table']}_" . implode('_', $details['columns']) . "_uk";
         $this->query(
             sprintf(
                 'ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)',
@@ -135,5 +135,23 @@ class Postgresql extends Pdo
             default:
                 throw new \Exception("Unknown data type '$type'");
         }
+    }
+
+    public function addForeignKey($details) 
+    {
+        $name = $details['table'] . '_' . implode('_', $details['columns']) . 
+            '_' . $details['foreign_table'] . 
+            '_'. implode($details['foreign_columns']) . '_fk';
+        
+        $this->query(
+            sprintf(
+                'ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) MATCH FULL',
+                $this->buildTableName($details['table'], $details['schema']),
+                $name, 
+                implode(',', $details['columns']), 
+                $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
+                implode(',', $details['foreign_columns'])
+            )
+        );
     }
 }

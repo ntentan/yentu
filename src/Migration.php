@@ -3,8 +3,6 @@ namespace yentu;
 
 class Migration
 {
-    private $driver;
-    
     public function init()
     {
         // Get the version of the current database so we know which migrations
@@ -16,12 +14,12 @@ class Migration
     
     public function run()
     {
-        $this->driver = DatabaseDriver::getConnection();
+        database\DatabaseItem::setDriver(DatabaseDriver::getConnection());
         require 'yentu/migrations/seed.php';
     }
     
     public function schema($schemaName)
     {
-        return new database\Schema($schemaName, $this->driver);
+        return new database\Schema($schemaName);
     }
 }

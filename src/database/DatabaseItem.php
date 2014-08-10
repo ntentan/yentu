@@ -5,6 +5,17 @@ namespace yentu\database;
 class DatabaseItem 
 {
     private $encapsulated;
+    private static $driver = false;
+    
+    protected function getDriver()
+    {
+        return self::$driver;
+    }
+    
+    public static function setDriver($driver)
+    {
+        self::$driver = $driver;
+    }
     
     protected function setEncapsulated($encapsulated)
     {

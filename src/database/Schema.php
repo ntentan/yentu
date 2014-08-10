@@ -2,21 +2,19 @@
 
 namespace yentu\database;
 
-class Schema
+class Schema extends DatabaseItem
 {
     private $name;
-    private $driver;
     
-    public function __construct($name, $driver)
+    public function __construct($name)
     {
         $this->name = $name;
-        $this->driver = $driver;
-        $driver->addSchema($name);
+        $this->getDriver()->addSchema($name);
     }
     
     public function table($name)
     {
-        return new Table($name, $this->driver, $this);
+        return new Table($name, $this);
     }
     
     public function getName()

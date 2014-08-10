@@ -28,15 +28,26 @@ class Importer
             $this->importTables($description['tables']);
         }
         
-        var_dump($this->foreignKeys);
-        
         $this->importForeignKeys($description['foreign_keys']);
         file_put_contents('yentu/migrations/seed.php', $this->code);
     }
     
-    protected function importForeignKeys($foreignKeys)
+    protected function importForeignKeys()
     {
-        var_dump($foreignKeys);
+        foreach($this->foreignKeys as $foreignKey)
+        {
+            $this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
+            $this->code->addIndent();
+            $this->code->add("->foreignKey('" . implode(',', $foreignKey['columns']) . "')");
+            $this->code->add("->references(");
+            $this->code->addIndent();
+            $this->code->add("\$this->schema('{$foreignKey['foreign_schema']}')->table('{$foreignKey['foreign_table']}'),");
+            $this->code->add("'" . implode(',', $foreignKey['foreign_columns']) . "'");
+            $this->code->decreaseIndent();
+            $this->code->add(');');
+            $this->code->decreaseIndent();
+            $this->code->ln();
+        }
     }
     
     protected function importColumns($columns)
@@ -99,7 +110,7 @@ class Importer
             
             if(count($table['foreign_keys']) > 0)
             {
-                $this->foreignKeys[] = $table['foreign_keys'];
+                $this->foreignKeys = array_merge($this->foreignKeys, $table['foreign_keys']);
             }
         }
     }

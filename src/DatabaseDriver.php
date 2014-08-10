@@ -14,6 +14,7 @@ abstract class DatabaseDriver
     abstract public function addPrimaryKey($details);
     abstract public function addUniqueConstraint($details);    
     abstract public function makeAutoPrimaryKey($details);
+    abstract public function addForeignKey($details);
 
     public function __construct($params) 
     {

@@ -30,7 +30,7 @@ class Column extends DatabaseItem
     public function type($type)
     {
         $this->type = $type;
-        $this->table->getDriver()->addColumn(
+        $this->getDriver()->addColumn(
             $this->buildColumnDescription()
         );
         $this->added = true;
@@ -42,7 +42,7 @@ class Column extends DatabaseItem
         $this->nulls = $nulls;
         if($this->added)
         {
-            $this->table->getDriver()->setColumnNulls(
+            $this->getDriver()->setColumnNulls(
                 $this->buildColumnDescription()
             );
         }

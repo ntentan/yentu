@@ -5,15 +5,13 @@ class Table extends DatabaseItem
 {
     private $schema;
     private $name;
-    private $driver;
     private $primaryKeyColumns;
     
-    public function __construct($name, $driver, $schema = false) 
+    public function __construct($name,  $schema = false) 
     {
         $this->name = $name;
-        $this->driver = $driver;
         $this->schema = $schema;
-        $driver->addTable(array(
+        $this->getDriver()->addTable(array(
             'name' => $name, 
             'schema' => $schema->getName()
             )
@@ -36,15 +34,10 @@ class Table extends DatabaseItem
         return $this->schema;
     }
     
-    public function getDriver()
-    {
-        return $this->driver;
-    }
-    
     public function primaryKey()
     {
         $columns = func_get_args();
-        $this->driver->addPrimaryKey(
+        $this->getDriver()->addPrimaryKey(
             array(
                 'table' => $this->name, 
                 'schema' => $this->schema->getName(), 
@@ -58,7 +51,7 @@ class Table extends DatabaseItem
     public function unique()
     {
         $columns = func_get_args();
-        $this->driver->addUniqueConstraint(
+        $this->getDriver()->addUniqueConstraint(
             array(
                 'table' => $this->name,
                 'schema' => $this->schema->getName(),
@@ -74,7 +67,7 @@ class Table extends DatabaseItem
         {
             throw new \Exception("Cannot make an auto incementing composite key.");
         }
-        $this->driver->makeAutoPrimaryKey(
+        $this->getDriver()->makeAutoPrimaryKey(
             array(
                 'table' => $this->name,
                 'schema' => $this->schema->getName(),
@@ -82,5 +75,10 @@ class Table extends DatabaseItem
             )
         );
         return $this;
+    }
+    
+    public function foreignKey()
+    {
+        return new ForeignKey(func_get_args(), $this);
     }
 }

@@ -102,25 +102,37 @@ class Postgresql extends \yentu\SchemaDescriptor
         $constraints = array();        
         $constraintColumns = $this->driver->query(
             sprintf("SELECT
-                        tc.constraint_name, kcu.column_name, 
-                        ccu.table_name AS foreign_table_name,
-                        ccu.table_schema AS foreign_schema_name,
-                        ccu.column_name AS foreign_column_name 
+                        kcu.constraint_name,
+                        kcu.table_schema as schema,
+                        kcu.table_name as table, 
+                        kcu.column_name as column, 
+                        ccu.table_name AS foreign_table,
+                        ccu.table_schema AS foreign_schema,
+                        ccu.column_name AS foreign_column,
+                        rc.update_rule as onupdate,
+                        rc.delete_rule as ondelete
                     FROM 
                         information_schema.table_constraints AS tc 
                         JOIN information_schema.key_column_usage AS kcu
                           ON tc.constraint_name = kcu.constraint_name
                         JOIN information_schema.constraint_column_usage AS ccu
                           ON ccu.constraint_name = tc.constraint_name
+                        JOIN information_schema.referential_constraints AS rc
+                          ON rc.constraint_name = tc.constraint_name
                     WHERE constraint_type = 'FOREIGN KEY' 
                         AND tc.table_name='%s' AND tc.table_schema='%s'",
                 $table['name'], $table['schema']
             )
         );  
-        
+                
         foreach($constraintColumns as $column)
         {
-            $constraints[$column['constraint_name']][] = $column['column_name'];
+            $constraints[$column['constraint_name']]['columns'][] = $column['column'];
+            $constraints[$column['constraint_name']]['foreign_columns'][] = $column['foreign_column'];
+            $constraints[$column['constraint_name']]['table'] = $column['table'];
+            $constraints[$column['constraint_name']]['schema'] = $column['schema'];
+            $constraints[$column['constraint_name']]['foreign_table'] = $column['foreign_table'];
+            $constraints[$column['constraint_name']]['foreign_schema'] = $column['foreign_schema'];
         }
         
         return $constraints;
