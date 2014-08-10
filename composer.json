@@ -12,7 +12,7 @@
         "psr-4" : { "yentu\\" : "src/"}
     },
     "require": {
-        "ekowabaka/clearice": "0.3.0-alpha"
+        "ekowabaka/clearice": "dev-master"
     },
     "bin" : ["bin/yentu"],
     "minimum-stability": "alpha"

@@ -15,6 +15,7 @@ abstract class DatabaseDriver
     abstract public function addUniqueConstraint($details);    
     abstract public function makeAutoPrimaryKey($details);
     abstract public function addForeignKey($details);
+    abstract public function doesTableExist($details);
 
     public function __construct($params) 
     {
@@ -27,5 +28,18 @@ abstract class DatabaseDriver
         require "yentu/config/default.php";
         $class = "\\yentu\\drivers\\" . ucfirst($config['driver']);
         return new $class($config);
+    }
+    
+    public function getCurrentDbVersion()
+    {
+        if($this->doesTableExist('yentu_version'))
+        {
+            
+        }
+    }
+    
+    public function setCurrentDbVersion()
+    {
+        
     }
 }

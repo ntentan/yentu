@@ -7,28 +7,54 @@ use yentu\Importer;
 use yentu\Migration;
 
 $cli = new ClearIce();
-$cli->addCommands('import', 'migrate');
+$cli->addCommands('import', 'migrate', 'init');
 $cli->addOptions(
     array(
         'command' => 'import',
         'short' => 'd',
         'long' => 'skip-defaults',
         'help' => 'do not import the default values of the columns'
+    ),
+    array(
+        'command' => 'init',
+        'short' => 'd',
+        'long' => 'database',
+        'help' => 'database platform. Supports postgresql',
+        'has_value' => true
+    ),
+    array(
+        'command' => 'init',
+        'short' => 'i',
+        'long' => 'interractive',
+        'help' => 'initialize yentu interractively',
+        'has_value' => true
     )
 );
+
 $cli->addHelp();
+$cli->setStrict(true);
 $options = $cli->parse();
 
-switch($options['__command__'])
+try{
+    $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
+    unset($options['__command__']);
+    $command = new $class();
+    $command->run($options);
+}
+catch(\Exception $e)
 {
-    case 'import':
-        $importer = new Importer();
-        $importer->run();
-        break;
-    
-    case 'migrate':
-        $migration = new Migration();
-        $migration->run();
-        break;
+    fputs(STDERR, $e->getMessage());
 }
 
+function initialize()
+{
+    /*$db = \yentu\DatabaseDriver::getConnection();
+    if($db->doesTableExist('yentu_version'))
+    {
+        throw new Exception("Yentu migration table already exists. Database has already been initialized.");
+    }
+    $db->addTable(array(
+        'name' => 'yentu_version'
+        )
+    );*/
+}
