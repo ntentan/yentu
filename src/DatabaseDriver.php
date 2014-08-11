@@ -33,16 +33,14 @@ abstract class DatabaseDriver
         return new $class($config);
     }
     
-    public function getDbVersion()
+    public function setVersion($version)
     {
-        if($this->doesTableExist('yentu_version'))
-        {
-            
-        }
+        $this->query('UPDATE yentu_version SET version = ?', array($version));
     }
     
-    public function setDbVersion()
+    public function getVersion() 
     {
-        
+        $version = $this->query("SELECT version FROM yentu_version");
+        return $version[0]['version'];
     }
 }

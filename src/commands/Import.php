@@ -1,6 +1,8 @@
 <?php
 namespace yentu\commands;
+
 use yentu\DatabaseDriver;
+use yentu\CodeWriter;
 
 class Import implements \yentu\Command
 {
@@ -15,16 +17,14 @@ class Import implements \yentu\Command
         $this->code = new CodeWriter();
     }
     
-    public function run()
+    public function run($options)
     {
-        
         $description = $this->db->describe();
         
         if(isset($description['schemata']))
         {
             $this->importSchemata($description['schemata']);
         }
-        
         if(isset($description['tables']))
         {
             $this->importTables($description['tables']);
@@ -33,6 +33,7 @@ class Import implements \yentu\Command
         $this->importForeignKeys($description['foreign_keys']);
         $timestamp = date('YmdHis', time());
         file_put_contents("yentu/migrations/{$timestamp}_import.php", $this->code);
+        $this->db->setVersion($timestamp);
     }
     
     protected function importForeignKeys()

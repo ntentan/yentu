@@ -1,6 +1,9 @@
 <?php
 namespace yentu\commands;
 
+/**
+ * 
+ */
 class Init implements \yentu\Command
 {
     private function getParams($options)
@@ -93,6 +96,8 @@ class Init implements \yentu\Command
             )
         );
         
+        $db->query("INSERT INTO yentu_version(version) VALUES('')");
+        
         mkdir('yentu');
         mkdir('yentu/config');
         mkdir('yentu/migrations');
@@ -100,12 +105,12 @@ class Init implements \yentu\Command
         $configFile = new \yentu\CodeWriter();
         $configFile->add('$config = array(');
         $configFile->addIndent();
-        $configFile->add("'driver' => '{$params['driver']}'");
-        $configFile->add("'host' => '{$params['host']}'");
-        $configFile->add("'port' => '{$params['port']}'");
-        $configFile->add("'dbname' => '{$params['dbname']}'");
-        $configFile->add("'user' => '{$params['user']}'");
-        $configFile->add("'password' => '{$params['password']}'");
+        $configFile->add("'driver' => '{$params['driver']}',");
+        $configFile->add("'host' => '{$params['host']}',");
+        $configFile->add("'port' => '{$params['port']}',");
+        $configFile->add("'dbname' => '{$params['dbname']}',");
+        $configFile->add("'user' => '{$params['user']}',");
+        $configFile->add("'password' => '{$params['password']}',");
         $configFile->decreaseIndent();
         $configFile->add(');');
         
