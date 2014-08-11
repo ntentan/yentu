@@ -3,9 +3,6 @@
 error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
-use yentu\Importer;
-use yentu\Migration;
-
 $cli = new ClearIce();
 $cli->addCommands('import', 'migrate', 'init');
 $cli->addOptions(
@@ -26,8 +23,7 @@ $cli->addOptions(
         'command' => 'init',
         'short' => 'i',
         'long' => 'interractive',
-        'help' => 'initialize yentu interractively',
-        'has_value' => true
+        'help' => 'initialize yentu interractively'
     )
 );
 
@@ -43,18 +39,5 @@ try{
 }
 catch(\Exception $e)
 {
-    fputs(STDERR, $e->getMessage());
-}
-
-function initialize()
-{
-    /*$db = \yentu\DatabaseDriver::getConnection();
-    if($db->doesTableExist('yentu_version'))
-    {
-        throw new Exception("Yentu migration table already exists. Database has already been initialized.");
-    }
-    $db->addTable(array(
-        'name' => 'yentu_version'
-        )
-    );*/
+    fputs(STDERR, $e->getMessage() . "\n");
 }

@@ -6,7 +6,7 @@ class Postgresql extends Pdo
     
     private function buildTableName($name, $schema)
     {
-        return ($schema === false ? '' : "\"{$schema}\".") . "\"$name\"";
+        return ($schema === false || $schema == ''? '' : "\"{$schema}\".") . "\"$name\"";
     }
 
     protected function getDriverName() 
@@ -153,5 +153,27 @@ class Postgresql extends Pdo
                 implode(',', $details['foreign_columns'])
             )
         );
+    }
+
+    public function doesTableExist($details) 
+    {
+        
+        if(is_string($details))
+        {
+            $details = array(
+                'table' => $details,
+                'schema' => false
+            );
+        }
+        
+        $tables = $this->query(
+            "SELECT * FROM information_schema.tables WHERE table_name = ? and table_schema = ?",
+            array(
+                $details['table'],
+                $details['schema'] == '' ? 'public' : $details['schema']
+            )
+        );
+        
+        if(count($tables) > 0) return true; else return false;
     }
 }

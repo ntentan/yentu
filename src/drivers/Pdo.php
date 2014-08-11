@@ -70,6 +70,7 @@ abstract class Pdo extends \yentu\DatabaseDriver
         $equated = array();
         foreach($params as $key => $value)
         {
+            if($value == '') { continue; }
             $equated[] = "$key=$value";
         }
         return implode(';', $equated);

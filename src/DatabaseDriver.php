@@ -23,14 +23,17 @@ abstract class DatabaseDriver
         $this->connect($params);
     }
     
-    public static function getConnection()
+    public static function getConnection($config = '')
     {
-        require "yentu/config/default.php";
+        if($config == '')
+        {
+            require "yentu/config/default.php";
+        }
         $class = "\\yentu\\drivers\\" . ucfirst($config['driver']);
         return new $class($config);
     }
     
-    public function getCurrentDbVersion()
+    public function getDbVersion()
     {
         if($this->doesTableExist('yentu_version'))
         {
@@ -38,7 +41,7 @@ abstract class DatabaseDriver
         }
     }
     
-    public function setCurrentDbVersion()
+    public function setDbVersion()
     {
         
     }
