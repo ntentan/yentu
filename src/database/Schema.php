@@ -14,12 +14,16 @@ class Schema extends DatabaseItem
     
     public function table($name)
     {
-        return new Table($name, $this);
+        return DatabaseItem::create('table', $name, $this);
     }
     
     public function getName()
     {
         return $this->name;
+    }
+
+    public function commit() {
+        
     }
 }
 

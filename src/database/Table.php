@@ -11,17 +11,21 @@ class Table extends DatabaseItem
     {
         $this->name = $name;
         $this->schema = $schema;
-        $this->getDriver()->addTable(array(
+        $tableDescription = array(
             'name' => $name, 
             'schema' => $schema->getName()
-            )
         );
-        $this->setEncapsulated($schema);
+        
+        if(!$this->getDriver()->doesTableExist($tableDescription))
+        {
+            $this->getDriver()->addTable($tableDescription);
+            $this->new = true;
+        }
     }
     
     public function column($name)
     {
-        return new Column($name, $this);
+        return DatabaseItem::create('column', $name, $this);
     }
     
     public function getName()
@@ -36,29 +40,13 @@ class Table extends DatabaseItem
     
     public function primaryKey()
     {
-        $columns = func_get_args();
-        $this->getDriver()->addPrimaryKey(
-            array(
-                'table' => $this->name, 
-                'schema' => $this->schema->getName(), 
-                'columns' => $columns
-            )
-        );
-        $this->primaryKeyColumns = $columns;
-        return $this;
+        $this->primaryKeyColumns = func_get_args();
+        return DatabaseItem::create('primary_key', func_get_args(), $this);
     }
     
     public function unique()
     {
-        $columns = func_get_args();
-        $this->getDriver()->addUniqueConstraint(
-            array(
-                'table' => $this->name,
-                'schema' => $this->schema->getName(),
-                'columns' => $columns
-            )
-        );
-        return $this;
+        return DatabaseItem::create('unique_key', func_get_args(), $this);
     }
     
     public function autoIncrement()
@@ -79,6 +67,11 @@ class Table extends DatabaseItem
     
     public function foreignKey()
     {
-        return new ForeignKey(func_get_args(), $this);
+        return DatabaseItem::create('foreign_key', func_get_args(), $this);
     }
+
+    public function commit() {
+        
+    }
+
 }

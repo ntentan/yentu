@@ -7,7 +7,7 @@ class Column extends DatabaseItem
     private $type;
     private $table;
     private $nulls;
-    private $added = false;
+    private $default;
     
     private function buildColumnDescription()
     {
@@ -24,34 +24,47 @@ class Column extends DatabaseItem
     {
         $this->table = $table;
         $this->name = $name;
-        $this->setEncapsulated($table);
+        if(!$this->getDriver()->doesColumnExist(
+            array(
+                'table' => $table->getName(),
+                'schema' => $table->getSchema()->getName(),
+                'name' => $name
+            )
+        )){
+            $this->new = true;
+        }
     }
     
     public function type($type)
     {
         $this->type = $type;
-        $this->getDriver()->addColumn(
-            $this->buildColumnDescription()
-        );
-        $this->added = true;
         return $this;
     }
     
     public function nulls($nulls)
     {
         $this->nulls = $nulls;
-        if($this->added)
-        {
-            $this->getDriver()->setColumnNulls(
-                $this->buildColumnDescription()
-            );
-        }
         return $this;
     }
     
-    public function defaultValue()
+    public function defaultValue($default)
     {
+        $this->default = $default;
         return $this;
     }
+
+    public function commit() 
+    {
+        $columnDescription = $this->buildColumnDescription();
+        if($this->isNew())
+        {
+            $this->getDriver()->addColumn($columnDescription);        
+        }
+        else
+        {
+            $this->getDriver()->setColumnNulls($columnDescription);
+        }
+    }
+
 }
 

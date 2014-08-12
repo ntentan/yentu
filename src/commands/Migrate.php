@@ -1,16 +1,20 @@
 <?php
 namespace yentu\commands;
 
+use yentu\database\DatabaseItem;
+use yentu\DatabaseDriver;
+
 class Migrate implements \yentu\Command
 {
-    public function run()
+    public function run($options)
     {
-        database\DatabaseItem::setDriver(DatabaseDriver::getConnection());
+        DatabaseItem::setDriver(DatabaseDriver::getConnection());
         require 'yentu/migrations/seed.php';
     }
     
-    public function schema($schemaName)
+    public function schema($name)
     {
-        return new database\Schema($schemaName);
+        DatabaseItem::commitPending();
+        return DatabaseItem::create('schema', $name);
     }
 }

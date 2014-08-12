@@ -4,7 +4,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
 $cli = new ClearIce();
-$cli->addCommands('import', 'migrate', 'init');
+$cli->addCommands('import', 'migrate', 'init', 'create');
 $cli->addOptions(
     array(
         'command' => 'import',

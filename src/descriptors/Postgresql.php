@@ -66,6 +66,9 @@ class Postgresql extends \yentu\SchemaDescriptor
             case 'boolean':
                 return 'boolean';
                 
+            case 'date':
+                return 'date';
+                
             default:
                 throw new \Exception("Unknown data type '$type'");
         }
@@ -168,7 +171,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         $tables = $this->driver->query(
             "select table_schema as schema, table_name as name 
             from information_schema.tables
-            where table_schema = '$schema'"
+            where table_schema = '$schema' and table_type = 'BASE TABLE'"
         );
         
         foreach($tables as $table)

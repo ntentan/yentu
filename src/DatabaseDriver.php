@@ -16,6 +16,8 @@ abstract class DatabaseDriver
     abstract public function makeAutoPrimaryKey($details);
     abstract public function addForeignKey($details);
     abstract public function doesTableExist($details);
+    abstract public function doesColumnExist($details);
+    abstract public function doesForeignKeyExist($details);
 
     public function __construct($params) 
     {

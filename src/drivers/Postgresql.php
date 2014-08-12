@@ -54,8 +54,9 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s ADD PRIMARY KEY (%s)',
+                'ALTER TABLE %s ADD CONSTRAINT %s PRIMARY KEY (%s)',
                 $this->buildTableName($details['table'], $details['schema']),
+                $details['name'] == '' ? "{$details['table']}_pk" : $details['name'],
                 implode(',', $details['columns'])
             )
         );
@@ -126,6 +127,9 @@ class Postgresql extends Pdo
             case 'timestamp':
                 return 'timestamp with time zone';
                 
+            case 'date':
+                return 'date';
+                
             case 'text':
                 return 'text';
                 
@@ -161,19 +165,51 @@ class Postgresql extends Pdo
         if(is_string($details))
         {
             $details = array(
-                'table' => $details,
+                'name' => $details,
                 'schema' => false
             );
         }
         
         $tables = $this->query(
-            "SELECT * FROM information_schema.tables WHERE table_name = ? and table_schema = ?",
+            "SELECT table_name FROM information_schema.tables WHERE table_name = ? and table_schema = ? and table_type = 'BASE TABLE'",
             array(
-                $details['table'],
+                $details['name'],
                 $details['schema'] == '' ? 'public' : $details['schema']
             )
         );
         
         if(count($tables) > 0) return true; else return false;
+    }
+
+    public function doesColumnExist($details) 
+    {
+        $column = $this->query(
+            "SELECT column_name FROM information_schema.columns where table_name = ? and table_schema = ? and column_name = ? ",
+            array(
+                $details['table'],
+                $details['schema'],
+                $details['name']
+            )
+        );
+        if(count($column) > 0) return true; else return false;
+    }
+    
+    public function doesForeignKeyExist($details)
+    {
+        $column = $this->query(
+            "SELECT constraint_name FROM information_schema.key_column_usage "
+                . "JOIN information_schema.table_constraints "
+                . "USING (constraint_name) where constraint_type = 'FOREIGN KEY' "
+                . "WHERE table_name = ? AND table_schema = ? and column_name in "
+                . "(?" . str_repeat(', ?', count($details['columns'])) . ")",
+            array_merge(
+                array(
+                    $details['table'],
+                    $details['schema'],
+                ),
+                $details['columns']
+            )
+        );
+        if(count($column) > 0) return $column[0]['constraint_name']; else false;
     }
 }

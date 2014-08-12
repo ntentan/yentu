@@ -38,17 +38,14 @@ class Import implements \yentu\Command
     
     protected function importForeignKeys()
     {
-        foreach($this->foreignKeys as $foreignKey)
+        foreach($this->foreignKeys as $name => $foreignKey)
         {
             $this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
             $this->code->addIndent();
             $this->code->add("->foreignKey('" . implode(',', $foreignKey['columns']) . "')");
-            $this->code->add("->references(");
-            $this->code->addIndent();
-            $this->code->add("\$this->schema('{$foreignKey['foreign_schema']}')->table('{$foreignKey['foreign_table']}'),");
-            $this->code->add("'" . implode(',', $foreignKey['foreign_columns']) . "'");
-            $this->code->decreaseIndent();
-            $this->code->add(');');
+            $this->code->add("->references(\$this->schema('{$foreignKey['foreign_schema']}')->table('{$foreignKey['foreign_table']}'))");
+            $this->code->add("->columns('" . implode(',', $foreignKey['foreign_columns']) . "')");
+            $this->code->add("->name('$name');");
             $this->code->decreaseIndent();
             $this->code->ln();
         }
@@ -121,10 +118,10 @@ class Import implements \yentu\Command
     
     protected function importConstraints($type, $constraints)
     {
-        foreach($constraints as $constraint)
+        foreach($constraints as $name => $constraint)
         {
             $constraint = implode("','", $constraint);
-            $this->code->add("->$type('$constraint')");
+            $this->code->add("->$type('$constraint')->name('$name')");
         }
     }
 }
