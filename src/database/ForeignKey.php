@@ -13,11 +13,13 @@ class ForeignKey extends DatabaseItem
     {
         $this->table = $table;
         $this->columns = $columns;
+        DatabaseItem::disableCommitPending();
     }
     
     public function references($table)
     {
         $this->foreignTable = $table;
+        DatabaseItem::enableCommitPending();
         return $this;
     }
     

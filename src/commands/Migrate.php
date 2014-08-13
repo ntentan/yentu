@@ -8,8 +8,10 @@ class Migrate implements \yentu\Command
 {
     public function run($options)
     {
-        DatabaseItem::setDriver(DatabaseDriver::getConnection());
+        $db = DatabaseDriver::getConnection();
+        DatabaseItem::setDriver($db);
         require 'yentu/migrations/seed.php';
+        DatabaseItem::commitPending();
     }
     
     public function schema($name)

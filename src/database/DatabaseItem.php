@@ -6,7 +6,7 @@ abstract class DatabaseItem
 {
     //private $encapsulated;
     private static $encapsulated = array();
-    private static $top;
+    private static $canCommitPending = true;
     private static $driver = false;
     protected $new = false;
     
@@ -45,10 +45,7 @@ abstract class DatabaseItem
     
     public function __call($method, $arguments)
     {
-        var_dump(count(self::$encapsulated));
         $encapsulated = end(self::$encapsulated);
-        $classy = new \ReflectionClass($encapsulated);
-        var_dump($classy->getName(), $method);
         
         if(!is_object($encapsulated))
         {
@@ -69,6 +66,7 @@ abstract class DatabaseItem
     
     public static function commitPending()
     {
+        if(self::$canCommitPending === FALSE) return;
         $size = count(self::$encapsulated);
         for($i = 0; $i < $size; $i++)
         {
@@ -86,6 +84,16 @@ abstract class DatabaseItem
         DatabaseItem::push($item);
         return $item;
     }
+    
+    public static function disableCommitPending()
+    {
+        self::$canCommitPending = false;
+    }
+    
+    public static function enableCommitPending()
+    {
+        self::$canCommitPending = true;
+    }    
     
     abstract public function commit();
 }
