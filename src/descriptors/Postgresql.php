@@ -3,6 +3,9 @@ namespace yentu\descriptors;
 
 class Postgresql extends \yentu\SchemaDescriptor
 {
+    const TO_YENTU = 'yentu';
+    const TO_POSTGRESQL = 'pgsql';
+    
     /**
      * 
      * @note Query sourced from http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
@@ -44,33 +47,22 @@ class Postgresql extends \yentu\SchemaDescriptor
         return $constraints;        
     }
     
-    protected function convertTypes($type)
+    public static function convertTypes($type, $direction)
     {
-        switch($type)
+        $types = array(
+            'integer' => 'integer',
+            'character varying' => 'string',
+            'numeric' => 'double',
+            'timestamp without time zone' => 'timestamp',
+            'text' => 'text',
+            'boolean' => 'boolean',
+            'date' => 'date'
+        );
+        
+        switch($direction)
         {
-            case 'integer':
-                return 'integer';
-                
-            case 'character varying':
-                return 'string';
-                
-            case 'numeric':
-                return 'double';
-                
-            case 'timestamp without time zone':
-                return 'timestamp';
-                
-            case 'text':
-                return 'text';
-                
-            case 'boolean':
-                return 'boolean';
-                
-            case 'date':
-                return 'date';
-                
-            default:
-                throw new \Exception("Unknown data type '$type'");
+            case self::TO_YENTU: return $types[$type];
+            case self::TO_POSTGRESQL: return array_search($type);
         }
     }
     
@@ -89,7 +81,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         foreach($columnDetails as $i => $column)
         {
             $columns[$column['name']] = $column;
-            $columns[$column['name']]['type'] = $this->convertTypes($columnDetails[$i]['type']);
+            $columns[$column['name']]['type'] = self::convertTypes($columnDetails[$i]['type'], self::TO_YENTU);
             $columns[$column['name']]['nulls'] = $columns[$column['name']]['nulls'] == 'YES' ? true : false;
         }
         

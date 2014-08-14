@@ -45,7 +45,12 @@ class Postgresql extends Pdo
         $this->query(
             sprintf('ALTER TABLE %s ADD COlUMN %s %s', 
                 $this->buildTableName($details['table'], $details['schema']),
-                $details['name'], $this->convertTypes($details['type'])
+                $details['name'], self::convertTypes($details['type'], 
+                    \yentu\descriptors\Postgresql::convertTypes(
+                        $details['type'], 
+                        \yentu\descriptors\Postgresql::TO_POSTGRESQL
+                    )
+                )
             )
         );
     }
@@ -143,9 +148,12 @@ class Postgresql extends Pdo
 
     public function addForeignKey($details) 
     {
-        $name = $details['table'] . '_' . implode('_', $details['columns']) . 
+        $name = $details['name'] == '' 
+            ? 
+            $details['table'] . '_' . implode('_', $details['columns']) . 
             '_' . $details['foreign_table'] . 
-            '_'. implode($details['foreign_columns']) . '_fk';
+            '_'. implode($details['foreign_columns']) . '_fk' 
+            : $details['name'];
         
         $this->query(
             sprintf(
@@ -224,8 +232,14 @@ class Postgresql extends Pdo
         if(count($column) > 0) return $column[0]['constraint_name']; else false;
     }
 
-    public function dropForeignKey($details) {
-        
+    public function dropForeignKey($details) 
+    {
+        $this->query(
+            sprintf(
+                "ALTER TABLE %s DROP CONSTRAINT %s",
+                $this->buildTableName($details['table'], $details['schema']),
+                $details['name']
+            )
+        );
     }
-
 }

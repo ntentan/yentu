@@ -4,9 +4,9 @@ namespace yentu;
 class ChangeLogger
 {
     private $driver;
-    private $version;
-    private $migration;
-
+    private static $version;
+    private static $migration;
+    private static $session;
 
     private function __construct(DatabaseDriver $driver) 
     {
@@ -15,17 +15,18 @@ class ChangeLogger
     
     public static function wrap($item)
     {
+        self::$session = sha1(rand() . time());
         return new ChangeLogger($item);
     }
     
-    public function setVersion($version)
+    public static function setVersion($version)
     {
-        $this->version = $version;
+        self::$version = $version;
     }
     
-    public function setMigration($migration)
+    public static function setMigration($migration)
     {
-        $this->migration = $migration;
+        self::$migration = $migration;
     }
     
     public function __call($method, $arguments) 
@@ -36,12 +37,13 @@ class ChangeLogger
         if(preg_match("/^(add|drop)/", $method))
         {
             $this->driver->query(
-                'INSERT INTO yentu_history(version, method, arguments, migration) VALUES (?,?,?,?)',
+                'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',
                 array(
-                    $this->version,
+                    self::$session,
+                    self::$version,
                     $method,
                     json_encode($arguments),
-                    $this->migration
+                    self::$migration
                 )
             );
         }

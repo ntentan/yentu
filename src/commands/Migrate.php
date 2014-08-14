@@ -20,8 +20,8 @@ class Migrate implements \yentu\Command
         {
             preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $matches);
             
-            $db->setVersion($matches['timestamp']);
-            $db->setMigration($matches['migration']);
+            ChangeLogger::setVersion($matches['timestamp']);
+            ChangeLogger::setMigration($matches['migration']);
             
             if($matches['timestamp'] > $version)
             {

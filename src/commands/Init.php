@@ -91,7 +91,7 @@ class Init implements \yentu\Command
         $db->addColumn(
             array(
                 'table' => 'yentu_history',
-                'name' => 'version',
+                'name' => 'session',
                 'type' => 'string'
             )
         );
@@ -99,7 +99,7 @@ class Init implements \yentu\Command
         $db->addColumn(
             array(
                 'table' => 'yentu_history',
-                'name' => 'item_type',
+                'name' => 'version',
                 'type' => 'string'
             )
         );     
@@ -107,7 +107,7 @@ class Init implements \yentu\Command
         $db->addColumn(
             array(
                 'table' => 'yentu_history',
-                'name' => 'action',
+                'name' => 'method',
                 'type' => 'string'
             )
         );  
@@ -115,15 +115,7 @@ class Init implements \yentu\Command
         $db->addColumn(
             array(
                 'table' => 'yentu_history',
-                'name' => 'parameters',
-                'type' => 'text'
-            )
-        );  
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'reminders',
+                'name' => 'arguments',
                 'type' => 'text'
             )
         );  
@@ -133,6 +125,21 @@ class Init implements \yentu\Command
                 'table' => 'yentu_history',
                 'name' => 'migration',
                 'type' => 'string'
+            )
+        ); 
+        
+        $db->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'id',
+                'type' => 'integer'
+            )
+        );
+        
+        $db->addPrimaryKey(
+            array(
+                'table' => 'yentu_history',
+                'columns' => array('id')
             )
         );
                 
