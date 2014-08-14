@@ -35,7 +35,7 @@ class Import implements \yentu\Command
             $this->importTables($description['tables']);
         }
         
-        $this->importForeignKeys($description['foreign_keys']);
+        $this->importForeignKeys();
         $timestamp = date('YmdHis', time());
         file_put_contents("yentu/migrations/{$timestamp}_import.php", $this->code);
         $this->db->setVersion($timestamp);
@@ -50,8 +50,17 @@ class Import implements \yentu\Command
             $this->code->add("->foreignKey('" . implode(',', $foreignKey['columns']) . "')");
             $this->code->add("->references(\$this->schema('{$foreignKey['foreign_schema']}')->table('{$foreignKey['foreign_table']}'))");
             $this->code->add("->columns('" . implode(',', $foreignKey['foreign_columns']) . "')");
-            $this->code->add("->onDelete('{$foreignKey['on_delete']}')");
-            $this->code->add("->onUpdate('{$foreignKey['on_update']}')");            
+            
+            if($foreignKey['on_delete'] != '')
+            {
+                $this->code->add("->onDelete('{$foreignKey['on_delete']}')");
+            }
+            
+            if($foreignKey['on_update'] != '')
+            {
+                $this->code->add("->onUpdate('{$foreignKey['on_update']}')");
+            }
+            
             $this->code->add("->name('$name');");
             $this->code->decreaseIndent();
             $this->code->ln();

@@ -8,6 +8,8 @@ class ForeignKey extends DatabaseItem
     private $foreignTable;
     private $foreignColumns;
     private $name;
+    private $onDelete = 'NO ACTION';
+    private $onUpdate = 'NO ACTION';
     
     public function __construct($columns, $table) 
     {
@@ -60,7 +62,9 @@ class ForeignKey extends DatabaseItem
                 'foreign_columns' => $key['foreign_columns'],
                 'foreign_table' => $key['foreign_table'],
                 'foreign_schema' => $key['foreign_schema'],
-                'name' => $this->name
+                'name' => $this->name,
+                'on_delete' => $key['on_delete'],
+                'on_update' => $key['on_update']
             )
         );
         return $this;
@@ -78,7 +82,9 @@ class ForeignKey extends DatabaseItem
                     'foreign_columns' => $this->foreignColumns,
                     'foreign_table' => $this->foreignTable->getName(),
                     'foreign_schema' => $this->foreignTable->getSchema()->getName(),
-                    'name' => $this->name
+                    'name' => $this->name,
+                    'on_delete' => $this->onDelete,
+                    'on_update' => $this->onUpdate
                 )
             );        
         }
@@ -89,5 +95,16 @@ class ForeignKey extends DatabaseItem
         $this->name = $name;
         return $this;
     }
+    
+    public function onDelete($onDelete)
+    {
+        $this->onDelete = $onDelete;
+        return $this;
+    }
 
+    public function onUpdate($onUpdate)
+    {
+        $this->onUpdate = $onUpdate;
+        return $this;
+    }
 }

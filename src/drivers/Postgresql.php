@@ -45,8 +45,9 @@ class Postgresql extends Pdo
         $this->query(
             sprintf('ALTER TABLE %s ADD COlUMN %s %s', 
                 $this->buildTableName($details['table'], $details['schema']),
-                $details['name'], self::convertTypes($details['type'], 
-                    \yentu\descriptors\Postgresql::convertTypes(
+                $details['name'], 
+                    \yentu\descriptors\Postgresql::convertTypes($details['type'], 
+                        \yentu\descriptors\Postgresql::convertTypes(
                         $details['type'], 
                         \yentu\descriptors\Postgresql::TO_POSTGRESQL
                     )
@@ -127,12 +128,14 @@ class Postgresql extends Pdo
         
         $this->query(
             sprintf(
-                'ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) MATCH FULL',
+                'ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) MATCH FULL ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $name, 
                 implode(',', $details['columns']), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
-                implode(',', $details['foreign_columns'])
+                implode(',', $details['foreign_columns']),
+                $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'],
+                $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
             )
         );
     }
@@ -199,7 +202,7 @@ class Postgresql extends Pdo
                 $details['columns']
             )
         );
-        if(count($column) > 0) return $column[0]['constraint_name']; else false;
+        if(count($column) > 0) return $column[0]['constraint_name']; else return false;
     }
 
     public function dropForeignKey($details) 
