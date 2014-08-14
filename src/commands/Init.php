@@ -50,38 +50,8 @@ class Init implements \yentu\Command
         return $params;
     }
     
-    public function run($options)
+    private function createHistory($db)
     {
-        if(file_exists('yentu'))
-        {
-            throw new \Exception("Could not initialize yentu. Your project has already been initialized with yentu.");
-        }
-        else if(!is_writable('./'))
-        {
-            throw new \Exception("Your current directory is not writable.");
-        }
-        
-        $params = $this->getParams($options);
-        
-        if(count($params) == 0 && defined('STDOUT'))
-        {
-            global $argv;
-            throw new \Exception(
-                wordwrap(
-                    "Ooops! You didn't provide any parameters. \nPlease execute "
-                    . "`{$argv[0]} init -i` to execute command interractively. "
-                    . "You can also try `{$argv[0]} init --help` for more information.\n"
-                )
-            );
-        }
-        
-        $db = \yentu\DatabaseDriver::getConnection($params);
-        
-        if($db->doesTableExist('yentu_history'))
-        {
-            throw new \Exception("Could not initialize yentu. Your database has already been initialized with yentu.");
-        }
-        
         $db->addTable(
             array(
                 'name' => 'yentu_history'
@@ -141,8 +111,11 @@ class Init implements \yentu\Command
                 'table' => 'yentu_history',
                 'columns' => array('id')
             )
-        );
-                
+        );        
+    }
+    
+    public function createConfigFile($params)
+    {
         mkdir('yentu');
         mkdir('yentu/config');
         mkdir('yentu/migrations');
@@ -159,7 +132,44 @@ class Init implements \yentu\Command
         $configFile->decreaseIndent();
         $configFile->add(');');
         
-        file_put_contents('yentu/config/default.php', $configFile);
+        file_put_contents('yentu/config/default.php', $configFile);        
+    }
+    
+    public function run($options)
+    {
+        if(file_exists('yentu'))
+        {
+            throw new \Exception("Could not initialize yentu. Your project has already been initialized with yentu.");
+        }
+        else if(!is_writable('./'))
+        {
+            throw new \Exception("Your current directory is not writable.");
+        }
+        
+        $params = $this->getParams($options);
+        
+        if(count($params) == 0 && defined('STDOUT'))
+        {
+            global $argv;
+            throw new \Exception(
+                wordwrap(
+                    "Ooops! You didn't provide any parameters. \nPlease execute "
+                    . "`{$argv[0]} init -i` to execute command interractively. "
+                    . "You can also try `{$argv[0]} init --help` for more information.\n"
+                )
+            );
+        }
+        
+        $db = \yentu\DatabaseDriver::getConnection($params);
+        
+        if($db->doesTableExist('yentu_history'))
+        {
+            throw new \Exception("Could not initialize yentu. Your database has already been initialized with yentu.");
+        }
+        
+        $this->createHistory($db);
+        $this->createConfigFile($params);
+                
         echo "yentu successfully initialized.\n";
     }
 }

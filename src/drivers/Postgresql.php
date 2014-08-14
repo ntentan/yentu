@@ -115,36 +115,6 @@ class Postgresql extends Pdo
             );            
         }
     }
-    
-    protected function convertTypes($type)
-    {
-        switch($type)
-        {
-            case 'integer':
-                return 'integer';
-                
-            case 'string':
-                return 'character varying';
-                
-            case 'double':
-                return 'numeric';
-                
-            case 'timestamp':
-                return 'timestamp with time zone';
-                
-            case 'date':
-                return 'date';
-                
-            case 'text':
-                return 'text';
-                
-            case 'boolean':
-                return 'boolean';
-                
-            default:
-                throw new \Exception("Unknown data type '$type'");
-        }
-    }
 
     public function addForeignKey($details) 
     {
