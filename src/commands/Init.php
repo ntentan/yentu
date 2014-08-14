@@ -54,7 +54,7 @@ class Init implements \yentu\Command
     {
         if(file_exists('yentu'))
         {
-            throw new \Exception("Your project has already been initialized with yentu.");
+            throw new \Exception("Could not initialize yentu. Your project has already been initialized with yentu.");
         }
         else if(!is_writable('./'))
         {
@@ -77,27 +77,65 @@ class Init implements \yentu\Command
         
         $db = \yentu\DatabaseDriver::getConnection($params);
         
-        if($db->doesTableExist('yentu_version'))
+        if($db->doesTableExist('yentu_history'))
         {
-            throw new \Exception("Your database has already been initialized with yentu.");
+            throw new \Exception("Could not initialize yentu. Your database has already been initialized with yentu.");
         }
         
         $db->addTable(
             array(
-                'name' => 'yentu_version'
+                'name' => 'yentu_history'
             )
         );
         
         $db->addColumn(
             array(
-                'table' => 'yentu_version',
+                'table' => 'yentu_history',
                 'name' => 'version',
                 'type' => 'string'
             )
         );
         
-        $db->query("INSERT INTO yentu_version(version) VALUES('')");
+        $db->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'item_type',
+                'type' => 'string'
+            )
+        );     
         
+        $db->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'action',
+                'type' => 'string'
+            )
+        );  
+        
+        $db->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'parameters',
+                'type' => 'text'
+            )
+        );  
+        
+        $db->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'reminders',
+                'type' => 'text'
+            )
+        );  
+        
+        $db->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'migration',
+                'type' => 'string'
+            )
+        );
+                
         mkdir('yentu');
         mkdir('yentu/config');
         mkdir('yentu/migrations');
@@ -115,5 +153,6 @@ class Init implements \yentu\Command
         $configFile->add(');');
         
         file_put_contents('yentu/config/default.php', $configFile);
+        echo "yentu successfully initialized.\n";
     }
 }

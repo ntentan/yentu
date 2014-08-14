@@ -112,8 +112,8 @@ class Postgresql extends \yentu\SchemaDescriptor
                         ccu.table_name AS foreign_table,
                         ccu.table_schema AS foreign_schema,
                         ccu.column_name AS foreign_column,
-                        rc.update_rule as onupdate,
-                        rc.delete_rule as ondelete
+                        rc.update_rule as on_update,
+                        rc.delete_rule as on_delete
                     FROM 
                         information_schema.table_constraints AS tc 
                         JOIN information_schema.key_column_usage AS kcu
@@ -201,19 +201,18 @@ class Postgresql extends \yentu\SchemaDescriptor
             'schemata' => array(),
         );
         
-        $description['schemata'] = $this->driver->query(
+        $schemata = $this->driver->query(
             "select schema_name as name from information_schema.schemata 
             where schema_name not like 'pg_temp%' and 
             schema_name not like 'pg_toast%' and 
             schema_name not in ('pg_catalog', 'information_schema')"
         );
         
-        foreach($description['schemata'] as $i => $schema)
+        foreach($schemata as $i => $schema)
         {
-            $description['schemata'][$i]['tables'] = $this->getTables($schema['name']);
-            if($schema['name'] == 'public' && count($description['schemata'][$i]['tables'] == 0))
+            if($schema['name'] != 'public' && count($description['schemata'][$i]['tables'] > 0))
             {
-                unset($description['schemata'][$i]);
+                $description['schemata'][$schema['name']]['tables'] = $this->getTables($schema['name']);                
             }
         }
         

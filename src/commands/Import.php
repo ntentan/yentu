@@ -19,7 +19,12 @@ class Import implements \yentu\Command
     
     public function run($options)
     {
-        $description = $this->db->describe();
+        $files = scandir("yentu/migrations");
+        if(count($files) > 2)
+        {
+            throw new \Exception("Cannot run imports. Your migrations directory is not empty");
+        }
+        $description = $this->db->getDescription();
         
         if(isset($description['schemata']))
         {
@@ -45,6 +50,8 @@ class Import implements \yentu\Command
             $this->code->add("->foreignKey('" . implode(',', $foreignKey['columns']) . "')");
             $this->code->add("->references(\$this->schema('{$foreignKey['foreign_schema']}')->table('{$foreignKey['foreign_table']}'))");
             $this->code->add("->columns('" . implode(',', $foreignKey['foreign_columns']) . "')");
+            $this->code->add("->onDelete('{$foreignKey['on_delete']}')");
+            $this->code->add("->onUpdate('{$foreignKey['on_update']}')");            
             $this->code->add("->name('$name');");
             $this->code->decreaseIndent();
             $this->code->ln();

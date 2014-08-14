@@ -75,7 +75,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function makeAutoPrimaryKey($details) 
+    public function addAutoPrimaryKey($details) 
     {
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
         $this->query("CREATE SEQUENCE $sequence");
@@ -158,6 +158,15 @@ class Postgresql extends Pdo
             )
         );
     }
+    
+    public function doesSchemaExist($name) 
+    {
+        $schema = $this->query(
+            "SELECT schema_name FROM information_schema.schemata WHERE schema_name = ?",
+            array($name)
+        );
+        if(count($schema) > 0) return true; return false;
+    }
 
     public function doesTableExist($details) 
     {
@@ -200,8 +209,10 @@ class Postgresql extends Pdo
             "SELECT constraint_name FROM information_schema.key_column_usage "
                 . "JOIN information_schema.table_constraints "
                 . "USING (constraint_name) where constraint_type = 'FOREIGN KEY' "
-                . "WHERE table_name = ? AND table_schema = ? and column_name in "
-                . "(?" . str_repeat(', ?', count($details['columns'])) . ")",
+                . "AND table_constraints.table_name = ? "
+                . "AND table_constraints.table_schema = ? "
+                . "AND column_name in "
+                . "(?" . str_repeat(', ?', count($details['columns']) - 1) . ")",
             array_merge(
                 array(
                     $details['table'],
@@ -212,4 +223,9 @@ class Postgresql extends Pdo
         );
         if(count($column) > 0) return $column[0]['constraint_name']; else false;
     }
+
+    public function dropForeignKey($details) {
+        
+    }
+
 }

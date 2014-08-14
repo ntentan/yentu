@@ -55,7 +55,8 @@ class Table extends DatabaseItem
         {
             throw new \Exception("Cannot make an auto incementing composite key.");
         }
-        $this->getDriver()->makeAutoPrimaryKey(
+        
+        $this->getDriver()->addAutoPrimaryKey(
             array(
                 'table' => $this->name,
                 'schema' => $this->schema->getName(),

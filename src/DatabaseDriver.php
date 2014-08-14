@@ -3,7 +3,8 @@ namespace yentu;
 
 abstract class DatabaseDriver
 {
-    abstract public function describe();
+    private $description = false;
+    abstract protected function describe();
     abstract protected function connect($params);
     
     abstract public function addSchema($name);
@@ -13,11 +14,23 @@ abstract class DatabaseDriver
     abstract public function addColumn($details);
     abstract public function addPrimaryKey($details);
     abstract public function addUniqueConstraint($details);    
-    abstract public function makeAutoPrimaryKey($details);
+    abstract public function addAutoPrimaryKey($details);
     abstract public function addForeignKey($details);
+    abstract public function dropForeignKey($details);
+    
+    abstract public function doesSchemaExist($name);
     abstract public function doesTableExist($details);
     abstract public function doesColumnExist($details);
     abstract public function doesForeignKeyExist($details);
+    
+    public function getDescription()
+    {
+        if($this->description === false)
+        {
+            $this->description = $this->describe();
+        }
+        return $this->description;
+    }
 
     public function __construct($params) 
     {
@@ -37,12 +50,12 @@ abstract class DatabaseDriver
     
     public function setVersion($version)
     {
-        $this->query('UPDATE yentu_version SET version = ?', array($version));
+        $this->query('INSERT INTO yentu_history(version) values (?)', array($version));
     }
     
     public function getVersion() 
     {
-        $version = $this->query("SELECT version FROM yentu_version");
+        $version = $this->query("SELECT MAX(version) as version FROM yentu_history");
         return $version[0]['version'];
     }
 }
