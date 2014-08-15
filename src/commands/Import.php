@@ -121,6 +121,7 @@ class Import implements \yentu\Command
                 $this->code->add("->autoIncrement()");
             }
             $this->importConstraints('unique', $table['unique_keys']);
+            $this->importConstraints('index', $table['indices']);
             
             $this->code->decreaseIndent();
             $this->code->ln();

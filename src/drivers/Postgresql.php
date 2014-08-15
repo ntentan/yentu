@@ -3,7 +3,6 @@ namespace yentu\drivers;
 
 class Postgresql extends Pdo
 {
-    
     private function buildTableName($name, $schema)
     {
         return ($schema === false || $schema == ''? '' : "\"{$schema}\".") . "\"$name\"";
@@ -68,7 +67,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function addUniqueConstraint($details)
+    public function addUniqueKey($details)
     {
         $name = "{$details['table']}_" . implode('_', $details['columns']) . "_uk";
         $this->query(
@@ -80,6 +79,17 @@ class Postgresql extends Pdo
             )
         );
     }
+    
+    public function dropUniqueKey($details) 
+    {
+        $this->query(
+            sprintf(
+                "ALTER TABLE %s DROP CONSTRAINT %s",
+                $this->buildTableName($details['table'], $details['schema']),
+                $details['name']
+            )
+        );        
+    }    
     
     public function addAutoPrimaryKey($details) 
     {
@@ -119,18 +129,11 @@ class Postgresql extends Pdo
 
     public function addForeignKey($details) 
     {
-        $name = $details['name'] == '' 
-            ? 
-            $details['table'] . '_' . implode('_', $details['columns']) . 
-            '_' . $details['foreign_table'] . 
-            '_'. implode($details['foreign_columns']) . '_fk' 
-            : $details['name'];
-        
         $this->query(
             sprintf(
                 'ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) MATCH FULL ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
-                $name, 
+                $details['name'], 
                 implode(',', $details['columns']), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
                 implode(',', $details['foreign_columns']),
@@ -140,7 +143,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function doesSchemaExist($name) 
+    /*public function doesSchemaExist($name) 
     {
         $schema = $this->query(
             "SELECT schema_name FROM information_schema.schemata WHERE schema_name = ?",
@@ -203,7 +206,7 @@ class Postgresql extends Pdo
             )
         );
         if(count($column) > 0) return $column[0]['constraint_name']; else return false;
-    }
+    }*/
 
     public function dropForeignKey($details) 
     {
@@ -215,4 +218,12 @@ class Postgresql extends Pdo
             )
         );
     }
+
+    /*public function doesPrimaryKeyExist($details) {
+        
+    }
+
+    public function doesUniqueConstraintExist($details) {
+        
+    }*/
 }

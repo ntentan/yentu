@@ -74,6 +74,13 @@ class ForeignKey extends DatabaseItem
     {
         if($this->isNew())
         {
+            if($this->name == '')
+            {
+                $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . 
+                    '_' . $this->foreignTable->getName() . 
+                    '_'. implode('_', $this->foreignColumns) . '_fk';
+            }
+            
             $this->getDriver()->addForeignKey(
                 array(
                     'columns' => $this->columns,

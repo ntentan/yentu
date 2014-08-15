@@ -1,46 +1,26 @@
 <?php
 namespace yentu\database;
 
-class PrimaryKey extends DatabaseItem
-{
-    private $columns;
-    private $table;
-    private $name;
-    
-    public function __construct($columns, $table)
+class PrimaryKey extends BasicKey
+{ 
+    protected function addKey($constraint) 
     {
-        $this->columns = $columns;
-        $this->table = $table;
+        $this->getDriver()->addPrimaryKey($constraint);        
     }
-    
-    public function commit() 
-    {
-        $this->getDriver()->addPrimaryKey(
-            array(
-                'table' => $this->table->getName(), 
-                'schema' => $this->table->getSchema()->getName(), 
-                'columns' => $this->columns,
-                'name' => $this->name
-            )
-        );
-        return $this;        
-    }
-    
-    public function drop()
-    {
-        $this->getDriver()->dropPrimaryKey(
-            array(
-                'columns' => $this->columns,
-                'table' => $this
-            )
-        );
-        return $this;
-    }
-    
-    public function name($name)
-    {
-        $this->name = $name;
-        return $this;
-    }    
-}
 
+    protected function doesKeyExist($constraint) 
+    {
+        return $this->getDriver()->doesPrimaryKeyExist($constraint);        
+    }
+
+    protected function dropKey($constraint) 
+    {
+        $this->getDriver()->dropPrimaryKey($constraint);        
+    }
+
+    protected function getNamePostfix() 
+    {
+        return 'pk';
+    }
+
+}

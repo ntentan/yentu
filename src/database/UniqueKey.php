@@ -1,46 +1,26 @@
 <?php
 namespace yentu\database;
 
-class UniqueKey extends DatabaseItem
-{
-    private $columns;
-    private $table;
-    private $name;
-    
-    public function __construct($columns, $table)
+class UniqueKey extends BasicKey
+{ 
+    protected function addKey($constraint) 
     {
-        $this->columns = $columns;
-        $this->table = $table;
+        $this->getDriver()->addUniqueKey($constraint);        
     }
-    
-    public function commit() 
+
+    protected function doesKeyExist($constraint) 
     {
-        $this->getDriver()->addUniqueConstraint(
-            array(
-                'table' => $this->table->getName(), 
-                'schema' => $this->table->getSchema()->getName(), 
-                'columns' => $this->columns,
-                'name' => $this->name
-            )
-        );
-        return $this;        
+        return $this->getDriver()->doesUniqueKeyExist($constraint);        
     }
-    
-    public function drop()
+
+    protected function dropKey($constraint) 
     {
-        $this->getDriver()->dropUniqueKey(
-            array(
-                'columns' => $this->columns,
-                'table' => $this
-            )
-        );
-        return $this;
+        $this->getDriver()->dropUniqueKey($constraint);        
     }
-    
-    public function name($name)
+
+    protected function getNamePostfix() 
     {
-        $this->name = $name;
-        return $this;
-    }    
+        return 'uk';
+    }
 }
 
