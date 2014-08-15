@@ -31,33 +31,29 @@ abstract class BasicKey extends DatabaseItem
     abstract protected function addKey($constraint);
     abstract protected function dropKey($constraint);
     abstract protected function getNamePostfix();
+    
+    private function getKeyDescription()
+    {
+        return array(
+            'table' => $this->table->getName(), 
+            'schema' => $this->table->getSchema()->getName(), 
+            'columns' => $this->columns,
+            'name' => $this->name
+        );
+    }
 
     public function commit() 
     {
         if($this->isNew())
         {
-            $this->addKey(
-                array(
-                    'table' => $this->table->getName(), 
-                    'schema' => $this->table->getSchema()->getName(), 
-                    'columns' => $this->columns,
-                    'name' => $this->name
-                )
-            );
+            $this->addKey($this->getKeyDescription());
         }
         return $this;        
     }
     
     public function drop()
     {
-        $this->dropKey(
-            array(
-                'columns' => $this->columns,
-                'table' => $this->table->getName(),
-                'schema' => $this->table->getSchema()->getName(),
-                'name' => $this->name
-            )
-        );
+        $this->dropKey($this->getKeyDescription());
         return $this;
     }
     

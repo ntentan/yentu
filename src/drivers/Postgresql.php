@@ -80,7 +80,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function dropUniqueKey($details) 
+    private function dropKeyItem($details)
     {
         $this->query(
             sprintf(
@@ -88,7 +88,12 @@ class Postgresql extends Pdo
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name']
             )
-        );        
+        );
+    }
+    
+    public function dropUniqueKey($details) 
+    {
+        $this->dropKeyItem($details);
     }    
     
     public function addAutoPrimaryKey($details) 
@@ -142,88 +147,9 @@ class Postgresql extends Pdo
             )
         );
     }
-    
-    /*public function doesSchemaExist($name) 
-    {
-        $schema = $this->query(
-            "SELECT schema_name FROM information_schema.schemata WHERE schema_name = ?",
-            array($name)
-        );
-        if(count($schema) > 0) return true; return false;
-    }
-
-    public function doesTableExist($details) 
-    {
-        
-        if(is_string($details))
-        {
-            $details = array(
-                'name' => $details,
-                'schema' => false
-            );
-        }
-        
-        $tables = $this->query(
-            "SELECT table_name FROM information_schema.tables WHERE table_name = ? and table_schema = ? and table_type = 'BASE TABLE'",
-            array(
-                $details['name'],
-                $details['schema'] == '' ? 'public' : $details['schema']
-            )
-        );
-        
-        if(count($tables) > 0) return true; else return false;
-    }
-
-    public function doesColumnExist($details) 
-    {
-        $column = $this->query(
-            "SELECT column_name FROM information_schema.columns where table_name = ? and table_schema = ? and column_name = ? ",
-            array(
-                $details['table'],
-                $details['schema'],
-                $details['name']
-            )
-        );
-        if(count($column) > 0) return true; else return false;
-    }
-    
-    public function doesForeignKeyExist($details)
-    {
-        $column = $this->query(
-            "SELECT constraint_name FROM information_schema.key_column_usage "
-                . "JOIN information_schema.table_constraints "
-                . "USING (constraint_name) where constraint_type = 'FOREIGN KEY' "
-                . "AND table_constraints.table_name = ? "
-                . "AND table_constraints.table_schema = ? "
-                . "AND column_name in "
-                . "(?" . str_repeat(', ?', count($details['columns']) - 1) . ")",
-            array_merge(
-                array(
-                    $details['table'],
-                    $details['schema'],
-                ),
-                $details['columns']
-            )
-        );
-        if(count($column) > 0) return $column[0]['constraint_name']; else return false;
-    }*/
 
     public function dropForeignKey($details) 
     {
-        $this->query(
-            sprintf(
-                "ALTER TABLE %s DROP CONSTRAINT %s",
-                $this->buildTableName($details['table'], $details['schema']),
-                $details['name']
-            )
-        );
+        $this->dropKeyItem($details);
     }
-
-    /*public function doesPrimaryKeyExist($details) {
-        
-    }
-
-    public function doesUniqueConstraintExist($details) {
-        
-    }*/
 }
