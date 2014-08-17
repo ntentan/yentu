@@ -62,7 +62,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         switch($direction)
         {
             case self::TO_YENTU: return $types[$type];
-            case self::TO_POSTGRESQL: return array_search($type);
+            case self::TO_POSTGRESQL: return array_search($type, $types);
         }
     }
     

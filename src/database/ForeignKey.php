@@ -70,31 +70,28 @@ class ForeignKey extends DatabaseItem
         return $this;
     }
 
-    public function commit() 
+    public function commitNew() 
     {
-        if($this->isNew())
+        if($this->name == '')
         {
-            if($this->name == '')
-            {
-                $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . 
-                    '_' . $this->foreignTable->getName() . 
-                    '_'. implode('_', $this->foreignColumns) . '_fk';
-            }
-            
-            $this->getDriver()->addForeignKey(
-                array(
-                    'columns' => $this->columns,
-                    'table' => $this->table->getName(),
-                    'schema' => $this->table->getSchema()->getName(),
-                    'foreign_columns' => $this->foreignColumns,
-                    'foreign_table' => $this->foreignTable->getName(),
-                    'foreign_schema' => $this->foreignTable->getSchema()->getName(),
-                    'name' => $this->name,
-                    'on_delete' => $this->onDelete,
-                    'on_update' => $this->onUpdate
-                )
-            );        
+            $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . 
+                '_' . $this->foreignTable->getName() . 
+                '_'. implode('_', $this->foreignColumns) . '_fk';
         }
+
+        $this->getDriver()->addForeignKey(
+            array(
+                'columns' => $this->columns,
+                'table' => $this->table->getName(),
+                'schema' => $this->table->getSchema()->getName(),
+                'foreign_columns' => $this->foreignColumns,
+                'foreign_table' => $this->foreignTable->getName(),
+                'foreign_schema' => $this->foreignTable->getSchema()->getName(),
+                'name' => $this->name,
+                'on_delete' => $this->onDelete,
+                'on_update' => $this->onUpdate
+            )
+        );        
     }
     
     public function name($name)

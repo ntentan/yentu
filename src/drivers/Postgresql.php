@@ -112,14 +112,14 @@ class Postgresql extends Pdo
         );
     }    
     
-    public function setColumnNulls($details)
+    public function changeColumnNulls($details)
     {
-        if($details['nulls'] === false)
+        if($details['to']['nulls'] === false)
         {
             $this->query(
                 sprintf('ALTER TABLE %s ALTER COLUMN %s SET NOT NULL',
-                    $this->buildTableName($details['table'], $details['schema']),
-                    $details['name']
+                    $this->buildTableName($details['to']['table'], $details['to']['schema']),
+                    $details['to']['name']
                 )
             );
         }
@@ -127,8 +127,8 @@ class Postgresql extends Pdo
         {
             $this->query(
                 sprintf('ALTER TABLE %s ALTER COLUMN %s DROP NOT NULL',
-                    $this->buildTableName($details['table'], $details['schema']),
-                    $details['name']
+                    $this->buildTableName($details['to']['table'], $details['to']['schema']),
+                    $details['to']['name']
                 )
             );            
         }

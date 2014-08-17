@@ -42,13 +42,9 @@ abstract class BasicKey extends DatabaseItem
         );
     }
 
-    public function commit() 
+    public function commitNew() 
     {
-        if($this->isNew())
-        {
-            $this->addKey($this->getKeyDescription());
-        }
-        return $this;        
+        $this->addKey($this->getKeyDescription());
     }
     
     public function drop()

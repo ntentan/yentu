@@ -71,7 +71,7 @@ class Table extends DatabaseItem
         return DatabaseItem::create('foreign_key', func_get_args(), $this);
     }
 
-    public function commit() {
+    public function commitNew() {
         
     }
 

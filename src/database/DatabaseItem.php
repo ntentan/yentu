@@ -9,7 +9,9 @@ abstract class DatabaseItem
     private static $canCommitPending = true;
     private static $driver = false;
     protected $new = false;
-    
+    private $changes = array();
+
+
     private static $itemTypes = array(
         'table' => 'Table',
         'schema' => 'Schema',
@@ -18,6 +20,14 @@ abstract class DatabaseItem
         'primary_key' => 'PrimaryKey',
         'unique_key' => 'UniqueKey'
     );
+    
+    protected function addChange($method, $args)
+    {
+        $this->changes[] = array(
+            'method' => $method,
+            'args' => $args
+        );
+    }
     
     public function isNew()
     {
@@ -93,8 +103,26 @@ abstract class DatabaseItem
     public static function enableCommitPending()
     {
         self::$canCommitPending = true;
-    }    
+    }   
     
-    abstract public function commit();
+    public function commit()
+    {
+        if($this->isNew())
+        {
+            $this->commitNew();
+        }
+        else
+        {
+            foreach($this->changes as $change)
+            {
+                /*$method = new \ReflectionMethod(self::$driver, $change['method']);
+                $method->invoke(self::$driver, $change['args']);*/
+                self::$driver->$change['method']($change['args']);
+            }
+        }
+        return $this;
+    }
+    
+    abstract public function commitNew();
 }
 

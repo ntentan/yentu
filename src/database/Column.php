@@ -43,6 +43,22 @@ class Column extends DatabaseItem
     
     public function nulls($nulls)
     {
+       
+        if(!$this->isNew())
+        {
+            $currentDescription = $this->buildColumnDescription();
+            $newDescription = $currentDescription;
+            $newDescription['nulls'] = $nulls;
+                    
+            $this->addChange(
+                'changeColumnNulls', 
+                array(
+                    'from' => $currentDescription,
+                    'to' => $newDescription
+                )
+            );
+        }
+        
         $this->nulls = $nulls;
         return $this;
     }
@@ -53,18 +69,9 @@ class Column extends DatabaseItem
         return $this;
     }
 
-    public function commit() 
+    public function commitNew() 
     {
-        $columnDescription = $this->buildColumnDescription();
-        if($this->isNew())
-        {
-            $this->getDriver()->addColumn($columnDescription);        
-        }
-        else
-        {
-            $this->getDriver()->setColumnNulls($columnDescription);
-        }
+        $this->getDriver()->addColumn($this->buildColumnDescription());        
     }
-
 }
 

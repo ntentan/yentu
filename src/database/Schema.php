@@ -25,7 +25,7 @@ class Schema extends DatabaseItem
         return $this->name;
     }
 
-    public function commit() {
+    public function commitNew() {
         
     }
 }

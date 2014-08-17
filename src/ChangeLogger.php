@@ -34,7 +34,7 @@ class ChangeLogger
         $reflection = new \ReflectionMethod($this->driver, $method);
         $return = $reflection->invokeArgs($this->driver, $arguments);
         
-        if(preg_match("/^(add|drop)/", $method))
+        if(preg_match("/^(add|drop|change)/", $method))
         {
             $this->driver->query(
                 'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',

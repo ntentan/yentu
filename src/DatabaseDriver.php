@@ -34,6 +34,7 @@ abstract class DatabaseDriver
     abstract public function addAutoPrimaryKey($details);
     abstract public function addForeignKey($details);
     abstract public function dropForeignKey($details);
+    abstract public function changeColumnNulls($details);
     
     protected function dropItem($details, $type)
     {
@@ -58,7 +59,7 @@ abstract class DatabaseDriver
     public function doesColumnExist($details)
     {
         $table = $this->getTableDetails($details['schema'], $details['table']);
-        return isset($table[$details['name']]);
+        return isset($table['columns'][$details['name']]);
     }
     
     private function doesItemExist($details, $type)
