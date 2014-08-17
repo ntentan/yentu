@@ -13,11 +13,11 @@ class ChangeReverser
 
     public static function call($method, $arguments) 
     {
-        $reflection = new \ReflectionMethod(self::$driver, self::reverse($method));
-        return $reflection->invokeArgs(self::$driver, $arguments);        
+        $reflection = new \ReflectionMethod(self::$driver, self::reverseMethod($method));
+        return $reflection->invokeArgs(self::$driver, self::reverseArguments($arguments));        
     }    
     
-    private static function reverse($method)
+    private static function reverseMethod($method)
     {
         return preg_replace_callback(
             "/^(?<action>add|drop)/", 
@@ -29,5 +29,20 @@ class ChangeReverser
                 }
             }, $method
         );
+    }
+    
+    private static function reverseArguments($arguments)
+    {
+        if(isset($arguments['from']) && isset($arguments['to']))
+        {
+            return array(
+                'to' => $arguments['from'],
+                'from' => $arguments['to']
+            );
+        }
+        else
+        {
+            return $arguments;
+        }
     }
 }
