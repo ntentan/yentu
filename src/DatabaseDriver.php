@@ -7,7 +7,6 @@ abstract class DatabaseDriver
     
     public function __construct($params) 
     {
-        unset($config['driver']);
         $this->connect($params);
         $this->description = $this->describe();     
         
@@ -35,13 +34,15 @@ abstract class DatabaseDriver
     abstract public function addAutoPrimaryKey($details);
     abstract public function addForeignKey($details);
     abstract public function dropForeignKey($details);
-
-    /*abstract public function doesSchemaExist($name) **;
-    abstract public function doesTableExist($details) **;
-    abstract public function doesColumnExist($details) **;
-    abstract public function doesForeignKeyExist($details) **;
-    abstract public function doesUniqueKeyExist($details);
-    abstract public function doesPrimaryKeyExist($details);*/
+    
+    protected function dropItem($details, $type)
+    {
+        unset($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type][$details['name']]);
+        foreach($details['columns'] as $column)
+        {
+            unset($this->description['schemata'][$details['schema']]['tables'][$details['table']]["flat_$type"][$column]);
+        }
+    }
     
     public function doesSchemaExist($name)
     {

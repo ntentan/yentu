@@ -80,7 +80,7 @@ class Postgresql extends Pdo
         );
     }
     
-    private function dropKeyItem($details)
+    private function dropKeyItem($details, $type)
     {
         $this->query(
             sprintf(
@@ -89,11 +89,13 @@ class Postgresql extends Pdo
                 $details['name']
             )
         );
+        
+        $this->dropItem($details, $type);
     }
     
     public function dropUniqueKey($details) 
     {
-        $this->dropKeyItem($details);
+        $this->dropKeyItem($details, 'unique_keys');
     }    
     
     public function addAutoPrimaryKey($details) 
@@ -150,6 +152,6 @@ class Postgresql extends Pdo
 
     public function dropForeignKey($details) 
     {
-        $this->dropKeyItem($details);
+        $this->dropKeyItem($details, 'foreign_keys');
     }
 }
