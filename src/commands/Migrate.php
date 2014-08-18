@@ -13,7 +13,7 @@ class Migrate implements \yentu\Command
         DatabaseItem::setDriver($db);
         $version = $db->getVersion();
         
-        $migrations = scandir('yentu/migrations', SCANDIR_SORT_ASCENDING);
+        $migrations = scandir('yentu/migrations', 0);
         $matches = array();
         
         foreach($migrations as $migration)
