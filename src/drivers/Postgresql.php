@@ -45,14 +45,13 @@ class Postgresql extends Pdo
             sprintf('ALTER TABLE %s ADD COlUMN %s %s', 
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                    \yentu\descriptors\Postgresql::convertTypes($details['type'], 
-                        \yentu\descriptors\Postgresql::convertTypes(
+                    \yentu\descriptors\Postgresql::convertTypes(
                         $details['type'], 
                         \yentu\descriptors\Postgresql::TO_POSTGRESQL
                     )
                 )
-            )
-        );
+            );
+        
     }
     
     public function addPrimaryKey($details)
