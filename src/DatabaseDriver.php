@@ -3,7 +3,7 @@ namespace yentu;
 
 abstract class DatabaseDriver
 {
-    private $description;
+    private $description = array();
     
     public function __construct($params) 
     {
@@ -16,24 +16,39 @@ abstract class DatabaseDriver
             {
                 $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_foreign_keys'] = $this->flattenColumns($table['foreign_keys'], 'columns');
                 $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_unique_keys'] = $this->flattenColumns($table['unique_keys']);
+                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_indices'] = $this->flattenColumns($table['indices']);
             }
         }
+    }
+    
+    public function addSchema($name)    
+    {
+        $this->description['schemata'][$name] = array(
+            'name' => $name,
+            'tables' => array()
+        );
+        $this->_addSchema($name);
     }
     
     abstract protected function describe();
     abstract protected function connect($params);
     
-    abstract public function addSchema($name);
+    abstract protected function _addSchema($name);
     abstract public function dropSchema($name);
     abstract public function addTable($details);
     abstract public function dropTable($details);
     abstract public function addColumn($details);
+    abstract public function dropColumn($details);
     abstract public function addPrimaryKey($details);
+    abstract public function dropPrimaryKey($details);
     abstract public function addUniqueKey($details);   
     abstract public function dropUniqueKey($details);
     abstract public function addAutoPrimaryKey($details);
+    abstract public function dropAutoPrimaryKey($details);
     abstract public function addForeignKey($details);
     abstract public function dropForeignKey($details);
+    abstract public function addIndex($details);
+    abstract public function dropIndex($details);
     abstract public function changeColumnNulls($details);
     
     protected function dropItem($details, $type)
@@ -52,7 +67,8 @@ abstract class DatabaseDriver
     
     public function doesTableExist($details)
     {
-        return $details['schema'] === false ? isset($this->description['tables'][$details['name']]) : 
+        return $details['schema'] === false || !isset($details['schema']) ? 
+            isset($this->description['tables'][$details['name']]) : 
             isset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
     }
     
@@ -88,7 +104,12 @@ abstract class DatabaseDriver
     public function doesPrimaryKeyExist($details)
     {
         return $this->doesItemExist($details, 'primary_key');
-    }        
+    } 
+    
+    public function doesIndexExist($details)
+    {
+        return $this->doesItemExist($details, 'indices');
+    }
     
     private function getTableDetails($schema, $table)
     {

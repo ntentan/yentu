@@ -5,7 +5,7 @@ class Postgresql extends Pdo
 {
     private function buildTableName($name, $schema)
     {
-        return ($schema === false || $schema == ''? '' : "\"{$schema}\".") . "\"$name\"";
+        return ($schema === false || $schema == '' ? '' : "\"{$schema}\".") . "\"$name\"";
     }
 
     protected function getDriverName() 
@@ -13,24 +13,24 @@ class Postgresql extends Pdo
         return 'pgsql';
     }
 
-    public function addSchema($name) 
+    protected function _addSchema($name) 
     {
-        $this->query(sprintf('CREATE SCHEMA IF NOT EXISTS "%s"', $name));
+        $this->query(sprintf('CREATE SCHEMA "%s"', $name));
     }
     
     public function dropSchema($name) 
     {
-        //$this->query()
+        $this->query(sprintf('DROP SCHEMA "%s"', $name));
     }
 
     public function addTable($details) 
     {
-        $this->query(sprintf('CREATE TABLE IF NOT EXISTS %s ()',  $this->buildTableName($details['name'], $details['schema'])));        
+        $this->query(sprintf('CREATE TABLE  %s ()',  $this->buildTableName($details['name'], $details['schema'])));        
     }
 
     public function dropTable($details) 
     {
-        
+        $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
     }
 
     public function describe() 
@@ -51,7 +51,17 @@ class Postgresql extends Pdo
                     )
                 )
             );
-        
+    }
+    
+    public function dropColumn($details)
+    {
+        $this->query(
+            sprintf(
+                'ALTER TABLE %s DROP COLUMN %s', 
+                $this->buildTableName($details['table'], $details['schema']),
+                $details['name']
+            )
+        );
     }
     
     public function addPrimaryKey($details)
@@ -60,20 +70,30 @@ class Postgresql extends Pdo
             sprintf(
                 'ALTER TABLE %s ADD CONSTRAINT %s PRIMARY KEY (%s)',
                 $this->buildTableName($details['table'], $details['schema']),
-                $details['name'] == '' ? "{$details['table']}_pk" : $details['name'],
+                $details['name'],
                 implode(',', $details['columns'])
+            )
+        );
+    }
+    
+    public function dropPrimaryKey($details) 
+    {
+        $this->query(
+            sprintf(
+                'ALTER TABLE %s DROP CONSTRAINT %s',
+                $this->buildTableName($details['table'], $details['schema']),
+                $details['name']
             )
         );
     }
     
     public function addUniqueKey($details)
     {
-        $name = "{$details['table']}_" . implode('_', $details['columns']) . "_uk";
         $this->query(
             sprintf(
                 'ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)',
                 $this->buildTableName($details['table'], $details['schema']),
-                $name,
+                $details['name'],
                 implode(',', $details['columns'])
             )
         );
@@ -110,6 +130,20 @@ class Postgresql extends Pdo
             )
         );
     }    
+    
+    public function dropAutoPrimaryKey($details) 
+    {
+        $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
+        $this->query(
+            sprintf(
+                "ALTER TABLE %s ALTER COLUMN %s SET DEFAULT NULL",
+                $this->buildTableName($details['table'], $details['schema']),
+                $details['column'],
+                $sequence
+            )
+        );
+        $this->query("DROP SEQUENCE $sequence");
+    }      
     
     public function changeColumnNulls($details)
     {
@@ -153,4 +187,32 @@ class Postgresql extends Pdo
     {
         $this->dropKeyItem($details, 'foreign_keys');
     }
+
+    public function addIndex($details) 
+    {
+        printf(
+            'CREATE INDEX %s INDEX %s ON %s (%s)',
+            $details['unique'] ? 'UNIQUE' : '',
+            $details['name'],
+            $this->buildTableName($details['table'], $details['schema']),
+            implode(', ', $details['columns'])
+        );      
+        $this->query(
+            sprintf(
+                'CREATE INDEX %s INDEX %s ON %s (%s)',
+                $details['unique'] ? 'UNIQUE' : '',
+                $details['name'],
+                $this->buildTableName($details['table'], $details['schema']),
+                implode(', ', $details['columns'])
+            )
+        );
+    }
+    
+    
+
+    public function dropIndex($details) 
+    {
+        $this->query(sprintf('DROP INDEX %s', $details['name']));
+    }
+
 }

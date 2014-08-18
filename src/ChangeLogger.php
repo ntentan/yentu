@@ -11,6 +11,10 @@ class ChangeLogger
     private function __construct(DatabaseDriver $driver) 
     {
         $this->driver = $driver;
+        if(!$this->driver->doesTableExist(array('name' => 'yentu_history')))
+        {
+            $this->driver->createHistory();
+        }
     }
     
     public static function wrap($item)

@@ -44,6 +44,11 @@ class Table extends DatabaseItem
         return DatabaseItem::create('primary_key', func_get_args(), $this);
     }
     
+    public function index()
+    {
+        return DatabaseItem::create('index', func_get_args(), $this);
+    }
+    
     public function unique()
     {
         return DatabaseItem::create('unique_key', func_get_args(), $this);

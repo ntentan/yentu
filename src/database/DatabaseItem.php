@@ -18,7 +18,8 @@ abstract class DatabaseItem
         'column' => 'Column',
         'foreign_key' => 'ForeignKey',
         'primary_key' => 'PrimaryKey',
-        'unique_key' => 'UniqueKey'
+        'unique_key' => 'UniqueKey',
+        'index' => 'Index'
     );
     
     protected function addChange($method, $args)

@@ -11,6 +11,7 @@ class Migrate implements \yentu\Command
     {
         $db = ChangeLogger::wrap(DatabaseDriver::getConnection());
         DatabaseItem::setDriver($db);
+        
         $version = $db->getVersion();
         
         $migrations = scandir('yentu/migrations', 0);

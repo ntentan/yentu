@@ -41,7 +41,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         );
         foreach($constraintColumns as $column)
         {
-            $constraints[$column['constraint_name']][] = $column['column_name'];
+            $constraints[$column['index_name']][] = $column['column_name'];
         }
         
         return $constraints;        
@@ -56,13 +56,28 @@ class Postgresql extends \yentu\SchemaDescriptor
             'timestamp without time zone' => 'timestamp',
             'text' => 'text',
             'boolean' => 'boolean',
-            'date' => 'date'
+            'date' => 'date',
+            'bytea' => 'blob'
         );
         
         switch($direction)
         {
-            case self::TO_YENTU: return $types[$type];
-            case self::TO_POSTGRESQL: return array_search($type, $types);
+            case self::TO_YENTU: 
+                $destinationType = $types[$type];
+                break;
+            
+            case self::TO_POSTGRESQL: 
+                $destinationType = array_search($type, $types);
+                break;
+        }
+        
+        if($destinationType == '')
+        {
+            throw new \Exception("Invalid data type {$type} requested"); 
+        }
+        else
+        {
+            return $destinationType;
         }
     }
     
@@ -202,8 +217,13 @@ class Postgresql extends \yentu\SchemaDescriptor
         
         foreach($schemata as $i => $schema)
         {
-            if($schema['name'] != 'public' && count($description['schemata'][$i]['tables'] > 0))
+            if($schema['name'] == 'public')
             {
+                $description['tables'] = $this->getTables('public');
+            }
+            else
+            {
+                $description['schemata'][$schema['name']]['name'] = $schema['name'];
                 $description['schemata'][$schema['name']]['tables'] = $this->getTables($schema['name']);                
             }
         }
