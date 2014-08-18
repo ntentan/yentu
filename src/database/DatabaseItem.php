@@ -7,7 +7,12 @@ abstract class DatabaseItem
     //private $encapsulated;
     private static $encapsulated = array();
     private static $canCommitPending = true;
-    private static $driver = false;
+    
+    /**
+     *
+     * @var \yentu\DatabaseDriver
+     */
+    private static $driver;
     protected $new = false;
     private $changes = array();
 
