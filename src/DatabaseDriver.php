@@ -140,4 +140,71 @@ abstract class DatabaseDriver
         $session = $this->query("SELECT session FROM yentu_history ORDER BY version DESC LIMIT 1");
         return $session[0]['session'];
     }
+    
+    public function createHistory()
+    {
+        $this->addTable(array('name' => 'yentu_history'));
+        
+        $this->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'session',
+                'type' => 'string'
+            )
+        );
+        
+        $this->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'version',
+                'type' => 'string'
+            )
+        );     
+        
+        $this->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'method',
+                'type' => 'string'
+            )
+        );  
+        
+        $this->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'arguments',
+                'type' => 'text'
+            )
+        );  
+        
+        $this->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'migration',
+                'type' => 'string'
+            )
+        ); 
+        
+        $this->addColumn(
+            array(
+                'table' => 'yentu_history',
+                'name' => 'id',
+                'type' => 'integer'
+            )
+        );
+        
+        $this->addPrimaryKey(
+            array(
+                'table' => 'yentu_history',
+                'columns' => array('id')
+            )
+        );
+        
+        $this->addAutoPrimaryKey(
+            array(
+                'table' => 'yentu_history',
+                'column' => 'id'
+            )
+        );
+    }    
 }

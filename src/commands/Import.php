@@ -38,6 +38,8 @@ class Import implements \yentu\Command
         $this->importForeignKeys();
         $timestamp = date('YmdHis', time());
         file_put_contents("yentu/migrations/{$timestamp}_import.php", $this->code);
+        
+        $this->db->createHistory();
         $this->db->setVersion($timestamp);
     }
     

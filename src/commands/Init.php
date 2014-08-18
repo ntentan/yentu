@@ -50,70 +50,6 @@ class Init implements \yentu\Command
         return $params;
     }
     
-    private function createHistory($db)
-    {
-        $db->addTable(
-            array(
-                'name' => 'yentu_history'
-            )
-        );
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'session',
-                'type' => 'string'
-            )
-        );
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'version',
-                'type' => 'string'
-            )
-        );     
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'method',
-                'type' => 'string'
-            )
-        );  
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'arguments',
-                'type' => 'text'
-            )
-        );  
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'migration',
-                'type' => 'string'
-            )
-        ); 
-        
-        $db->addColumn(
-            array(
-                'table' => 'yentu_history',
-                'name' => 'id',
-                'type' => 'integer'
-            )
-        );
-        
-        $db->addPrimaryKey(
-            array(
-                'table' => 'yentu_history',
-                'columns' => array('id')
-            )
-        );        
-    }
-    
     public function createConfigFile($params)
     {
         mkdir('yentu');
@@ -167,9 +103,10 @@ class Init implements \yentu\Command
             throw new \Exception("Could not initialize yentu. Your database has already been initialized with yentu.");
         }
         
-        $this->createHistory($db);
+        $db->createHistory();
         $this->createConfigFile($params);
                 
         echo "yentu successfully initialized.\n";
     }
 }
+
