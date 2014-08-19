@@ -228,7 +228,7 @@ class Postgresql extends \yentu\SchemaDescriptor
             }
         }
         
-        return $description;  
+        return \yentu\SchemaDescription::wrap($description);
     }
 }
 

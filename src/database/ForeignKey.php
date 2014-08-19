@@ -27,7 +27,6 @@ class ForeignKey extends DatabaseItem
         
         if($constraint === false)
         {
-            DatabaseItem::disableCommitPending();
             $this->new = true;
         }
         else
@@ -39,7 +38,6 @@ class ForeignKey extends DatabaseItem
     public function references($table)
     {
         $this->foreignTable = $table;
-        DatabaseItem::enableCommitPending();
         return $this;
     }
     

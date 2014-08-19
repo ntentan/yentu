@@ -31,12 +31,18 @@ class Migrate implements \yentu\Command
             }
         }
         
-        DatabaseItem::commitPending();
+        //DatabaseItem::commitPending();
+        DatabaseItem::purge();
     }
     
     public function schema($name)
     {
-        DatabaseItem::commitPending();
-        return DatabaseItem::create('schema', $name);
+        DatabaseItem::purge();
+        return new \yentu\database\Schema($name);
+    }
+    
+    public function refSchema($name)
+    {
+        return new \yentu\database\Schema($name);
     }
 }

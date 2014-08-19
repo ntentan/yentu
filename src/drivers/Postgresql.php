@@ -18,17 +18,17 @@ class Postgresql extends Pdo
         $this->query(sprintf('CREATE SCHEMA "%s"', $name));
     }
     
-    public function dropSchema($name) 
+    protected function _dropSchema($name) 
     {
         $this->query(sprintf('DROP SCHEMA "%s"', $name));
     }
 
-    public function addTable($details) 
+    protected function _addTable($details) 
     {
         $this->query(sprintf('CREATE TABLE  %s ()',  $this->buildTableName($details['name'], $details['schema'])));        
     }
 
-    public function dropTable($details) 
+    protected function _dropTable($details) 
     {
         $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
     }
@@ -39,7 +39,7 @@ class Postgresql extends Pdo
         return $descriptor->describe();
     }
 
-    public function addColumn($details) 
+    protected function _addColumn($details) 
     {
         $this->query(
             sprintf('ALTER TABLE %s ADD COlUMN %s %s', 
@@ -53,7 +53,7 @@ class Postgresql extends Pdo
             );
     }
     
-    public function dropColumn($details)
+    protected function _dropColumn($details)
     {
         $this->query(
             sprintf(
@@ -64,7 +64,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function addPrimaryKey($details)
+    protected function _addPrimaryKey($details)
     {
         $this->query(
             sprintf(
@@ -76,7 +76,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function dropPrimaryKey($details) 
+    protected function _dropPrimaryKey($details) 
     {
         $this->query(
             sprintf(
@@ -87,7 +87,7 @@ class Postgresql extends Pdo
         );
     }
     
-    public function addUniqueKey($details)
+    protected function _addUniqueKey($details)
     {
         $this->query(
             sprintf(
@@ -112,12 +112,12 @@ class Postgresql extends Pdo
         $this->dropItem($details, $type);
     }
     
-    public function dropUniqueKey($details) 
+    protected function _dropUniqueKey($details) 
     {
         $this->dropKeyItem($details, 'unique_keys');
     }    
     
-    public function addAutoPrimaryKey($details) 
+    protected function _addAutoPrimaryKey($details) 
     {
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
         $this->query("CREATE SEQUENCE $sequence");
@@ -131,7 +131,7 @@ class Postgresql extends Pdo
         );
     }    
     
-    public function dropAutoPrimaryKey($details) 
+    protected function _dropAutoPrimaryKey($details) 
     {
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
         $this->query(
@@ -145,7 +145,7 @@ class Postgresql extends Pdo
         $this->query("DROP SEQUENCE $sequence");
     }      
     
-    public function changeColumnNulls($details)
+    protected function _changeColumnNulls($details)
     {
         if($details['to']['nulls'] === false)
         {
@@ -167,7 +167,7 @@ class Postgresql extends Pdo
         }
     }
 
-    public function addForeignKey($details) 
+    protected function _addForeignKey($details) 
     {
         $this->query(
             sprintf(
@@ -183,23 +183,16 @@ class Postgresql extends Pdo
         );
     }
 
-    public function dropForeignKey($details) 
+    protected function _dropForeignKey($details) 
     {
         $this->dropKeyItem($details, 'foreign_keys');
     }
 
-    public function addIndex($details) 
+    protected function _addIndex($details) 
     {
-        printf(
-            'CREATE INDEX %s INDEX %s ON %s (%s)',
-            $details['unique'] ? 'UNIQUE' : '',
-            $details['name'],
-            $this->buildTableName($details['table'], $details['schema']),
-            implode(', ', $details['columns'])
-        );      
         $this->query(
             sprintf(
-                'CREATE INDEX %s INDEX %s ON %s (%s)',
+                'CREATE INDEX %s %s ON %s (%s)',
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
@@ -210,7 +203,7 @@ class Postgresql extends Pdo
     
     
 
-    public function dropIndex($details) 
+    protected function _dropIndex($details) 
     {
         $this->query(sprintf('DROP INDEX %s', $details['name']));
     }

@@ -53,24 +53,7 @@ class Table extends DatabaseItem
     {
         return DatabaseItem::create('unique_key', func_get_args(), $this);
     }
-    
-    public function autoIncrement()
-    {
-        if(count($this->primaryKeyColumns) > 1)
-        {
-            throw new \Exception("Cannot make an auto incementing composite key.");
-        }
         
-        $this->getDriver()->addAutoPrimaryKey(
-            array(
-                'table' => $this->name,
-                'schema' => $this->schema->getName(),
-                'column' => $this->primaryKeyColumns[0]
-            )
-        );
-        return $this;
-    }
-    
     public function foreignKey()
     {
         return DatabaseItem::create('foreign_key', func_get_args(), $this);

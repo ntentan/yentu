@@ -10,11 +10,11 @@ class ChangeReverser
         self::$driver = $driver;
     }
 
-
     public static function call($method, $arguments) 
     {
-        $reflection = new \ReflectionMethod(self::$driver, self::reverseMethod($method));
-        return $reflection->invokeArgs(self::$driver, self::reverseArguments($arguments));        
+        $method = self::reverseMethod($method);
+        $arguments = self::reverseArguments($arguments[0]);
+        return self::$driver->$method($arguments[0]);
     }    
     
     private static function reverseMethod($method)

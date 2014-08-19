@@ -3,9 +3,9 @@ namespace yentu\database;
 
 abstract class BasicKey extends DatabaseItem
 {
-    private $columns;
-    private $table;
-    private $name;
+    protected $columns;
+    protected $table;
+    protected $name;
     
     public function __construct($columns, $table)
     {

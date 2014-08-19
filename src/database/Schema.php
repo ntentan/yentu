@@ -17,7 +17,7 @@ class Schema extends DatabaseItem
     
     public function table($name)
     {
-        return DatabaseItem::create('table', $name, $this);
+        return $this->create('table', $name, $this);
     }
     
     public function getName()

@@ -31,13 +31,13 @@ $cli->addHelp();
 $cli->setStrict(true);
 $options = $cli->parse();
 
-try{
+//try{
     $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
     unset($options['__command__']);
     $command = new $class();
     $command->run($options);
-}
-catch(\Exception $e)
-{
-    fputs(STDERR, wordwrap($e->getMessage()) . "\n");
-}
+//}
+//catch(\Exception $e)
+//{
+//    fputs(STDERR, wordwrap($e->getMessage()) . "\n");
+//}

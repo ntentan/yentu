@@ -22,5 +22,21 @@ class PrimaryKey extends BasicKey
     {
         return 'pk';
     }
-
+    
+    public function autoIncrement()
+    {
+        if(count($this->columns) > 1)
+        {
+            throw new \Exception("Cannot make an auto incementing composite key.");
+        }
+        
+        $this->getDriver()->addAutoPrimaryKey(
+            array(
+                'table' => $this->table->getName(),
+                'schema' => $this->table->getSchema()->getName(),
+                'column' => $this->columns[0]
+            )
+        );
+        return $this;
+    }
 }

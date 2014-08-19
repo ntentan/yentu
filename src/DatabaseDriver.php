@@ -3,7 +3,7 @@ namespace yentu;
 
 abstract class DatabaseDriver
 {
-    private $description = array();
+    private $description;
     
     public function __construct($params) 
     {
@@ -21,35 +21,36 @@ abstract class DatabaseDriver
         }
     }
     
-    public function addSchema($name)    
+    public function __call($name, $arguments)
     {
-        $this->description['schemata'][$name] = array(
-            'name' => $name,
-            'tables' => array()
-        );
-        $this->_addSchema($name);
+        if(preg_match("/^(add|drop|change)/", $name))
+        {
+            $this->description->$name($arguments[0]);
+            $name = "_$name";
+            $this->$name($arguments[0]);
+        }
     }
-    
+        
     abstract protected function describe();
     abstract protected function connect($params);
     
     abstract protected function _addSchema($name);
-    abstract public function dropSchema($name);
-    abstract public function addTable($details);
-    abstract public function dropTable($details);
-    abstract public function addColumn($details);
-    abstract public function dropColumn($details);
-    abstract public function addPrimaryKey($details);
-    abstract public function dropPrimaryKey($details);
-    abstract public function addUniqueKey($details);   
-    abstract public function dropUniqueKey($details);
-    abstract public function addAutoPrimaryKey($details);
-    abstract public function dropAutoPrimaryKey($details);
-    abstract public function addForeignKey($details);
-    abstract public function dropForeignKey($details);
-    abstract public function addIndex($details);
-    abstract public function dropIndex($details);
-    abstract public function changeColumnNulls($details);
+    abstract protected function _dropSchema($name);
+    abstract protected function _addTable($details);
+    abstract protected function _dropTable($details);
+    abstract protected function _addColumn($details);
+    abstract protected function _dropColumn($details);
+    abstract protected function _addPrimaryKey($details);
+    abstract protected function _dropPrimaryKey($details);
+    abstract protected function _addUniqueKey($details);   
+    abstract protected function _dropUniqueKey($details);
+    abstract protected function _addAutoPrimaryKey($details);
+    abstract protected function _dropAutoPrimaryKey($details);
+    abstract protected function _addForeignKey($details);
+    abstract protected function _dropForeignKey($details);
+    abstract protected function _addIndex($details);
+    abstract protected function _dropIndex($details);
+    abstract protected function _changeColumnNulls($details);
     
     protected function dropItem($details, $type)
     {
