@@ -8,17 +8,7 @@ abstract class DatabaseDriver
     public function __construct($params) 
     {
         $this->connect($params);
-        $this->description = $this->describe();     
-        
-        foreach($this->description['schemata'] as $schemaName => $schema)
-        {
-            foreach($schema['tables'] as $tableName => $table)
-            {
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_foreign_keys'] = $this->flattenColumns($table['foreign_keys'], 'columns');
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_unique_keys'] = $this->flattenColumns($table['unique_keys']);
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_indices'] = $this->flattenColumns($table['indices']);
-            }
-        }
+        $this->description = $this->describe(); 
     }
     
     public function __call($name, $arguments)
@@ -116,19 +106,6 @@ abstract class DatabaseDriver
     {
         return $schema === false ? $this->description['tables'][$table] : 
             $this->description['schemata'][$schema]['tables'][$table];        
-    }
-    
-    private function flattenColumns($items, $key = false)
-    {
-        $flattened = array();
-        foreach($items as $name => $item)
-        {
-            foreach($key === false ? $item : $item[$key] as $column)
-            {
-                $flattened[$column] = $name;
-            }
-        }
-        return $flattened;
     }
     
     public function getDescription()

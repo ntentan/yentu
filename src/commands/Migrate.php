@@ -21,18 +21,17 @@ class Migrate implements \yentu\Command
         {
             preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $matches);
             
-            ChangeLogger::setVersion($matches['timestamp']);
-            ChangeLogger::setMigration($matches['migration']);
-            
             if($matches['timestamp'] > $version)
             {
+                ChangeLogger::setVersion($matches['timestamp']);
+                ChangeLogger::setMigration($matches['migration']);                        
                 echo "Applying '{$matches['migration']}' migration\n";
                 require "yentu/migrations/{$migration}";
+                DatabaseItem::purge();
             }
         }
         
         //DatabaseItem::commitPending();
-        DatabaseItem::purge();
     }
     
     public function schema($name)
