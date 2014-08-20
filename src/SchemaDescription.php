@@ -62,6 +62,18 @@ class SchemaDescription implements \ArrayAccess
         }
     }
     
+    public function dropTable($details)
+    {
+        if($details['schema'] != '')
+        {
+            unset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
+        }
+        else
+        {
+            unset($this->description['tables'][$details['name']]);
+        }        
+    }
+    
     private function getTable($details)
     {
         if($details['schema'] == '')
@@ -89,13 +101,20 @@ class SchemaDescription implements \ArrayAccess
     public function addColumn($details)
     {
         $table = $this->getTable($details);
-        $table['columns'][] = array(
+        $table['columns'][$details['name']] = array(
             'name' => $details['name'],
             'type' => $details['type'],
             'nulls' => $details['nulls']
         );
         $this->setTable($details, $table);
     }
+    
+   public function dropColumn($details)
+    {
+        $table = $this->getTable($details);
+        unset($table['columns'][$details['name']]);
+        $this->setTable($details, $table);
+    }    
     
     public function addPrimaryKey($details)
     {
@@ -106,6 +125,13 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
     
+    public function dropPrimaryKey($details)
+    {
+        $table = $this->getTable($details);
+        unset($table['primary_key']);
+        $this->setTable($details, $table);
+    }
+    
     public function addAutoPrimaryKey($details)
     {
         $table = $this->getTable($details);
@@ -113,10 +139,25 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
     
+    public function dropAutoPrimaryKey($details)
+    {
+        $table = $this->getTable($details);
+        $table['auto_increment'] = false;
+        $this->setTable($details, $table);
+    }    
+    
+    
     public function addUniqueKey($details)
     {
         $table = $this->getTable($details);
         $table['unique_keys'][$details['name']] = $details['columns'];
+        $this->setTable($details, $table);        
+    }
+    
+    public function dropUniqueKey($details)
+    {
+        $table = $this->getTable($details);
+        unset($table['unique_keys'][$details['name']]);
         $this->setTable($details, $table);        
     }
     
@@ -127,10 +168,24 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
     
+    public function dropIndex($details)
+    {
+        $table = $this->getTable($details);
+        unset($table['indices'][$details['name']]);
+        $this->setTable($details, $table);        
+    }
+    
     public function addForeignKey($details)
     {
         $table = $this->getTable($details);
         $table['foreign_keys'][$details['name']] = $details['columns'];
+        $this->setTable($details, $table);
+    }
+    
+    public function dropForeignKey($details)
+    {
+        $table = $this->getTable($details);
+        unset($table['foreign_keys'][$details['name']]);
         $this->setTable($details, $table);
     }
     

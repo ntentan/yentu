@@ -218,6 +218,7 @@ abstract class DatabaseDriver
         $this->addPrimaryKey(
             array(
                 'table' => 'yentu_history',
+                'name' => 'yentu_history_pk',
                 'columns' => array('id')
             )
         );
