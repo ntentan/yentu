@@ -37,7 +37,7 @@ try{
     $command = new $class();
     $command->run($options);
 }
-catch(\Exception $e)
+catch(\yentu\commands\CommandError $e)
 {
     fputs(STDERR, wordwrap($e->getMessage()) . "\n");
 }

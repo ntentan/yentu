@@ -6,6 +6,10 @@ use yentu\CodeWriter;
 
 class Import implements \yentu\Command
 {
+    /**
+     *
+     * @var \yentu\DatabaseDriver
+     */
     private $db;
     private $code;
     private $hasSchema = false;
@@ -22,7 +26,7 @@ class Import implements \yentu\Command
         $files = scandir("yentu/migrations");
         if(count($files) > 2)
         {
-            throw new \Exception("Cannot run imports. Your migrations directory is not empty");
+            throw new CommandError("Cannot run imports. Your migrations directory is not empty");
         }
         $description = $this->db->getDescription();
         
@@ -39,18 +43,36 @@ class Import implements \yentu\Command
         $timestamp = date('YmdHis', time());
         file_put_contents("yentu/migrations/{$timestamp}_import.php", $this->code);
         
-        $this->db->createHistory();
+        if(!$this->db->doesTableExist('yentu_history'))
+        {
+            $this->db->createHistory();
+        }
         $this->db->setVersion($timestamp);
+    }
+    
+    private function generateSchemaCode($description, $ref = false, $prefix = '')
+    {
+        $refprefix = $ref === true ? 'ref' : '';
+        if($description["{$prefix}schema"] == false)
+        {
+            return "\$this->{$refprefix}table('{$description["{$prefix}table"]}')";
+        }
+        else
+        {
+            return "\$this->{$refprefix}schema('{$description["{$prefix}schema"]}')->\$this->table('{$description["{$prefix}table"]}')";
+        }
     }
     
     protected function importForeignKeys()
     {
         foreach($this->foreignKeys as $name => $foreignKey)
         {
-            $this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
+            //$this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
+            $this->code->add($this->generateSchemaCode($foreignKey));
             $this->code->addIndent();
             $this->code->add("->foreignKey('" . implode(',', $foreignKey['columns']) . "')");
-            $this->code->add("->references(\$this->schema('{$foreignKey['foreign_schema']}')->table('{$foreignKey['foreign_table']}'))");
+            $reference = $this->generateSchemaCode($foreignKey, true, 'foreign_');
+            $this->code->add("->references({$reference})");
             $this->code->add("->columns('" . implode(',', $foreignKey['foreign_columns']) . "')");
             
             if($foreignKey['on_delete'] != '')
@@ -89,7 +111,10 @@ class Import implements \yentu\Command
     protected function importSchemata($schemata)
     {
         $this->code->add('// Schemata');
-        $this->hasSchema = true;
+        if(count($schemata) > 0)
+        {
+            $this->hasSchema = true;
+        }
         foreach($schemata as $schema)
         {
             $this->code->add("\$this->schema('{$schema['name']}')");
@@ -105,6 +130,7 @@ class Import implements \yentu\Command
     {
         foreach($tables as $table)
         {
+            if($table['name'] == 'yentu_history') continue;
             if($this->hasSchema)
             {
                 $this->code->add("->table('{$table['name']}')");
@@ -124,6 +150,11 @@ class Import implements \yentu\Command
             }
             $this->importConstraints('unique', $table['unique_keys']);
             $this->importConstraints('index', $table['indices']);
+            
+            if(!$this->hasSchema)
+            {
+                $this->code->add(';');                
+            }
             
             $this->code->decreaseIndent();
             $this->code->ln();

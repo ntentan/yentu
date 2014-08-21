@@ -58,7 +58,15 @@ abstract class DatabaseDriver
     
     public function doesTableExist($details)
     {
-        return $details['schema'] === false || !isset($details['schema']) ? 
+        if(is_string($details))
+        {
+            $details = array(
+                'schema' => false,
+                'name' => $details
+            );
+        }
+        
+        return $details['schema'] == false? 
             isset($this->description['tables'][$details['name']]) : 
             isset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
     }
