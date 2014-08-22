@@ -1,0 +1,12 @@
+language: php
+php:
+ - "5.4"
+ - "5.3"
+before_script: 
+ - composer install
+ - psql -c 'create database yentu_tests;' -U postgres
+ 
+services:
+ - postgresql
+
+script: phpunit --configuration tests/config/travis.xml tests
