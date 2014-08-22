@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "34efde3305e07d11b053794cb89ff1a83a02652d"
+                "reference": "622c634d2351cfef1613db9619bb8d5c445f75a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/34efde3305e07d11b053794cb89ff1a83a02652d",
-                "reference": "34efde3305e07d11b053794cb89ff1a83a02652d",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/622c634d2351cfef1613db9619bb8d5c445f75a7",
+                "reference": "622c634d2351cfef1613db9619bb8d5c445f75a7",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "A tool for parsing command line arguments",
-            "time": "2014-08-11 16:07:06"
+            "time": "2014-08-22 18:58:46"
         }
     ],
     "packages-dev": [
