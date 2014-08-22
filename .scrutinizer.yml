@@ -23,8 +23,10 @@ build:
     dependencies:
         before:
             - composer install --prefer-dist
-            - sudo service postgresql start
+    project_setup:
+        before:
             - sudo -u postgres createdb yentu_tests
+            
     tests:
         override:
             -
