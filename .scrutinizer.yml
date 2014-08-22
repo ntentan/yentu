@@ -19,18 +19,4 @@ checks:
         return_doc_comments: true
         return_doc_comment_if_not_inferrable: true
         require_php_tag_first: true
-build:
-    dependencies:
-        before:
-            - composer install --prefer-dist
-    project_setup:
-        before:
-            - sudo -u postgres createdb yentu_tests
-            
-    tests:
-        override:
-            -
-                command: 'phpunit --coverage-clover test.out --configuration tests/config/scrutinizer.xml tests'
-                coverage:
-                    file: 'test.out'
-                    format: 'php-clover'        
+     
