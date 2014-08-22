@@ -6,6 +6,8 @@ namespace yentu\commands;
  */
 class Init implements \yentu\Command
 {
+    private $home = './yentu';
+    
     private function getParams($options)
     {
         if($options['interractive']) 
@@ -50,11 +52,16 @@ class Init implements \yentu\Command
         return $params;
     }
     
+    public function setDefaultHome($home)
+    {
+        $this->home = $home;
+    }
+    
     public function createConfigFile($params)
     {
-        mkdir('yentu');
-        mkdir('yentu/config');
-        mkdir('yentu/migrations');
+        mkdir($this->home);
+        mkdir("{$this->home}/config");
+        mkdir("{$this->home}/migrations");
         
         $configFile = new \yentu\CodeWriter();
         $configFile->add('$config = array(');
@@ -68,18 +75,18 @@ class Init implements \yentu\Command
         $configFile->decreaseIndent();
         $configFile->add(');');
         
-        file_put_contents('yentu/config/default.php', $configFile);        
+        file_put_contents("{$this->home}/config/default.php", $configFile);        
     }
     
     public function run($options)
     {
-        if(file_exists('yentu'))
+        if(file_exists($this->home))
         {
-            throw new \Exception("Could not initialize yentu. Your project has already been initialized with yentu.");
+            throw new CommandError("Could not initialize yentu. Your project has already been initialized with yentu.");
         }
-        else if(!is_writable('./'))
+        else if(!is_writable(dirname($this->home)))
         {
-            throw new \Exception("Your current directory is not writable.");
+            throw new CommandError("Your current directory is not writable.");
         }
         
         $params = $this->getParams($options);
@@ -87,12 +94,10 @@ class Init implements \yentu\Command
         if(count($params) == 0 && defined('STDOUT'))
         {
             global $argv;
-            throw new \Exception(
-                wordwrap(
-                    "Ooops! You didn't provide any parameters. \nPlease execute "
-                    . "`{$argv[0]} init -i` to execute command interractively. "
-                    . "You can also try `{$argv[0]} init --help` for more information.\n"
-                )
+            throw new CommandError(
+                "Ooops! You didn't provide any parameters. Please execute "
+                . "`{$argv[0]} init -i` to execute command interractively. "
+                . "You can also try `{$argv[0]} init --help` for more information.\n"
             );
         }
         
@@ -100,13 +105,13 @@ class Init implements \yentu\Command
         
         if($db->doesTableExist('yentu_history'))
         {
-            throw new \Exception("Could not initialize yentu. Your database has already been initialized with yentu.");
+            throw new CommandError("Could not initialize yentu. Your database has already been initialized with yentu.");
         }
         
         $db->createHistory();
         $this->createConfigFile($params);
                 
-        echo "yentu successfully initialized.\n";
+        echo "Yentu successfully initialized.\n";
     }
 }
 

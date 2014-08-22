@@ -12,7 +12,10 @@
         "psr-4" : { "yentu\\" : "src/"}
     },
     "require": {
-        "ekowabaka/clearice": "0.3.*"
+        "ekowabaka/clearice": "dev-master"
+    },
+    "require-dev" : {
+        "mikey179/vfsStream" : "v1.3.0"
     },
     "bin" : ["bin/yentu"],
     "minimum-stability": "alpha"
