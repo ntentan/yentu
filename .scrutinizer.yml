@@ -22,7 +22,7 @@ checks:
 build:
     dependencies:
         before:
-            - composer install
+            - composer install --prefer-dist
             - sudo -u postgres createdb yentu_tests
     tests:
         override:
