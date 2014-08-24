@@ -5,7 +5,7 @@ use yentu\database\DatabaseItem;
 use yentu\DatabaseDriver;
 use yentu\ChangeLogger;
 
-class Migrate implements \yentu\Command
+class Migrate extends \yentu\Command
 {
     public function run($options)
     {

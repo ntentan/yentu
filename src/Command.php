@@ -1,8 +1,20 @@
 <?php
 namespace yentu;
 
-interface Command
+abstract class Command
 {
-    public function run($options);
+    private static $home = './yentu';
+
+    abstract public function run($options);
+    
+    public static function setDefaultHome($home)
+    {
+        self::$home = $home;
+    }    
+    
+    public static function getPath($path)
+    {
+        return self::$home . "/$path";
+    }
 }
 

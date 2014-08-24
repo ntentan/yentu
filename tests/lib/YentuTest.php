@@ -26,6 +26,9 @@
 
 namespace yentu\tests;
 
+use org\bovigo\vfs\vfsStream;
+use yentu\Command;
+
 class YentuTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -47,5 +50,28 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $constraint->setPDO($this->pdo); 
         $constraint->setTable($table);
         $this->assertThat($column, $constraint, $message);
+    }
+    
+    protected function initialize()
+    {
+        $this->pdo = new \PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);     
+        $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
+        $init = new \yentu\commands\Init();
+        vfsStream::setup('home');
+        Command::setDefaultHome(vfsStream::url('home/yentu'));
+        $init->run(
+            array(
+                'driver' => 'postgresql',
+                'host' => $GLOBALS['DB_HOST'],
+                'dbname' => $GLOBALS['DB_NAME'],
+                'user' => $GLOBALS['DB_USER'],
+                'password' => $GLOBALS['DB_PASSWORD']
+            )
+        );            
+    }
+    
+    protected function deinitialize()
+    {
+        
     }
 }

@@ -5,7 +5,7 @@ use yentu\ChangeReverser;
 use yentu\DatabaseDriver;
 use yentu\database\DatabaseItem;
 
-class Rollback implements \yentu\Command
+class Rollback extends \yentu\Command
 {
     public function run($options) 
     {

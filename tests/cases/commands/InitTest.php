@@ -15,6 +15,11 @@ class InitTest extends \yentu\tests\YentuTest
         vfsStream::setup('home');
     }
     
+    public function tearDown()
+    {
+        $this->deinitialize();
+    }    
+    
     public function testParameters()
     {
         $initCommand = new \yentu\commands\Init();

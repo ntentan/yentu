@@ -3,8 +3,9 @@ namespace yentu\commands;
 
 use yentu\DatabaseDriver;
 use yentu\CodeWriter;
+use yentu\Command;
 
-class Import implements \yentu\Command
+class Import extends Command
 {
     /**
      *
@@ -23,7 +24,7 @@ class Import implements \yentu\Command
     
     public function run($options)
     {
-        $files = scandir("yentu/migrations");
+        $files = scandir(Command::getPath("migrations"));
         if(count($files) > 2)
         {
             throw new CommandError("Cannot run imports. Your migrations directory is not empty");
@@ -41,7 +42,7 @@ class Import implements \yentu\Command
         
         $this->importForeignKeys();
         $timestamp = date('YmdHis', time());
-        file_put_contents("yentu/migrations/{$timestamp}_import.php", $this->code);
+        file_put_contents(Command::getPath("migrations/{$timestamp}_import.php"), $this->code);
         
         if(!$this->db->doesTableExist('yentu_history'))
         {

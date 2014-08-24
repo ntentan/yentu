@@ -1,7 +1,7 @@
 <?php
 namespace yentu\commands;
 
-class Create implements \yentu\Command
+class Create extends \yentu\Command
 {
     public function run($options)
     {
