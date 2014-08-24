@@ -4,11 +4,11 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "79d6907e977bcdd11f088d0a6ec44178",
+    "hash": "ffcea6228676d535eedacdacfe4c238e",
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "dev-master",
+            "version": "0.3.0-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
@@ -88,9 +88,9 @@
 
     ],
     "minimum-stability": "alpha",
-    "stability-flags": {
-        "ekowabaka/clearice": 20
-    },
+    "stability-flags": [
+
+    ],
     "platform": [
 
     ],

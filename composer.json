@@ -9,7 +9,10 @@
         }
     ],
     "autoload" : {
-        "psr-4" : { "yentu\\" : "src/"}
+        "psr-4" : { 
+            "yentu\\tests\\" : "tests/lib/",
+            "yentu\\" : "src/"
+        }
     },
     "require": {
         "ekowabaka/clearice": "0.3.*"

@@ -5,10 +5,8 @@ require "vendor/autoload.php";
 
 use \org\bovigo\vfs\vfsStream;
 
-class InitTest extends PHPUnit_Framework_TestCase
+class InitTest extends \yentu\tests\YentuTest
 {
-    private $pdo;
-    
     public function setup()
     {
         $this->pdo = new PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);
@@ -21,6 +19,7 @@ class InitTest extends PHPUnit_Framework_TestCase
     {
         $initCommand = new \yentu\commands\Init();
         $initCommand->setDefaultHome(vfsStream::url("home/yentu"));
+        
         ob_start();
         $initCommand->run(
             array(
@@ -31,6 +30,7 @@ class InitTest extends PHPUnit_Framework_TestCase
                 'password' => $GLOBALS['DB_PASSWORD']
             )
         );
+        
         $output = ob_get_clean();
         $this->assertEquals(true, file_exists(vfsStream::url("home/yentu")));
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu")));
@@ -49,6 +49,7 @@ class InitTest extends PHPUnit_Framework_TestCase
             'password' => $GLOBALS['DB_PASSWORD']
         ), $config);
         $this->assertEquals("Yentu successfully initialized.\n", $output);
+        $this->assertTableExists('yentu_history');
     }
     
     public function testInterractive()
