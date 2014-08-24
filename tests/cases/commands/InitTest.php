@@ -30,7 +30,11 @@ class InitTest extends \yentu\tests\YentuTest
                 'password' => $GLOBALS['DB_PASSWORD']
             )
         );
-        
+        $this->runAssertions();
+    }
+    
+    private function runAssertions()
+    {
         $output = ob_get_clean();
         $this->assertEquals(true, file_exists(vfsStream::url("home/yentu")));
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu")));
@@ -50,6 +54,12 @@ class InitTest extends \yentu\tests\YentuTest
         ), $config);
         $this->assertEquals("Yentu successfully initialized.\n", $output);
         $this->assertTableExists('yentu_history');
+        $this->assertColumnExists('session', 'yentu_history');        
+        $this->assertColumnExists('version', 'yentu_history');        
+        $this->assertColumnExists('method', 'yentu_history');        
+        $this->assertColumnExists('arguments', 'yentu_history');        
+        $this->assertColumnExists('migration', 'yentu_history');        
+        $this->assertColumnExists('id', 'yentu_history');        
     }
     
     public function testInterractive()
@@ -73,8 +83,7 @@ class InitTest extends \yentu\tests\YentuTest
         $initCommand->run(array(
             'interractive' => true
         ));
-        $output = ob_get_clean();
-        $this->assertEquals("Yentu successfully initialized.\n", $output);
+        $this->runAssertions();
     }
     
     /**

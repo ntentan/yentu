@@ -40,4 +40,12 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }
+    
+    public function assertColumnExists($column, $table, $message = '')
+    {
+        $constraint = new constraints\ColumnExists();
+        $constraint->setPDO($this->pdo); 
+        $constraint->setTable($table);
+        $this->assertThat($column, $constraint, $message);
+    }
 }

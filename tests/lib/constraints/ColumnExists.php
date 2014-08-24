@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * The MIT License
  *
@@ -24,30 +23,26 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests;
+namespace yentu\tests\constraints;
 
-abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
-{
-    protected $pdo;
-    protected $table;
-    
-    public function setPDO($pdo)
+class ColumnExists extends \yentu\tests\YentuConstraint
+{   
+    public function matches($other)
     {
-        $this->pdo = $pdo;
+        
+        $response = $this->pdo->query(
+            sprintf(
+                "SELECT * FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s'",
+                $this->table['table'], 
+                $this->table['schema'],
+                $other
+            )
+        );
+        return $response->rowCount() === 1;
     }
     
-    public function setTable($table)
+    public function toString()
     {
-        if(is_string($table))
-        {
-            $this->table = array(
-                'table' => $table,
-                'schema' => 'public'
-            );
-        }
-        else
-        {
-            $this->table = $table;
-        }
+        return "is a column on {$this->table['table']}";
     }
 }
