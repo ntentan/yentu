@@ -2,11 +2,12 @@
 namespace yentu\commands;
 
 use yentu\Command;
+use yentu\Yentu;
 
 /**
  * 
  */
-class Init extends Command
+class Init implements Command
 {
     private function getParams($options)
     {
@@ -54,9 +55,9 @@ class Init extends Command
     
     public function createConfigFile($params)
     {
-        mkdir(Command::getPath(''));
-        mkdir(Command::getPath('config'));
-        mkdir(Command::getPath('migrations'));
+        mkdir(Yentu::getPath(''));
+        mkdir(Yentu::getPath('config'));
+        mkdir(Yentu::getPath('migrations'));
         
         $configFile = new \yentu\CodeWriter();
         $configFile->add('$config = array(');
@@ -70,16 +71,16 @@ class Init extends Command
         $configFile->decreaseIndent();
         $configFile->add(');');
         
-        file_put_contents(Command::getPath("config/default.php"), $configFile);        
+        file_put_contents(Yentu::getPath("config/default.php"), $configFile);        
     }
     
     public function run($options)
     {
-        if(file_exists(Command::getPath('')))
+        if(file_exists(Yentu::getPath('')))
         {
             throw new CommandError("Could not initialize yentu. Your project has already been initialized with yentu.");
         }
-        else if(!is_writable(dirname(Command::getPath(''))))
+        else if(!is_writable(dirname(Yentu::getPath(''))))
         {
             throw new CommandError("Your current directory is not writable.");
         }
@@ -106,7 +107,7 @@ class Init extends Command
         $db->createHistory();
         $this->createConfigFile($params);
                 
-        echo "Yentu successfully initialized.\n";
+        Yentu::out("Yentu successfully initialized.\n");
     }
 }
 

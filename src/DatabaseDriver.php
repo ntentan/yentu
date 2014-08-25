@@ -125,7 +125,7 @@ abstract class DatabaseDriver
     {
         if($config == '')
         {
-            require Command::getPath("config/default.php");
+            require Yentu::getPath("config/default.php");
         }
         $class = "\\yentu\\drivers\\" . ucfirst($config['driver']);
         return new $class($config);

@@ -4,8 +4,9 @@ namespace yentu\commands;
 use yentu\DatabaseDriver;
 use yentu\CodeWriter;
 use yentu\Command;
+use yentu\Yentu;
 
-class Import extends Command
+class Import implements Command
 {
     /**
      *
@@ -16,15 +17,28 @@ class Import extends Command
     private $hasSchema = false;
     private $foreignKeys = array();
     
-    public function __construct()
+    public function __construct($codeWriter = null)
     {
         $this->db = DatabaseDriver::getConnection();
-        $this->code = new CodeWriter();
     }
     
+    private function initializeCodeWriter()
+    {
+        if(!is_object($this->code))
+        {
+            $this->code = new CodeWriter();
+        }
+    }
+    
+    public function setCodeWriter($code)
+    {
+       $this->code = $code; 
+    }
+
     public function run($options)
     {
-        $files = scandir(Command::getPath("migrations"));
+        $this->initializeCodeWriter();
+        $files = scandir(Yentu::getPath("migrations"));
         if(count($files) > 2)
         {
             throw new CommandError("Cannot run imports. Your migrations directory is not empty");
@@ -42,13 +56,15 @@ class Import extends Command
         
         $this->importForeignKeys();
         $timestamp = date('YmdHis', time());
-        file_put_contents(Command::getPath("migrations/{$timestamp}_import.php"), $this->code);
+        file_put_contents(Yentu::getPath("migrations/{$timestamp}_import.php"), $this->code);
         
         if(!$this->db->doesTableExist('yentu_history'))
         {
             $this->db->createHistory();
         }
         $this->db->setVersion($timestamp);
+        
+        return $timestamp;
     }
     
     private function generateSchemaCode($description, $ref = false, $prefix = '')

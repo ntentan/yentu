@@ -27,7 +27,8 @@
 namespace yentu\tests;
 
 use org\bovigo\vfs\vfsStream;
-use yentu\Command;
+
+error_reporting(E_ALL ^ E_NOTICE);
 
 class YentuTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +59,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
         $init = new \yentu\commands\Init();
         vfsStream::setup('home');
-        Command::setDefaultHome(vfsStream::url('home/yentu'));
+        \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
         $init->run(
             array(
                 'driver' => 'postgresql',
