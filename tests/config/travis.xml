@@ -6,5 +6,8 @@
         <var name="DB_PASSWORD" value="" />
         <var name="DB_NAME" value="yentu_tests" />
         <var name="DB_HOST" value="localhost" />
+        
+        <var name="IMPORT_DB_DSN" value="pgsql:dbname=yentu_test_import;host=localhost;user=postgres" />
+        <var name="IMPORT_DB_NAME" value="yentu_test_import" />        
     </php>
 </phpunit>
