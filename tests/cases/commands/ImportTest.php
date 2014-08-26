@@ -63,8 +63,28 @@ class ImportTest extends \yentu\tests\YentuTest
             vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );
         require 'tests/expected/import.php';
+        file_put_contents('expected', var_export($description->toArray(), true));
         $this->assertEquals($expectedDescription, $description->toArray());
     }
+    
+    /**
+     * @expectedException \yentu\commands\CommandError
+     */
+    public function testImportNonEmptyMigrations()
+    {
+        file_put_contents(vfsStream::url('home/yentu/migrations/1234568901234_existing.php'), 'nothing');
+        $import = new yentu\commands\Import();
+        $import->run(array());        
+    }
+    
+    public function testDatabaseNotExisting()
+    {
+        $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
+        $this->pdo->query('DROP SEQUENCE IF EXISTS yentu_history_id_seq');
+        $import = new yentu\commands\Import();
+        $import->run(array());  
+        $this->assertTableExists('yentu_history');
+    }    
     
     public function tearDown()
     {

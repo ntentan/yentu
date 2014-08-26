@@ -145,7 +145,9 @@ class Postgresql extends \yentu\SchemaDescriptor
             $constraints[$column['constraint_name']]['schema'] = $this->fixSchema($column['schema']);
             $constraints[$column['constraint_name']]['foreign_table'] = $column['foreign_table'];
             $constraints[$column['constraint_name']]['foreign_schema'] = $this->fixSchema($column['foreign_schema']);
-        }
+            $constraints[$column['constraint_name']]['on_update'] = $column['on_update'];
+            $constraints[$column['constraint_name']]['on_delete'] = $column['on_delete'];
+        }   
         
         return $constraints;
     }
