@@ -40,8 +40,19 @@ class Migrate implements \yentu\Command
         return new \yentu\database\Schema($name);
     }
     
-    public function refSchema($name)
+    public function refschema($name)
     {
         return new \yentu\database\Schema($name);
+    }
+    
+    public function table($name)
+    {
+        DatabaseItem::purge();
+        return new \yentu\database\Table($name);
+    }
+    
+    public function reftable($name)
+    {
+        return new \yentu\database\Table($name);
     }
 }

@@ -51,8 +51,10 @@ class Postgresql extends \yentu\SchemaDescriptor
     {
         $types = array(
             'integer' => 'integer',
+            'bigint' => 'bigint',
             'character varying' => 'string',
             'numeric' => 'double',
+            'timestamp with time zone' => 'timestamp',
             'timestamp without time zone' => 'timestamp',
             'text' => 'text',
             'boolean' => 'boolean',
@@ -140,9 +142,9 @@ class Postgresql extends \yentu\SchemaDescriptor
             $constraints[$column['constraint_name']]['columns'][] = $column['column'];
             $constraints[$column['constraint_name']]['foreign_columns'][] = $column['foreign_column'];
             $constraints[$column['constraint_name']]['table'] = $column['table'];
-            $constraints[$column['constraint_name']]['schema'] = $column['schema'];
+            $constraints[$column['constraint_name']]['schema'] = $this->fixSchema($column['schema']);
             $constraints[$column['constraint_name']]['foreign_table'] = $column['foreign_table'];
-            $constraints[$column['constraint_name']]['foreign_schema'] = $column['foreign_schema'];
+            $constraints[$column['constraint_name']]['foreign_schema'] = $this->fixSchema($column['foreign_schema']);
         }
         
         return $constraints;
@@ -172,6 +174,18 @@ class Postgresql extends \yentu\SchemaDescriptor
         return $constraints;
     }
     
+    private function fixSchema($schema)
+    {
+        if($schema == false || $schema == 'public')
+        {
+            return '';
+        }
+        else
+        {
+            return $schema;
+        }
+    }
+    
     protected function getTables($schema)
     {
         $description = array();
@@ -188,6 +202,7 @@ class Postgresql extends \yentu\SchemaDescriptor
             $table['unique_keys'] = $this->getConstraint($table, 'UNIQUE');
             $table['foreign_keys'] = $this->getForeignConstraints($table);
             $table['indices'] = $this->getIndices($table);
+            $table['schema'] = $this->fixSchema($table['schema']);
             
             $primaryKey = reset($table['primary_key']);
             if(count($primaryKey) == 1 && substr_count($table['columns'][$primaryKey[0]]['default'], 'nextval'))

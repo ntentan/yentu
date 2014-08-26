@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf3eab1ee4dd69c08fded2142fe57894",
+    "hash": "ffcea6228676d535eedacdacfe4c238e",
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "0.3.0-alpha",
+            "version": "0.3.0-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "57f5817a14784df59203beaf1b026ef2fd847ac7"
+                "reference": "622c634d2351cfef1613db9619bb8d5c445f75a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/57f5817a14784df59203beaf1b026ef2fd847ac7",
-                "reference": "57f5817a14784df59203beaf1b026ef2fd847ac7",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/622c634d2351cfef1613db9619bb8d5c445f75a7",
+                "reference": "622c634d2351cfef1613db9619bb8d5c445f75a7",
                 "shasum": ""
             },
             "require": {
@@ -41,19 +41,56 @@
                 }
             ],
             "description": "A tool for parsing command line arguments",
-            "time": "2014-08-04 13:05:02"
+            "time": "2014-08-22 18:58:46"
         }
     ],
     "packages-dev": [
-
+        {
+            "name": "mikey179/vfsStream",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikey179/vfsStream.git",
+                "reference": "8571f349567e02af1b7efc0fc4e3a4a1c98e664e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/8571f349567e02af1b7efc0fc4e3a4a1c98e664e",
+                "reference": "8571f349567e02af1b7efc0fc4e3a4a1c98e664e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "org\\bovigo\\vfs\\": "src/main/php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "homepage": "http://vfs.bovigo.org/",
+            "time": "2014-07-21 20:15:54"
+        }
     ],
     "aliases": [
 
     ],
     "minimum-stability": "alpha",
-    "stability-flags": {
-        "ekowabaka/clearice": 15
-    },
+    "stability-flags": [
+
+    ],
     "platform": [
 
     ],

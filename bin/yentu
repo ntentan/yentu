@@ -5,6 +5,7 @@ require "vendor/autoload.php";
 
 $cli = new ClearIce();
 $cli->addCommands('import', 'migrate', 'init', 'create', 'rollback');
+
 $cli->addOptions(
     array(
         'command' => 'import',
@@ -14,16 +15,51 @@ $cli->addOptions(
     ),
     array(
         'command' => 'init',
+        'short' => 'i',
+        'long' => 'interractive',
+        'help' => 'initialize yentu interractively'
+    ),
+    array(
+        'command' => 'init',
         'short' => 'd',
-        'long' => 'database',
+        'long' => 'driver',
         'help' => 'database platform. Supports postgresql',
         'has_value' => true
     ),
     array(
         'command' => 'init',
-        'short' => 'i',
-        'long' => 'interractive',
-        'help' => 'initialize yentu interractively'
+        'short' => 'h',
+        'long' => 'host',
+        'help' => 'the hostname of the target database',
+        'has_value' => true
+    ),
+    array(
+        'command' => 'init',
+        'short' => 'p',
+        'long' => 'port',
+        'help' => 'the port of the target database',
+        'has_value' => true
+    ),        
+    array(
+        'command' => 'init',
+        'short' => 'n',
+        'long' => 'dbname',
+        'help' => 'the name of the target database',
+        'has_value' => true
+    ),        
+    array(
+        'command' => 'init',
+        'short' => 'u',
+        'long' => 'user',
+        'help' => 'the user name on the target database',
+        'has_value' => true
+    ),        
+    array(
+        'command' => 'init',
+        'short' => 'p',
+        'long' => 'password',
+        'help' => 'the passwrd of the user on the target database',
+        'has_value' => true
     )
 );
 
@@ -37,7 +73,11 @@ try{
     $command = new $class();
     $command->run($options);
 }
-catch(\Exception $e)
+catch(\yentu\commands\CommandError $e)
 {
-    fputs(STDERR, wordwrap($e->getMessage()) . "\n");
+    fputs(
+        STDERR, 
+        wordwrap("There was an error executing your command: " . $e->getMessage()) . "\n"
+    );
 }
+

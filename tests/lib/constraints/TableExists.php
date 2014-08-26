@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * The MIT License
  *
@@ -24,9 +23,32 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
+namespace yentu\tests\constraints;
 
-interface Command
-{
-    public function run($options);
+class TableExists extends \yentu\tests\YentuConstraint
+{   
+    public function matches($other)
+    {
+        if(is_string($other))
+        {
+            $table = array(
+                'table' => $other,
+                'schema' => 'public'
+            );
+        }
+        
+        $response = $this->pdo->query(
+            sprintf(
+                "SELECT * FROM information_schema.tables  where table_name = '%s' and table_schema = '%s'",
+                $table['table'], 
+                $table['schema']
+            )
+        );
+        return $response->rowCount() === 1;
+    }
+    
+    public function toString()
+    {
+        return 'is an existing database table';
+    }
 }

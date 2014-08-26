@@ -13,7 +13,7 @@ class Table extends DatabaseItem
         $this->schema = $schema;
         $tableDescription = array(
             'name' => $name, 
-            'schema' => $schema->getName()
+            'schema' => $schema === false ? false :$schema->getName()
         );
         
         if(!$this->getDriver()->doesTableExist($tableDescription))

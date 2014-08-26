@@ -58,7 +58,15 @@ abstract class DatabaseDriver
     
     public function doesTableExist($details)
     {
-        return $details['schema'] === false || !isset($details['schema']) ? 
+        if(is_string($details))
+        {
+            $details = array(
+                'schema' => false,
+                'name' => $details
+            );
+        }
+        
+        return $details['schema'] == false? 
             isset($this->description['tables'][$details['name']]) : 
             isset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
     }
@@ -117,7 +125,7 @@ abstract class DatabaseDriver
     {
         if($config == '')
         {
-            require "yentu/config/default.php";
+            require Yentu::getPath("config/default.php");
         }
         $class = "\\yentu\\drivers\\" . ucfirst($config['driver']);
         return new $class($config);

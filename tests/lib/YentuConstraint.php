@@ -24,9 +24,30 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
+namespace yentu\tests;
 
-interface Command
+abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
 {
-    public function run($options);
+    protected $pdo;
+    protected $table;
+    
+    public function setPDO($pdo)
+    {
+        $this->pdo = $pdo;
+    }
+    
+    public function setTable($table)
+    {
+        if(is_string($table))
+        {
+            $this->table = array(
+                'table' => $table,
+                'schema' => 'public'
+            );
+        }
+        else
+        {
+            $this->table = $table;
+        }
+    }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * The MIT License
  *
@@ -24,9 +23,26 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
+namespace yentu\tests\constraints;
 
-interface Command
-{
-    public function run($options);
+class ColumnExists extends \yentu\tests\YentuConstraint
+{   
+    public function matches($other)
+    {
+        
+        $response = $this->pdo->query(
+            sprintf(
+                "SELECT * FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s'",
+                $this->table['table'], 
+                $this->table['schema'],
+                $other
+            )
+        );
+        return $response->rowCount() === 1;
+    }
+    
+    public function toString()
+    {
+        return "is a column on {$this->table['table']}";
+    }
 }
