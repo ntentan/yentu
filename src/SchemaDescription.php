@@ -232,4 +232,9 @@ class SchemaDescription implements \ArrayAccess
     {
         return new SchemaDescription($description);
     }
+
+    public function toArray()
+    {
+        return $this->description;
+    }    
 }

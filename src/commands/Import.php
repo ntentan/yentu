@@ -16,6 +16,7 @@ class Import implements Command
     private $code;
     private $hasSchema = false;
     private $foreignKeys = array();
+    private $newVersion;
     
     public function __construct($codeWriter = null)
     {
@@ -55,16 +56,21 @@ class Import implements Command
         }
         
         $this->importForeignKeys();
-        $timestamp = date('YmdHis', time());
-        file_put_contents(Yentu::getPath("migrations/{$timestamp}_import.php"), $this->code);
+        $this->newVersion = date('YmdHis', time());
+        file_put_contents(Yentu::getPath("migrations/{$this->newVersion}_import.php"), $this->code);
         
         if(!$this->db->doesTableExist('yentu_history'))
         {
             $this->db->createHistory();
         }
-        $this->db->setVersion($timestamp);
+        $this->db->setVersion($this->newVersion);
         
-        return $timestamp;
+        return $description;
+    }
+    
+    public function getNewVersion()
+    {
+        return $this->newVersion;
     }
     
     private function generateSchemaCode($description, $ref = false, $prefix = '')
