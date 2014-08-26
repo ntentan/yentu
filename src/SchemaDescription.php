@@ -61,6 +61,7 @@ class SchemaDescription implements \ArrayAccess
         {
             $this->description['tables'][$details['name']] = $table;
         }
+        $this->setTable(array('schema'=>$details['schema'], 'table'=>$details['schema']), $table);
     }
     
     public function dropTable($details)
@@ -118,6 +119,9 @@ class SchemaDescription implements \ArrayAccess
         $flattened = array();
         foreach($items as $name => $item)
         {
+            if($key !== false && $item[$key] === null) {
+                var_dump($item[$key], $item);
+            }
             foreach($key === false ? $item : $item[$key] as $column)
             {
                 $flattened[$column] = $name;
@@ -206,7 +210,7 @@ class SchemaDescription implements \ArrayAccess
     public function addForeignKey($details)
     {
         $table = $this->getTable($details);
-        $table['foreign_keys'][$details['name']] = $details['columns'];
+        $table['foreign_keys'][$details['name']] = $details;;
         $this->setTable($details, $table);
     }
     
