@@ -57,14 +57,13 @@ class ImportTest extends \yentu\tests\YentuTest
         
         $import = new yentu\commands\Import();
         $import->setCodeWriter($codeWriter);
-        $timestamp = $import->run(array());
+        $description = $import->run(array());
+        $newVersion = $import->getNewVersion();
         $this->assertFileExists(
-            vfsStream::url("home/yentu/migrations/{$timestamp}_import.php")
+            vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );
-        /*$this->assertStringEqualsFile(
-            vfsStream::url("home/yentu/migrations/{$timestamp}_import.php"),
-            file_get_contents('tests/expected/target_import.php')
-        );*/
+        require 'tests/expected/import.php';
+        $this->assertEquals($expectedDescription, $description->toArray());
     }
     
     public function tearDown()
