@@ -478,7 +478,7 @@ $expectedDescription = array(
                     'name' => 'user_status',
                     'type' => 'double',
                     'nulls' => true,
-                    'default' => NULL,
+                    'default' => '2',
                 ),
                 'email' =>
                 array(
@@ -526,72 +526,6 @@ $expectedDescription = array(
             array(
             ),
             'auto_increment' => true,
-        ),
-        'yentu_history' =>
-        array(
-            'schema' => '',
-            'name' => 'yentu_history',
-            'columns' =>
-            array(
-                'session' =>
-                array(
-                    'name' => 'session',
-                    'type' => 'string',
-                    'nulls' => true,
-                    'default' => NULL,
-                ),
-                'version' =>
-                array(
-                    'name' => 'version',
-                    'type' => 'string',
-                    'nulls' => true,
-                    'default' => NULL,
-                ),
-                'method' =>
-                array(
-                    'name' => 'method',
-                    'type' => 'string',
-                    'nulls' => true,
-                    'default' => NULL,
-                ),
-                'arguments' =>
-                array(
-                    'name' => 'arguments',
-                    'type' => 'text',
-                    'nulls' => true,
-                    'default' => NULL,
-                ),
-                'migration' =>
-                array(
-                    'name' => 'migration',
-                    'type' => 'string',
-                    'nulls' => true,
-                    'default' => NULL,
-                ),
-                'id' =>
-                array(
-                    'name' => 'id',
-                    'type' => 'integer',
-                    'nulls' => false,
-                ),
-            ),
-            'primary_key' =>
-            array(
-                'yentu_history_pk' =>
-                array(
-                    0 => 'id',
-                ),
-            ),
-            'unique_keys' =>
-            array(
-            ),
-            'foreign_keys' =>
-            array(
-            ),
-            'indices' =>
-            array(
-            ),
-            'auto_increment' => true,
-        ),
+        )
     ),
 );

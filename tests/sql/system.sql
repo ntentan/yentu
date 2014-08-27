@@ -104,7 +104,7 @@ CREATE TABLE users (
     first_name character varying(64) NOT NULL,
     last_name character varying(64) NOT NULL,
     other_names character varying(64),
-    user_status numeric(1,0),
+    user_status numeric DEFAULT 2,
     email character varying(64) NOT NULL
 );
 
@@ -124,15 +124,6 @@ CREATE SEQUENCE yentu_history_id_seq
     NO MAXVALUE
     CACHE 1;
 
-CREATE TABLE yentu_history (
-    session character varying,
-    version character varying,
-    method character varying,
-    arguments text,
-    migration character varying,
-    id integer DEFAULT nextval('yentu_history_id_seq'::regclass) NOT NULL
-);
-
 ALTER TABLE ONLY api_keys ALTER COLUMN api_key_id SET DEFAULT nextval('api_keys_api_key_id_seq'::regclass);
 
 ALTER TABLE ONLY audit_trail ALTER COLUMN audit_trail_id SET DEFAULT nextval('audit_trail_audit_trail_id_seq'::regclass);
@@ -146,47 +137,6 @@ ALTER TABLE ONLY permissions ALTER COLUMN permission_id SET DEFAULT nextval('per
 ALTER TABLE ONLY roles ALTER COLUMN role_id SET DEFAULT nextval('roles_role_id_seq'::regclass);
 
 ALTER TABLE ONLY users ALTER COLUMN user_id SET DEFAULT nextval('users_user_id_seq'::regclass);
-
-COPY api_keys (api_key_id, user_id, active, key, secret) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('api_keys_api_key_id_seq', 1, false);
-
-COPY audit_trail (audit_trail_id, user_id, item_id, item_type, description, audit_date, type, data) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('audit_trail_audit_trail_id_seq', 1, false);
-
-COPY audit_trail_data (audit_trail_data_id, audit_trail_id, data) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('audit_trail_data_audit_trail_data_id_seq', 1, false);
-
-COPY keystore (keystore_id, key, value) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('keystore_keystore_id_seq', 1, false);
-
-COPY permissions (permission_id, role_id, permission, value, module) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('permissions_permission_id_seq', 1, false);
-
-COPY roles (role_id, role_name) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('roles_role_id_seq', 1, false);
-
-COPY users (user_id, user_name, password, role_id, first_name, last_name, other_names, user_status, email) FROM stdin;
-\.
-
-SELECT pg_catalog.setval('users_user_id_seq', 1, false);
-
-COPY yentu_history (session, version, method, arguments, migration, id) FROM stdin;
-\N	20140826182510	\N	\N	\N	1
-\.
-
-SELECT pg_catalog.setval('yentu_history_id_seq', 1, true);
 
 ALTER TABLE ONLY api_keys
     ADD CONSTRAINT api_keys_pkey PRIMARY KEY (api_key_id);
@@ -214,9 +164,6 @@ ALTER TABLE ONLY users
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT user_name_uk UNIQUE (user_name);
-
-ALTER TABLE ONLY yentu_history
-    ADD CONSTRAINT yentu_history_pk PRIMARY KEY (id);
 
 CREATE INDEX audit_trail_item_id_idx ON audit_trail USING btree (item_id);
 

@@ -63,8 +63,9 @@ class ImportTest extends \yentu\tests\YentuTest
             vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );
         require 'tests/expected/import.php';
-        file_put_contents('expected', var_export($description->toArray(), true));
-        $this->assertEquals($expectedDescription, $description->toArray());
+        $descriptionArray = $description->toArray();
+        unset($descriptionArray['tables']['yentu_history']);
+        $this->assertEquals($expectedDescription, $descriptionArray);
     }
     
     /**
