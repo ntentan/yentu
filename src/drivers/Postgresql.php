@@ -51,6 +51,8 @@ class Postgresql extends Pdo
                     )
                 )
             );
+        $this->_changeColumnNulls($details);
+        
     }
     
     protected function _dropColumn($details)
@@ -145,18 +147,29 @@ class Postgresql extends Pdo
         $this->query("DROP SEQUENCE $sequence");
     }      
     
+    /**
+     * 
+     * @param array $details
+     */
     protected function _changeColumnNulls($details)
     {
-        if($details['to']['nulls'] === false)
+        if($details['to']['nulls'] === false || $details['nulls'] === false)
         {
+            // Remove the to key to make it possible for this function to be run
+            // bu the _addColumn method
+            if(isset($details['to']))
+            {
+                $details = $details['to'];
+            }
+            
             $this->query(
                 sprintf('ALTER TABLE %s ALTER COLUMN %s SET NOT NULL',
-                    $this->buildTableName($details['to']['table'], $details['to']['schema']),
-                    $details['to']['name']
+                    $this->buildTableName($details['table'], $details['schema']),
+                    $details['name']
                 )
             );
         }
-        else
+        else if(isset($details['to']))
         {
             $this->query(
                 sprintf('ALTER TABLE %s ALTER COLUMN %s DROP NOT NULL',
