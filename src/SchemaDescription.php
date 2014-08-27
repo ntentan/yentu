@@ -3,7 +3,6 @@ namespace yentu;
 
 class SchemaDescription implements \ArrayAccess
 {
-    
     private $description = array(
         'schemata' => array(),
         'tables' => array()

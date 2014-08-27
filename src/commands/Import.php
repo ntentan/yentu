@@ -18,9 +18,9 @@ class Import implements Command
     private $foreignKeys = array();
     private $newVersion;
     
-    public function __construct($codeWriter = null)
+    public function __construct($driver = null)
     {
-        $this->db = DatabaseDriver::getConnection();
+        $this->db = $driver === null ? DatabaseDriver::getConnection() : $driver;
     }
     
     private function initializeCodeWriter()
@@ -57,7 +57,9 @@ class Import implements Command
         
         $this->importForeignKeys();
         $this->newVersion = date('YmdHis', time());
-        file_put_contents(Yentu::getPath("migrations/{$this->newVersion}_import.php"), $this->code);
+        $path = Yentu::getPath("migrations/{$this->newVersion}_import.php");
+        file_put_contents($path, $this->code);
+        Yentu::out("Created `$path`\n");
         
         if(!$this->db->doesTableExist('yentu_history'))
         {
