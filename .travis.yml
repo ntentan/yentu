@@ -7,6 +7,7 @@ before_script:
  - psql -c 'create database yentu_tests;' -U postgres
  - psql -c 'create database yentu_test_import;' -U postgres
  - psql -f tests/sql/system.sql -U postgres yentu_test_import
+ - psql -c 'create database yentu_test_migrate;' -U postgres
  
 services:
  - postgresql

@@ -8,6 +8,9 @@
         <var name="DB_HOST" value="localhost" />
         
         <var name="IMPORT_DB_DSN" value="pgsql:dbname=yentu_test_import;host=localhost;user=postgres" />
-        <var name="IMPORT_DB_NAME" value="yentu_test_import" />        
+        <var name="IMPORT_DB_NAME" value="yentu_test_import" />   
+        
+        <var name="MIGRATE_DB_DSN" value="pgsql:dbname=yentu_test_migrate;host=localhost;user=postgres" />
+        <var name="MIGRATE_DB_NAME" value="yentu_test_migrate" />                
     </php>
 </phpunit>

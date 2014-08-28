@@ -11,7 +11,7 @@ class Yentu
     private static $home = './yentu';
     private static $level = Yentu::OUTPUT_LEVEL_1;
     private static $streamResource;
-    private static $streamUrl = 'php://stdut';
+    private static $streamUrl = 'php://stdout';
 
 
     public static function setDefaultHome($home)

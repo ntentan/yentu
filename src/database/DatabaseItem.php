@@ -63,11 +63,11 @@ abstract class DatabaseItem
     }
     
     public function __call($method, $arguments)
-    {
-        //$encapsulated = end(self::$encapsulated);
-        
+    {   
         if(!is_object($this->encapsulated))
         {
+            $class = new \ReflectionClass($this);
+            var_dump($class->getName());
             throw new \Exception("Failed to call method {$method}. Could not find an encapsulated object.");
         }
         else if (method_exists($this->encapsulated, $method))

@@ -4,6 +4,7 @@ namespace yentu\commands;
 use yentu\database\DatabaseItem;
 use yentu\DatabaseDriver;
 use yentu\ChangeLogger;
+use yentu\Yentu;
 
 class Migrate implements \yentu\Command
 {
@@ -14,7 +15,7 @@ class Migrate implements \yentu\Command
         
         $version = $db->getVersion();
         
-        $migrations = scandir('yentu/migrations', 0);
+        $migrations = scandir(Yentu::getPath('migrations'), 0);
         $matches = array();
         
         foreach($migrations as $migration)
@@ -25,12 +26,11 @@ class Migrate implements \yentu\Command
             {
                 ChangeLogger::setVersion($matches['timestamp']);
                 ChangeLogger::setMigration($matches['migration']);                        
-                echo "Applying '{$matches['migration']}' migration\n";
-                require "yentu/migrations/{$migration}";
+                Yentu::out("Applying '{$matches['migration']}' migration\n");
+                require Yentu::getPath("migrations/{$migration}");
                 DatabaseItem::purge();
             }
         }
-        
         //DatabaseItem::commitPending();
     }
     
@@ -48,11 +48,11 @@ class Migrate implements \yentu\Command
     public function table($name)
     {
         DatabaseItem::purge();
-        return new \yentu\database\Table($name);
+        return new \yentu\database\Table($name, new \yentu\database\NullSchema());
     }
     
     public function reftable($name)
     {
-        return new \yentu\database\Table($name);
+        return new \yentu\database\Table($name, new \yentu\database\NullSchema());
     }
 }

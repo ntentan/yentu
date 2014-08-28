@@ -53,18 +53,20 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->assertThat($column, $constraint, $message);
     }
     
-    protected function initialize()
+    protected function initialize($dsn = '')
     {
-        $this->pdo = new \PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);     
+        $this->pdo = new \PDO($GLOBALS["{$dsn}_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);     
         $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
+        $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq"); 
         $init = new \yentu\commands\Init();
         vfsStream::setup('home');
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
+        \yentu\Yentu::setStreamUrl(vfsStream::url('home/output.txt'));
         $init->run(
             array(
                 'driver' => 'postgresql',
                 'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS['DB_NAME'],
+                'dbname' => $GLOBALS["{$dsn}_DB_NAME"],
                 'user' => $GLOBALS['DB_USER'],
                 'password' => $GLOBALS['DB_PASSWORD']
             )

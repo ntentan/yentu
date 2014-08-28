@@ -7,7 +7,7 @@ class Table extends DatabaseItem
     private $name;
     private $primaryKeyColumns;
     
-    public function __construct($name,  $schema = false) 
+    public function __construct($name,  $schema) 
     {
         $this->name = $name;
         $this->schema = $schema;
@@ -25,7 +25,7 @@ class Table extends DatabaseItem
     
     public function column($name)
     {
-        return DatabaseItem::create('column', $name, $this);
+        return $this->create('column', $name, $this);
     }
     
     public function getName()
@@ -41,23 +41,28 @@ class Table extends DatabaseItem
     public function primaryKey()
     {
         $this->primaryKeyColumns = func_get_args();
-        return DatabaseItem::create('primary_key', func_get_args(), $this);
+        return $this->create('primary_key', func_get_args(), $this);
     }
     
     public function index()
     {
-        return DatabaseItem::create('index', func_get_args(), $this);
+        return $this->create('index', func_get_args(), $this);
     }
     
     public function unique()
     {
-        return DatabaseItem::create('unique_key', func_get_args(), $this);
+        return $this->create('unique_key', func_get_args(), $this);
     }
         
     public function foreignKey()
     {
-        return DatabaseItem::create('foreign_key', func_get_args(), $this);
+        return $this->create('foreign_key', func_get_args(), $this);
     }
+    
+    public function table($name)
+    {
+        return $this->create('table', $name, $this->schema);
+    }    
 
     public function commitNew() {
         
