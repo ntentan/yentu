@@ -26,3 +26,6 @@
 
 exec("dropdb yentu_test_migrate");
 exec("createdb yentu_test_migrate");
+exec("dropdb yentu_test_rollback");
+exec("createdb yentu_test_rollback");
+exec("psql -f tests/sql/pre_rollback.sql yentu_test_rollback");

@@ -37,7 +37,6 @@ class YentuTest extends \PHPUnit_Framework_TestCase
      * @var \PDO
      */
     protected $pdo;
-    protected $clearHistory = true;
     
     public function assertTableExists($table, $message = '')
     {
@@ -75,12 +74,9 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     {
         $this->pdo = new \PDO($GLOBALS["{$dsn}_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
         
-        if($this->clearHistory === true)
-        {
-            $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
-            $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq"); 
-        }
-        
+        $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
+        $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq"); 
+
         $init = new \yentu\commands\Init();
         vfsStream::setup('home');
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
@@ -93,11 +89,11 @@ class YentuTest extends \PHPUnit_Framework_TestCase
                 'user' => $GLOBALS['DB_USER'],
                 'password' => $GLOBALS['DB_PASSWORD']
             )
-        );            
+        );
     }
     
     protected function deinitialize()
     {
-        
+        //$this->pdo->
     }
 }

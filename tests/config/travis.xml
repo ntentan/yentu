@@ -11,6 +11,9 @@
         <var name="IMPORT_DB_NAME" value="yentu_test_import" />   
         
         <var name="MIGRATE_DB_DSN" value="pgsql:dbname=yentu_test_migrate;host=localhost;user=postgres" />
-        <var name="MIGRATE_DB_NAME" value="yentu_test_migrate" />                
+        <var name="MIGRATE_DB_NAME" value="yentu_test_migrate" />
+        
+        <var name="ROLLBACK_DB_DSN" value="pgsql:dbname=yentu_test_rollback;host=localhost;user=postgres" />
+        <var name="ROLLBACK_DB_NAME" value="yentu_test_rollback" />                             
     </php>
 </phpunit>

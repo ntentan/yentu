@@ -28,31 +28,42 @@ require "vendor/autoload.php";
 
 use org\bovigo\vfs\vfsStream;
 
-class MigrateTest extends \yentu\tests\YentuTest
+class RollbackTest extends \yentu\tests\YentuTest
 {
     public function setup()
     {
-        $this->initialize('MIGRATE');
+        $this->pdo = new \PDO($GLOBALS["ROLLBACK_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']); 
+        
+        vfsStream::setup('home');        
+        \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
+        \yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));        
+        
+        $init = new \yentu\commands\Init();
+        $init->createConfigFile(
+            array(
+                'driver' => 'postgresql',
+                'host' => $GLOBALS['DB_HOST'],
+                'dbname' => $GLOBALS["ROLLBACK_DB_NAME"],
+                'user' => $GLOBALS['DB_USER'],
+                'password' => $GLOBALS['DB_PASSWORD']
+            )
+        );
     }
     
-    public function testMigration()
+    public function testRollback()
     {
-        copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = new yentu\commands\Migrate();
-        $migrate->run(array());
-        $this->assertEquals(
-            "Yentu successfully initialized.\nApplying 'import' migration\n", 
-            file_get_contents(vfsStream::url('home/output.txt'))
-        );
+        $rollback = new yentu\commands\Rollback();
+        $rollback->run(array());
     }
     
     /**
      * @dataProvider tablesProvider
      * @depends testMigration
      */
-    public function testTables($table)
+    /*public function testTables($table)
     {
         $this->assertTableExists($table);
+        $this->clearHistory = false;
     }
 
     public function testChangeNulls()
@@ -62,6 +73,7 @@ class MigrateTest extends \yentu\tests\YentuTest
         $this->assertColumnNullable('role_name', 'roles');
         $migrate->run(array());
         $this->assertColumnNotNullable('role_name', 'roles');
+        $this->clearHistory = false;
     }
     
     public function tablesProvider()
@@ -97,6 +109,6 @@ class MigrateTest extends \yentu\tests\YentuTest
             array('users'),
             array('yentu_history'),
         );
-    }
+    }*/
 }
 
