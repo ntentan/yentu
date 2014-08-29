@@ -32,22 +32,6 @@ class ImportTest extends \yentu\tests\YentuTest
 {
     public function setup()
     {
-        /*$this->pdo = new \PDO($GLOBALS['IMPORT_DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
-        $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE");         
-        $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq CASCADE");         
-        $init = new \yentu\commands\Init();
-        vfsStream::setup('home');
-        yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
-        yentu\Yentu::setStreamUrl(vfsStream::url('home/output.txt'));
-        $init->run(
-            array(
-                'driver' => 'postgresql',
-                'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS['IMPORT_DB_NAME'],
-                'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
-            )
-        ); */
         $this->initialize('IMPORT');
     }
     
