@@ -5,10 +5,6 @@ CREATE SEQUENCE api_keys_api_key_id_seq
     NO MAXVALUE
     CACHE 1;
 
-SET default_tablespace = '';
-
-SET default_with_oids = false;
-
 CREATE TABLE api_keys (
     secret character varying NOT NULL,
     key character varying NOT NULL,
