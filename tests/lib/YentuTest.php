@@ -61,7 +61,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $init = new \yentu\commands\Init();
         vfsStream::setup('home');
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
-        \yentu\Yentu::setStreamUrl(vfsStream::url('home/output.txt'));
+        \yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));
         $init->run(
             array(
                 'driver' => 'postgresql',

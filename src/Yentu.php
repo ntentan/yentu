@@ -11,7 +11,6 @@ class Yentu
     private static $home = './yentu';
     private static $level = Yentu::OUTPUT_LEVEL_1;
     private static $streamResource;
-    private static $streamUrl = 'php://stdout';
 
 
     public static function setDefaultHome($home)
@@ -24,9 +23,9 @@ class Yentu
         return self::$home . "/$path";
     }
     
-    public static function setStreamUrl($url)
+    public static function setOutputStreamUrl($url)
     {
-        self::$streamUrl = $url;
+        self::$streamResource = fopen($url, 'w');
     }
 
     /**
@@ -37,7 +36,7 @@ class Yentu
     {
         if(!is_resource(self::$streamResource))
         {
-            self::$streamResource = fopen(self::$streamUrl, 'w');
+            self::$streamResource = fopen('php://stdout', 'w');
         }
         if($level <= self::$level)
         {

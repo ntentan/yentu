@@ -13,7 +13,6 @@ class InitTest extends \yentu\tests\YentuTest
         $this->pdo->query("DROP TABLE IF EXISTS yentu_history");
         $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq");
         vfsStream::setup('home');
-        //yentu\Yentu::setStreamUrl(vfsStream::url('home/output.txt'));
     }
     
     public function tearDown()
