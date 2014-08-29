@@ -37,6 +37,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
      * @var \PDO
      */
     protected $pdo;
+    protected $clearHistory = true;
     
     public function assertTableExists($table, $message = '')
     {
@@ -53,11 +54,33 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->assertThat($column, $constraint, $message);
     }
     
+    public function assertColumnNullable($column, $table, $message = '')
+    {
+        $constraint = new constraints\ColumnNullability();
+        $constraint->setPDO($this->pdo);
+        $constraint->setTable($table);
+        $this->assertThat($column, $constraint, $message);
+    }
+    
+    public function assertColumnNotNullable($column, $table, $message = '')
+    {
+        $constraint = new constraints\ColumnNullability();
+        $constraint->setPDO($this->pdo);
+        $constraint->setTable($table);
+        $constraint->setNullability('NO');
+        $this->assertThat($column, $constraint, $message);
+    }    
+    
     protected function initialize($dsn = '')
     {
-        $this->pdo = new \PDO($GLOBALS["{$dsn}_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);     
-        $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
-        $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq"); 
+        $this->pdo = new \PDO($GLOBALS["{$dsn}_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
+        
+        if($this->clearHistory === true)
+        {
+            $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
+            $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq"); 
+        }
+        
         $init = new \yentu\commands\Init();
         vfsStream::setup('home');
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));

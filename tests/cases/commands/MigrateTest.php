@@ -53,13 +53,17 @@ class MigrateTest extends \yentu\tests\YentuTest
     public function testTables($table)
     {
         $this->assertTableExists($table);
+        $this->clearHistory = false;
     }
 
     public function testChangeNulls()
     {
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901234_change_null.php'));
         $migrate = new yentu\commands\Migrate();
+        $this->assertColumnNullable('role_name', 'roles');
         $migrate->run(array());
+        $this->assertColumnNotNullable('role_name', 'roles');
+        $this->clearHistory = false;
     }
     
     public function tablesProvider()
