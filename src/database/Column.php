@@ -34,7 +34,7 @@ class Column extends DatabaseItem
             )
         )){
             $this->new = true;
-            Yentu::out("Adding a new column \"{$name}\" to the \"{$table->getName()}\" table\n");
+            Yentu::out("Adding a new column \"{$name}\" to the \"{$table->getName()}\" table\n", Yentu::OUTPUT_LEVEL_3);
         }
     }
     
@@ -49,17 +49,7 @@ class Column extends DatabaseItem
        
         if(!$this->isNew())
         {
-            $currentDescription = $this->buildDescription();
-            $newDescription = $currentDescription;
-            $newDescription['nulls'] = $nulls;
-                    
-            $this->addChange(
-                'changeColumnNulls', 
-                array(
-                    'from' => $currentDescription,
-                    'to' => $newDescription
-                )
-            );
+            $this->addChange('nulls', $nulls);
         }
         
         $this->nulls = $nulls;
