@@ -32,7 +32,7 @@ abstract class BasicKey extends DatabaseItem
     abstract protected function dropKey($constraint);
     abstract protected function getNamePostfix();
     
-    private function getKeyDescription()
+    protected function buildDescription()
     {
         return array(
             'table' => $this->table->getName(), 
@@ -44,7 +44,7 @@ abstract class BasicKey extends DatabaseItem
 
     public function commitNew() 
     {
-        $this->addKey($this->getKeyDescription());
+        $this->addKey($this->buildDescription());
     }
     
     public function drop()

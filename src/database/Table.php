@@ -68,4 +68,10 @@ class Table extends DatabaseItem
         
     }
 
+    protected function buildDescription() {
+        return array(
+            'name' => $this->name,
+            'schema' => $this->schema->getName()
+        );
+    }
 }

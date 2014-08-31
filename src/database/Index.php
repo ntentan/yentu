@@ -42,13 +42,17 @@ class Index extends \yentu\database\DatabaseItem
     
     public function commitNew() 
     {
-        $this->getDriver()->addIndex(
-            array(
-                'table' => $this->table->getName(),
-                'schema' => $this->table->getSchema()->getName(),
-                'columns' => $this->columns,
-                'name' => $this->name
-            )
+        $this->getDriver()->addIndex($this->buildDescription());
+    }
+
+    protected function buildDescription() 
+    {
+        return array(
+            'table' => $this->table->getName(),
+            'schema' => $this->table->getSchema()->getName(),
+            'columns' => $this->columns,
+            'name' => $this->name
         );
     }
+
 }

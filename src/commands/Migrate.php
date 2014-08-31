@@ -8,12 +8,14 @@ use yentu\Yentu;
 
 class Migrate implements \yentu\Command
 {
+    private $driver;
+    
     public function run($options)
     {
-        $db = ChangeLogger::wrap(DatabaseDriver::getConnection());
-        DatabaseItem::setDriver($db);
+        $this->driver = ChangeLogger::wrap(DatabaseDriver::getConnection());
+        DatabaseItem::setDriver($this->driver);
         
-        $version = $db->getVersion();
+        $version = $this->driver->getVersion();
         
         $migrations = scandir(Yentu::getPath('migrations'), 0);
         $matches = array();
@@ -53,5 +55,11 @@ class Migrate implements \yentu\Command
     public function reftable($name)
     {
         return new \yentu\database\Table($name, new \yentu\database\NullSchema());
+    }
+    
+    public function query($query, $bindData = array())
+    {
+        DatabaseItem::purge();
+        return $this->driver->query($query, $bindData);
     }
 }

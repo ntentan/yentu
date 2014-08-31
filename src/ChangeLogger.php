@@ -35,9 +35,6 @@ class ChangeLogger
     
     public function __call($method, $arguments) 
     {
-        /*$reflection = new \ReflectionMethod($this->driver, $method);
-        $return = $reflection->invokeArgs($this->driver, $arguments);*/
-        
         $return = $this->driver->$method($arguments[0]);
         
         if(preg_match("/^(add|drop|change)/", $method))

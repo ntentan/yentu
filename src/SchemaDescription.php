@@ -140,12 +140,26 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
     
-   public function dropColumn($details)
+    public function dropColumn($details)
     {
         $table = $this->getTable($details);
         unset($table['columns'][$details['name']]);
         $this->setTable($details, $table);
     }    
+    
+    public function changeColumnNulls($details)
+    {
+        $table = $this->getTable($details);
+        $table['columns'][$details['to']['name']]['nulls'] = $details['to']['nulls'];
+        $this->setTable($details, $table);
+    }
+    
+    public function changeColumnName($details)
+    {
+        $table = $this->getTable($details);
+        $table['columns'][$details['to']['name']]['name'] = $details['to']['name'];
+        $this->setTable($details, $table);
+    }
     
     public function addPrimaryKey($details)
     {
@@ -219,14 +233,7 @@ class SchemaDescription implements \ArrayAccess
         unset($table['foreign_keys'][$details['name']]);
         $this->setTable($details, $table);
     }
-    
-    public function changeColumnNulls($details)
-    {
-        $table = $this->getTable($details);
-        $table['columns'][$details['to']['name']]['nulls'] = $details['to']['nulls'];
-        $this->setTable($details, $table);
-    }
-    
+        
     public static function wrap($description)
     {
         return new SchemaDescription($description);

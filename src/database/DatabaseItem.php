@@ -4,10 +4,6 @@ namespace yentu\database;
 
 abstract class DatabaseItem 
 {
-    //private $encapsulated;
-    //private static $encapsulated = array();
-    //private static $canCommitPending = true;
-    
     private $encapsulated;
     private static $encapsulatedStack = array();
     
@@ -30,12 +26,21 @@ abstract class DatabaseItem
         'index' => 'Index'
     );
     
-    protected function addChange($method, $args)
+    protected function addChange($attribute, $value)
     {
+        $currentDescription = $this->buildDescription();
+        $newDescription = $currentDescription;
+        $newDescription[$attribute] = $value;
+        $class = new \ReflectionClass($this);
+        $name = $class->getShortName();
+        
         $this->changes[] = array(
-            'method' => $method,
-            'args' => $args
-        );
+            'method' => "change{$name}" . str_replace('_', '', $attribute), 
+            'args' => array(
+                'from' => $currentDescription,
+                'to' => $newDescription
+            )
+        );        
     }
     
     public function isNew()
@@ -66,8 +71,6 @@ abstract class DatabaseItem
     {   
         if(!is_object($this->encapsulated))
         {
-            $class = new \ReflectionClass($this);
-            var_dump($class->getName());
             throw new \Exception("Failed to call method {$method}. Could not find an encapsulated object.");
         }
         else if (method_exists($this->encapsulated, $method))
@@ -85,23 +88,7 @@ abstract class DatabaseItem
             
             return $this->encapsulated->__call($method, $arguments);
         }
-        /*else
-        {
-            $encapsulated = array_pop(self::$encapsulated);
-            return $encapsulated->__call($method, $arguments);
-        }*/
     }
-    
-    /*public static function commitPending()
-    {
-        //if(self::$canCommitPending === FALSE) return;
-        //$size = count(self::$encapsulated);
-        for($i = 0; $i < $size; $i++)
-        {
-            $encapsulated = array_pop(self::$encapsulated);
-            $encapsulated->commit();
-        }
-    }*/
     
     public function setEncapsulated($item)
     {
@@ -128,32 +115,27 @@ abstract class DatabaseItem
         return $item;
     }
     
-    /*public static function disableCommitPending()
-    {
-        self::$canCommitPending = false;
-    }
-    
-    public static function enableCommitPending()
-    {
-        self::$canCommitPending = true;
-    }*/  
-    
     public function commit()
     {
         if($this->isNew())
         {
             $this->commitNew();
         }
-        else
+
+        foreach($this->changes as $change)
         {
-            foreach($this->changes as $change)
-            {
-                self::$driver->$change['method']($change['args']);
-            }
+            self::$driver->$change['method']($change['args']);
         }
+
         return $this;
     }
     
+    public function rename($newName)
+    {
+        $this->addChange('name', $newName);
+    }    
+    
     abstract public function commitNew();
+    abstract protected function buildDescription();
 }
 

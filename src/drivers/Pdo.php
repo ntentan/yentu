@@ -54,6 +54,7 @@ abstract class Pdo extends \yentu\DatabaseDriver
            if($result === false)
             {
                 $errorInfo = $this->pdo->errorInfo();
+                var_dump($errorInfo);
                 throw new \Exception($errorInfo[2]);                
             }
             else 

@@ -28,5 +28,12 @@ class Schema extends DatabaseItem
     public function commitNew() {
         
     }
+
+    protected function buildDescription() {
+        return array(
+            'name' => $this->name
+        );
+    }
+
 }
 

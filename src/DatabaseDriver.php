@@ -17,6 +17,7 @@ abstract class DatabaseDriver
         {
             $this->description->$name($arguments[0]);
             $name = "_$name";
+            new \ReflectionMethod($this, $name);
             $this->$name($arguments[0]);
         }
     }
@@ -29,6 +30,8 @@ abstract class DatabaseDriver
     abstract protected function _addTable($details);
     abstract protected function _dropTable($details);
     abstract protected function _addColumn($details);
+    abstract protected function _changeColumnNulls($details);
+    abstract protected function _changeColumnName($details);
     abstract protected function _dropColumn($details);
     abstract protected function _addPrimaryKey($details);
     abstract protected function _dropPrimaryKey($details);
@@ -40,7 +43,6 @@ abstract class DatabaseDriver
     abstract protected function _dropForeignKey($details);
     abstract protected function _addIndex($details);
     abstract protected function _dropIndex($details);
-    abstract protected function _changeColumnNulls($details);
     
     protected function dropItem($details, $type)
     {

@@ -1,6 +1,8 @@
 <?php
 namespace yentu\database;
 
+use yentu\Yentu;
+
 class Column extends DatabaseItem
 {
     private $name;
@@ -9,7 +11,7 @@ class Column extends DatabaseItem
     private $nulls;
     private $default;
     
-    private function buildColumnDescription()
+    protected function buildDescription()
     {
         return array(
             'name' => $this->name,
@@ -32,6 +34,7 @@ class Column extends DatabaseItem
             )
         )){
             $this->new = true;
+            Yentu::out("Adding a new column \"{$name}\" to the \"{$table->getName()}\" table\n");
         }
     }
     
@@ -46,7 +49,7 @@ class Column extends DatabaseItem
        
         if(!$this->isNew())
         {
-            $currentDescription = $this->buildColumnDescription();
+            $currentDescription = $this->buildDescription();
             $newDescription = $currentDescription;
             $newDescription['nulls'] = $nulls;
                     
@@ -71,7 +74,7 @@ class Column extends DatabaseItem
 
     public function commitNew() 
     {
-        $this->getDriver()->addColumn($this->buildColumnDescription());        
+        $this->getDriver()->addColumn($this->buildDescription());        
     }
 }
 
