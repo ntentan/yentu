@@ -25,6 +25,7 @@
  */
 
 $expectedDescription = array(
+    'views' => array(),
     'schemata' =>
     array(
     ),

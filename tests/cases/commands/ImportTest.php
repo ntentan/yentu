@@ -61,6 +61,7 @@ class ImportTest extends \yentu\tests\YentuTest
                 'schemata' => array(
                     'test' => array(
                         'name' => 'test',
+                        'views' => array(),
                         'tables' =>  array(
                             'audit_trail_data' =>
                             array(

@@ -54,6 +54,10 @@ class Import implements Command
         {
             $this->importTables($description['tables']);
         }
+        if(isset($description['views']))
+        {
+            $this->importViews($description['views']);
+        }
         
         $this->importForeignKeys();
         $this->newVersion = date('YmdHis', time());
@@ -152,8 +156,8 @@ class Import implements Command
         }        
     }
 
-	protected function importViews($views)
-	{
+    protected function importViews($views)
+    {
         foreach($views as $view)
         {
             $definition = sprintf('->definition("%s")', addslashes($view['query']));
@@ -167,7 +171,7 @@ class Import implements Command
             }
             $this->code->ln();
         }
-	}
+    }
     
     protected function importTables($tables)
     {
