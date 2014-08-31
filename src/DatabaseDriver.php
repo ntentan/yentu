@@ -43,6 +43,8 @@ abstract class DatabaseDriver
     abstract protected function _dropForeignKey($details);
     abstract protected function _addIndex($details);
     abstract protected function _dropIndex($details);
+    abstract protected function _addView($details);
+    abstract protected function _dropView($details);
     
     protected function dropItem($details, $type)
     {
@@ -58,7 +60,7 @@ abstract class DatabaseDriver
         return isset($this->description['schemata'][$name]);
     }
     
-    public function doesTableExist($details)
+    public function doesTableExist($details, $type = 'tables')
     {
         if(is_string($details))
         {
@@ -69,8 +71,8 @@ abstract class DatabaseDriver
         }
         
         return $details['schema'] == false? 
-            isset($this->description['tables'][$details['name']]) : 
-            isset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
+            isset($this->description[$type][$details['name']]) : 
+            isset($this->description['schemata'][$details['schema']][$type][$details['name']]);
     }
     
     public function doesColumnExist($details)
@@ -110,6 +112,11 @@ abstract class DatabaseDriver
     public function doesIndexExist($details)
     {
         return $this->doesItemExist($details, 'indices');
+    }
+    
+    public function doesViewExist($details)
+    {
+        return $this->doesTableExist($details, 'views');
     }
     
     private function getTableDetails($schema, $table)

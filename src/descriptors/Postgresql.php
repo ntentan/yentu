@@ -190,22 +190,22 @@ class Postgresql extends \yentu\SchemaDescriptor
     
     protected function getViews($schema)
     {
-		$description = array();
-		$views = $this->driver->query(
-            "select table_schema as schema, table_name as name, view_definition as query
-            from information_schema.views
-            where table_schema = '$schema'");
-            
-		foreach($views as $view)
-		{
-			$description[$view['name']] = array(
-				'name' => $view['name'],
-				'schema' => $view['schema'],
-				'query' => $view['query']
-			);
-		}
-		return $description;
-	}
+        $description = array();
+        $views = $this->driver->query(
+        "select table_schema as schema, table_name as name, view_definition as definition
+        from information_schema.views
+        where table_schema = '$schema'");
+
+        foreach($views as $view)
+        {
+            $description[$view['name']] = array(
+                'name' => $view['name'],
+                'schema' => $view['schema'],
+                'definition' => $view['definition']
+            );
+        }
+        return $description;
+    }
     
     protected function getTables($schema)
     {

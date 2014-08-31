@@ -20,6 +20,11 @@ class Schema extends DatabaseItem
         return $this->create('table', $name, $this);
     }
     
+    public function view($name)
+    {
+        return $this->create('view', $name, $this);
+    }
+    
     public function getName()
     {
         return $this->name;

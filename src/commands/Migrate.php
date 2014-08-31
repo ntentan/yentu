@@ -5,6 +5,10 @@ use yentu\database\DatabaseItem;
 use yentu\DatabaseDriver;
 use yentu\ChangeLogger;
 use yentu\Yentu;
+use yentu\database\Schema;
+use yentu\database\Table;
+use yentu\database\View;
+use yentu\database\NullSchema;
 
 class Migrate implements \yentu\Command
 {
@@ -38,28 +42,34 @@ class Migrate implements \yentu\Command
     public function schema($name)
     {
         DatabaseItem::purge();
-        return new \yentu\database\Schema($name);
+        return new Schema($name);
     }
     
     public function refschema($name)
     {
-        return new \yentu\database\Schema($name);
+        return new Schema($name);
     }
     
     public function table($name)
     {
         DatabaseItem::purge();
-        return new \yentu\database\Table($name, new \yentu\database\NullSchema());
+        return new Table($name, new NullSchema());
     }
     
     public function reftable($name)
     {
-        return new \yentu\database\Table($name, new \yentu\database\NullSchema());
+        return new Table($name, new NullSchema());
     }
     
     public function query($query, $bindData = array())
     {
         DatabaseItem::purge();
         return $this->driver->query($query, $bindData);
+    }
+    
+    public function view($name)
+    {
+        DatabaseItem::purge();
+        return new View($name, new NullSchema);
     }
 }

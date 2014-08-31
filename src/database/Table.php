@@ -11,14 +11,10 @@ class Table extends DatabaseItem
     {
         $this->name = $name;
         $this->schema = $schema;
-        $tableDescription = array(
-            'name' => $name, 
-            'schema' => $schema === false ? false :$schema->getName()
-        );
         
-        if(!$this->getDriver()->doesTableExist($tableDescription))
+        if(!$this->getDriver()->doesTableExist($this->buildDescription()))
         {
-            $this->getDriver()->addTable($tableDescription);
+            $this->getDriver()->addTable($this->buildDescription());
             $this->new = true;
         }
     }

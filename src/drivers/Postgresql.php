@@ -27,6 +27,15 @@ class Postgresql extends Pdo
     {
         $this->query(sprintf('CREATE TABLE  %s ()',  $this->buildTableName($details['name'], $details['schema'])));        
     }
+    
+    protected function _addView($details)
+    {
+        $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
+    }
+    
+    protected function _dropView($details) {
+        $this->query(sprintf('DROP VIEW %s', $this->buildTableName($details['name'], $details['schema'])));
+    }
 
     protected function _dropTable($details) 
     {

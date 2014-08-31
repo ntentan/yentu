@@ -52,27 +52,40 @@ class SchemaDescription implements \ArrayAccess
             'foreign_keys' => array(),
             'indices' => array()
         );
+        $this->setTable(array('schema'=>$details['schema'], 'table'=>$details['name']), $table);
+    }
+    
+    public function addView($details)
+    {
+        $view = array(
+            'name' => $details['name'],
+            'definition' => $details['definition']
+        );
         
         if($details['schema'] != '')
         {
-            $this->description['schemata'][$details['schema']]['tables'][$details['name']] = $table;
+            $this->description['schemata'][$details['schema']]['views'][$details['name']] = $view;
         }
         else
         {
-            $this->description['tables'][$details['name']] = $table;
+            $this->description['views'][$details['name']] = $view;
         }
-        $this->setTable(array('schema'=>$details['schema'], 'table'=>$details['schema']), $table);
     }
     
-    public function dropTable($details)
+    public function dropView($details)
+    {
+        $this->dropTable($details, 'views');
+    }
+    
+    public function dropTable($details, $type = 'tables')
     {
         if($details['schema'] != '')
         {
-            unset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
+            unset($this->description['schemata'][$details['schema']][$type][$details['name']]);
         }
         else
         {
-            unset($this->description['tables'][$details['name']]);
+            unset($this->description[$type][$details['name']]);
         }        
     }
     

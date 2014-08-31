@@ -23,7 +23,8 @@ abstract class DatabaseItem
         'foreign_key' => 'ForeignKey',
         'primary_key' => 'PrimaryKey',
         'unique_key' => 'UniqueKey',
-        'index' => 'Index'
+        'index' => 'Index',
+        'view' => 'View'
     );
     
     protected function addChange($attribute, $value)
