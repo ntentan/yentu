@@ -188,6 +188,25 @@ class Postgresql extends \yentu\SchemaDescriptor
         }
     }
     
+    protected function getViews($schema)
+    {
+		$description = array();
+		$views = $this->driver->query(
+            "select table_schema as schema, table_name as name, view_definition as query
+            from information_schema.views
+            where table_schema = '$schema'");
+            
+		foreach($views as $view)
+		{
+			$description[$view['name']] = array(
+				'name' => $view['name'],
+				'schema' => $view['schema'],
+				'query' => $view['query']
+			);
+		}
+		return $description;
+	}
+    
     protected function getTables($schema)
     {
         $description = array();
@@ -237,11 +256,13 @@ class Postgresql extends \yentu\SchemaDescriptor
             if($schema['name'] == 'public')
             {
                 $description['tables'] = $this->getTables('public');
+                $description['views'] = $this->getViews('public');
             }
             else
             {
                 $description['schemata'][$schema['name']]['name'] = $schema['name'];
                 $description['schemata'][$schema['name']]['tables'] = $this->getTables($schema['name']);                
+                $description['schemata'][$schema['name']]['views'] = $this->getViews($schema['name']);                
             }
         }
         

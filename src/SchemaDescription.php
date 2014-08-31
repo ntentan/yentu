@@ -5,7 +5,8 @@ class SchemaDescription implements \ArrayAccess
 {
     private $description = array(
         'schemata' => array(),
-        'tables' => array()
+        'tables' => array(),
+        'views' => array()
     );
     
     private function __construct($description)

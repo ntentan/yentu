@@ -145,11 +145,29 @@ class Import implements Command
             $this->code->add("\$this->schema('{$schema['name']}')");
             $this->code->addIndent();
             $this->importTables($schema['tables']);
+            $this->importViews($schema['views']);
             $this->code->add(';');
             $this->code->decreaseIndent();
             
         }        
     }
+
+	protected function importViews($views)
+	{
+        foreach($views as $view)
+        {
+            $definition = sprintf('->definition("%s")', addslashes($view['query']));
+            if($this->hasSchema)
+            {
+                $this->code->add("->view('{$view['name']}')$definition");
+            }
+            else
+            {
+                $this->code->add("\$this->view('{$view['name']}')$definition");
+            }
+            $this->code->ln();
+        }
+	}
     
     protected function importTables($tables)
     {
@@ -200,3 +218,4 @@ class Import implements Command
         }
     }
 }
+
