@@ -60,7 +60,13 @@ $cli->addOptions(
         'long' => 'password',
         'help' => 'the passwrd of the user on the target database',
         'has_value' => true
-    )
+    ),
+    array(
+        'short' => 'h',
+        'long' => 'home',
+        'help' => 'specifies where the yentu configurations are found',
+        'has_value' => true
+    )  
 );
 
 $cli->addHelp();
@@ -68,10 +74,15 @@ $cli->setStrict(true);
 $options = $cli->parse();
 
 try{
-    $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
-    unset($options['__command__']);
-    $command = new $class();
-    $command->run($options);
+    if($options['__command__'])
+    {
+        if($options['home']) \yentu\Yentu::setDefaultHome($options['home']);
+        
+        $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
+        unset($options['__command__']);
+        $command = new $class();
+        $command->run($options);
+    }
 }
 catch(\yentu\commands\CommandError $e)
 {

@@ -15,7 +15,14 @@ class Yentu
 
     public static function setDefaultHome($home)
     {
-        self::$home = $home;
+        if(file_exists($home))
+        {
+            self::$home = $home;
+        }
+        else
+        {
+            throw new Exception("Home directory $home does not exist.");
+        }
     }    
     
     public static function getPath($path)
