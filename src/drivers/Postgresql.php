@@ -47,6 +47,44 @@ class Postgresql extends Pdo
             );
             $this->_addPrimaryKey($primaryKey);
         }
+        
+        if(isset($details['unique_keys']))
+        {
+            foreach($details['unique_keys'] as $name => $columns)
+            {
+                $uniqueKey = array(
+                    'name' => $name,
+                    'columns' => $columns,
+                    'table' => $details['name'],
+                    'schema' => $details['schema']
+                );
+                $this->_addUniqueKey($uniqueKey);
+            }
+        }
+        
+        if(isset($details['foreign_keys']))
+        {
+            foreach($details['foreign_keys'] as $name => $foreignKey)
+            {
+                $foreignKey['name'] = $name;
+                $foreignKey['table'] = $details['name'];
+                $foreignKey['schema'] = $details['schema'];
+                $this->_addForeignKey($foreignKey);
+            }
+        }
+        
+        if(isset($details['indices']))
+        {
+            foreach($details['indices'] as $name => $index)
+            {
+                $index = array(
+                    'name' => $name,
+                    'columns' => $index,
+                    'table' => $details['name'],
+                    'schema' => $details['schema']
+                );
+            }
+        }
     }
     
     protected function _addView($details)
