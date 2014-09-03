@@ -21,7 +21,7 @@ class Migrate implements \yentu\Command
         
         $version = $this->driver->getVersion();
         
-        $migrations = scandir(Yentu::getPath('migrations'), 0);
+        $migrations = Yentu::getMigrations();
         $matches = array();
         
         foreach($migrations as $migration)

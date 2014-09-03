@@ -46,6 +46,7 @@ class SchemaDescription implements \ArrayAccess
     {
         $table = array(
             'name' => $details['name'],
+            'schema' => $details['schema'],
             'columns' => array(),
             'primary_key' => array(),
             'unique_keys' => array(),
@@ -89,7 +90,7 @@ class SchemaDescription implements \ArrayAccess
         }        
     }
     
-    private function getTable($details)
+    public function getTable($details)
     {
         if($details['schema'] == '')
         {
@@ -133,7 +134,7 @@ class SchemaDescription implements \ArrayAccess
         foreach($items as $name => $item)
         {
             if($key !== false && $item[$key] === null) {
-                var_dump($item[$key], $item);
+                //var_dump($item[$key], $item);
             }
             foreach($key === false ? $item : $item[$key] as $column)
             {

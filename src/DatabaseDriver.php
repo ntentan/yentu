@@ -60,7 +60,7 @@ abstract class DatabaseDriver
         return isset($this->description['schemata'][$name]);
     }
     
-    public function doesTableExist($details, $type = 'tables')
+    public function doesTableExist($details)
     {
         if(is_string($details))
         {
@@ -71,8 +71,8 @@ abstract class DatabaseDriver
         }
         
         return $details['schema'] == false? 
-            isset($this->description[$type][$details['name']]) : 
-            isset($this->description['schemata'][$details['schema']][$type][$details['name']]);
+            isset($this->description['tables'][$details['name']])  : 
+            isset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
     }
     
     public function doesColumnExist($details)
@@ -116,7 +116,19 @@ abstract class DatabaseDriver
     
     public function doesViewExist($details)
     {
-        return $this->doesTableExist($details, 'views');
+        if(is_string($details))
+        {
+            $details = array(
+                'schema' => false,
+                'name' => $details
+            );
+        }
+        
+        // too complex 
+        return $details['schema'] == false? 
+            isset($this->description['views'][$details['name']]) ? $this->description['views'][$details['name']]['definition'] : false :
+            isset($this->description['schemata'][$details['schema']]['views'][$details['name']]) ?
+                $this->description['schemata'][$details['schema']]['views'][$details['name']]['definition'] : FALSE;
     }
     
     private function getTableDetails($schema, $table)

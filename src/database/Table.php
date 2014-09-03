@@ -6,6 +6,7 @@ class Table extends DatabaseItem
     private $schema;
     private $name;
     private $primaryKeyColumns;
+    private $columns;
     
     public function __construct($name,  $schema) 
     {
@@ -22,6 +23,23 @@ class Table extends DatabaseItem
     public function column($name)
     {
         return $this->create('column', $name, $this);
+    }
+    
+    public function insert()
+    {
+        
+    }
+    
+    public function drop()
+    {
+        $table = $this->getDriver()->getDescription()->getTable(
+            array(
+                'table' => $this->name,
+                'schema' => $this->schema->getName()
+            )
+        );
+        $this->getDriver()->dropTable($table);
+        return $this;
     }
     
     public function getName()

@@ -25,11 +25,33 @@ class Postgresql extends Pdo
 
     protected function _addTable($details) 
     {
-        $this->query(sprintf('CREATE TABLE  %s ()',  $this->buildTableName($details['name'], $details['schema'])));        
+        //var_dump($details);
+        $this->query(sprintf('CREATE TABLE  %s ()',  $this->buildTableName($details['name'], $details['schema'])));    
+        if(isset($details['columns']))
+        {
+            foreach($details['columns'] as $column)
+            {
+                $column['table'] = $details['name'];
+                $column['schema'] = $details['schema'];
+                $this->_addColumn($column);
+            }
+        }
+        
+        if(isset($details['primary_key']))
+        {
+            $primaryKey = array(
+                'columns' => reset($details['primary_key']),
+                'name' => key($details['primary_key']),
+                'table' => $details['name'],
+                'schema' => $details['schema']
+            );
+            $this->_addPrimaryKey($primaryKey);
+        }
     }
     
     protected function _addView($details)
     {
+        $this->query(sprintf("SET search_path TO %s, public", $details['schema']));
         $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
     }
     
@@ -39,7 +61,28 @@ class Postgresql extends Pdo
 
     protected function _dropTable($details) 
     {
+        $table = $this->query(
+            "select column_default from 
+                information_schema.table_constraints pk 
+                join information_schema.key_column_usage c on 
+                   c.table_name = pk.table_name and 
+                   c.constraint_name = pk.constraint_name and
+                   c.constraint_schema = pk.table_schema
+                join information_schema.columns cl on
+                    cl.table_name = c.table_name and
+                    cl.table_schema = pk.table_schema and
+                    cl.column_name = c.column_name
+
+                where pk.table_name = ? and pk.table_schema=?
+                and constraint_type = 'PRIMARY KEY'",
+            array($details['name'], $details['schema'])
+        );
+        
         $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
+        if(preg_match("/nextval\(\'(?<sequence>.*)\'\:\:regclass\)/i", $table[0]['column_default'], $matches))
+        {
+            $this->query("DROP SEQUENCE IF EXISTS {$matches['sequence']}");
+        }        
     }
 
     public function describe() 
@@ -198,7 +241,7 @@ class Postgresql extends Pdo
                 $sequence
             )
         );
-        $this->query("DROP SEQUENCE $sequence");
+        $this->query("DROP SEQUENCE IF EXISTS $sequence");
     }      
     
     protected function _addForeignKey($details) 

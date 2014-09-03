@@ -11,10 +11,16 @@ class View extends \yentu\database\DatabaseItem
     {
         $this->name = $name;
         $this->schema = $schema;
-        if(!$this->getDriver()->doesViewExist($this->buildDescription()))
+        $this->definition = $this->getDriver()->doesViewExist($this->buildDescription());
+        if($this->definition === false)
         {
             $this->new = true;
         }
+    }
+    
+    public function drop()
+    {
+        $this->getDriver()->dropView($this->buildDescription());
     }
     
     public function commitNew() 

@@ -1,6 +1,8 @@
 <?php
 namespace yentu\commands;
 
+use yentu\Yentu;
+
 class Create implements \yentu\Command
 {
     public function run($options)
@@ -20,7 +22,7 @@ class Create implements \yentu\Command
         else if(preg_match("/[a-z][a-z0-9\_]*/",$name))
         {
             $code = new \yentu\CodeWriter();
-            file_put_contents("yentu/migrations/{$timestamp}_{$name}.php", $code);
+            file_put_contents(Yentu::getPath("migrations/{$timestamp}_{$name}.php"), $code);
         }
         else
         {

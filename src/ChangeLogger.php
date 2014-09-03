@@ -7,6 +7,7 @@ class ChangeLogger
     private static $version;
     private static $migration;
     private static $session;
+    private static $changes;
 
     private function __construct(DatabaseDriver $driver) 
     {
@@ -49,9 +50,15 @@ class ChangeLogger
                     self::$migration
                 )
             );
+            self::$changes++;
         }
         
         return $return;
+    }
+    
+    public static function getChanges()
+    {
+        return self::$changes;
     }
 }
 

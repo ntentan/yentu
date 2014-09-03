@@ -23,6 +23,11 @@ class Yentu
         return self::$home . "/$path";
     }
     
+    public static function getMigrations()
+    {
+        return scandir(Yentu::getPath('migrations'), 0);        
+    }
+    
     public static function setOutputStreamUrl($url)
     {
         self::$streamResource = fopen($url, 'w');

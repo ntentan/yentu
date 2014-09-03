@@ -91,4 +91,19 @@ catch(\yentu\commands\CommandError $e)
         wordwrap("There was an error executing your command: " . $e->getMessage()) . "\n"
     );
 }
+catch(\yentu\DatabaseDriverException $e)
+{
+    fputs(
+        STDERR,
+        wordwrap("Failed to perform database action: " . $e->getMessage()) . "\n"
+    );
+    
+    if(\yentu\ChangeLogger::getChanges() > 0)
+    {
+        \yentu\Yentu::out("Attempting to rollback ... ");
+        $rollback = new yentu\commands\Rollback();
+        $rollback->run(array());
+        \yentu\Yentu::out("safely rolled back all changes.\n");
+    }
+}
 
