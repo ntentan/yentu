@@ -246,7 +246,7 @@ class Postgresql extends Pdo
             )
         );
         
-        $this->dropItem($details, $type);
+        $this->dropTableItem($details, $type);
     }
     
     protected function _dropUniqueKey($details) 

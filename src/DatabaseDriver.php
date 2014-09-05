@@ -4,11 +4,13 @@ namespace yentu;
 abstract class DatabaseDriver
 {
     private $description;
+    private $assertor;
     
     public function __construct($params) 
     {
         $this->connect($params);
         $this->description = $this->describe(); 
+        $this->assertor = new DatabaseAssertor($this->description);
     }
     
     public function __call($name, $arguments)
@@ -19,6 +21,11 @@ abstract class DatabaseDriver
             $name = "_$name";
             new \ReflectionMethod($this, $name);
             $this->$name($arguments[0]);
+        }
+        else if(preg_match("/^does([A-Za-z]+)/", $name))
+        {
+            $method = new \ReflectionMethod($this->assertor, $name);
+            return $method->invokeArgs($this->assertor, $arguments);
         }
     }
         
@@ -45,96 +52,14 @@ abstract class DatabaseDriver
     abstract protected function _dropIndex($details);
     abstract protected function _addView($details);
     abstract protected function _dropView($details);
-    
-    protected function dropItem($details, $type)
+        
+    protected function dropTableItem($details, $type)
     {
         unset($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type][$details['name']]);
         foreach($details['columns'] as $column)
         {
             unset($this->description['schemata'][$details['schema']]['tables'][$details['table']]["flat_$type"][$column]);
         }
-    }
-    
-    public function doesSchemaExist($name)
-    {
-        return isset($this->description['schemata'][$name]);
-    }
-    
-    public function doesTableExist($details)
-    {
-        if(is_string($details))
-        {
-            $details = array(
-                'schema' => false,
-                'name' => $details
-            );
-        }
-        
-        return $details['schema'] == false? 
-            isset($this->description['tables'][$details['name']])  : 
-            isset($this->description['schemata'][$details['schema']]['tables'][$details['name']]);
-    }
-    
-    public function doesColumnExist($details)
-    {
-        $table = $this->getTableDetails($details['schema'], $details['table']);
-        return isset($table['columns'][$details['name']]);
-    }
-    
-    private function doesItemExist($details, $type)
-    {
-        $table = $this->getTableDetails($details['schema'], $details['table']);
-        if(isset($details['columns']))
-        {
-            return isset($table["flat_$type"][$details['columns'][0]]) ? $table["flat_$type"][$details['columns'][0]] : false;
-        }
-        else if(isset($details['name']))
-        {
-            return isset($table[$type][$details['name']]);
-        }        
-    }
-    
-    public function doesForeignKeyExist($details)
-    {
-        return $this->doesItemExist($details, 'foreign_keys');
-    }
-    
-    public function doesUniqueKeyExist($details)
-    {
-        return $this->doesItemExist($details, 'unique_keys');
-    }
-    
-    public function doesPrimaryKeyExist($details)
-    {
-        return $this->doesItemExist($details, 'primary_key');
-    } 
-    
-    public function doesIndexExist($details)
-    {
-        return $this->doesItemExist($details, 'indices');
-    }
-    
-    public function doesViewExist($details)
-    {
-        if(is_string($details))
-        {
-            $details = array(
-                'schema' => false,
-                'name' => $details
-            );
-        }
-        
-        // too complex 
-        return $details['schema'] == false? 
-            isset($this->description['views'][$details['name']]) ? $this->description['views'][$details['name']]['definition'] : false :
-            isset($this->description['schemata'][$details['schema']]['views'][$details['name']]) ?
-                $this->description['schemata'][$details['schema']]['views'][$details['name']]['definition'] : FALSE;
-    }
-    
-    private function getTableDetails($schema, $table)
-    {
-        return $schema === false ? $this->description['tables'][$table] : 
-            $this->description['schemata'][$schema]['tables'][$table];        
     }
     
     public function getDescription()
