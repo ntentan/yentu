@@ -34,6 +34,11 @@ class DatabaseAssertor
         $this->description = $description;
     }
     
+    public function doesSchemaExist($details)
+    {
+        return isset($this->description['schemata'][$details]);
+    }
+    
     public function doesTableExist($details)
     {
         if(is_string($details))

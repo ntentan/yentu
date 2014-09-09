@@ -96,6 +96,12 @@ class Postgresql extends Pdo
     protected function _dropView($details) {
         $this->query(sprintf('DROP VIEW %s', $this->buildTableName($details['name'], $details['schema'])));
     }
+    
+    protected function _changeViewDefinition($details)
+    {
+        $this->_dropView($details['from']);
+        $this->_addView($details['to']);
+    }
 
     protected function _dropTable($details) 
     {

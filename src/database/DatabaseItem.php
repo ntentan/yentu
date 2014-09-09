@@ -34,9 +34,9 @@ abstract class DatabaseItem
         $newDescription[$attribute] = $value;
         $class = new \ReflectionClass($this);
         $name = $class->getShortName();
-        
+                
         $this->changes[] = array(
-            'method' => "change{$name}" . str_replace('_', '', $attribute), 
+            'method' => "change{$name}". str_replace('_', '', $attribute), 
             'args' => array(
                 'from' => $currentDescription,
                 'to' => $newDescription

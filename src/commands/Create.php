@@ -22,7 +22,9 @@ class Create implements \yentu\Command
         else if(preg_match("/[a-z][a-z0-9\_]*/",$name))
         {
             $code = new \yentu\CodeWriter();
-            file_put_contents(Yentu::getPath("migrations/{$timestamp}_{$name}.php"), $code);
+            $path = Yentu::getPath("migrations/{$timestamp}_{$name}.php");
+            file_put_contents($path, $code);
+            Yentu::out("Added $path for new migration");
         }
         else
         {

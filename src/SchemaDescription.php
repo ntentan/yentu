@@ -78,6 +78,17 @@ class SchemaDescription implements \ArrayAccess
         $this->dropTable($details, 'views');
     }
     
+    public function changeViewDefinition($details)
+    {
+        $viewDetails = array(
+            'view' => $details['from']['name'],
+            'schema' => $details['from']['schema']
+        );
+        $view = $this->getTable($viewDetails, 'view');
+        $view['definition'] = $details['to']['definition'];
+        $this->setTable($viewDetails, $view, 'view');
+    }
+    
     public function dropTable($details, $type = 'tables')
     {
         if($details['schema'] != '')
@@ -90,27 +101,27 @@ class SchemaDescription implements \ArrayAccess
         }        
     }
     
-    public function getTable($details)
+    public function getTable($details, $type = 'table')
     {
         if($details['schema'] == '')
         {
-            return $this->description['tables'][$details['table']];
+            return $this->description["{$type}s"][$details[$type]];
         }
         else
         {
-            return $this->description['schemata'][$details['schema']]['tables'][$details['table']];
+            return $this->description['schemata'][$details['schema']]["{$type}s"][$details[$type]];
         }
     }
     
-    private function setTable($details, $table)
+    private function setTable($details, $table, $type = 'table')
     {
         if($details['schema'] == '')
         {
-            $this->description['tables'][$details['table']] = $table;
+            $this->description["{$type}s"][$details[$type]] = $table;
         }
         else
         {
-            $this->description['schemata'][$details['schema']]['tables'][$details['table']] = $table;
+            $this->description['schemata'][$details['schema']]["{$type}s"][$details[$type]] = $table;
         }
         $this->flattenAllColumns();
     }

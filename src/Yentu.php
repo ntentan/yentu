@@ -3,9 +3,16 @@ namespace yentu;
 
 class Yentu
 {
+    // Total silence. Like mute :-X
     const OUTPUT_LEVEL_0 = 0;
+    
+    // General top level info.
     const OUTPUT_LEVEL_1 = 1;
+    
+    // Details of operations being performed.
     const OUTPUT_LEVEL_2 = 2;
+    
+    // Log every single query too.
     const OUTPUT_LEVEL_3 = 3;
     
     private static $home = './yentu';
@@ -48,6 +55,17 @@ class Yentu
             fputs(self::$streamResource, $string);
             fflush(self::$streamResource);
         }
+    }
+    
+    public static function toCamelCase($string)
+    {
+        $segments = explode('_', $string);
+        $camel = '';
+        foreach($segments as $segment)
+        {
+            $camel+=ucfirst($segment);
+        }
+        return $camel;
     }
 }
 

@@ -17,7 +17,7 @@ abstract class DatabaseDriver
     {
         if(preg_match("/^(add|drop|change)/", $name))
         {
-            $this->description->$name($arguments[0]);
+            $this->announce($name, $arguments); 
             $name = "_$name";
             new \ReflectionMethod($this, $name);
             $this->$name($arguments[0]);
@@ -52,6 +52,7 @@ abstract class DatabaseDriver
     abstract protected function _dropIndex($details);
     abstract protected function _addView($details);
     abstract protected function _dropView($details);
+    abstract protected function _changeViewDefinition($details);
         
     protected function dropTableItem($details, $type)
     {

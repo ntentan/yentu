@@ -95,15 +95,18 @@ catch(\yentu\DatabaseDriverException $e)
 {
     fputs(
         STDERR,
-        wordwrap("Failed to perform database action: " . $e->getMessage()) . "\n"
+        "Failed to perform database action: " . $e->getMessage() . "\n"
     );
-    
+    rollback_changes();
+}
+
+function rollback_changes()
+{
     if(\yentu\ChangeLogger::getChanges() > 0)
     {
         \yentu\Yentu::out("Attempting to rollback ... ");
         $rollback = new yentu\commands\Rollback();
         $rollback->run(array());
         \yentu\Yentu::out("safely rolled back all changes.\n");
-    }
+    }    
 }
-
