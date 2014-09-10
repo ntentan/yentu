@@ -18,6 +18,7 @@ abstract class DatabaseDriver
         if(preg_match("/^(add|drop|change)/", $name))
         {
             $this->announce($name, $arguments); 
+            $this->description->$name($arguments[0]);
             $name = "_$name";
             new \ReflectionMethod($this, $name);
             $this->$name($arguments[0]);
