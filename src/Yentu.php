@@ -79,7 +79,7 @@ class Yentu
         Yentu::out(
             ucfirst("{$matches['command']}ing ") . 
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " " .
-            $this->getDetails($matches['command'], $arguments) ."\n",
+            self::getDetails($matches['command'], $arguments) ."\n",
             self::OUTPUT_LEVEL_2
         );
     }
