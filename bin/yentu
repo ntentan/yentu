@@ -66,12 +66,29 @@ $cli->addOptions(
         'long' => 'home',
         'help' => 'specifies where the yentu configurations are found',
         'has_value' => true
-    )  
+    ),
+    array(
+        'short' => 'v',
+        'long' => 'verbose',
+        'help' => 'set level of verbosity. high, mid, low and none',
+        'has_value' => true
+    )
 );
 
 $cli->addHelp();
 $cli->setStrict(true);
 $options = $cli->parse();
+
+if(isset($options['verbose']))
+{
+    \yentu\Yentu::setOutputLevel($options['verbose']);
+}
+
+$welcome = <<<WELCOME
+Yentu Database Migrations.
+By James Ekow Abaka Ainooson
+WELCOME;
+\yentu\Yentu::out($welcome);
 
 try{
     if($options['__command__'])

@@ -13,11 +13,13 @@ abstract class DatabaseDriver
         $this->assertor = new DatabaseAssertor($this->description);
     }
     
+
+    
     public function __call($name, $arguments)
     {
         if(preg_match("/^(add|drop|change)/", $name))
         {
-            $this->announce($name, $arguments); 
+            Yentu::announce($name, $arguments[0]); 
             $this->description->$name($arguments[0]);
             $name = "_$name";
             new \ReflectionMethod($this, $name);
