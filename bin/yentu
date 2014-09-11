@@ -87,6 +87,7 @@ if(isset($options['verbose']))
 $welcome = <<<WELCOME
 Yentu Database Migrations.
 By James Ekow Abaka Ainooson
+
 WELCOME;
 \yentu\Yentu::out($welcome);
 
