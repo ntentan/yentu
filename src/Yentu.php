@@ -103,7 +103,7 @@ class Yentu
         {
             $destination = "schema '{$arguments['schema']}'";
         }
-        return "'{$arguments["name"]}' $dir $destination";
+        return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
     }    
 }
 
