@@ -97,8 +97,8 @@ ClearIce::addOptions(
     )
 );
 
-ClearIce::setDescription("Yentu Database Migrations\nA sample or should I say dummy wiki app to help explain ClearIce. This app practically does nothing.");
-ClearIce::setFootnote("Hope you had a nice time learning about ClearIce. We're pretty sure your cli apps would no longer be boring to work with.\n\nReport bugs to bugs@clearice.tld");
+ClearIce::setDescription("Yentu Database Migrations\nYentu allows you to keep track of changes to your database schema through your source countrol system.");
+ClearIce::setFootnote("Report bugs to jainooson@gmail.com");
 
 ClearIce::addHelp();
 ClearIce::setStrict(true);
