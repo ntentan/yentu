@@ -3,10 +3,32 @@
 error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
-$cli = new ClearIce();
-$cli->addCommands('import', 'migrate', 'init', 'create', 'rollback');
+use clearice\ClearIce;
 
-$cli->addOptions(
+ClearIce::addCommands(
+    array(
+        'command' => 'import',
+        'help' => 'import the schema of an existing database into a yentu migration'
+    ), 
+    array(
+        'command' => 'migrate',
+        'help' => 'run new migrations on the target database'
+    ), 
+    array(
+        'command' => 'init',
+        'help' => 'initialize the current directory (or the one specified through the  --home option) with yentu'
+    ), 
+    array(
+        'command' => 'create',
+        'help' => 'create a new migration'
+    ),
+    array(
+        'command' => 'rollback',
+        'help' => 'rollback the previus migration which was run on the database'
+    )
+);
+
+ClearIce::addOptions(
     array(
         'command' => 'import',
         'short' => 'd',
@@ -69,9 +91,12 @@ $cli->addOptions(
     )  
 );
 
-$cli->addHelp();
-$cli->setStrict(true);
-$options = $cli->parse();
+ClearIce::setDescription("Yentu Database Migrations\nA sample or should I say dummy wiki app to help explain ClearIce. This app practically does nothing.");
+ClearIce::setFootnote("Hope you had a nice time learning about ClearIce. We're pretty sure your cli apps would no longer be boring to work with.\n\nReport bugs to bugs@clearice.tld");
+
+ClearIce::addHelp();
+ClearIce::setStrict(true);
+$options = ClearIce::parse();
 
 try{
     if($options['__command__'])
@@ -82,6 +107,10 @@ try{
         unset($options['__command__']);
         $command = new $class();
         $command->run($options);
+    }
+    else
+    {
+        ClearIce::output(ClearIce::getHelpMessage());
     }
 }
 catch(\yentu\commands\CommandError $e)

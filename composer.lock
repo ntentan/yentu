@@ -8,26 +8,29 @@
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "v0.3.0-beta2",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "c054fbad29c09d0359767d03ba3476ece4b8c947"
+                "reference": "d82a3cff8b05a3f74add773ed5238c791391a0ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/c054fbad29c09d0359767d03ba3476ece4b8c947",
-                "reference": "c054fbad29c09d0359767d03ba3476ece4b8c947",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/d82a3cff8b05a3f74add773ed5238c791391a0ec",
+                "reference": "d82a3cff8b05a3f74add773ed5238c791391a0ec",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
+            "require-dev": {
+                "mikey179/vfsstream": "v1.3.0"
+            },
             "type": "library",
             "autoload": {
-                "files": [
-                    "ClearIce.php"
-                ]
+                "psr-4": {
+                    "clearice\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -41,7 +44,7 @@
                 }
             ],
             "description": "A tool for parsing command line arguments",
-            "time": "2014-09-02 16:36:36"
+            "time": "2014-09-14 14:25:34"
         }
     ],
     "packages-dev": [
@@ -84,17 +87,10 @@
             "time": "2014-07-21 20:15:54"
         }
     ],
-    "aliases": [
-
-    ],
+    "aliases": [],
     "minimum-stability": "alpha",
-    "stability-flags": [
-
-    ],
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "stability-flags": [],
+    "prefer-stable": false,
+    "platform": [],
+    "platform-dev": []
 }
