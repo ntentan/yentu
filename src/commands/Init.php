@@ -3,6 +3,7 @@ namespace yentu\commands;
 
 use yentu\Command;
 use yentu\Yentu;
+use clearice\ClearIce;
 
 /**
  * 
@@ -12,10 +13,8 @@ class Init implements Command
     private function getParams($options)
     {
         if($options['interractive']) 
-        {
-            $cli = new \ClearIce();
-            
-            $params['driver'] = $cli->getResponse('Database type', array(
+        {   
+            $params['driver'] = ClearIce::getResponse('Database type', array(
                     'required' => true,
                     'answers' => array(
                         'postgresql'
@@ -23,25 +22,25 @@ class Init implements Command
                 )
             );
             
-            $params['host'] = $cli->getResponse('Database host', array(
+            $params['host'] = ClearIce::getResponse('Database host', array(
                     'required' => true,
                     'default' => 'localhost'
                 )
             );
             
-            $params['port'] = $cli->getResponse('Database port');
+            $params['port'] = ClearIce::getResponse('Database port');
             
-            $params['dbname'] = $cli->getResponse('Database name', array(
+            $params['dbname'] = ClearIce::getResponse('Database name', array(
                     'required' => true
                 )
             );
             
-            $params['user'] = $cli->getResponse('Database user name', array(
+            $params['user'] = ClearIce::getResponse('Database user name', array(
                     'required' => true
                 )
             );            
             
-            $params['password'] = $cli->getResponse('Database password', array(
+            $params['password'] = ClearIce::getResponse('Database password', array(
                     'required' => FALSE
                 )
             );            

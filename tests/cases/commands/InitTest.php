@@ -28,6 +28,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
 use \org\bovigo\vfs\vfsStream;
+use clearice\ClearIce;
 
 class InitTest extends \yentu\tests\YentuTest
 {
@@ -101,11 +102,11 @@ class InitTest extends \yentu\tests\YentuTest
     
     public function testInterractive()
     {
-        ClearIce::$defaultErrorStream = vfsStream::url("home/error.out");
-        ClearIce::$defaultOutputStream = vfsStream::url("home/standard.out");
-        ClearIce::$defaultInputStream = vfsStream::url("home/responses.in");
+        ClearIce::setStreamUrl('error', vfsStream::url("home/error.out"));
+        ClearIce::setStreamUrl('output', vfsStream::url("home/standard.out"));
+        ClearIce::setStreamUrl('input', vfsStream::url("home/responses.in"));
         
-        file_put_contents(ClearIce::$defaultInputStream,
+        file_put_contents(vfsStream::url("home/responses.in"),
             "postgresql\n"
             . "localhost\n"
             . "\n"
