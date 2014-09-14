@@ -88,7 +88,13 @@ ClearIce::addOptions(
         'long' => 'home',
         'help' => 'specifies where the yentu configurations are found',
         'has_value' => true
-    )  
+    ),
+    array(
+        'short' => 'v',
+        'long' => 'verbose',
+        'help' => 'set level of verbosity. high, mid, low and none',
+        'has_value' => true
+    )
 );
 
 ClearIce::setDescription("Yentu Database Migrations\nA sample or should I say dummy wiki app to help explain ClearIce. This app practically does nothing.");
@@ -97,6 +103,18 @@ ClearIce::setFootnote("Hope you had a nice time learning about ClearIce. We're p
 ClearIce::addHelp();
 ClearIce::setStrict(true);
 $options = ClearIce::parse();
+
+if(isset($options['verbose']))
+{
+    \yentu\Yentu::setOutputLevel($options['verbose']);
+}
+
+$welcome = <<<WELCOME
+Yentu Database Migrations.
+By James Ekow Abaka Ainooson
+
+WELCOME;
+\yentu\Yentu::out($welcome);
 
 try{
     if($options['__command__'])

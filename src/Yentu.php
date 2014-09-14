@@ -57,6 +57,11 @@ class Yentu
         }
     }
     
+    public static function setOutputLevel($level)
+    {
+        self::$level = $level;
+    }
+    
     public static function toCamelCase($string)
     {
         $segments = explode('_', $string);
@@ -67,5 +72,38 @@ class Yentu
         }
         return $camel;
     }
+    
+    public static function announce($name, $arguments)
+    {
+        preg_match("/(?<command>add|drop|chang(e))(?<item_type>[a-zA-Z]+)/", $name, $matches);
+        Yentu::out(
+            ucfirst("{$matches['command']}ing ") . 
+            preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " " .
+            self::getDetails($matches['command'], $arguments) ."\n",
+            self::OUTPUT_LEVEL_2
+        );
+    }
+    
+    private static function getDetails($name, $arguments)
+    {
+        if($name == 'add')
+        {
+            $dir = 'to';
+        }
+        else if($name == 'drop')
+        {
+            $dir = 'from';
+        }
+        
+        if(isset($arguments['table']) && isset($arguments['schema']))
+        {
+            $destination = "table '{$arguments['schema']}.{$arguments['table']}'";
+        }
+        elseif(isset($arguments['schema']) && !isset($arguments['table']))
+        {
+            $destination = "schema '{$arguments['schema']}'";
+        }
+        return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
+    }    
 }
 
