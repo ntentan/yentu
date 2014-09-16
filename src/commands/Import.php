@@ -128,6 +128,10 @@ class Import implements Command
             $this->code->addNoIndent("->type('{$column['type']}')");
             $this->code->addNoIndent("->nulls(" . ($column['nulls'] === true ? 'true' : 'false') . ")");
             
+            if($column['length'] != '')
+            {
+                $this->code->addNoIndent("->length({$column['length']})");
+            }
             if($column['default'] != '')
             {
                 $this->code->addNoIndent("->defaultValue(\"{$column['default']}\")");
@@ -160,7 +164,7 @@ class Import implements Command
     {
         foreach($views as $view)
         {
-            $definition = sprintf('->definition("%s")', addslashes($view['query']));
+            $definition = sprintf('->definition("%s")', str_replace('"', '\"', $view['definition']));
             if($this->hasSchema)
             {
                 $this->code->add("->view('{$view['name']}')$definition");

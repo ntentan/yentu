@@ -10,6 +10,7 @@ class Column extends DatabaseItem
     private $table;
     private $nulls;
     private $default;
+    private $length;
     
     protected function buildDescription()
     {
@@ -18,7 +19,8 @@ class Column extends DatabaseItem
             'type' => $this->type,
             'table' => $this->table->getName(),
             'schema' => $this->table->getSchema()->getName(),
-            'nulls' => $this->nulls
+            'nulls' => $this->nulls,
+            'length' => $this->length
         );
     }
     
@@ -34,7 +36,6 @@ class Column extends DatabaseItem
             )
         )){
             $this->new = true;
-            Yentu::out("Adding a new column \"{$name}\" to the \"{$table->getName()}\" table\n", Yentu::OUTPUT_LEVEL_3);
         }
     }
     
@@ -65,6 +66,12 @@ class Column extends DatabaseItem
     public function commitNew() 
     {
         $this->getDriver()->addColumn($this->buildDescription());        
+    }
+    
+    public function length($length)
+    {
+        $this->length = $length;
+        return $this;
     }
 }
 

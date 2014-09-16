@@ -146,6 +146,10 @@ catch(\yentu\DatabaseDriverException $e)
     );
     rollback_changes();
 }
+catch(\PDOException $e)
+{
+    ClearIce::error("Failed to connect to database:" . $e->getMessage() . "\n");
+}
 
 function rollback_changes()
 {

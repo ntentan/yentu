@@ -143,7 +143,8 @@ class Postgresql extends Pdo
                 $details['name'], 
                     \yentu\descriptors\Postgresql::convertTypes(
                         $details['type'], 
-                        \yentu\descriptors\Postgresql::TO_POSTGRESQL
+                        \yentu\descriptors\Postgresql::TO_POSTGRESQL,
+                        $details['size']
                     )
                 )
             );

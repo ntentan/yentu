@@ -47,7 +47,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         return $constraints;        
     }
     
-    public static function convertTypes($type, $direction)
+    public static function convertTypes($type, $direction, $length = null)
     {
         $types = array(
             'integer' => 'integer',
@@ -70,6 +70,7 @@ class Postgresql extends \yentu\SchemaDescriptor
             
             case self::TO_POSTGRESQL: 
                 $destinationType = array_search($type, $types);
+                
                 break;
         }
         
@@ -79,6 +80,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         }
         else
         {
+            $destinationType .= $length === null ? '' : "($length)";
             return $destinationType;
         }
     }
@@ -88,7 +90,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         $columns = array();
         $columnDetails = $this->driver->query(
             sprintf(
-                "select column_name as name, data_type as type, is_nullable as nulls, column_default as default
+                "select column_name as name, data_type as type, is_nullable as nulls, column_default as default, character_maximum_length as length
                 from information_schema.columns
                 where table_name = '%s' and table_schema='%s'", 
                 $table['name'], $table['schema']
