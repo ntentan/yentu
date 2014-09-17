@@ -220,9 +220,9 @@ $expected = <<< HEAD
         ->autoIncrement()
 
     ;
-\$this->schema('test')->\$this->table('api_keys')
+\$this->schema('test')->table('api_keys')
     ->foreignKey('user_id')
-    ->references(\$this->refschema('test')->\$this->table('users'))
+    ->references(\$this->refschema('test')->table('users'))
     ->columns('user_id')
     ->onDelete('NO ACTION')
     ->onUpdate('NO ACTION')
