@@ -88,7 +88,7 @@ class Import implements Command
         }
         else
         {
-            return "\$this->{$refprefix}schema('{$description["{$prefix}schema"]}')->\$this->table('{$description["{$prefix}table"]}')";
+            return "\$this->{$refprefix}schema('{$description["{$prefix}schema"]}')->table('{$description["{$prefix}table"]}')";
         }
     }
     
@@ -99,10 +99,10 @@ class Import implements Command
             //$this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
             $this->code->add($this->generateSchemaCode($foreignKey));
             $this->code->addIndent();
-            $this->code->add("->foreignKey('" . implode(',', $foreignKey['columns']) . "')");
+            $this->code->add("->foreignKey('" . implode("','", $foreignKey['columns']) . "')");
             $reference = $this->generateSchemaCode($foreignKey, true, 'foreign_');
             $this->code->add("->references({$reference})");
-            $this->code->add("->columns('" . implode(',', $foreignKey['foreign_columns']) . "')");
+            $this->code->add("->columns('" . implode("','", $foreignKey['foreign_columns']) . "')");
             
             if($foreignKey['on_delete'] != '')
             {
@@ -144,10 +144,12 @@ class Import implements Command
     protected function importSchemata($schemata)
     {
         $this->code->add('// Schemata');
+        
         if(count($schemata) > 0)
         {
             $this->hasSchema = true;
         }
+        
         foreach($schemata as $schema)
         {
             $this->code->add("\$this->schema('{$schema['name']}')");
@@ -155,9 +157,10 @@ class Import implements Command
             $this->importTables($schema['tables']);
             $this->importViews($schema['views']);
             $this->code->add(';');
-            $this->code->decreaseIndent();
-            
+            $this->code->decreaseIndent(); 
         }        
+        
+        $this->hasSchema = false;
     }
 
     protected function importViews($views)

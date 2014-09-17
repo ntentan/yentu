@@ -4,6 +4,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
 use clearice\ClearIce;
+use yentu\Yentu;
 
 ClearIce::addCommands(
     array(
@@ -106,7 +107,7 @@ $options = ClearIce::parse();
 
 if(isset($options['verbose']))
 {
-    \yentu\Yentu::setOutputLevel($options['verbose']);
+    Yentu::setOutputLevel($options['verbose']);
 }
 
 $welcome = <<<WELCOME
@@ -114,12 +115,12 @@ Yentu Database Migrations.
 By James Ekow Abaka Ainooson
 
 WELCOME;
-\yentu\Yentu::out($welcome);
+Yentu::out($welcome);
 
 try{
     if($options['__command__'])
     {
-        if($options['home']) \yentu\Yentu::setDefaultHome($options['home']);
+        if($options['home']) Yentu::setDefaultHome($options['home']);
         
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
@@ -155,9 +156,11 @@ function rollback_changes()
 {
     if(\yentu\ChangeLogger::getChanges() > 0)
     {
-        \yentu\Yentu::out("Attempting to rollback ... ");
-        $rollback = new yentu\commands\Rollback();
+        Yentu::out("Attempting to rollback ... ");
+        Yentu::setOutputLevel(0);
+        $rollback = new \yentu\commands\Rollback();
         $rollback->run(array());
-        \yentu\Yentu::out("safely rolled back all changes.\n");
+        Yentu::setOutputLevel(1);        
+        Yentu::out("safely rolled back all changes.\n");
     }    
 }
