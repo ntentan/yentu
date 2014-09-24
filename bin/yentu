@@ -39,7 +39,7 @@ ClearIce::addOptions(
     array(
         'command' => 'init',
         'short' => 'i',
-        'long' => 'interractive',
+        'long' => 'interractive', 
         'help' => 'initialize yentu interractively'
     ),
     array(
@@ -83,7 +83,23 @@ ClearIce::addOptions(
         'long' => 'password',
         'help' => 'the passwrd of the user on the target database',
         'has_value' => true
+    )
+);
+
+ClearIce::addOptions(
+    array(
+        'command' => 'migrate',
+        'long' => 'ignore-foreign-constraints',
+        'help' => 'do not apply any database constraints'
     ),
+    array(
+        'command' => 'migrate',
+        'long' => 'foreign-constraints-only',
+        'help' => 'apply only database constraints'
+    )
+);
+
+ClearIce::addOptions(
     array(
         'short' => 'h',
         'long' => 'home',

@@ -62,6 +62,11 @@ class Yentu
         self::$level = $level;
     }
     
+    public static function getOutputLevel()
+    {
+        return self::$level;
+    }
+    
     public static function toCamelCase($string)
     {
         $segments = explode('_', $string);
@@ -73,15 +78,15 @@ class Yentu
         return $camel;
     }
     
-    public static function announce($name, $arguments)
+    public static function announce($command, $itemType, $arguments)
     {
-        preg_match("/(?<command>add|drop|chang(e))(?<item_type>[a-zA-Z]+)/", $name, $matches);
         Yentu::out(
-            ucfirst("{$matches['command']}ing ") . 
-            preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " " .
-            self::getDetails($matches['command'], $arguments) ."\n",
+            ucfirst("\n{$command}ing ") . 
+            preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
+            self::getDetails($command, $arguments),
             self::OUTPUT_LEVEL_2
         );
+        Yentu::out(".");
     }
     
     private static function getDetails($name, $arguments)

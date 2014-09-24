@@ -17,6 +17,13 @@ class Migrate implements \yentu\Command
     public function run($options)
     {
         $this->driver = ChangeLogger::wrap(DatabaseDriver::getConnection());
+        
+        if(isset($options['ignore-foreign-constraints']))
+        {
+            Yentu::out("Ignoring all foreign key constraints ... \n");
+            $this->driver->skip('ForeignKey');
+        }
+        
         DatabaseItem::setDriver($this->driver);
         
         $version = $this->driver->getVersion();

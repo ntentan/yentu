@@ -10,5 +10,4 @@ add keep track of the changes to your database schema using your current VCS.
 
 Installation
 ------------
-To install yentu add `ekowabaka\yentu` to your composer dependencies.
-
+To install yentu add `ekowabaka\yentu` to your composer dependencies. 

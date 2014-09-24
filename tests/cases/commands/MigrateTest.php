@@ -41,7 +41,7 @@ class MigrateTest extends \yentu\tests\YentuTest
         $migrate = new yentu\commands\Migrate();
         $migrate->run(array());
         $this->assertEquals(
-            "Yentu successfully initialized.\nApplying 'import' migration\n", 
+            file_get_contents("tests/streams/migrate_output.txt"), 
             file_get_contents(vfsStream::url('home/output.txt'))
         );
     }
