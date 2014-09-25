@@ -4,6 +4,7 @@ namespace yentu;
 abstract class DatabaseDriver
 {
     private $description;
+    private $assertor;        
     
     public function __construct($params) 
     {
@@ -20,6 +21,15 @@ abstract class DatabaseDriver
             new \ReflectionMethod($this, $name);
             return $this->$name($arguments[0]);
         }
+    }
+    
+    public function getAssertor()
+    {
+        if(!is_object($this->assertor))
+        {
+            $this->assertor = new DatabaseAssertor($this->description);
+        }
+        return $this->assertor;
     }
         
     abstract protected function describe();

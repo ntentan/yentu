@@ -56,6 +56,7 @@ class ImportTest extends \yentu\tests\YentuTest
     public function testSchemaCodeGen()
     {
         $db = $this->getMockBuilder('\\yentu\\drivers\\Postgresql')->disableOriginalConstructor()->getMock();
+        $db->method('getAssertor')->willReturn(new NegativeMockAssertor());
         $db->method('getDescription')->willReturn(
             array(
                 'schemata' => array(
@@ -255,5 +256,12 @@ HEAD;
     public function tearDown()
     {
         $this->deinitialize();
+    }
+}
+
+class NegativeMockAssertor{
+    public function __call($name, $arguments)
+    {
+        return false;
     }
 }

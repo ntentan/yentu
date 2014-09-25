@@ -25,7 +25,7 @@ class ChangeLogger
     private function __construct(DatabaseDriver $driver) 
     {
         $this->driver = $driver;
-        $this->assertor = new DatabaseAssertor($this->driver->getDescription());        
+        $this->assertor = $driver->getAssertor();        
         if(!$this->assertor->doesTableExist(array('name' => 'yentu_history')))
         {
             $this->driver->createHistory();

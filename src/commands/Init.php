@@ -98,7 +98,7 @@ class Init implements Command
         
         $db = \yentu\DatabaseDriver::getConnection($params);
         
-        if($db->doesTableExist('yentu_history'))
+        if($db->getAssertor()->doesTableExist('yentu_history'))
         {
             throw new CommandError("Could not initialize yentu. Your database has already been initialized with yentu.");
         }
