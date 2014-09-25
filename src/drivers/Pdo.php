@@ -2,6 +2,8 @@
 
 namespace yentu\drivers;
 
+use yentu\Yentu;
+
 abstract class Pdo extends \yentu\DatabaseDriver
 {
     /**
@@ -34,6 +36,8 @@ abstract class Pdo extends \yentu\DatabaseDriver
     public function query($query, $bindData = false)
     {
         $return = array();
+        
+        Yentu::out("\n    > Running Query [$query]", Yentu::OUTPUT_LEVEL_3);
         
         if(is_array($bindData))
         {

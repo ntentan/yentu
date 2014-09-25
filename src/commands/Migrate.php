@@ -24,6 +24,12 @@ class Migrate implements \yentu\Command
             $this->driver->skip('ForeignKey');
         }
         
+        if(isset($options['foreign-keys-only']))
+        {
+            Yentu::out("\nApplying only foreign keys ...\n");
+            $this->driver->allowOnly('ForeignKey');
+        }
+        
         DatabaseItem::setDriver($this->driver);
         
         $version = $this->driver->getVersion();
@@ -39,7 +45,7 @@ class Migrate implements \yentu\Command
             {
                 ChangeLogger::setVersion($matches['timestamp']);
                 ChangeLogger::setMigration($matches['migration']);                        
-                Yentu::out("Applying '{$matches['migration']}' migration\n");
+                Yentu::out("\nApplying '{$matches['migration']}' migration\n");
                 require Yentu::getPath("migrations/{$migration}");
                 DatabaseItem::purge();
             }

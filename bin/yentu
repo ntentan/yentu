@@ -152,31 +152,31 @@ catch(\yentu\commands\CommandError $e)
 {
     fputs(
         STDERR, 
-        wordwrap("There was an error executing your command: " . $e->getMessage()) . "\n"
+        "\nThere was an error executing your command: " . $e->getMessage() . "\n"
     );
 }
 catch(\yentu\DatabaseDriverException $e)
 {
     fputs(
         STDERR,
-        "Failed to perform database action: " . $e->getMessage() . "\n"
+        "\nFailed to perform database action: " . $e->getMessage() . "\n"
     );
     rollback_changes();
 }
 catch(\PDOException $e)
 {
-    ClearIce::error("Failed to connect to database:" . $e->getMessage() . "\n");
+    ClearIce::error("\nFailed to connect to database:" . $e->getMessage() . "\n");
 }
 
 function rollback_changes()
 {
     if(\yentu\ChangeLogger::getChanges() > 0)
     {
-        Yentu::out("Attempting to rollback ... ");
+        Yentu::out("Attempting to rollback all changes ... ");
         Yentu::setOutputLevel(0);
         $rollback = new \yentu\commands\Rollback();
         $rollback->run(array());
         Yentu::setOutputLevel(1);        
-        Yentu::out("safely rolled back all changes.\n");
+        Yentu::out("OK\n");
     }    
 }

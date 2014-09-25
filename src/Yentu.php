@@ -81,7 +81,7 @@ class Yentu
     public static function announce($command, $itemType, $arguments)
     {
         Yentu::out(
-            ucfirst("\n{$command}ing ") . 
+            "\n  - " . ucfirst("{$command}ing ") . 
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
             self::getDetails($command, $arguments),
             self::OUTPUT_LEVEL_2

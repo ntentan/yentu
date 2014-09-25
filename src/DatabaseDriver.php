@@ -4,51 +4,21 @@ namespace yentu;
 abstract class DatabaseDriver
 {
     private $description;
-    private $assertor;
-    private $skippedItemTypes = array();
-    private $allowedItemTypes = array();
     
     public function __construct($params) 
     {
         $this->connect($params);
         $this->description = $this->describe(); 
-        $this->assertor = new DatabaseAssertor($this->description);
     }
-    
-    public function skip($itemType)
-    {
-        $this->skippedItemTypes[] = $itemType;
-    }
-    
-    public function allowOnly($itemType)
-    {
         
-    }
-    
     public function __call($name, $arguments)
     {
-        if(preg_match("/^(?<command>add|drop|change)(?<item_type>[a-zA-Z]+)/", $name, $matches))
+        if(preg_match("/^(add|drop|change)/", $name))
         {
-            if(
-                array_search($matches['item_type'], $this->skippedItemTypes) || 
-                (!array_search($matches['item_type'], $this->allowedItemTypes) && count($this->allowedItemTypes) > 0)
-            )
-            {
-                Yentu::out("Skipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['iten_type']) . " '" . $arguments['name'] . "'\n");
-            }
-            else
-            {
-                Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);
-                $this->description->$name($arguments[0]);
-                $name = "_$name";
-                new \ReflectionMethod($this, $name);
-                $this->$name($arguments[0]);
-            }
-        }
-        else if(preg_match("/^does([A-Za-z]+)/", $name))
-        {
-            $method = new \ReflectionMethod($this->assertor, $name);
-            return $method->invokeArgs($this->assertor, $arguments);
+            $this->description->$name($arguments[0]);
+            $name = "_$name";
+            new \ReflectionMethod($this, $name);
+            return $this->$name($arguments[0]);
         }
     }
         

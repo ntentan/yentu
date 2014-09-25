@@ -8,11 +8,25 @@ class ChangeLogger
     private static $migration;
     private static $session;
     private static $changes;
+    private $skippedItemTypes = array();
+    private $allowedItemTypes = array();
+    private $assertor;    
+    
+    public function skip($itemType)
+    {
+        $this->skippedItemTypes[] = $itemType;
+    }
+    
+    public function allowOnly($itemType)
+    {
+        $this->allowedItemTypes[] = $itemType;
+    }    
 
     private function __construct(DatabaseDriver $driver) 
     {
         $this->driver = $driver;
-        if(!$this->driver->doesTableExist(array('name' => 'yentu_history')))
+        $this->assertor = new DatabaseAssertor($this->driver->getDescription());        
+        if(!$this->assertor->doesTableExist(array('name' => 'yentu_history')))
         {
             $this->driver->createHistory();
         }
@@ -36,22 +50,39 @@ class ChangeLogger
     
     public function __call($method, $arguments) 
     {
-        $return = $this->driver->$method($arguments[0]);
-        
-        if(preg_match("/^(add|drop|change)/", $method))
+        if(preg_match("/^(?<command>add|drop|change)(?<item_type>[a-zA-Z]+)/", $method, $matches))
         {
-            $this->driver->query(
-                'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',
-                array(
-                    self::$session,
-                    self::$version,
-                    $method,
-                    json_encode($arguments),
-                    self::$migration
-                )
-            );
-            self::$changes++;
+            if(
+                array_search($matches['item_type'], $this->skippedItemTypes) !== false || 
+                (!array_search($matches['item_type'], $this->allowedItemTypes) && count($this->allowedItemTypes) > 0)
+            )
+            {
+                Yentu::out("Skipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n");
+            }
+            else
+            {        
+                $return = $this->driver->$method($arguments[0]);
+                Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);  
+                $outputLevel = Yentu::getOutputLevel(); Yentu::setOutputLevel(Yentu::OUTPUT_LEVEL_0);
+                $this->driver->query(
+                    'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',
+                    array(
+                        self::$session,
+                        self::$version,
+                        $method,
+                        json_encode($arguments),
+                        self::$migration
+                    )
+                );
+                Yentu::setOutputLevel($outputLevel);
+                self::$changes++;
+            }
         }
+        else if(preg_match("/^does([A-Za-z]+)/", $method))
+        {
+            $invokable = new \ReflectionMethod($this->assertor, $method);
+            return $invokable->invokeArgs($this->assertor, $arguments);
+        }        
         
         return $return;
     }
