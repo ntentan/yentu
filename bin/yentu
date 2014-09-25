@@ -89,12 +89,12 @@ ClearIce::addOptions(
 ClearIce::addOptions(
     array(
         'command' => 'migrate',
-        'long' => 'ignore-foreign-constraints',
+        'long' => 'ignore-foreign-keys',
         'help' => 'do not apply any database constraints'
     ),
     array(
         'command' => 'migrate',
-        'long' => 'foreign-constraints-only',
+        'long' => 'foreign-keys-only',
         'help' => 'apply only database constraints'
     )
 );

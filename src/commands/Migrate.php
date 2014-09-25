@@ -18,9 +18,9 @@ class Migrate implements \yentu\Command
     {
         $this->driver = ChangeLogger::wrap(DatabaseDriver::getConnection());
         
-        if(isset($options['ignore-foreign-constraints']))
+        if(isset($options['ignore-foreign-keys']))
         {
-            Yentu::out("Ignoring all foreign key constraints ... \n");
+            Yentu::out("\nIgnoring all foreign key constraints ...\n");
             $this->driver->skip('ForeignKey');
         }
         
