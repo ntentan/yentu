@@ -14,9 +14,13 @@ class Migrate implements \yentu\Command
 {
     private $driver;
     
+    const FILTER_UNRUN = 'unrun';
+    const FILTER_LAST_SESSION = 'lastSession';
+    
     public function run($options)
     {
         $this->driver = ChangeLogger::wrap(DatabaseDriver::getConnection());
+        $filter = self::FILTER_UNRUN;
         
         if(isset($options['ignore-foreign-keys']))
         {
@@ -28,27 +32,59 @@ class Migrate implements \yentu\Command
         {
             Yentu::out("\nApplying only foreign keys ...\n");
             $this->driver->allowOnly('ForeignKey');
+            $filter = self::FILTER_LAST_SESSION;
         }
         
         DatabaseItem::setDriver($this->driver);
         
         $version = $this->driver->getVersion();
         
-        $migrations = Yentu::getMigrations();
-        $matches = array();
+        $migrations = $this->filter(Yentu::getMigrations(), $filter, $version);
         
         foreach($migrations as $migration)
         {
-            preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $matches);
-            
-            if($matches['timestamp'] > $version)
+            ChangeLogger::setVersion($migration['timestamp']);
+            ChangeLogger::setMigration($migration['migration']);                        
+            Yentu::out("\nApplying '{$migration['migration']}' migration\n");
+            require Yentu::getPath("migrations/{$migration['file']}");
+            DatabaseItem::purge();
+        }
+    }
+    
+    private function filter($migrations, $type = self::FILTER_UNRUN, $version = null)
+    {
+        $filterMethod = "{$type}Filter";
+        return $this->$filterMethod($migrations, $version);
+    }
+    
+    private function getMigrationDetails($migration)
+    {
+        preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $details);
+        $details['file'] = $migration;
+        return $details;
+    }
+    
+    private function unrunFilter($input, $version)
+    {
+        $output = array();
+        foreach($input as $migration)
+        {
+            $migration = $this->getMigrationDetails($migration);
+            if($migration['timestamp'] > $version)
             {
-                ChangeLogger::setVersion($matches['timestamp']);
-                ChangeLogger::setMigration($matches['migration']);                        
-                Yentu::out("\nApplying '{$matches['migration']}' migration\n");
-                require Yentu::getPath("migrations/{$migration}");
-                DatabaseItem::purge();
+                $output[] = $migration;
             }
+        }
+        return $output;
+    }
+    
+    private function lastSessionFilter($input, $version)
+    {
+        $versions = $this->driver->getSessionVersions($this->driver->getLastSession());
+        $output = array();
+        foreach($input as $migration)
+        {
+            
         }
     }
     
