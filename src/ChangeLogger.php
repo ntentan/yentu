@@ -54,10 +54,11 @@ class ChangeLogger
         {
             if(
                 array_search($matches['item_type'], $this->skippedItemTypes) !== false || 
-                (!array_search($matches['item_type'], $this->allowedItemTypes) && count($this->allowedItemTypes) > 0)
+                (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
             )
             {
-                Yentu::out("Skipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n");
+                Yentu::out("S");
+                Yentu::out("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", Yentu::OUTPUT_LEVEL_2);
             }
             else
             {        
@@ -82,7 +83,12 @@ class ChangeLogger
         {
             $invokable = new \ReflectionMethod($this->assertor, $method);
             return $invokable->invokeArgs($this->assertor, $arguments);
-        }        
+        }
+        else
+        {
+            $invokable = new \ReflectionMethod($this->driver, $method);
+            return $invokable->invokeArgs($this->driver, $arguments);
+        }
         
         return $return;
     }

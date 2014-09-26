@@ -102,7 +102,7 @@ abstract class DatabaseDriver
     {
         $sessionVersions = array();
         $versions = $this->query(
-            "SELECT version FROM yentu_history WHERE session = ?", array($session)
+            "SELECT DISTINCT version FROM yentu_history WHERE session = ?", array($session)
         );
         
         foreach($versions as $version)

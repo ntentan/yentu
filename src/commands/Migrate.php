@@ -84,8 +84,13 @@ class Migrate implements \yentu\Command
         $output = array();
         foreach($input as $migration)
         {
-            
+            $migration = $this->getMigrationDetails($migration);
+            if(array_search($migration['timestamp'], $versions) !== false)
+            {
+                $output[] = $migration;
+            }
         }
+        return $output;
     }
     
     public function schema($name)
