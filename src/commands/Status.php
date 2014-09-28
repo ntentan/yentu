@@ -24,6 +24,27 @@ class Status implements Command
             return;
         }
         
+        $migrationInfo = $this->getMigrationInfo($version);
+        
+        
+        Yentu::out("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
+        $this->displayMigrations($migrationInfo['run']['previous']);
+        
+        Yentu::out("\nLast migration applied:\n    $current\n");
+        
+        if($migrationInfo['counter']['yet'] > 0)
+        {
+            Yentu::out("\nThere are {$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
+            $this->displayMigrations($migrationInfo['run']['yet']);
+        }
+        else
+        {
+            Yentu::out("\nThere are no pending migrations.\n");
+        }
+    }
+    
+    private function getMigrationInfo($version)
+    {
         $migrations = Yentu::getMigrations();
         $counter['previous'] = 0;
         $counting = 'previous';
@@ -46,20 +67,10 @@ class Status implements Command
             }
         }
         
-        Yentu::out("\n" . ($counter['previous'] == 0 ? 'No' : $counter['previous']) . " migration(s) have been applied so far.\n");
-        $this->displayMigrations($run['previous']);
-        
-        Yentu::out("\nLast migration applied:\n    $current\n");
-        
-        if($counter['yet'] > 0)
-        {
-            Yentu::out("\nThere are {$counter['yet']} migration(s) that could be applied.\n");
-            $this->displayMigrations($run['yet']);
-        }
-        else
-        {
-            Yentu::out("\nThere are no pending migrations.\n");
-        }
+        return array(
+            'counter' => $counter,
+            'run' => $run
+        );
     }
     
     private function displayMigrations($descriptions)
