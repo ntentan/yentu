@@ -30,7 +30,7 @@ class Status implements Command
         Yentu::out("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
         $this->displayMigrations($migrationInfo['run']['previous']);
         
-        Yentu::out("\nLast migration applied:\n    $current\n");
+        Yentu::out("\nLast migration applied:\n    {$migrationInfo['current']}\n");
         
         if($migrationInfo['counter']['yet'] > 0)
         {
@@ -69,6 +69,7 @@ class Status implements Command
         
         return array(
             'counter' => $counter,
+            'current' => $current,
             'run' => $run
         );
     }
