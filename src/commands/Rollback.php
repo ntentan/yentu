@@ -27,7 +27,8 @@ class Rollback implements \yentu\Command
         {
             if($previousMigration !== $operation['migration'])
             {
-                Yentu::out("\nRolling back '{$operation['migration']}' migration\n");                
+                Yentu::out("\nRolling back '{$operation['migration']}' migration\n");  
+                $previousMigration = $operation['migration'];
             }
             ChangeReverser::call($operation['method'], json_decode($operation['arguments'], true));
             $db->query('DELETE FROM yentu_history WHERE id = ?', array($operation['id']));

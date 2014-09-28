@@ -25,6 +25,11 @@ class Yentu
         self::$home = $home;
     }    
     
+    public static function getDefaultHome()
+    {
+        return self::$home;
+    }
+    
     public static function getPath($path)
     {
         return self::$home . "/$path";

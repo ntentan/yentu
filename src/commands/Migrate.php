@@ -48,6 +48,7 @@ class Migrate implements \yentu\Command
             Yentu::out("\nApplying '{$migration['migration']}' migration\n");
             require Yentu::getPath("migrations/{$migration['file']}");
             DatabaseItem::purge();
+            Yentu::out("\n");
         }
     }
     

@@ -159,20 +159,25 @@ catch(\yentu\DatabaseDriverException $e)
 {
     fputs(
         STDERR,
-        "\nFailed to perform database action: " . $e->getMessage() . "\n"
+        "\n\nFailed to perform database action: " . $e->getMessage() . "\n"
     );
+    rollback_changes();
+}
+catch (\yentu\SyntaxErrorException $e)
+{
+    ClearIce::error("\n\nError found in syntax: {$e->getMessage()}\n");
     rollback_changes();
 }
 catch(\PDOException $e)
 {
-    ClearIce::error("\nFailed to connect to database:" . $e->getMessage() . "\n");
+    ClearIce::error("\n\nFailed to connect to database:" . $e->getMessage() . "\n");
 }
 
 function rollback_changes()
 {
     if(\yentu\ChangeLogger::getChanges() > 0)
     {
-        Yentu::out("Attempting to rollback all changes ... ");
+        Yentu::out("\nAttempting to rollback all changes ... ");
         Yentu::setOutputLevel(0);
         $rollback = new \yentu\commands\Rollback();
         $rollback->run(array());
@@ -180,3 +185,5 @@ function rollback_changes()
         Yentu::out("OK\n");
     }    
 }
+
+ClearIce::output("\n");

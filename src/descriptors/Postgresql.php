@@ -76,7 +76,7 @@ class Postgresql extends \yentu\SchemaDescriptor
         
         if($destinationType == '')
         {
-            throw new \Exception("Invalid data type {$type} requested"); 
+            throw new \yentu\DatabaseDriverException("Invalid data type {$type} requested"); 
         }
         else
         {
