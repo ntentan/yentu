@@ -89,7 +89,7 @@ class Postgresql extends Pdo
     
     protected function _addView($details)
     {
-        $this->query(sprintf("SET search_path TO %s, public", $details['schema']));
+        $this->query(sprintf('SET search_path TO "%s", public', $details['schema']));
         $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
     }
     
@@ -125,7 +125,7 @@ class Postgresql extends Pdo
         $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
         if(preg_match("/nextval\(\'(?<sequence>.*)\'\:\:regclass\)/i", $table[0]['column_default'], $matches))
         {
-            $this->query("DROP SEQUENCE IF EXISTS {$matches['sequence']}");
+            $this->query(sprintf('DROP SEQUENCE IF EXISTS "%s"', $matches['sequence']));
         }        
     }
 
@@ -138,7 +138,7 @@ class Postgresql extends Pdo
     protected function _addColumn($details) 
     {
         $this->query(
-            sprintf('ALTER TABLE %s ADD COlUMN %s %s', 
+            sprintf('ALTER TABLE %s ADD COlUMN "%s" %s', 
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
                     \yentu\descriptors\Postgresql::convertTypes(
@@ -156,7 +156,7 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s DROP COLUMN %s', 
+                'ALTER TABLE %s DROP COLUMN "%s"', 
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name']
             )
@@ -179,7 +179,7 @@ class Postgresql extends Pdo
             }
             
             $this->query(
-                sprintf('ALTER TABLE %s ALTER COLUMN %s SET NOT NULL',
+                sprintf('ALTER TABLE %s ALTER COLUMN "%s" SET NOT NULL',
                     $this->buildTableName($details['table'], $details['schema']),
                     $details['name']
                 )
@@ -188,7 +188,7 @@ class Postgresql extends Pdo
         else if(isset($details['to']))
         {
             $this->query(
-                sprintf('ALTER TABLE %s ALTER COLUMN %s DROP NOT NULL',
+                sprintf('ALTER TABLE %s ALTER COLUMN "%s" DROP NOT NULL',
                     $this->buildTableName($details['to']['table'], $details['to']['schema']),
                     $details['to']['name']
                 )
@@ -199,7 +199,7 @@ class Postgresql extends Pdo
     protected function _changeColumnName($details) {
         $this->query(
             sprintf (
-                'ALTER TABLE %s RENAME COLUMN %s TO %s', 
+                'ALTER TABLE %s RENAME COLUMN "%s" TO "%s"', 
                 $this->buildTableName($details['to']['table'], $details['to']['schema']),
                 $details['from']['name'],
                 $details['to']['name']
@@ -212,10 +212,10 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s ADD CONSTRAINT %s PRIMARY KEY (%s)',
+                'ALTER TABLE %s ADD CONSTRAINT "%s" PRIMARY KEY ("%s")',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode(',', $details['columns'])
+                implode('","', $details['columns'])
             )
         );
     }
@@ -224,7 +224,7 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s DROP CONSTRAINT %s',
+                'ALTER TABLE %s DROP CONSTRAINT "%s"',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name']
             )
@@ -235,10 +235,10 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)',
+                'ALTER TABLE %s ADD CONSTRAINT "%s" UNIQUE ("%s")',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode(',', $details['columns'])
+                implode('","', $details['columns'])
             )
         );
     }
@@ -247,7 +247,7 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                "ALTER TABLE %s DROP CONSTRAINT %s",
+                'ALTER TABLE %s DROP CONSTRAINT "%s"',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name']
             )
@@ -267,7 +267,7 @@ class Postgresql extends Pdo
         $this->query("CREATE SEQUENCE $sequence");
         $this->query(
             sprintf(
-                "ALTER TABLE %s ALTER COLUMN %s SET DEFAULT nextval('%s')",
+                'ALTER TABLE %s ALTER COLUMN "%s" SET DEFAULT nextval(\'%s\')',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['column'],
                 $sequence
@@ -280,25 +280,25 @@ class Postgresql extends Pdo
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
         $this->query(
             sprintf(
-                "ALTER TABLE %s ALTER COLUMN %s SET DEFAULT NULL",
+                'ALTER TABLE %s ALTER COLUMN "%s" SET DEFAULT NULL',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['column'],
                 $sequence
             )
         );
-        $this->query("DROP SEQUENCE IF EXISTS $sequence");
+        $this->query(sprintf('DROP SEQUENCE IF EXISTS "%s"', $sequence));
     }      
     
     protected function _addForeignKey($details) 
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) MATCH FULL ON DELETE %s ON UPDATE %s',
+                'ALTER TABLE %s ADD CONSTRAINT "%s" FOREIGN KEY ("%s") REFERENCES %s ("%s") MATCH FULL ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                implode(',', $details['columns']), 
+                implode('","', $details['columns']), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
-                implode(',', $details['foreign_columns']),
+                implode('","', $details['foreign_columns']),
                 $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'],
                 $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
             )
@@ -314,11 +314,11 @@ class Postgresql extends Pdo
     {
         $this->query(
             sprintf(
-                'CREATE INDEX %s %s ON %s (%s)',
+                'CREATE INDEX %s "%s" ON %s ("%s")',
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
-                implode(', ', $details['columns'])
+                implode('", "', $details['columns'])
             )
         );
     }
