@@ -89,7 +89,12 @@ class Postgresql extends Pdo
     
     protected function _addView($details)
     {
-        $this->query(sprintf('SET search_path TO "%s", public', $details['schema']));
+        if($details['schema'] != null)
+        {
+            $this->query(
+                sprintf('SET search_path TO "%s", public', $details['schema'])
+            );
+        }
         $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
     }
     

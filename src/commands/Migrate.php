@@ -118,6 +118,6 @@ class Migrate implements \yentu\Command
     public function view($name)
     {
         DatabaseItem::purge();
-        return new View($name, new NullSchema);
+        return new View($name, new NullSchema());
     }
 }

@@ -6,7 +6,6 @@ class Table extends DatabaseItem
     private $schema;
     private $name;
     private $primaryKeyColumns;
-    private $columns;
     
     public function __construct($name,  $schema) 
     {
@@ -76,7 +75,12 @@ class Table extends DatabaseItem
     public function table($name)
     {
         return $this->create('table', $name, $this->schema);
-    }    
+    }  
+    
+    public function view($name)
+    {
+        return $this->create('view', $name, $this->schema);
+    }
 
     public function commitNew() {
         

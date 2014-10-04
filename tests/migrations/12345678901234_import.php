@@ -305,7 +305,9 @@ $this->table('users')
     ->column('name')->type('string')->nulls(true)
     ->column('location_id')->type('integer')->nulls(false)
     ->primaryKey('location_id')->name('location_id_pk')
-    ->autoIncrement();
+    ->autoIncrement()
+        
+->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)");
 
 
 $this->table('users')
