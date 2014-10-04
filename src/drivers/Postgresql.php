@@ -286,7 +286,7 @@ class Postgresql extends Pdo
                 $sequence
             )
         );
-        $this->query(sprintf('DROP SEQUENCE IF EXISTS "%s"', $sequence));
+        $this->query("DROP SEQUENCE IF EXISTS $sequence");
     }      
     
     protected function _addForeignKey($details) 
