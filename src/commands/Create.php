@@ -15,7 +15,7 @@ class Create implements \yentu\Command
         $timestamp = \yentu\Timestamp::get();
         if($name == '')
         {
-            throw new \Exception(
+            throw new CommandError(
                 "Please provide a name for your new migration"
             );            
         }
@@ -24,7 +24,7 @@ class Create implements \yentu\Command
             $code = new \yentu\CodeWriter();
             $path = Yentu::getPath("migrations/{$timestamp}_{$name}.php");
             file_put_contents($path, $code);
-            Yentu::out("Added $path for new migration");
+            Yentu::out("\nAdded $path for new migration\n\n");
         }
         else
         {

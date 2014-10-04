@@ -48,6 +48,7 @@ class Migrate implements \yentu\Command
             Yentu::out("\nApplying '{$migration['migration']}' migration\n");
             require Yentu::getPath("migrations/{$migration['file']}");
             DatabaseItem::purge();
+            Yentu::out("\n");
         }
     }
     
@@ -57,19 +58,12 @@ class Migrate implements \yentu\Command
         return $this->$filterMethod($migrations, $version);
     }
     
-    private function getMigrationDetails($migration)
-    {
-        preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $details);
-        $details['file'] = $migration;
-        return $details;
-    }
-    
     private function unrunFilter($input, $version)
     {
         $output = array();
         foreach($input as $migration)
         {
-            $migration = $this->getMigrationDetails($migration);
+            $migration = Yentu::getMigrationDetails($migration);
             if($migration['timestamp'] > $version)
             {
                 $output[] = $migration;
@@ -84,7 +78,7 @@ class Migrate implements \yentu\Command
         $output = array();
         foreach($input as $migration)
         {
-            $migration = $this->getMigrationDetails($migration);
+            $migration = Yentu::getMigrationDetails($migration);
             if(array_search($migration['timestamp'], $versions) !== false)
             {
                 $output[] = $migration;

@@ -25,6 +25,11 @@ class Yentu
         self::$home = $home;
     }    
     
+    public static function getDefaultHome()
+    {
+        return self::$home;
+    }
+    
     public static function getPath($path)
     {
         return self::$home . "/$path";
@@ -34,6 +39,13 @@ class Yentu
     {
         return scandir(Yentu::getPath('migrations'), 0);        
     }
+    
+    public static function getMigrationDetails($migration)
+    {
+        preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $details);
+        $details['file'] = $migration;
+        return $details;
+    }    
     
     public static function setOutputStreamUrl($url)
     {
