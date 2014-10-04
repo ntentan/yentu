@@ -322,12 +322,9 @@ class Postgresql extends Pdo
             )
         );
     }
-    
-    
 
     protected function _dropIndex($details) 
     {
         $this->query(sprintf('DROP INDEX %s', $this->buildTableName($details['name'], $details['schema'])));
     }
-
 }

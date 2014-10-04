@@ -38,12 +38,31 @@ class YentuTest extends \PHPUnit_Framework_TestCase
      */
     protected $pdo;
     
+    public function tearDown()
+    {
+        $this->pdo = null;
+    }
+    
+    public function assertSchemaExists($schema, $message = '')
+    {
+        $constraint = new constraints\SchemaExists();
+        $constraint->setPDO($this->pdo);
+        $this->assertThat($schema, $constraint, $message);
+    }
+    
     public function assertTableExists($table, $message = '')
     {
         $constraint = new constraints\TableExists();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }
+    
+    public function assertTableDoesntExist($table, $message = '')
+    {
+        $constraint = new constraints\TableDoesntExist();
+        $constraint->setPDO($this->pdo);
+        $this->assertThat($table, $constraint, $message);
+    }    
     
     public function assertColumnExists($column, $table, $message = '')
     {

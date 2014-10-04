@@ -25,23 +25,14 @@
 
 namespace yentu\tests\constraints;
 
-class TableExists extends \yentu\tests\YentuConstraint
+class SchemaExists extends \yentu\tests\YentuConstraint
 {   
-    public function matches($table)
-    {
-        if(is_string($table))
-        {
-            $table = array(
-                'table' => $table,
-                'schema' => 'public'
-            );
-        }
-        
+    public function matches($schema)
+    {   
         $response = $this->pdo->query(
             sprintf(
-                "SELECT * FROM information_schema.tables  where table_name = '%s' and table_schema = '%s'",
-                $table['table'], 
-                $table['schema']
+                "SELECT * FROM information_schema.schemata  where schema_name = '%s'",
+                $schema
             )
         );
         return $response->rowCount() === 1;
@@ -49,6 +40,6 @@ class TableExists extends \yentu\tests\YentuConstraint
     
     public function toString()
     {
-        return 'is an existing database table';
+        return 'is an existing schema';
     }
 }

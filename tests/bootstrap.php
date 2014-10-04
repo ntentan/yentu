@@ -24,6 +24,9 @@
  * THE SOFTWARE.
  */
 
+// Bootstrap for running the test on a local machine.
+
+chdir(__DIR__ . "/../");
 exec("dropdb yentu_test_migrate");
 exec("createdb yentu_test_migrate");
 exec("dropdb yentu_test_rollback");

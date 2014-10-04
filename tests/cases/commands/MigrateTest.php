@@ -64,6 +64,25 @@ class MigrateTest extends \yentu\tests\YentuTest
         $this->assertColumnNotNullable('role_name', 'roles');
     }
     
+    public function testSchemaMigration()
+    {
+        copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));        
+        $migrate = new yentu\commands\Migrate();
+        $migrate->run(array());
+        $this->assertSchemaExists('schema');
+    } 
+    
+    /**
+     * @dataProvider tablesProvider
+     * @depends testSchemaMigration
+     */
+    public function testSchemaTables($table)
+    {
+        if($table == 'yentu_history') return;        
+        $schema = array_search($table, array('cities', 'locations', 'countries', 'regions')) === false ? 'schema' : 'geo';
+        $this->assertTableExists(array('table'=>$table, 'schema' => $schema));
+    }    
+    
     public function tablesProvider()
     {
         return array(

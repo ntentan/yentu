@@ -25,14 +25,14 @@
 
 namespace yentu\tests\constraints;
 
-class TableExists extends \yentu\tests\YentuConstraint
+class TableDoesntExist extends \yentu\tests\YentuConstraint
 {   
-    public function matches($table)
+    public function matches($other)
     {
-        if(is_string($table))
+        if(is_string($other))
         {
             $table = array(
-                'table' => $table,
+                'table' => $other,
                 'schema' => 'public'
             );
         }
@@ -44,11 +44,11 @@ class TableExists extends \yentu\tests\YentuConstraint
                 $table['schema']
             )
         );
-        return $response->rowCount() === 1;
+        return $response->rowCount() === 0;
     }
     
     public function toString()
     {
-        return 'is an existing database table';
+        return 'table doesn\'t exist';
     }
 }

@@ -36,7 +36,7 @@ class RollbackTest extends \yentu\tests\YentuTest
         
         vfsStream::setup('home');        
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
-        \yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));        
+        //\yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));        
         
         $init = new \yentu\commands\Init();
         $init->createConfigFile(
@@ -49,6 +49,14 @@ class RollbackTest extends \yentu\tests\YentuTest
             )
         );
     }
+    /**
+     * @dataProvider tablesProvider
+     */    
+    public function testTablesExistence($table)
+    {
+        $this->assertTableExists($table);
+        $this->clearHistory = false;        
+    }
     
     public function testRollback()
     {
@@ -58,21 +66,11 @@ class RollbackTest extends \yentu\tests\YentuTest
     
     /**
      * @dataProvider tablesProvider
-     * @depends testMigration
+     * @depends testRollback
      */
-    /*public function testTables($table)
+    public function testTables($table)
     {
-        $this->assertTableExists($table);
-        $this->clearHistory = false;
-    }
-
-    public function testChangeNulls()
-    {
-        copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901234_change_null.php'));
-        $migrate = new yentu\commands\Migrate();
-        $this->assertColumnNullable('role_name', 'roles');
-        $migrate->run(array());
-        $this->assertColumnNotNullable('role_name', 'roles');
+        $this->assertTableDoesntExist($table);
         $this->clearHistory = false;
     }
     
@@ -106,9 +104,8 @@ class RollbackTest extends \yentu\tests\YentuTest
             array('roles'),
             array('suppliers'),
             array('temporary_roles'),
-            array('users'),
-            array('yentu_history'),
+            array('users')
         );
-    }*/
+    }
 }
 
