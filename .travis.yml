@@ -4,12 +4,6 @@ php:
  - "5.3"
 before_script: 
  - composer install
- - psql -c 'create database yentu_tests;' -U postgres
- - psql -c 'create database yentu_test_import;' -U postgres
- - psql -f tests/sql/system.sql -U postgres yentu_test_import
- - psql -c 'create database yentu_test_migrate;' -U postgres
- - psql -c 'create database yentu_test_rollback;' -U postgres
- - psql -f tests/sql/pre_rollback.sql -U postgres yentu_test_rollback
  
 services:
  - postgresql
