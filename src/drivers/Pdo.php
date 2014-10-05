@@ -28,6 +28,11 @@ abstract class Pdo extends \yentu\DatabaseDriver
         );
     }
     
+    public function disconnect()
+    {
+        $this->pdo = null;
+    }
+    
     protected function quote($string)
     {
         return $this->pdo->quote($string);

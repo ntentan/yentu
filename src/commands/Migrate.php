@@ -50,6 +50,8 @@ class Migrate implements \yentu\Command
             DatabaseItem::purge();
             Yentu::out("\n");
         }
+        
+        $this->driver->disconnect();
     }
     
     private function filter($migrations, $type = self::FILTER_UNRUN, $version = null)

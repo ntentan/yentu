@@ -30,13 +30,15 @@ use org\bovigo\vfs\vfsStream;
 
 class ImportTest extends \yentu\tests\YentuTest
 {
-    public function setup()
+    public function setUp()
     {
-        $this->initialize('IMPORT');
+        $this->createDb($GLOBALS['IMPORT_DB_NAME'], file_get_contents("tests/sql/system.sql"));
+        $this->initYentu($GLOBALS['IMPORT_DB_NAME']);
     }
     
     public function testImport()
     {
+        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents('tests/sql/system.sql'));
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         
@@ -246,17 +248,13 @@ HEAD;
     
     public function testDatabaseNotExisting()
     {
+        $this->connect($GLOBALS['IMPORT_DB_DSN']);        
         $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
         $this->pdo->query('DROP SEQUENCE IF EXISTS yentu_history_id_seq');
         $import = new yentu\commands\Import();
         $import->run(array());  
         $this->assertTableExists('yentu_history');
-    }    
-    
-    public function tearDown()
-    {
-        $this->deinitialize();
-    }
+    }   
 }
 
 class NegativeMockAssertor{

@@ -308,7 +308,7 @@ $this->table('users')
     ->autoIncrement()
         
 ->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)");
-
+$this->view('countries_view')->definition("SELECT * FROM countries JOIN regions USING (country_id)");
 
 $this->table('users')
     ->foreignKey('branch_id')

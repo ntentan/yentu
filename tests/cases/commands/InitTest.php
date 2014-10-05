@@ -32,23 +32,18 @@ use clearice\ClearIce;
 
 class InitTest extends \yentu\tests\YentuTest
 {
-    public function setup()
+    public function setUp()
     {
-        $this->pdo = new PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);
+        $this->createDb($GLOBALS['DB_NAME']);
+        $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->pdo->query("DROP TABLE IF EXISTS yentu_history");
         $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq");
-        vfsStream::setup('home');
-    }
-    
-    public function tearDown()
-    {
-        $this->deinitialize();
-    }    
+        $this->setupStreams();
+    }  
     
     public function testParameters()
     {
         $initCommand = new \yentu\commands\Init();
-        yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         
         ob_start();
         $initCommand->run(

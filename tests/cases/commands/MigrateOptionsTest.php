@@ -24,9 +24,26 @@
  * THE SOFTWARE.
  */
 
-// Bootstrap for running the test on a local machine.
+require "vendor/autoload.php";
 
-chdir(__DIR__ . "/../");
-//exec("dropdb yentu_test_rollback");
-//exec("createdb yentu_test_rollback");
-//exec("psql -f tests/sql/pre_rollback.sql yentu_test_rollback");
+use org\bovigo\vfs\vfsStream;
+
+class MigrateOptionsTest extends \yentu\tests\YentuTest
+{
+    public function setUp()
+    {
+        $this->setupForMigration();
+    }
+    
+    public function testMigration()
+    {
+        copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
+        $migrate = new yentu\commands\Migrate();
+        $migrate->run(array('ignore-foreign-keys' => true));
+        $this->assertEquals(
+            file_get_contents("tests/streams/migrate_options_output.txt"), 
+            file_get_contents(vfsStream::url('home/output.txt'))
+        );
+    }
+}
+

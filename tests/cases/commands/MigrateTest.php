@@ -30,9 +30,10 @@ use org\bovigo\vfs\vfsStream;
 
 class MigrateTest extends \yentu\tests\YentuTest
 {
+
     public function setup()
     {
-        $this->initialize('MIGRATE');
+        $this->setupForMigration();
     }
     
     public function testMigration()
@@ -40,29 +41,24 @@ class MigrateTest extends \yentu\tests\YentuTest
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
         $migrate = new yentu\commands\Migrate();
         $migrate->run(array());
+        
         $this->assertEquals(
             file_get_contents("tests/streams/migrate_output.txt"), 
             file_get_contents(vfsStream::url('home/output.txt'))
         );
-    }
-    
-    /**
-     * @dataProvider tablesProvider
-     * @depends testMigration
-     */
-    public function testTables($table)
-    {
-        $this->assertTableExists($table);
-    }
-
-    public function testChangeNulls()
-    {
-        copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901234_change_null.php'));
+        
+        foreach($this->tables as $table)
+        {
+            $this->assertTableExists($table);        
+        }
+        
+        copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
         $migrate = new yentu\commands\Migrate();
         $this->assertColumnNullable('role_name', 'roles');
         $migrate->run(array());
-        $this->assertColumnNotNullable('role_name', 'roles');
+        $this->assertColumnNotNullable('role_name', 'roles');        
     }
+    
     
     public function testSchemaMigration()
     {
@@ -70,52 +66,47 @@ class MigrateTest extends \yentu\tests\YentuTest
         $migrate = new yentu\commands\Migrate();
         $migrate->run(array());
         $this->assertSchemaExists('schema');
-    } 
-    
-    /**
-     * @dataProvider tablesProvider
-     * @depends testSchemaMigration
-     */
-    public function testSchemaTables($table)
-    {
-        if($table == 'yentu_history') return;        
-        $schema = array_search($table, array('cities', 'locations', 'countries', 'regions')) === false ? 'schema' : 'geo';
-        $this->assertTableExists(array('table'=>$table, 'schema' => $schema));
+
+        foreach($this->tables as $table)
+        {
+            if($table == 'yentu_history') return;        
+            $schema = array_search($table, array('cities', 'locations', 'countries', 'regions', 'countries_view')) === false ? 'schema' : 'geo';
+            $this->assertTableExists(array('table'=>$table, 'schema' => $schema));
+        }
     }    
     
-    public function tablesProvider()
-    {
-        return array(
-            array('api_keys'),
-            array('audit_trail'),
-            array('audit_trail_data'),
-            array('bank_branches'),
-            array('banks'),
-            array('binary_objects'),
-            array('branches'),
-            array('cheque_formats'),
-            array('cities'),
-            array('client_joint_accounts'),
-            array('clients'),
-            array('client_users'),
-            array('configurations'),
-            array('countries'),
-            array('departments'),
-            array('holidays'),
-            array('identification_types'),
-            array('locations'),
-            array('note_attachments'),
-            array('notes'),
-            array('notifications'),
-            array('permissions'),
-            array('regions'),
-            array('relationships'),
-            array('roles'),
-            array('suppliers'),
-            array('temporary_roles'),
-            array('users'),
-            array('yentu_history'),
-        );
-    }
+    private $tables = array(
+        'api_keys',
+        'audit_trail',
+        'audit_trail_data',
+        'bank_branches',
+        'banks',
+        'binary_objects',
+        'branches',
+        'cheque_formats',
+        'cities',
+        'client_joint_accounts',
+        'clients',
+        'client_users',
+        'configurations',
+        'countries',
+        'departments',
+        'holidays',
+        'identification_types',
+        'locations',
+        'note_attachments',
+        'notes',
+        'notifications',
+        'permissions',
+        'regions',
+        'relationships',
+        'roles',
+        'suppliers',
+        'temporary_roles',
+        'users',
+        'yentu_history',
+        'users_view',
+        'countries_view'
+    );
 }
 

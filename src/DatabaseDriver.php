@@ -34,6 +34,7 @@ abstract class DatabaseDriver
         
     abstract protected function describe();
     abstract protected function connect($params);
+    abstract public function disconnect();
     
     abstract protected function _addSchema($name);
     abstract protected function _dropSchema($name);
@@ -182,5 +183,5 @@ abstract class DatabaseDriver
             )
         );
         Yentu::setOutputLevel($level);
-    }    
+    }
 }

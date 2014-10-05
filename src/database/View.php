@@ -14,6 +14,8 @@ class View extends \yentu\database\DatabaseItem
         $this->definition = $this->getDriver()->doesViewExist($this->buildDescription());
         if($this->definition === false)
         {
+            $this->definition = "SELECT null";
+            $this->getDriver()->addView($this->buildDescription());
             $this->new = true;
         }
     }
@@ -25,15 +27,12 @@ class View extends \yentu\database\DatabaseItem
     
     public function commitNew() 
     {
-        $this->getDriver()->addView($this->buildDescription());
+        
     }
     
     public function definition($definition)
     {
-        if(!$this->isNew())
-        {
-            $this->addChange('definition', $definition);
-        }
+        $this->addChange('definition', $definition);
         $this->definition = $definition;
         return $this;
     }

@@ -117,13 +117,6 @@ CREATE SEQUENCE users_user_id_seq
 
 ALTER SEQUENCE users_user_id_seq OWNED BY users.user_id;
 
-CREATE SEQUENCE yentu_history_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
 ALTER TABLE ONLY api_keys ALTER COLUMN api_key_id SET DEFAULT nextval('api_keys_api_key_id_seq'::regclass);
 
 ALTER TABLE ONLY audit_trail ALTER COLUMN audit_trail_id SET DEFAULT nextval('audit_trail_audit_trail_id_seq'::regclass);

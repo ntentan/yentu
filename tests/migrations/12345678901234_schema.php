@@ -273,6 +273,8 @@ $this->schema('schema')->table('users')
     ->primaryKey('audit_trail_id')->name('audit_trail_audit_id_pk')
     ->autoIncrement()
     ->index('item_id')->name('audit_trail_item_id_idx');
+        
+$this->schema('schema')->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)");
 
         
 $this->schema('geo')->table('regions')
@@ -308,7 +310,9 @@ $this->schema('geo')->table('regions')
     ->column('name')->type('string')->nulls(true)
     ->column('location_id')->type('integer')->nulls(false)
     ->primaryKey('location_id')->name('location_id_pk')
-    ->autoIncrement();
+    ->autoIncrement()
+        
+->view('countries_view')->definition("SELECT * FROM countries JOIN regions USING (country_id)");
 
 
 $this->schema('schema')->table('users')

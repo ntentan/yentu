@@ -87,32 +87,63 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $constraint->setTable($table);
         $constraint->setNullability('NO');
         $this->assertThat($column, $constraint, $message);
-    }    
+    }  
     
-    protected function initialize($dsn = '')
+    protected function createDb($name)
     {
-        $this->pdo = new \PDO($GLOBALS["{$dsn}_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
-        
-        $this->pdo->query("DROP TABLE IF EXISTS yentu_history CASCADE"); 
-        $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq"); 
-
-        $init = new \yentu\commands\Init();
+        $pdo = new \PDO($GLOBALS["DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     
+        try{
+            $pdo->exec("DROP DATABASE $name");
+        }
+        catch(\PDOException $e)
+        {
+            
+        }
+        $pdo->exec("CREATE DATABASE $name"); 
+        $pdo = null;        
+    }
+    
+    protected function initDb($dsn, $queries)
+    {
+        $pdo = new \PDO($dsn, $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     
+        $pdo->exec($queries);
+        $pdo = null;         
+    }
+    
+    protected function setupStreams()
+    {
         vfsStream::setup('home');
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
         \yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));
+    }
+    
+    protected function initYentu($name)
+    {
+        $init = new \yentu\commands\Init();
+        $this->setupStreams();
         $init->run(
             array(
                 'driver' => 'postgresql',
                 'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS["{$dsn}_DB_NAME"],
+                'dbname' => $name,
                 'user' => $GLOBALS['DB_USER'],
                 'password' => $GLOBALS['DB_PASSWORD']
             )
-        );
+        );            
     }
     
-    protected function deinitialize()
+    protected function connect($dsn)
     {
-        //$this->pdo->
+        $this->pdo = new \PDO($dsn, $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);        
+    }
+    
+    protected function setupForMigration()
+    {
+        $this->createDb($GLOBALS['MIGRATE_DB_NAME']);
+        $this->connect($GLOBALS["MIGRATE_DB_DSN"]);
+        $this->initYentu($GLOBALS['MIGRATE_DB_NAME']);
     }
 }

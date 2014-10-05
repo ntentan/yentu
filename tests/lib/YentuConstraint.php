@@ -28,6 +28,10 @@ namespace yentu\tests;
 
 abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
 {
+    /**
+     *
+     * @var \PDO
+     */
     protected $pdo;
     protected $table;
     

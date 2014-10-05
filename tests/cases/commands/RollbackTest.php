@@ -32,12 +32,10 @@ class RollbackTest extends \yentu\tests\YentuTest
 {
     public function setup()
     {
-        $this->pdo = new \PDO($GLOBALS["ROLLBACK_DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']); 
-        
-        vfsStream::setup('home');        
-        \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
-        //\yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));        
-        
+        $this->createDb($GLOBALS['ROLLBACK_DB_NAME']);
+        $this->initDb($GLOBALS['ROLLBACK_DB_DSN'], file_get_contents("tests/sql/pre_rollback.sql"));
+        $this->connect($GLOBALS['ROLLBACK_DB_DSN']);
+        $this->setupStreams();
         $init = new \yentu\commands\Init();
         $init->createConfigFile(
             array(
@@ -49,63 +47,55 @@ class RollbackTest extends \yentu\tests\YentuTest
             )
         );
     }
-    /**
-     * @dataProvider tablesProvider
-     */    
-    public function testTablesExistence($table)
-    {
-        $this->assertTableExists($table);
-        $this->clearHistory = false;        
-    }
+
     
     public function testRollback()
     {
+        foreach($this->tables as $table)
+        {
+            $this->assertTableExists($table);     
+        }
+        
         $rollback = new yentu\commands\Rollback();
         $rollback->run(array());
+        
+        foreach($this->tables as $table)
+        {
+            if($table == 'yentu_history') continue;
+            $this->assertTableDoesntExist($table);            
+        }
     }
     
-    /**
-     * @dataProvider tablesProvider
-     * @depends testRollback
-     */
-    public function testTables($table)
-    {
-        $this->assertTableDoesntExist($table);
-        $this->clearHistory = false;
-    }
-    
-    public function tablesProvider()
-    {
-        return array(
-            array('api_keys'),
-            array('audit_trail'),
-            array('audit_trail_data'),
-            array('bank_branches'),
-            array('banks'),
-            array('binary_objects'),
-            array('branches'),
-            array('cheque_formats'),
-            array('cities'),
-            array('client_joint_accounts'),
-            array('clients'),
-            array('client_users'),
-            array('configurations'),
-            array('countries'),
-            array('departments'),
-            array('holidays'),
-            array('identification_types'),
-            array('locations'),
-            array('note_attachments'),
-            array('notes'),
-            array('notifications'),
-            array('permissions'),
-            array('regions'),
-            array('relationships'),
-            array('roles'),
-            array('suppliers'),
-            array('temporary_roles'),
-            array('users')
-        );
-    }
+    private $tables = array(
+        'api_keys',
+        'audit_trail',
+        'audit_trail_data',
+        'bank_branches',
+        'banks',
+        'binary_objects',
+        'branches',
+        'cheque_formats',
+        'cities',
+        'client_joint_accounts',
+        'clients',
+        'client_users',
+        'configurations',
+        'countries',
+        'departments',
+        'holidays',
+        'identification_types',
+        'locations',
+        'note_attachments',
+        'notes',
+        'notifications',
+        'permissions',
+        'regions',
+        'relationships',
+        'roles',
+        'suppliers',
+        'temporary_roles',
+        'users',
+        'yentu_history'
+    );
 }
 
