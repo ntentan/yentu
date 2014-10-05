@@ -44,7 +44,7 @@ class TableExists extends \yentu\tests\YentuConstraint
                 $table['schema']
             )
         );
-        return $response->rowCount() === 1;
+        return $this->processResult($response->rowCount() === 1);
     }
     
     public function toString()

@@ -1,4 +1,5 @@
 <?php
+
 /* 
  * The MIT License
  *
@@ -25,30 +26,28 @@
 
 namespace yentu\tests\constraints;
 
-class TableDoesntExist extends \yentu\tests\YentuConstraint
+class ForeignKeyExists extends \yentu\tests\YentuConstraint
 {   
-    public function matches($other)
+    public function matches($table)
     {
-        if(is_string($other))
+        if(!isset($table['schema']))
         {
-            $table = array(
-                'table' => $other,
-                'schema' => 'public'
-            );
+            $table['schema'] = 'public';
         }
         
         $response = $this->pdo->query(
             sprintf(
-                "SELECT * FROM information_schema.tables  where table_name = '%s' and table_schema = '%s'",
+                "SELECT * FROM information_schema.table_constraints  where table_name = '%s' and table_schema = '%s' and constraint_name = '%s' and constraint_type='FOREIGN KEY'",
                 $table['table'], 
-                $table['schema']
+                $table['schema'],
+                $table['name']
             )
         );
-        return $response->rowCount() === 0;
+        return $this->processResult($response->rowCount() === 1);
     }
     
     public function toString()
     {
-        return 'table doesn\'t exist';
+        return 'is an existing database table';
     }
 }

@@ -34,6 +34,17 @@ abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
      */
     protected $pdo;
     protected $table;
+    private $negate;
+    
+    public function negate()
+    {
+        $this->negate = true;
+    }
+    
+    protected function processResult($result)
+    {
+        if($this->negate === true) return !$result; else return $result;
+    }
     
     public function setPDO($pdo)
     {

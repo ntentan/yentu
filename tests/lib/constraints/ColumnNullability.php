@@ -45,7 +45,7 @@ class ColumnNullability extends \yentu\tests\YentuConstraint
                 $other
             )
         );
-        return $response->rowCount() === 1;
+        return $this->processResult($response->rowCount() === 1);
     }
     
     public function toString()

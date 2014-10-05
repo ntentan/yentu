@@ -313,14 +313,12 @@ $this->view('countries_view')->definition("SELECT * FROM countries JOIN regions 
 $this->table('users')
     ->foreignKey('branch_id')
     ->references($this->reftable('branches'))
-    ->columns('branch_id')
-    ->name('users_branch_id_fk');
+    ->columns('branch_id');
 
 $this->table('users')
     ->foreignKey('department_id')
     ->references($this->reftable('departments'))
-    ->columns('department_id')
-    ->name('users_dept_id_fk');
+    ->columns('department_id');
 
 $this->table('users')
     ->foreignKey('role_id')

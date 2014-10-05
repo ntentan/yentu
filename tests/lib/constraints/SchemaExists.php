@@ -35,7 +35,7 @@ class SchemaExists extends \yentu\tests\YentuConstraint
                 $schema
             )
         );
-        return $response->rowCount() === 1;
+        return $this->processResult($response->rowCount() === 1);
     }
     
     public function toString()

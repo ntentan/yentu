@@ -41,9 +41,54 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
         $migrate = new yentu\commands\Migrate();
         $migrate->run(array('ignore-foreign-keys' => true));
         $this->assertEquals(
-            file_get_contents("tests/streams/migrate_options_output.txt"), 
+            file_get_contents("tests/streams/migrate_options_output_1.txt"), 
             file_get_contents(vfsStream::url('home/output.txt'))
         );
+        
+        foreach($this->fkeys as $fkey)
+        {
+            $this->assertForignKeyDoesntExist($fkey);
+        }
+ 
+        file_put_contents(vfsStream::url("home/output.txt"), '');
+        
+        $migrate->run(array('foreign-keys-only' => true));
+        $this->assertEquals(
+            file_get_contents("tests/streams/migrate_options_output_2.txt"), 
+            file_get_contents(vfsStream::url('home/output.txt'))
+        );  
+        
+        foreach($this->fkeys as $fkey)
+        {
+            $this->assertForignKeyExists($fkey);
+        }        
     }
+    
+    private $fkeys = array(
+        array("table" => "users", "name" => "users_branch_id_branches_branch_id_fk"),
+        array("table" => "users", "name" => "users_department_id_departments_department_id_fk"),
+        array("table" => "users", "name" => "users_role_id_fk"),
+        array("table" => "temporary_roles", "name" => "temporary_rol_new_role_id_fk"),
+        array("table" => "temporary_roles", "name" => "temporary_rol_orig_role_id_fk"),
+        array("table" => "temporary_roles", "name" => "temporary_roles_user_id_fk"),
+        array("table" => "suppliers", "name" => "suppliers_user_id_fk"),
+        array("table" => "permissions", "name" => "permissios_role_id_fk"),
+        array("table" => "notes", "name" => "notes_user_id_fk"),
+        array("table" => "regions", "name" => "regions_country_id_fk"),
+        array("table" => "note_attachments", "name" => "note_attachments_note_id_fkey"),
+        array("table" => "clients", "name" => "clients_branch_id_fkey"),
+        array("table" => "clients", "name" => "clients_city_id_fk"),
+        array("table" => "clients", "name" => "clients_country_id_fk"),
+        array("table" => "clients", "name" => "clients_id_type_id_fk"),
+        array("table" => "clients", "name" => "clients_nationality_id_fk"),
+        array("table" => "client_users", "name" => "client_users_main_client_id_fk"),
+        array("table" => "client_joint_accounts", "name" => "client_joint_id_type_id_fk"),
+        array("table" => "client_joint_accounts", "name" => "client_joint_main_client_id_fk"),
+        array("table" => "cities", "name" => "cities_region_id_fk"),
+        array("table" => "bank_branches", "name" => "branch_bank_id_fk"),
+        array("table" => "api_keys", "name" => "api_keys_user_id_fkey")
+    );
 }
+
+
 

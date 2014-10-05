@@ -59,7 +59,8 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     
     public function assertTableDoesntExist($table, $message = '')
     {
-        $constraint = new constraints\TableDoesntExist();
+        $constraint = new constraints\TableExists();
+        $constraint->negate();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }    
@@ -88,6 +89,21 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $constraint->setNullability('NO');
         $this->assertThat($column, $constraint, $message);
     }  
+    
+    public function assertForignKeyExists($table, $message = '')
+    {
+        $constraint = new constraints\ForeignKeyExists();
+        $constraint->setPDO($this->pdo);
+        $this->assertThat($table, $constraint, $message);
+    }    
+    
+    public function assertForignKeyDoesntExist($table, $message = '')
+    {
+        $constraint = new constraints\ForeignKeyExists();
+        $constraint->negate();
+        $constraint->setPDO($this->pdo);
+        $this->assertThat($table, $constraint, $message);
+    }      
     
     protected function createDb($name)
     {
