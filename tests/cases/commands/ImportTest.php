@@ -64,7 +64,7 @@ class ImportTest extends \yentu\tests\YentuTest
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = new yentu\commands\Import();
         $import->setCodeWriter($codeWriter);
-        $description = $import->run(array());
+        $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
             vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
@@ -72,6 +72,24 @@ class ImportTest extends \yentu\tests\YentuTest
         $this->assertSchemaExists('common');
         $this->assertSchemaExists('hr');
     }
+    
+    public function testViewImport()
+    {
+        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents('tests/sql/import_views.sql'));
+        $this->connect($GLOBALS['IMPORT_DB_DSN']);
+        
+        $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
+        $import = new yentu\commands\Import();
+        $import->setCodeWriter($codeWriter);
+        $import->run(array());
+        $newVersion = $import->getNewVersion();
+        $this->assertFileExists(
+            vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
+        );   
+        $this->assertTableExists('employees_view');
+        $this->assertTableExists('disabled_employees_view');
+    }    
         
     /**
      * @expectedException \yentu\commands\CommandError
