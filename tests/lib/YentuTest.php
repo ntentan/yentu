@@ -37,6 +37,29 @@ class YentuTest extends \PHPUnit_Framework_TestCase
      * @var \PDO
      */
     protected $pdo;
+    protected $testDatabase;
+    protected $testDefaultSchema;
+    
+    public function setup()
+    {
+        $drivers = array(
+            'postgresql' => 'pgsql',
+            'mysql' => 'mysql'
+        );
+        
+        $class = new \ReflectionClass($this);
+        preg_match("/[A-Z][a-z]+/", $class->getName(), $matches);
+        $GLOBALS['DRIVER'] = strtolower($matches[0]);
+        $prefix = strtoupper($matches[0]);
+        $GLOBALS['DB_DSN'] = "{$drivers[$GLOBALS['DRIVER']]}:host={$GLOBALS["{$prefix}_HOST"]}";
+        $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}"; 
+        $GLOBALS['DB_NAME'] = $this->testDatabase;
+        $GLOBALS['DB_USER'] = $GLOBALS["{$prefix}_USER"];
+        $GLOBALS['DB_PASSWORD'] = $GLOBALS["{$prefix}_PASSWORD"];
+        $GLOBALS['DB_HOST'] = $GLOBALS["{$prefix}_HOST"];
+        $GLOBALS['DEFAULT_SCHEMA'] = $this->testDefaultSchema == '' ? 
+            $this->testDatabase : $this->testDefaultSchema;
+    }
     
     public function tearDown()
     {
@@ -152,9 +175,8 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     
     protected function setupForMigration()
     {
-        $this->createDb($GLOBALS['MIGRATE_DB_NAME']);
-        $this->connect($GLOBALS["MIGRATE_DB_DSN"]);
-        $this->initYentu($GLOBALS['MIGRATE_DB_NAME']);
-        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['MIGRATE_DEFAULT_SCHEMA'];
+        $this->createDb($GLOBALS['DB_NAME']);
+        $this->connect($GLOBALS["DB_FULL_DSN"]);
+        $this->initYentu($GLOBALS['DB_NAME']);
     }
 }

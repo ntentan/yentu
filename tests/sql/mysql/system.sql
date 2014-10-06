@@ -75,4 +75,3 @@ ALTER TABLE permissions
 
 ALTER TABLE users
     ADD CONSTRAINT users_role_id_fk FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE SET NULL;
-

@@ -24,46 +24,58 @@
  * THE SOFTWARE.
  */
 
-require "vendor/autoload.php";
+namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
 
-class RollbackTest extends \yentu\tests\YentuTest
+class MigrateTest extends \yentu\tests\YentuTest
 {
+
     public function setup()
     {
-        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['ROLLBACK_DEFAULT_SCHEMA'];
-        $this->createDb($GLOBALS['ROLLBACK_DB_NAME']);
-        $this->initDb($GLOBALS['ROLLBACK_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
-        $this->connect($GLOBALS['ROLLBACK_DB_DSN']);
-        $this->setupStreams();
-        $init = new \yentu\commands\Init();
-        $init->createConfigFile(
-            array(
-                'driver' => $GLOBALS['DRIVER'],
-                'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS["ROLLBACK_DB_NAME"],
-                'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
-            )
-        );
+        $this->testDatabase = 'yentu_migration_test';
+        parent::setup();        
+        $this->setupForMigration();
     }
-
     
-    public function testRollback()
+    public function testMigration()
     {
+        copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
+        $migrate = new \yentu\commands\Migrate();
+        $migrate->run(array());
+        
+        $this->assertEquals(
+            file_get_contents("tests/streams/migrate_output.txt"), 
+            file_get_contents(vfsStream::url('home/output.txt'))
+        );
+        
         foreach($this->tables as $table)
         {
-            $this->assertTableExists($table);     
+            $this->assertTableExists($table);        
         }
         
-        $rollback = new yentu\commands\Rollback();
-        $rollback->run(array());
-        
+        copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
+        $migrate = new \yentu\commands\Migrate();
+        $this->assertColumnNullable('role_name', 'roles');
+        $this->assertColumnExists('user_name', 'users');
+        $migrate->run(array());
+        $this->assertColumnNotNullable('role_name', 'roles');        
+        $this->assertColumnExists('username', 'users');
+    }
+    
+    
+    public function testSchemaMigration()
+    {        
+        copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));        
+        $migrate = new \yentu\commands\Migrate();
+        $migrate->run(array());
+        $this->assertSchemaExists('schema');
+
         foreach($this->tables as $table)
         {
-            if($table == 'yentu_history') continue;
-            $this->assertTableDoesntExist($table);            
+            if($table == 'yentu_history') return;        
+            $schema = array_search($table, array('cities', 'locations', 'countries', 'regions', 'countries_view')) === false ? 'schema' : 'geo';
+            $this->assertTableExists(array('table'=>$table, 'schema' => $schema));
         }
     }
     
@@ -96,7 +108,9 @@ class RollbackTest extends \yentu\tests\YentuTest
         'suppliers',
         'temporary_roles',
         'users',
-        'yentu_history'
+        'yentu_history',
+        'users_view',
+        'countries_view'
     );
 }
 

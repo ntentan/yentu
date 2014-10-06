@@ -23,9 +23,7 @@
  * THE SOFTWARE.
  */
 
-error_reporting(E_ALL ^ E_NOTICE);
-
-require "vendor/autoload.php";
+namespace yentu\tests\cases;
 
 use \org\bovigo\vfs\vfsStream;
 use clearice\ClearIce;
@@ -34,9 +32,10 @@ class InitTest extends \yentu\tests\YentuTest
 {
     public function setUp()
     {
+        $this->testDatabase = 'yentu_tests';        
+        parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
         $this->connect($GLOBALS['DB_FULL_DSN']);
-        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['DB_DEFAULT_SCHEMA'];
         $this->setupStreams();
     }  
     
@@ -104,7 +103,7 @@ class InitTest extends \yentu\tests\YentuTest
         );
         
         $initCommand = new \yentu\commands\Init;
-        yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
+        \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
         $initCommand->run(array(
             'interractive' => true
@@ -119,7 +118,7 @@ class InitTest extends \yentu\tests\YentuTest
     {
         vfsStream::setup('home', 0444);
         $initCommand = new \yentu\commands\Init();
-        yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
+        \yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
             array(
                 'driver' => 'postgresql',
@@ -138,7 +137,7 @@ class InitTest extends \yentu\tests\YentuTest
     {
         mkdir(vfsStream::url('home/yentu'));
         $initCommand = new \yentu\commands\Init();
-        yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
+        \yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
             array(
                 'driver' => 'postgresql',
@@ -156,7 +155,7 @@ class InitTest extends \yentu\tests\YentuTest
     public function testNoParams()
     {
         $initCommand = new \yentu\commands\Init();
-        yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
+        \yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(array());         
     }
     
@@ -167,7 +166,7 @@ class InitTest extends \yentu\tests\YentuTest
     {
         $this->pdo->query('CREATE TABLE yentu_history(dummy INT)');
         $initCommand = new \yentu\commands\Init();
-        yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
+        \yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
             array(
                 'driver' => $GLOBALS['DRIVER'],

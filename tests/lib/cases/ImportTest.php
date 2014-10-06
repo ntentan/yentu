@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-require "vendor/autoload.php";
+namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
 
@@ -32,18 +32,19 @@ class ImportTest extends \yentu\tests\YentuTest
 {
     public function setUp()
     {
-        $this->createDb($GLOBALS['IMPORT_DB_NAME']);
-        $this->initYentu($GLOBALS['IMPORT_DB_NAME']);
-        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['IMPORT_DEFAULT_SCHEMA'];
+        $this->testDatabase = 'yentu_import_test';
+        parent::setup();
+        $this->createDb($GLOBALS['DB_NAME']);
+        $this->initYentu($GLOBALS['DB_NAME']);
     }
     
     public function testImport()
     {
-        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/system.sql"));
+        $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/system.sql"));
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         
-        $import = new yentu\commands\Import();
+        $import = new \yentu\commands\Import();
         $import->setCodeWriter($codeWriter);
         $description = $import->run(array());
         $newVersion = $import->getNewVersion();
@@ -58,16 +59,16 @@ class ImportTest extends \yentu\tests\YentuTest
     
     public function testSchemaImport()
     {
-        $this->connect($GLOBALS['IMPORT_DB_DSN']);
+        $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->pdo->query('DROP SCHEMA IF EXISTS hr');
         $this->pdo->query('DROP SCHEMA IF EXISTS common');
         
-        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_schema.sql"));
-        $this->connect($GLOBALS['IMPORT_DB_DSN']);
+        $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_schema.sql"));
+        $this->connect($GLOBALS['DB_FULL_DSN']);
         
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        $import = new yentu\commands\Import();
+        $import = new \yentu\commands\Import();
         $import->setCodeWriter($codeWriter);
         $import->run(array());
         $newVersion = $import->getNewVersion();
@@ -80,12 +81,12 @@ class ImportTest extends \yentu\tests\YentuTest
     
     public function testViewImport()
     {
-        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_views.sql"));
-        $this->connect($GLOBALS['IMPORT_DB_DSN']);
+        $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_views.sql"));
+        $this->connect($GLOBALS['DB_FULL_DSN']);
         
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        $import = new yentu\commands\Import();
+        $import = new \yentu\commands\Import();
         $import->setCodeWriter($codeWriter);
         $import->run(array());
         $newVersion = $import->getNewVersion();
@@ -103,13 +104,13 @@ class ImportTest extends \yentu\tests\YentuTest
     public function testImportNonEmptyMigrations()
     {
         file_put_contents(vfsStream::url('home/yentu/migrations/1234568901234_existing.php'), 'nothing');
-        $import = new yentu\commands\Import();
+        $import = new \yentu\commands\Import();
         $import->run(array());        
     }
     
     public function testDatabaseNotExisting()
     {
-        $this->connect($GLOBALS['IMPORT_DB_DSN']);   
+        $this->connect($GLOBALS['DB_FULL_DSN']);   
         try{
             $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
             $this->pdo->query('DROP SEQUENCE IF EXISTS yentu_history_id_seq');
@@ -118,7 +119,7 @@ class ImportTest extends \yentu\tests\YentuTest
         {
             
         }
-        $import = new yentu\commands\Import();
+        $import = new \yentu\commands\Import();
         $import->run(array());  
         $this->assertTableExists('yentu_history');
     } 

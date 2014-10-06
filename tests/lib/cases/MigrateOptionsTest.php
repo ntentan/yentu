@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-require "vendor/autoload.php";
+namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
 
@@ -32,13 +32,15 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
 {
     public function setUp()
     {
+        $this->testDatabase = 'yentu_migration_test';
+        parent::setup();
         $this->setupForMigration();
     }
     
     public function testMigration()
     {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = new yentu\commands\Migrate();
+        $migrate = new \yentu\commands\Migrate();
         $migrate->run(array('ignore-foreign-keys' => true));
         $this->assertEquals(
             file_get_contents("tests/streams/migrate_options_output_1.txt"), 
