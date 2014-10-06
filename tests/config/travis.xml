@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit>
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../bootstrap.php">
     <php>
-        <var name="DB_DSN" value="pgsql:host=localhost;user=postgres" />
-        <var name="DB_FULL_DSN" value="pgsql:dbname=yentu_tests;host=localhost;user=postgres" />
+        <var name="DRIVER" value="postgresql" />        
+        <var name="DB_DSN" value="pgsql:host=localhost" />
+        <var name="DB_FULL_DSN" value="pgsql:dbname=yentu_tests;host=localhost" />
         <var name="DB_USER" value="postgres" />
         <var name="DB_PASSWORD" value="" />
         <var name="DB_NAME" value="yentu_tests" />
         <var name="DB_HOST" value="localhost" />
+        <var name="DB_DEFAULT_SCHEMA" value="public" />
         
-        <var name="IMPORT_DB_DSN" value="pgsql:dbname=yentu_test_import;host=localhost;user=postgres" />
-        <var name="IMPORT_DB_NAME" value="yentu_test_import" />   
+        <var name="IMPORT_DB_DSN" value="pgsql:dbname=yentu_test_import;host=localhost" />
+        <var name="IMPORT_DB_NAME" value="yentu_test_import" />
+        <var name="IMPORT_DEFAULT_SCHEMA" value="public" />
         
-        <var name="MIGRATE_DB_DSN" value="pgsql:dbname=yentu_test_migrate;host=localhost;user=postgres" />
-        <var name="MIGRATE_DB_NAME" value="yentu_test_migrate" />
+        <var name="MIGRATE_DB_DSN" value="pgsql:dbname=yentu_test_migrate;host=localhost" />
+        <var name="MIGRATE_DB_NAME" value="yentu_test_migrate" />   
+        <var name="MIGRATE_DEFAULT_SCHEMA" value="public" />
         
-        <var name="ROLLBACK_DB_DSN" value="pgsql:dbname=yentu_test_rollback;host=localhost;user=postgres" />
-        <var name="ROLLBACK_DB_NAME" value="yentu_test_rollback" />                             
+        <var name="ROLLBACK_DB_DSN" value="pgsql:dbname=yentu_test_rollback;host=localhost" />
+        <var name="ROLLBACK_DB_NAME" value="yentu_test_rollback" />  
+        <var name="ROLLBACK_DEFAULT_SCHEMA" value="public" />              
     </php>
+    <testsuites>
+        <testsuite name="Main Test Suite">
+            <directory>../cases</directory>    
+        </testsuite>
+    </testsuites>
 </phpunit>
