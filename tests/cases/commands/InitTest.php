@@ -36,8 +36,7 @@ class InitTest extends \yentu\tests\YentuTest
     {
         $this->createDb($GLOBALS['DB_NAME']);
         $this->connect($GLOBALS['DB_FULL_DSN']);
-        $this->pdo->query("DROP TABLE IF EXISTS yentu_history");
-        $this->pdo->query("DROP SEQUENCE IF EXISTS yentu_history_id_seq");
+        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['DB_DEFAULT_SCHEMA'];
         $this->setupStreams();
     }  
     
@@ -48,7 +47,7 @@ class InitTest extends \yentu\tests\YentuTest
         ob_start();
         $initCommand->run(
             array(
-                'driver' => 'postgresql',
+                'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS['DB_NAME'],
                 'user' => $GLOBALS['DB_USER'],
@@ -72,19 +71,13 @@ class InitTest extends \yentu\tests\YentuTest
         require(vfsStream::url('home/yentu/config/default.php'));
         
         $this->assertEquals(array(
-            'driver' => 'postgresql',
+            'driver' => $GLOBALS['DRIVER'],
             'host' => $GLOBALS['DB_HOST'],
             'port' => '',
             'dbname' => $GLOBALS['DB_NAME'],
             'user' => $GLOBALS['DB_USER'],
             'password' => $GLOBALS['DB_PASSWORD']
-        ), $config);
-        //$this->assertEquals("Yentu successfully initialized.\n", $output);
-        
-        /*$this->assertStringEqualsFile(
-            vfsStream::url("home/output.txt"),
-            "Yentu successfully initialized.\n"
-        );*/        
+        ), $config);      
         
         $this->assertTableExists('yentu_history');
         $this->assertColumnExists('session', 'yentu_history');        
@@ -102,7 +95,7 @@ class InitTest extends \yentu\tests\YentuTest
         ClearIce::setStreamUrl('input', vfsStream::url("home/responses.in"));
         
         file_put_contents(vfsStream::url("home/responses.in"),
-            "postgresql\n"
+            "{$GLOBALS['DRIVER']}\n"
             . "localhost\n"
             . "\n"
             . "{$GLOBALS['DB_NAME']}\n"
@@ -172,12 +165,12 @@ class InitTest extends \yentu\tests\YentuTest
      */    
     public function testExistingDb()
     {
-        $this->pdo->query('CREATE TABLE yentu_history()');
+        $this->pdo->query('CREATE TABLE yentu_history(dummy INT)');
         $initCommand = new \yentu\commands\Init();
         yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
             array(
-                'driver' => 'postgresql',
+                'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS['DB_NAME'],
                 'user' => $GLOBALS['DB_USER'],

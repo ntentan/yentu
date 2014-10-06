@@ -33,7 +33,7 @@ class TableExists extends \yentu\tests\YentuConstraint
         {
             $table = array(
                 'table' => $table,
-                'schema' => 'public'
+                'schema' => $GLOBALS['DEFAULT_SCHEMA']
             );
         }
         

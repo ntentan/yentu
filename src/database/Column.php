@@ -1,8 +1,6 @@
 <?php
 namespace yentu\database;
 
-use yentu\Yentu;
-
 class Column extends DatabaseItem
 {
     private $name;
@@ -28,14 +26,23 @@ class Column extends DatabaseItem
     {
         $this->table = $table;
         $this->name = $name;
-        if(!$this->getDriver()->doesColumnExist(
+        $column = $this->getDriver()->doesColumnExist(
             array(
                 'table' => $table->getName(),
                 'schema' => $table->getSchema()->getName(),
                 'name' => $name
             )
-        )){
+        );
+        if($column === false)
+        {
             $this->new = true;
+        }
+        else
+        {
+            $this->default = $column['default'];
+            $this->length = $column['length'];
+            $this->type = $column['type'];
+            $this->nulls = $column['nulls'];
         }
     }
     

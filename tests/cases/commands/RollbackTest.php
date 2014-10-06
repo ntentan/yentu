@@ -32,14 +32,15 @@ class RollbackTest extends \yentu\tests\YentuTest
 {
     public function setup()
     {
+        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['ROLLBACK_DEFAULT_SCHEMA'];
         $this->createDb($GLOBALS['ROLLBACK_DB_NAME']);
-        $this->initDb($GLOBALS['ROLLBACK_DB_DSN'], file_get_contents("tests/sql/pre_rollback.sql"));
+        $this->initDb($GLOBALS['ROLLBACK_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['ROLLBACK_DB_DSN']);
         $this->setupStreams();
         $init = new \yentu\commands\Init();
         $init->createConfigFile(
             array(
-                'driver' => 'postgresql',
+                'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS["ROLLBACK_DB_NAME"],
                 'user' => $GLOBALS['DB_USER'],

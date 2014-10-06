@@ -24,7 +24,8 @@ abstract class DatabaseItem
         'primary_key' => 'PrimaryKey',
         'unique_key' => 'UniqueKey',
         'index' => 'Index',
-        'view' => 'View'
+        'view' => 'View',
+        'view_definition' => 'ViewDefinition'
     );
     
     protected function addChange($attribute, $value)
@@ -41,7 +42,7 @@ abstract class DatabaseItem
                 'from' => $currentDescription,
                 'to' => $newDescription
             )
-        );        
+        );   
     }
     
     public function isNew()
@@ -122,7 +123,7 @@ abstract class DatabaseItem
         {
             $this->commitNew();
         }
-
+        
         foreach($this->changes as $change)
         {
             self::$driver->$change['method']($change['args']);

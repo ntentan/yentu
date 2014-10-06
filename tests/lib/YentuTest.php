@@ -109,13 +109,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     {
         $pdo = new \PDO($GLOBALS["DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     
-        try{
-            $pdo->exec("DROP DATABASE $name");
-        }
-        catch(\PDOException $e)
-        {
-            
-        }
+        $pdo->exec("DROP DATABASE IF EXISTS $name");
         $pdo->exec("CREATE DATABASE $name"); 
         $pdo = null;        
     }
@@ -141,7 +135,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->setupStreams();
         $init->run(
             array(
-                'driver' => 'postgresql',
+                'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $name,
                 'user' => $GLOBALS['DB_USER'],
@@ -161,5 +155,6 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->createDb($GLOBALS['MIGRATE_DB_NAME']);
         $this->connect($GLOBALS["MIGRATE_DB_DSN"]);
         $this->initYentu($GLOBALS['MIGRATE_DB_NAME']);
+        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['MIGRATE_DEFAULT_SCHEMA'];
     }
 }

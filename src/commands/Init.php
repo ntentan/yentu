@@ -44,7 +44,8 @@ class Init implements Command
             $params['driver'] = ClearIce::getResponse('Database type', array(
                     'required' => true,
                     'answers' => array(
-                        'postgresql'
+                        'postgresql',
+                        'mysql'
                     )
                 )
             );

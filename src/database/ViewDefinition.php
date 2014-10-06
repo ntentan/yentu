@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * The MIT License
  *
@@ -24,45 +23,43 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests;
+namespace yentu\database;
 
-abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
+class ViewDefinition extends \yentu\database\DatabaseItem
 {
-    /**
-     *
-     * @var \PDO
-     */
-    protected $pdo;
-    protected $table;
-    private $negate;
-    
-    public function negate()
+    private $name;
+    private $schema;
+    private $definition;
+        
+    public function __construct($name, $definition, $schema)
     {
-        $this->negate = true;
+        $this->new = true;
+        $this->name = $name;
+        $this->definition = $definition;
+        $this->schema = $schema;
     }
     
-    protected function processResult($result)
+    protected function buildDescription()
     {
-        if($this->negate === true) return !$result; else return $result;
+        return array(
+            'name' => $this->name,
+            'definition' => $this->definition,
+            'schema' => $this->schema->getName()
+        );
     }
-    
-    public function setPDO($pdo)
+
+    public function commitNew()
     {
-        $this->pdo = $pdo;
-    }
-    
-    public function setTable($table)
-    {
-        if(is_string($table))
-        {
-            $this->table = array(
-                'table' => $table,
-                'schema' => $GLOBALS['DEFAULT_SCHEMA']
-            );
-        }
-        else
-        {
-            $this->table = $table;
-        }
+        $this->getDriver()->changeViewDefinition(array(
+            'from' => array(
+                'name' => $this->name,
+                'schema' => $this->schema->getName()
+            ),
+            'to' => array(
+                'name' => $this->name,
+                'schema' => $this->schema->getName(),
+                'definition' => $this->definition
+            )
+        ));
     }
 }

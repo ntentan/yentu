@@ -21,6 +21,10 @@ abstract class DatabaseDriver
             new \ReflectionMethod($this, $name);
             return $this->$name($arguments[0]);
         }
+        else
+        {
+            throw new \Exception("Failed to execute method '$name'");
+        }
     }
     
     public function getAssertor()

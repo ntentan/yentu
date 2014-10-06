@@ -11,14 +11,13 @@ abstract class Pdo extends \yentu\DatabaseDriver
      * @var \PDO
      */
     private $pdo;
+    protected $defaultSchema;
     
     protected function connect($params) 
     {
-        $username = $params['username'];
+        $username = $params['user'];
         $password = $params['password'];
         
-        unset($params['username']);
-        unset($params['password']);
         unset($params['driver']);
         
         $this->pdo = new \PDO(
@@ -31,6 +30,11 @@ abstract class Pdo extends \yentu\DatabaseDriver
     public function disconnect()
     {
         $this->pdo = null;
+    }
+    
+    public function getDefaultSchema()
+    {
+        return $this->defaultSchema;
     }
     
     protected function quote($string)
@@ -63,7 +67,7 @@ abstract class Pdo extends \yentu\DatabaseDriver
            if($result === false)
             {
                 $errorInfo = $this->pdo->errorInfo();
-                throw new \yentu\DatabaseDriverException($errorInfo[2]);                
+                throw new \yentu\DatabaseDriverException("{$errorInfo[2]}. Query [$query]");                
             }
             else 
             {

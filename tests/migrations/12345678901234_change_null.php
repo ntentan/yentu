@@ -26,3 +26,6 @@
 
 $this->table('roles')
     ->column('role_name')->type('string')->nulls(false);
+
+$this->table('users')
+    ->column('user_name')->rename('username');

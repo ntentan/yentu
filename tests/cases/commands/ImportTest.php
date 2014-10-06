@@ -34,11 +34,12 @@ class ImportTest extends \yentu\tests\YentuTest
     {
         $this->createDb($GLOBALS['IMPORT_DB_NAME']);
         $this->initYentu($GLOBALS['IMPORT_DB_NAME']);
+        $GLOBALS['DEFAULT_SCHEMA'] = $GLOBALS['IMPORT_DEFAULT_SCHEMA'];
     }
     
     public function testImport()
     {
-        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents('tests/sql/system.sql'));
+        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/system.sql"));
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         
@@ -49,7 +50,7 @@ class ImportTest extends \yentu\tests\YentuTest
         $this->assertFileExists(
             vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );
-        require 'tests/expected/import.php';
+        require "tests/expected/{$GLOBALS['DRIVER']}/import.php";
         $descriptionArray = $description->toArray();
         unset($descriptionArray['tables']['yentu_history']);
         $this->assertEquals($expectedDescription, $descriptionArray);
@@ -57,7 +58,11 @@ class ImportTest extends \yentu\tests\YentuTest
     
     public function testSchemaImport()
     {
-        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents('tests/sql/import_schema.sql'));
+        $this->connect($GLOBALS['IMPORT_DB_DSN']);
+        $this->pdo->query('DROP SCHEMA IF EXISTS hr');
+        $this->pdo->query('DROP SCHEMA IF EXISTS common');
+        
+        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_schema.sql"));
         $this->connect($GLOBALS['IMPORT_DB_DSN']);
         
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
@@ -75,7 +80,7 @@ class ImportTest extends \yentu\tests\YentuTest
     
     public function testViewImport()
     {
-        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents('tests/sql/import_views.sql'));
+        $this->initDb($GLOBALS['IMPORT_DB_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_views.sql"));
         $this->connect($GLOBALS['IMPORT_DB_DSN']);
         
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
@@ -87,6 +92,7 @@ class ImportTest extends \yentu\tests\YentuTest
         $this->assertFileExists(
             vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );   
+            
         $this->assertTableExists('employees_view');
         $this->assertTableExists('disabled_employees_view');
     }    
@@ -103,13 +109,19 @@ class ImportTest extends \yentu\tests\YentuTest
     
     public function testDatabaseNotExisting()
     {
-        $this->connect($GLOBALS['IMPORT_DB_DSN']);        
-        $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
-        $this->pdo->query('DROP SEQUENCE IF EXISTS yentu_history_id_seq');
+        $this->connect($GLOBALS['IMPORT_DB_DSN']);   
+        try{
+            $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
+            $this->pdo->query('DROP SEQUENCE IF EXISTS yentu_history_id_seq');
+        }
+        catch(\PDOException $e)
+        {
+            
+        }
         $import = new yentu\commands\Import();
         $import->run(array());  
         $this->assertTableExists('yentu_history');
-    }   
+    } 
 }
 
 class NegativeMockAssertor{

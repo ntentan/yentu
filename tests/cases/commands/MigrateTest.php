@@ -55,13 +55,18 @@ class MigrateTest extends \yentu\tests\YentuTest
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
         $migrate = new yentu\commands\Migrate();
         $this->assertColumnNullable('role_name', 'roles');
+        $this->assertColumnExists('user_name', 'users');
         $migrate->run(array());
         $this->assertColumnNotNullable('role_name', 'roles');        
+        $this->assertColumnExists('username', 'users');
     }
     
     
     public function testSchemaMigration()
     {
+        $this->pdo->query('DROP SCHEMA IF EXISTS schema');
+        $this->pdo->query('DROP SCHEMA IF EXISTS geo');
+        
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));        
         $migrate = new yentu\commands\Migrate();
         $migrate->run(array());
@@ -73,7 +78,7 @@ class MigrateTest extends \yentu\tests\YentuTest
             $schema = array_search($table, array('cities', 'locations', 'countries', 'regions', 'countries_view')) === false ? 'schema' : 'geo';
             $this->assertTableExists(array('table'=>$table, 'schema' => $schema));
         }
-    }    
+    }
     
     private $tables = array(
         'api_keys',

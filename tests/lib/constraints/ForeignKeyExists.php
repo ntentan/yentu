@@ -32,12 +32,12 @@ class ForeignKeyExists extends \yentu\tests\YentuConstraint
     {
         if(!isset($table['schema']))
         {
-            $table['schema'] = 'public';
+            $table['schema'] = $GLOBALS['DEFAULT_SCHEMA'];
         }
         
         $response = $this->pdo->query(
             sprintf(
-                "SELECT * FROM information_schema.table_constraints  where table_name = '%s' and table_schema = '%s' and constraint_name = '%s' and constraint_type='FOREIGN KEY'",
+                "SELECT * FROM information_schema.table_constraints WHERE table_name = '%s' and table_schema = '%s' and constraint_name = '%s' and constraint_type='FOREIGN KEY'",
                 $table['table'], 
                 $table['schema'],
                 $table['name']

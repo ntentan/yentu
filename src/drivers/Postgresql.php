@@ -3,6 +3,8 @@ namespace yentu\drivers;
 
 class Postgresql extends Pdo
 {
+    protected $defaultSchema = 'public';
+    
     private function buildTableName($name, $schema)
     {
         return ($schema === false || $schema == '' ? '' : "\"{$schema}\".") . "\"$name\"";
@@ -149,12 +151,11 @@ class Postgresql extends Pdo
                     \yentu\descriptors\Postgresql::convertTypes(
                         $details['type'], 
                         \yentu\descriptors\Postgresql::TO_POSTGRESQL,
-                        $details['size']
+                        $details['length']
                     )
                 )
             );
         $this->_changeColumnNulls($details);
-        
     }
     
     protected function _dropColumn($details)
@@ -201,7 +202,8 @@ class Postgresql extends Pdo
         }
     }    
     
-    protected function _changeColumnName($details) {
+    protected function _changeColumnName($details) 
+    {
         $this->query(
             sprintf (
                 'ALTER TABLE %s RENAME COLUMN "%s" TO "%s"', 

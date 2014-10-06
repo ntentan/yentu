@@ -32,15 +32,19 @@ class View extends \yentu\database\DatabaseItem
     
     public function definition($definition)
     {
-        $this->addChange('definition', $definition);
-        $this->definition = $definition;
-        return $this;
+        return $this->create('view_definition', $this->name, $definition, $this->schema);
     }
     
     public function view($name)
     {
         DatabaseItem::purge();
         return $this->create('view', $name, $this->schema);
+    }
+    
+    public function table($name)
+    {
+        DatabaseItem::purge();
+        return $this->create('table', $name, $this->schema);
     }
     
     protected function buildDescription() {

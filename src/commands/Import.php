@@ -69,6 +69,7 @@ class Import implements Command
             $this->db->createHistory();
         }
         $this->db->setVersion($this->newVersion);
+        $this->db = null;
         
         return $description;
     }
