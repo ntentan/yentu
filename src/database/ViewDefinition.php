@@ -53,7 +53,8 @@ class ViewDefinition extends \yentu\database\DatabaseItem
         $this->getDriver()->changeViewDefinition(array(
             'from' => array(
                 'name' => $this->name,
-                'schema' => $this->schema->getName()
+                'schema' => $this->schema->getName(),
+                'definition' => 'SELECT null'
             ),
             'to' => array(
                 'name' => $this->name,
