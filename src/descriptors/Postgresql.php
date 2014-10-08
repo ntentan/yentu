@@ -235,12 +235,11 @@ class Postgresql extends \yentu\SchemaDescriptor
             }
             
             $description[$table['name']] = $table;
-        }        
-        
+        }      
         return $description;
     }
 
-    public function describe() 
+    /*public function describe() 
     {
         $description = array(
             'schemata' => array(),
@@ -269,6 +268,6 @@ class Postgresql extends \yentu\SchemaDescriptor
         }
         
         return \yentu\SchemaDescription::wrap($description);
-    }
+    }*/
 }
 
