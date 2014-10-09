@@ -28,10 +28,52 @@ namespace yentu\descriptors;
 
 class Mysql extends \yentu\SchemaDescriptor
 {
-    const TO_YENTU = 'yentu';
-    const TO_MYSQL = 'mysql';    
+    protected function getColumns(&$table)
+    {
+        
+    }
+
+    protected function getForeignKeys(&$table)
+    {
+        
+    }
+
+    protected function getIndices(&$table)
+    {
+        
+    }
+
+    protected function getPrimaryKey(&$table)
+    {
+        
+    }
+
+    protected function getSchemata()
+    {
+        
+    }
+
+    protected function getTables($schema)
+    {
+        
+    }
+
+    protected function getUniqueKeys(&$table)
+    {
+        
+    }
+
+    protected function getViews(&$schema)
+    {
+        
+    }
+
+    protected function hasAutoIncrementingKey(&$table)
+    {
+        
+    }
     
-    public function describe()
+    /*public function describe()
     {
         $description = array(
             'schemata' => array(),
@@ -271,7 +313,7 @@ class Mysql extends \yentu\SchemaDescriptor
      * @param type $table
      * @return type
      */
-    protected function getIndices($table)
+    /*protected function getIndices($table)
     {
         $constraints = array();        
         $constraintColumns = $this->driver->query(
@@ -286,5 +328,5 @@ class Mysql extends \yentu\SchemaDescriptor
         }
         
         return $constraints;        
-    }    
+    }*/   
 }

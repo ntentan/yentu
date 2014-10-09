@@ -133,8 +133,8 @@ class SchemaDescription implements \ArrayAccess
             foreach($schema['tables'] as $tableName => $table)
             {
                 $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_foreign_keys'] = $this->flattenColumns($table['foreign_keys'], 'columns');
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_unique_keys'] = $this->flattenColumns($table['unique_keys']);
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_indices'] = $this->flattenColumns($table['indices']);
+                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_unique_keys'] = $this->flattenColumns($table['unique_keys'], 'columns');
+                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_indices'] = $this->flattenColumns($table['indices'], 'columns');
             }
         }        
     }
@@ -144,9 +144,6 @@ class SchemaDescription implements \ArrayAccess
         $flattened = array();
         foreach($items as $name => $item)
         {
-            if($key !== false && $item[$key] === null) {
-                //var_dump($item[$key], $item);
-            }
             foreach($key === false ? $item : $item[$key] as $column)
             {
                 $flattened[$column] = $name;
@@ -191,7 +188,9 @@ class SchemaDescription implements \ArrayAccess
     {
         $table = $this->getTable($details);
         $table['primary_key'] = array(
-            $details['name'] => $details['columns']
+            $details['name'] => array(
+                'columns' => $details['columns']
+            )
         );
         $this->setTable($details, $table);
     }
@@ -217,11 +216,10 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }    
     
-    
     public function addUniqueKey($details)
     {
         $table = $this->getTable($details);
-        $table['unique_keys'][$details['name']] = $details['columns'];
+        $table['unique_keys'][$details['name']]['columns'] = $details['columns'];
         $this->setTable($details, $table);        
     }
     
@@ -235,7 +233,7 @@ class SchemaDescription implements \ArrayAccess
     public function addIndex($details)
     {
         $table = $this->getTable($details);
-        $table['indices'][$details['name']] = $details['columns'];
+        $table['indices'][$details['name']]['columns'] = $details['columns'];
         $this->setTable($details, $table);
     }
     
@@ -249,7 +247,7 @@ class SchemaDescription implements \ArrayAccess
     public function addForeignKey($details)
     {
         $table = $this->getTable($details);
-        $table['foreign_keys'][$details['name']] = $details;;
+        $table['foreign_keys'][$details['name']] = $details;
         $this->setTable($details, $table);
     }
     

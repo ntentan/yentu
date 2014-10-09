@@ -51,6 +51,12 @@ class ImportTest extends \yentu\tests\YentuTest
         $this->assertFileExists(
             vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );
+        
+        $this->assertStringEqualsFile(
+            vfsStream::url("home/yentu/migrations/{$newVersion}_import.php"),
+            file_get_contents("tests/expected/{$GLOBALS['DRIVER']}/output.php")
+        );
+        
         require "tests/expected/{$GLOBALS['DRIVER']}/import.php";
         $descriptionArray = $description->toArray();
         unset($descriptionArray['tables']['yentu_history']);

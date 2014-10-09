@@ -1,25 +1,23 @@
 <?php
 namespace yentu\descriptors;
 
-class Postgresql extends \yentu\SchemaDescriptor
+use yentu\SchemaDescriptor;
+
+class Postgresql extends SchemaDescriptor
 {
-    const TO_YENTU = 'yentu';
-    const TO_POSTGRESQL = 'pgsql';
-    
     /**
      * 
      * @note Query sourced from http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
      * @param type $table
      * @return type
      */
-    protected function getIndices($table)
+    protected function getIndices(&$table)
     {
-        $constraints = array();        
-        $constraintColumns = $this->driver->query(
+        return $this->driver->query(
             sprintf("select
                         t.relname as table_name,
-                        i.relname as index_name,
-                        a.attname as column_name
+                        i.relname as name,
+                        a.attname as column
                     from
                         pg_class t,
                         pg_class i,
@@ -38,13 +36,7 @@ class Postgresql extends \yentu\SchemaDescriptor
                             AND indisunique != 't'
                             AND indisprimary != 't'", 
             $table['name'], $table['schema'])
-        );
-        foreach($constraintColumns as $column)
-        {
-            $constraints[$column['index_name']][] = $column['column_name'];
-        }
-        
-        return $constraints;        
+        );        
     }
     
     public static function convertTypes($type, $direction, $length = null)
@@ -64,13 +56,12 @@ class Postgresql extends \yentu\SchemaDescriptor
         
         switch($direction)
         {
-            case self::TO_YENTU: 
+            case self::CONVERT_TO_YENTU: 
                 $destinationType = $types[$type];
                 break;
             
-            case self::TO_POSTGRESQL: 
+            case self::CONVERT_TO_DRIVER:
                 $destinationType = array_search($type, $types);
-                
                 break;
         }
         
@@ -85,10 +76,9 @@ class Postgresql extends \yentu\SchemaDescriptor
         }
     }
     
-    protected function getColumns($table)
+    protected function getColumns(&$table)
     {
-        $columns = array();
-        $columnDetails = $this->driver->query(
+        return $this->driver->query(
             sprintf(
                 "select column_name as name, data_type as type, is_nullable as nulls, column_default as default, character_maximum_length as length
                 from information_schema.columns
@@ -96,27 +86,17 @@ class Postgresql extends \yentu\SchemaDescriptor
                 $table['name'], $table['schema']
             )
         );
-        
-        foreach($columnDetails as $i => $column)
-        {
-            $columns[$column['name']] = $column;
-            $columns[$column['name']]['type'] = self::convertTypes($columnDetails[$i]['type'], self::TO_YENTU);
-            $columns[$column['name']]['nulls'] = $columns[$column['name']]['nulls'] == 'YES' ? true : false;
-        }
-        
-        return $columns;
     }
     
     /**
      * @note Query sourced from http://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
      * @param type $table
      */
-    protected function getForeignConstraints($table)
+    protected function getForeignKeys(&$table)
     {
-        $constraints = array();        
-        $constraintColumns = $this->driver->query(
+        return $this->driver->query(
             sprintf("SELECT
-                        kcu.constraint_name,
+                        kcu.constraint_name as name,
                         kcu.table_schema as schema,
                         kcu.table_name as table, 
                         kcu.column_name as column, 
@@ -137,28 +117,23 @@ class Postgresql extends \yentu\SchemaDescriptor
                         AND tc.table_name='%s' AND tc.table_schema='%s'",
                 $table['name'], $table['schema']
             )
-        );  
-                
-        foreach($constraintColumns as $column)
-        {
-            $constraints[$column['constraint_name']]['columns'][] = $column['column'];
-            $constraints[$column['constraint_name']]['foreign_columns'][] = $column['foreign_column'];
-            $constraints[$column['constraint_name']]['table'] = $column['table'];
-            $constraints[$column['constraint_name']]['schema'] = $this->fixSchema($column['schema']);
-            $constraints[$column['constraint_name']]['foreign_table'] = $column['foreign_table'];
-            $constraints[$column['constraint_name']]['foreign_schema'] = $this->fixSchema($column['foreign_schema']);
-            $constraints[$column['constraint_name']]['on_update'] = $column['on_update'];
-            $constraints[$column['constraint_name']]['on_delete'] = $column['on_delete'];
-        }   
-        
-        return $constraints;
+        ); 
     }
     
-    protected function getConstraint($table, $type)
+    protected function getPrimaryKey(&$table)
     {
-        $constraints = array();
-        $constraintColumns = $this->driver->query(
-            sprintf("select column_name, pk.constraint_name from 
+        return $this->getConstraint($table, 'PRIMARY KEY');
+    }
+    
+    protected function getUniqueKeys(&$table)
+    {
+        return $this->getConstraint($table, 'UNIQUE');
+    }
+
+    private function getConstraint($table, $type)
+    {
+        return $this->driver->query(
+            sprintf("select column_name as column, pk.constraint_name as name from 
                 information_schema.table_constraints pk 
                 join information_schema.key_column_usage c on 
                    c.table_name = pk.table_name and 
@@ -169,105 +144,46 @@ class Postgresql extends \yentu\SchemaDescriptor
                 $table['name'], $table['schema'], $type
             )
         );
-        
-        foreach($constraintColumns as $column)
-        {
-            $constraints[$column['constraint_name']][] = $column['column_name'];
-        }
-        
-        return $constraints;
     }
     
-    private function fixSchema($schema)
+    protected function getViews(&$schema)
     {
-        if($schema == false || $schema == 'public')
-        {
-            return '';
-        }
-        else
-        {
-            return $schema;
-        }
-    }
-    
-    protected function getViews($schema)
-    {
-        $description = array();
-        $views = $this->driver->query(
-        "select table_schema as schema, table_name as name, view_definition as definition
-        from information_schema.views
-        where table_schema = '$schema'");
-
-        foreach($views as $view)
-        {
-            $description[$view['name']] = array(
-                'name' => $view['name'],
-                'schema' => $view['schema'],
-                'definition' => $view['definition']
-            );
-        }
-        return $description;
+        return $this->driver->query(
+            "select table_schema as schema, table_name as name, view_definition as definition
+            from information_schema.views
+            where table_schema = '$schema'"
+        );
     }
     
     protected function getTables($schema)
     {
-        $description = array();
-        $tables = $this->driver->query(
+        return $tables = $this->driver->query(
             "select table_schema as schema, table_name as name 
             from information_schema.tables
             where table_schema = '$schema' and table_type = 'BASE TABLE'"
-        );
-        
-        foreach($tables as $table)
-        {
-            $table['columns'] = $this->getColumns($table);
-            $table['primary_key'] = $this->getConstraint($table, 'PRIMARY KEY');
-            $table['unique_keys'] = $this->getConstraint($table, 'UNIQUE');
-            $table['foreign_keys'] = $this->getForeignConstraints($table);
-            $table['indices'] = $this->getIndices($table);
-            $table['schema'] = $this->fixSchema($table['schema']);
-            
-            $primaryKey = reset($table['primary_key']);
-            if(count($primaryKey) == 1 && substr_count($table['columns'][$primaryKey[0]]['default'], 'nextval'))
-            {
-                $table['auto_increment'] = true;
-                unset($table['columns'][$primaryKey[0]]['default']);
-            }
-            
-            $description[$table['name']] = $table;
-        }      
-        return $description;
+        );        
     }
-
-    /*public function describe() 
+    
+    public function getSchemata()
     {
-        $description = array(
-            'schemata' => array(),
-        );
-        
-        $schemata = $this->driver->query(
+        return $this->driver->query(
             "select schema_name as name from information_schema.schemata 
             where schema_name not like 'pg_temp%' and 
             schema_name not like 'pg_toast%' and 
             schema_name not in ('pg_catalog', 'information_schema')"
         );
-        
-        foreach($schemata as $i => $schema)
+    }
+
+    protected function hasAutoIncrementingKey(&$table)
+    {
+        $auto = false;
+        $primaryKey = reset($table['primary_key']);
+        if(count($primaryKey) == 1 && substr_count($table['columns'][$primaryKey['columns'][0]]['default'], 'nextval'))
         {
-            if($schema['name'] == 'public')
-            {
-                $description['tables'] = $this->getTables('public');
-                $description['views'] = $this->getViews('public');
-            }
-            else
-            {
-                $description['schemata'][$schema['name']]['name'] = $schema['name'];
-                $description['schemata'][$schema['name']]['tables'] = $this->getTables($schema['name']);                
-                $description['schemata'][$schema['name']]['views'] = $this->getViews($schema['name']);                
-            }
+            unset($table['columns'][$primaryKey['columns'][0]]['default']);
+            $auto = true;
         }
-        
-        return \yentu\SchemaDescription::wrap($description);
-    }*/
+        return $auto;
+    }
 }
 

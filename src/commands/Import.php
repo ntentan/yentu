@@ -224,7 +224,7 @@ class Import implements Command
     {
         foreach($constraints as $name => $constraint)
         {
-            $constraint = implode("','", $constraint);
+            $constraint = implode("','", $constraint['columns']);
             $this->code->add("->$type('$constraint')->name('$name')");
         }
     }

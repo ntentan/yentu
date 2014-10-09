@@ -12,10 +12,10 @@ abstract class BasicKey extends DatabaseItem
         $this->columns = $columns;
         $this->table = $table;
         $keyName = $this->doesKeyExist(array(
-                'table' => $table->getName(),
-                'schema' => $table->getSchema()->getName(),
-                'columns' => $this->columns)
-            );
+            'table' => $table->getName(),
+            'schema' => $table->getSchema()->getName(),
+            'columns' => $this->columns)
+        );
         if($keyName === false)
         {
             $this->new = true;
