@@ -59,7 +59,7 @@ class Mysql extends Pdo
                     $details['column'], 
                     \yentu\descriptors\Mysql::convertTypes(
                         $column['type'], 
-                        \yentu\descriptors\Mysql::TO_MYSQL,
+                        \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
                         $column['length'] == '' ? 255 : $column['length']
                     ),
                     $column['nulls'] === false ? 'NOT NULL' : ''
@@ -82,7 +82,7 @@ class Mysql extends Pdo
                 $details['name'], 
                 \yentu\descriptors\Mysql::convertTypes(
                     $details['type'], 
-                    \yentu\descriptors\Mysql::TO_MYSQL,
+                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
                     $details['length'] == '' ? 255 : $details['length']
                 ),
                 $details['nulls'] === false ? 'NOT NULL' : ''
@@ -244,7 +244,7 @@ class Mysql extends Pdo
                 $details['to']['name'], 
                 \yentu\descriptors\Mysql::convertTypes(
                     $details['to']['type'], 
-                    \yentu\descriptors\Mysql::TO_MYSQL,
+                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
                     $details['to']['length'] == '' ? 255 : $details['to']['length']
                 ),
                 $details['to']['nulls'] === false ? 'NOT NULL' : ''
@@ -261,7 +261,7 @@ class Mysql extends Pdo
                 $details['name'], 
                 \yentu\descriptors\Mysql::convertTypes(
                     $details['type'], 
-                    \yentu\descriptors\Mysql::TO_MYSQL,
+                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
                     $details['length'] == '' ? 255 : $details['length']
                 ),
                 $details['nulls'] === false ? 'NOT NULL' : ''
@@ -286,7 +286,7 @@ class Mysql extends Pdo
                 $details['column'], 
                 \yentu\descriptors\Mysql::convertTypes(
                     $column['type'], 
-                    \yentu\descriptors\Mysql::TO_MYSQL,
+                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
                     $column['length'] == '' ? 255 : $column['length']
                 ),
                 $column['nulls'] === false ? 'NOT NULL' : ''

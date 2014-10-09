@@ -81,7 +81,10 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'api_key_id',
+          'columns' => 
+          array (
+            0 => 'api_key_id',
+          ),
         ),
       ),
       'unique_keys' => 
@@ -91,18 +94,18 @@ $expectedDescription = array (
       array (
         'api_keys_user_id_fkey' => 
         array (
+          'schema' => '',
+          'table' => 'api_keys',
           'columns' => 
           array (
             0 => 'user_id',
           ),
+          'foreign_table' => 'users',
+          'foreign_schema' => '',
           'foreign_columns' => 
           array (
             0 => 'user_id',
           ),
-          'table' => 'api_keys',
-          'schema' => '',
-          'foreign_table' => 'users',
-          'foreign_schema' => '',
           'on_update' => 'RESTRICT',
           'on_delete' => 'RESTRICT',
         ),
@@ -110,6 +113,7 @@ $expectedDescription = array (
       'indices' => 
       array (
       ),
+      'auto_increment' => true,
     ),
     'audit_trail' => 
     array (
@@ -186,7 +190,10 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'audit_trail_id',
+          'columns' => 
+          array (
+            0 => 'audit_trail_id',
+          ),
         ),
       ),
       'unique_keys' => 
@@ -196,33 +203,36 @@ $expectedDescription = array (
       array (
         'audit_trail_user_id_fk' => 
         array (
+          'schema' => '',
+          'table' => 'audit_trail',
           'columns' => 
           array (
             0 => 'user_id',
           ),
+          'foreign_table' => 'users',
+          'foreign_schema' => '',
           'foreign_columns' => 
           array (
             0 => 'user_id',
           ),
-          'table' => 'audit_trail',
-          'schema' => '',
-          'foreign_table' => 'users',
-          'foreign_schema' => '',
           'on_update' => 'RESTRICT',
           'on_delete' => 'CASCADE',
         ),
       ),
       'indices' => 
       array (
-        'audit_trail_item_id_idx' => 
+        '' => 
         array (
-          0 => 'item_id',
-        ),
-        'audit_trail_item_type_idx' => 
-        array (
-          0 => 'item_type',
+          'table_name' => 'audit_trail',
+          'columns' => 
+          array (
+            0 => 'item_id',
+            1 => 'item_type',
+          ),
+          'index_name' => 'audit_trail_item_type_idx',
         ),
       ),
+      'auto_increment' => true,
     ),
     'audit_trail_data' => 
     array (
@@ -259,7 +269,10 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'audit_trail_data_id',
+          'columns' => 
+          array (
+            0 => 'audit_trail_data_id',
+          ),
         ),
       ),
       'unique_keys' => 
@@ -271,6 +284,7 @@ $expectedDescription = array (
       'indices' => 
       array (
       ),
+      'auto_increment' => true,
     ),
     'keystore' => 
     array (
@@ -307,14 +321,20 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'keystore_id',
+          'columns' => 
+          array (
+            0 => 'keystore_id',
+          ),
         ),
       ),
       'unique_keys' => 
       array (
         'keystore_key_key' => 
         array (
-          0 => 'key',
+          'columns' => 
+          array (
+            0 => 'key',
+          ),
         ),
       ),
       'foreign_keys' => 
@@ -323,6 +343,7 @@ $expectedDescription = array (
       'indices' => 
       array (
       ),
+      'auto_increment' => true,
     ),
     'permissions' => 
     array (
@@ -375,7 +396,10 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'permission_id',
+          'columns' => 
+          array (
+            0 => 'permission_id',
+          ),
         ),
       ),
       'unique_keys' => 
@@ -385,18 +409,18 @@ $expectedDescription = array (
       array (
         'permissios_role_id_fk' => 
         array (
+          'schema' => '',
+          'table' => 'permissions',
           'columns' => 
           array (
             0 => 'role_id',
           ),
+          'foreign_table' => 'roles',
+          'foreign_schema' => '',
           'foreign_columns' => 
           array (
             0 => 'role_id',
           ),
-          'table' => 'permissions',
-          'schema' => '',
-          'foreign_table' => 'roles',
-          'foreign_schema' => '',
           'on_update' => 'RESTRICT',
           'on_delete' => 'CASCADE',
         ),
@@ -404,6 +428,7 @@ $expectedDescription = array (
       'indices' => 
       array (
       ),
+      'auto_increment' => true,
     ),
     'roles' => 
     array (
@@ -432,7 +457,10 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'role_id',
+          'columns' => 
+          array (
+            0 => 'role_id',
+          ),
         ),
       ),
       'unique_keys' => 
@@ -444,6 +472,7 @@ $expectedDescription = array (
       'indices' => 
       array (
       ),
+      'auto_increment' => true,
     ),
     'users' => 
     array (
@@ -528,32 +557,38 @@ $expectedDescription = array (
       array (
         'PRIMARY' => 
         array (
-          0 => 'user_id',
+          'columns' => 
+          array (
+            0 => 'user_id',
+          ),
         ),
       ),
       'unique_keys' => 
       array (
         'user_name_uk' => 
         array (
-          0 => 'user_name',
+          'columns' => 
+          array (
+            0 => 'user_name',
+          ),
         ),
       ),
       'foreign_keys' => 
       array (
         'users_role_id_fk' => 
         array (
+          'schema' => '',
+          'table' => 'users',
           'columns' => 
           array (
             0 => 'role_id',
           ),
+          'foreign_table' => 'roles',
+          'foreign_schema' => '',
           'foreign_columns' => 
           array (
             0 => 'role_id',
           ),
-          'table' => 'users',
-          'schema' => '',
-          'foreign_table' => 'roles',
-          'foreign_schema' => '',
           'on_update' => 'RESTRICT',
           'on_delete' => 'SET NULL',
         ),
@@ -561,10 +596,10 @@ $expectedDescription = array (
       'indices' => 
       array (
       ),
-    ),
+      'auto_increment' => true,
+    )
   ),
   'views' => 
   array (
   ),
 );
-

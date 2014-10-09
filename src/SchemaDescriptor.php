@@ -66,8 +66,8 @@ abstract class SchemaDescriptor
             $table['unique_keys'] = $this->describeUniqueKeys($table); //Constraint($table, 'UNIQUE');
             $table['foreign_keys'] = $this->describeForeignKeys($table);
             $table['indices'] = $this->describeIndices($table);
-            $table['schema'] = $this->fixSchema($table['schema']);
             $table['auto_increment'] = $this->hasAutoIncrementingKey($table);
+            $table['schema'] = $this->fixSchema($table['schema']);
             
             $description[$table['name']] = $table;
         }      
