@@ -120,7 +120,7 @@ class Mysql extends Pdo
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('", "', $details['columns'])
+                implode('`, `', $details['columns'])
             )
         );        
     }
@@ -149,65 +149,7 @@ class Mysql extends Pdo
     {
         $this->query(sprintf('CREATE TABLE %s (__yentu_placeholder_col INT)',  $this->buildTableName($details['name'], $details['schema'])));    
         $this->placeholders[$this->buildTableName($details['name'], $details['schema'])] = true;
-
-        if(isset($details['columns']))
-        {
-            foreach($details['columns'] as $column)
-            {
-                $column['table'] = $details['name'];
-                $column['schema'] = $details['schema'];
-                $this->_addColumn($column);
-            }
-        }        
-        
-        if(isset($details['primary_key']))
-        {
-            $primaryKey = array(
-                'columns' => reset($details['primary_key']),
-                'name' => key($details['primary_key']),
-                'table' => $details['name'],
-                'schema' => $details['schema']
-            );
-            $this->_addPrimaryKey($primaryKey);
-        }
-        
-        if(isset($details['unique_keys']))
-        {
-            foreach($details['unique_keys'] as $name => $columns)
-            {
-                $uniqueKey = array(
-                    'name' => $name,
-                    'columns' => $columns,
-                    'table' => $details['name'],
-                    'schema' => $details['schema']
-                );
-                $this->_addUniqueKey($uniqueKey);
-            }
-        }
-        
-        if(isset($details['foreign_keys']))
-        {
-            foreach($details['foreign_keys'] as $name => $foreignKey)
-            {
-                $foreignKey['name'] = $name;
-                $foreignKey['table'] = $details['name'];
-                $foreignKey['schema'] = $details['schema'];
-                $this->_addForeignKey($foreignKey);
-            }
-        }
-        
-        if(isset($details['indices']))
-        {
-            foreach($details['indices'] as $name => $index)
-            {
-                $index = array(
-                    'name' => $name,
-                    'columns' => $index,
-                    'table' => $details['name'],
-                    'schema' => $details['schema']
-                );
-            }
-        }
+        $this->setupTable($details);
     }
 
     protected function _addUniqueKey($details)
@@ -286,7 +228,7 @@ class Mysql extends Pdo
                 $details['column'], 
                 \yentu\descriptors\Mysql::convertTypes(
                     $column['type'], 
-                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
+                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER ,
                     $column['length'] == '' ? 255 : $column['length']
                 ),
                 $column['nulls'] === false ? 'NOT NULL' : ''
