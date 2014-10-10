@@ -89,5 +89,18 @@ abstract class Pdo extends \yentu\DatabaseDriver
         return implode(';', $equated);
     }
     
+    public function quoteQuery($query)
+    {
+        return preg_replace_callback(
+            '/\"([a-zA-Z\_ ]*)\"/', 
+            function($matches) {
+                return $this->quoteIdentifier($matches[1]);
+            }, 
+            $query
+        );
+    }
+    
     abstract protected function getDriverName();
+    abstract protected function quoteIdentifier($identifier);
+    
 }

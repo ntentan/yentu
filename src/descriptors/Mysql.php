@@ -26,9 +26,9 @@
 
 namespace yentu\descriptors;
 
-class Mysql extends \yentu\SchemaDescriptor
+class Mysql extends InformationSchema
 {
-    protected function getColumns(&$table)
+    /*protected function getColumns(&$table)
     {
         return $this->driver->query(
             sprintf(
@@ -38,7 +38,7 @@ class Mysql extends \yentu\SchemaDescriptor
                 $table['name'], $table['schema']
             )
         );
-    }
+    }*/
 
     protected function getForeignKeys(&$table)
     {
@@ -102,7 +102,7 @@ class Mysql extends \yentu\SchemaDescriptor
         return $this->driver->query(
             "select table_schema as `schema`, table_name as `name`
             from information_schema.tables
-            where table_schema = '$schema' and table_type = 'BASE TABLE'"
+            where table_schema = '$schema' and table_type = 'BASE TABLE' order by table_name"
         );
     }
 
@@ -111,7 +111,7 @@ class Mysql extends \yentu\SchemaDescriptor
         return $this->driver->query(
             "select table_schema as `schema`, table_name as name, view_definition as definition
             from information_schema.views
-            where table_schema = '$schema'"
+            where table_schema = '$schema' order by table_name"
         );
     }
 
@@ -155,7 +155,7 @@ class Mysql extends \yentu\SchemaDescriptor
                    c.constraint_name = pk.constraint_name and
                    c.constraint_schema = pk.table_schema
                 where pk.table_name = '%s' and pk.table_schema='%s'
-                and constraint_type = '%s'",
+                and constraint_type = '%s' order by column_name",
                 $table['name'], $table['schema'], $type
             )
         );

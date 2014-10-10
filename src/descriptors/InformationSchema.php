@@ -24,3 +24,29 @@
  * THE SOFTWARE.
  */
 
+namespace yentu\descriptors;
+
+use yentu\SchemaDescriptor;
+
+abstract class InformationSchema extends SchemaDescriptor
+{
+    protected function getColumns(&$table)
+    {
+        return $this->driver->query(
+            $this->driver->quoteQuery(
+                'select 
+                    "column_name" as "name", 
+                    "data_type" as "type", 
+                    "is_nullable" as "nulls", 
+                    "column_default" as "default", 
+                    "character_maximum_length" as "length"
+                from information_schema.columns
+                where table_name = ? and table_schema=?'
+            ),
+            array(
+                $table['name'],
+                $table['schema']
+            )
+        );
+    }
+}

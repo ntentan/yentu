@@ -337,4 +337,9 @@ class Mysql extends Pdo
     {
         return 'mysql';
     }
+
+    protected function quoteIdentifier($identifier)
+    {
+        return "`$identifier`";
+    }
 }

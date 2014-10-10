@@ -275,4 +275,9 @@ class Postgresql extends Pdo
     {
         $this->query(sprintf('DROP INDEX %s', $this->buildTableName($details['name'], $details['schema'])));
     }
+    
+    protected function quoteIdentifier($identifier)
+    {
+        return "\"$identifier\"";
+    }    
 }

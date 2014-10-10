@@ -1,9 +1,7 @@
 <?php
 namespace yentu\descriptors;
 
-use yentu\SchemaDescriptor;
-
-class Postgresql extends SchemaDescriptor
+class Postgresql extends InformationSchema
 {
     /**
      * 
@@ -76,7 +74,7 @@ class Postgresql extends SchemaDescriptor
         }
     }
     
-    protected function getColumns(&$table)
+    /*protected function getColumns(&$table)
     {
         return $this->driver->query(
             sprintf(
@@ -86,7 +84,7 @@ class Postgresql extends SchemaDescriptor
                 $table['name'], $table['schema']
             )
         );
-    }
+    }*/
     
     /**
      * @note Query sourced from http://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
