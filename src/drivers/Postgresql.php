@@ -28,7 +28,6 @@ class Postgresql extends Pdo
     protected function _addTable($details) 
     {
         $this->query(sprintf('CREATE TABLE  %s ()',  $this->buildTableName($details['name'], $details['schema'])));    
-        $this->setupTable($details);
     }
     
     protected function _addView($details)

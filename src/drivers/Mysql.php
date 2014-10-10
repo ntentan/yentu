@@ -149,7 +149,6 @@ class Mysql extends Pdo
     {
         $this->query(sprintf('CREATE TABLE %s (__yentu_placeholder_col INT)',  $this->buildTableName($details['name'], $details['schema'])));    
         $this->placeholders[$this->buildTableName($details['name'], $details['schema'])] = true;
-        $this->setupTable($details);
     }
 
     protected function _addUniqueKey($details)
