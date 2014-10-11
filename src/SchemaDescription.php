@@ -15,11 +15,14 @@ class SchemaDescription implements \ArrayAccess
         $this->description['tables'] = $this->convertColumnTypes(
             $this->description['tables'], $manipulator
         );
-        if(is_array($this->description['schema']['tables']))
+        foreach($this->description['schemata'] as $name => $schema)
         {
-            $this->description['schema']['tables'] = $this->convertColumnTypes(
-                $this->description['schema']['tables'], $manipulator
-            );
+            if(is_array($schema['tables']))
+            {
+                $this->description['schemata'][$name]['tables'] = $this->convertColumnTypes(
+                    $schema['tables'], $manipulator
+                );
+            }
         }
         $this->flattenAllColumns();
     }
