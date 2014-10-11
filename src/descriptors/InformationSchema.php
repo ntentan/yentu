@@ -40,8 +40,9 @@ abstract class InformationSchema extends SchemaDescriptor
                     "is_nullable" as "nulls", 
                     "column_default" as "default", 
                     "character_maximum_length" as "length"
-                from information_schema.columns
-                where table_name = ? and table_schema=?'
+                from "information_schema"."columns"
+                where "table_name" = ? and "table_schema"=?
+                order by "column_name"'
             ),
             array(
                 $table['name'],
@@ -49,4 +50,53 @@ abstract class InformationSchema extends SchemaDescriptor
             )
         );
     }
+    
+    protected function getTables($schema)
+    {
+        return $this->driver->query(
+            $this->driver->quoteQuery(
+                'select "table_schema" as "schema", "table_name" as "name"
+                from "information_schema"."tables"
+                where table_schema = ? and table_type = ? order by "table_name"'
+            ),
+            array($schema, 'BASE TABLE')
+        );
+    }  
+    
+    protected function getPrimaryKey(&$table)
+    {
+        return $this->getConstraint($table, 'PRIMARY KEY');
+    }
+    
+    protected function getUniqueKeys(&$table)
+    {
+        return $this->getConstraint($table, 'UNIQUE');
+    }
+
+    private function getConstraint($table, $type)
+    {
+        return $this->driver->query(
+            $this->driver->quoteQuery('select "column_name" as "column", "pk"."constraint_name" as "name" 
+                from "information_schema"."table_constraints" "pk" 
+                join "information_schema"."key_column_usage" "c" on 
+                   "c"."table_name" = "pk"."table_name" and 
+                   "c"."constraint_name" = "pk"."constraint_name" and
+                   "c"."constraint_schema" = "pk"."table_schema"
+                where "pk"."table_name" = ? and pk.table_schema= ?
+                and constraint_type = ? order by "pk"."constraint_name", "column_name"'),
+                array($table['name'], $table['schema'], $type)
+            );
+    }  
+    
+    protected function getViews(&$schema)
+    {
+        return $this->driver->query(
+            $this->driver->quoteQuery(
+                'select "table_schema" as "schema", "table_name" as "name", "view_definition" as "definition"
+                from "information_schema"."views"
+                where "table_schema" = ? order by "table_name"'
+            ),
+            array($schema)
+        );
+    }    
 }
