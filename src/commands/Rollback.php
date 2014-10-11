@@ -2,7 +2,7 @@
 namespace yentu\commands;
 
 use yentu\ChangeReverser;
-use yentu\DatabaseDriver;
+use yentu\DatabaseManipulator;
 use yentu\database\DatabaseItem;
 use yentu\Yentu;
 
@@ -10,7 +10,7 @@ class Rollback implements \yentu\Command
 {
     public function run($options) 
     {
-        $db = DatabaseDriver::getConnection();
+        $db = DatabaseManipulator::create();
         DatabaseItem::setDriver($db);
         ChangeReverser::setDriver($db);
         $previousMigration = '';

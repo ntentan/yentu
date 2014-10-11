@@ -1,10 +1,8 @@
 <?php
 
-namespace yentu\drivers;
+namespace ntentan\atiaa;
 
-use yentu\Yentu;
-
-abstract class Pdo extends \yentu\DatabaseDriver
+abstract class Driver
 {
     /**
      *
@@ -12,16 +10,18 @@ abstract class Pdo extends \yentu\DatabaseDriver
      */
     private $pdo;
     protected $defaultSchema;
+    private $config;
     
-    protected function connect($params) 
+    public function __construct($config) 
     {
-        $username = $params['user'];
-        $password = $params['password'];
+        $this->config = $config;
+        $username = $config['user'];
+        $password = $config['password'];
         
-        unset($params['driver']);
+        unset($config['driver']);
         
         $this->pdo = new \PDO(
-            $this->getDriverName() . ":" . $this->expand($params),
+            $this->getDriverName() . ":" . $this->expand($config),
             $username,
             $password
         );
@@ -46,15 +46,13 @@ abstract class Pdo extends \yentu\DatabaseDriver
     {
         $return = array();
         
-        Yentu::out("\n    > Running Query [$query]", Yentu::OUTPUT_LEVEL_3);
-        
         if(is_array($bindData))
         {
             $statement = $this->pdo->prepare($query);
             if($statement->execute($bindData) === false)
             {
                 $errorInfo = $this->pdo->errorInfo();
-                throw new \Exception($errorInfo[2]);                
+                throw new DatabaseDriverException($errorInfo[2]);                
             }
             else 
             {
@@ -64,10 +62,10 @@ abstract class Pdo extends \yentu\DatabaseDriver
         else
         {
             $result = $this->pdo->query($query, \PDO::FETCH_ASSOC);
-           if($result === false)
+            if($result === false)
             {
                 $errorInfo = $this->pdo->errorInfo();
-                throw new \yentu\DatabaseDriverException("{$errorInfo[2]}. Query [$query]");                
+                throw new DatabaseDriverException("{$errorInfo[2]}. Query [$query]");                
             }
             else 
             {
@@ -105,7 +103,13 @@ abstract class Pdo extends \yentu\DatabaseDriver
         );
     }
     
+    public function describe()
+    {
+        $descriptorClass = "\\ntentan\\atiaa\\descriptors\\" . ucfirst($this->config['driver']) . "Descriptor";
+        $descriptor = new $descriptorClass($this);
+        return $descriptor->describe();
+    }
+    
     abstract protected function getDriverName();
     abstract protected function quoteIdentifier($identifier);
-    
 }

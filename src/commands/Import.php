@@ -1,7 +1,7 @@
 <?php
 namespace yentu\commands;
 
-use yentu\DatabaseDriver;
+use yentu\DatabaseManipulator;
 use yentu\CodeWriter;
 use yentu\Command;
 use yentu\Yentu;
@@ -20,7 +20,7 @@ class Import implements Command
     
     public function __construct($driver = null)
     {
-        $this->db = $driver === null ? DatabaseDriver::getConnection() : $driver;
+        $this->db = $driver === null ? DatabaseManipulator::create() : $driver;
     }
     
     private function initializeCodeWriter()

@@ -1,14 +1,11 @@
 <?php
-namespace yentu;
+namespace ntentan\atiaa;
 
-abstract class SchemaDescriptor
-{
-    const CONVERT_TO_YENTU = 'yentu';
-    const CONVERT_TO_DRIVER = 'driver';
-    
+abstract class Descriptor
+{   
     /**
      *
-     * @var \yentu\DatabaseDriver
+     * @var \ntentan\atiaa\Driver;
      */
     protected $driver;
     
@@ -51,7 +48,7 @@ abstract class SchemaDescriptor
             }
         }
         
-        return SchemaDescription::wrap($description);        
+        return $description;       
     }
     
     private function describeTables($schema)
@@ -74,12 +71,6 @@ abstract class SchemaDescriptor
         return $description;        
     }
     
-    private function convertType()
-    {
-        $class = new \ReflectionClass($this);
-        return $class->getMethod('convertTypes')->invokeArgs(null, func_get_args());
-    }
-    
     private function describeColumns($table)
     {
         $columns = array();
@@ -87,7 +78,6 @@ abstract class SchemaDescriptor
         foreach($columnDetails as $i => $column)
         {
             $columns[$column['name']] = $column;
-            $columns[$column['name']]['type'] = $this->convertType($columnDetails[$i]['type'], self::CONVERT_TO_YENTU);
             $columns[$column['name']]['nulls'] = $columns[$column['name']]['nulls'] == 'YES' ? true : false;
         }
         

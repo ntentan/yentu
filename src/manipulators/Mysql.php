@@ -24,12 +24,60 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\drivers;
+namespace yentu\manipulators;
 
-class Mysql extends Pdo
+class Mysql extends \yentu\DatabaseManipulator
 {
     private $autoIncrementPending;
     private $placeholders = array();
+    
+    public function convertTypes($type, $direction, $length = null)
+    {
+        $types = array(
+            'integer' => 'integer',
+            'int' => 'integer',
+            'decimal' => 'integer',
+            'bigint' => 'bigint',
+            
+            'varchar' => 'string',
+            'char' => 'string',
+            
+            'double' => 'double',
+            'timestamp' => 'timestamp',
+            
+            'text' => 'text',
+            'tinytext' => 'text',
+            'mediumtext' => 'text',
+            
+            'boolean' => 'boolean',
+            'tinyint' => 'boolean',
+            
+            'date' => 'date',
+            'blob' => 'blob'
+        );
+        
+        switch($direction)
+        {
+            case self::CONVERT_TO_YENTU: 
+                $destinationType = $types[$type];
+                break;
+            
+            case self::CONVERT_TO_DRIVER: 
+                $destinationType = array_search($type, $types);
+                
+                break;
+        }
+        
+        if($destinationType == '')
+        {
+            throw new \yentu\DatabaseDriverException("Invalid data type {$type} requested"); 
+        }
+        else if($destinationType == 'varchar')
+        {
+            $destinationType .= $length === null ? '' : "($length)";
+        }
+        return $destinationType;        
+    }     
     
     private function buildTableName($name, $schema)
     {
@@ -57,9 +105,9 @@ class Mysql extends Pdo
                 sprintf('ALTER TABLE %s MODIFY `%s` %s %s AUTO_INCREMENT',
                    $this->buildTableName($details['table'], $details['schema']),
                     $details['column'], 
-                    \yentu\descriptors\Mysql::convertTypes(
+                    $this->convertTypes(
                         $column['type'], 
-                        \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
+                        self::CONVERT_TO_DRIVER,
                         $column['length'] == '' ? 255 : $column['length']
                     ),
                     $column['nulls'] === false ? 'NOT NULL' : ''
@@ -80,9 +128,9 @@ class Mysql extends Pdo
             sprintf('ALTER TABLE %s ADD COLUMN `%s` %s %s', 
                 $tableName,
                 $details['name'], 
-                \yentu\descriptors\Mysql::convertTypes(
+                $this->convertTypes(
                     $details['type'], 
-                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
+                    self::CONVERT_TO_DRIVER,
                     $details['length'] == '' ? 255 : $details['length']
                 ),
                 $details['nulls'] === false ? 'NOT NULL' : ''
@@ -183,9 +231,9 @@ class Mysql extends Pdo
                $this->buildTableName($details['to']['table'], $details['to']['schema']),
                 $details['from']['name'],                 
                 $details['to']['name'], 
-                \yentu\descriptors\Mysql::convertTypes(
+                $this->convertTypes(
                     $details['to']['type'], 
-                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
+                    self::CONVERT_TO_DRIVER,
                     $details['to']['length'] == '' ? 255 : $details['to']['length']
                 ),
                 $details['to']['nulls'] === false ? 'NOT NULL' : ''
@@ -200,9 +248,9 @@ class Mysql extends Pdo
             sprintf('ALTER TABLE %s MODIFY `%s` %s %s',
                $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                \yentu\descriptors\Mysql::convertTypes(
+                $this->convertTypes(
                     $details['type'], 
-                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER,
+                    self::CONVERT_TO_DRIVER,
                     $details['length'] == '' ? 255 : $details['length']
                 ),
                 $details['nulls'] === false ? 'NOT NULL' : ''
@@ -225,9 +273,9 @@ class Mysql extends Pdo
             sprintf('ALTER TABLE %s MODIFY `%s` %s %s',
                $this->buildTableName($details['table'], $details['schema']),
                 $details['column'], 
-                \yentu\descriptors\Mysql::convertTypes(
+                $this->convertTypes(
                     $column['type'], 
-                    \yentu\descriptors\Mysql::CONVERT_TO_DRIVER ,
+                    self::CONVERT_TO_DRIVER ,
                     $column['length'] == '' ? 255 : $column['length']
                 ),
                 $column['nulls'] === false ? 'NOT NULL' : ''
@@ -290,7 +338,7 @@ class Mysql extends Pdo
                 )
             );  
         }
-        catch(\yentu\DatabaseDriverException $e)
+        catch(\ntentan\atiaa\DatabaseDriverException $e)
         {
             $this->_dropAutoPrimaryKey(array(
                 'column' => $details['columns'][0],

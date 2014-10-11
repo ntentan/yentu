@@ -124,7 +124,7 @@ class Init implements Command
             );
         }
         
-        $db = \yentu\DatabaseDriver::getConnection($params);
+        $db = \yentu\DatabaseManipulator::create($params);
         
         if($db->getAssertor()->doesTableExist('yentu_history'))
         {

@@ -1,7 +1,7 @@
 <?php
-namespace yentu\descriptors;
+namespace ntentan\atiaa\descriptors;
 
-class Postgresql extends InformationSchema
+class PostgresqlDescriptor extends InformationSchemaDescriptor
 {
     /**
      * 
@@ -36,43 +36,6 @@ class Postgresql extends InformationSchema
                         order by i.relname, a.attname", 
             $table['name'], $table['schema'])
         );        
-    }
-    
-    public static function convertTypes($type, $direction, $length = null)
-    {
-        $types = array(
-            'integer' => 'integer',
-            'bigint' => 'bigint',
-            'character varying' => 'string',
-            'numeric' => 'double',
-            'timestamp with time zone' => 'timestamp',
-            'timestamp without time zone' => 'timestamp',
-            'text' => 'text',
-            'boolean' => 'boolean',
-            'date' => 'date',
-            'bytea' => 'blob'
-        );
-        
-        switch($direction)
-        {
-            case self::CONVERT_TO_YENTU: 
-                $destinationType = $types[$type];
-                break;
-            
-            case self::CONVERT_TO_DRIVER:
-                $destinationType = array_search($type, $types);
-                break;
-        }
-        
-        if($destinationType == '')
-        {
-            throw new \yentu\DatabaseDriverException("Invalid data type {$type} requested"); 
-        }
-        else
-        {
-            $destinationType .= $length === null ? '' : "($length)";
-            return $destinationType;
-        }
     }
     
     /**

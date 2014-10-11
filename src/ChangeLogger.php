@@ -22,7 +22,7 @@ class ChangeLogger
         $this->allowedItemTypes[] = $itemType;
     }    
 
-    private function __construct(DatabaseDriver $driver) 
+    private function __construct(DatabaseManipulator $driver) 
     {
         $this->driver = $driver;
         $this->assertor = $driver->getAssertor();        

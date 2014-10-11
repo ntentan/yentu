@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\descriptors;
+namespace ntentan\atiaa\descriptors;
 
-class Mysql extends InformationSchema
+class MysqlDescriptor extends InformationSchemaDescriptor
 {
 
     protected function getForeignKeys(&$table)
@@ -105,45 +105,4 @@ class Mysql extends InformationSchema
         
         return $auto;
     }
-    
-    public static function convertTypes($type, $direction, $length = null)
-    {
-        $types = array(
-            'integer' => 'integer',
-            'int' => 'integer',
-            'decimal' => 'integer',
-            'bigint' => 'bigint',
-            'varchar' => 'string',
-            'double' => 'double',
-            'timestamp' => 'timestamp',
-            'text' => 'text',
-            'tinytext' => 'text',
-            'boolean' => 'boolean',
-            'tinyint' => 'boolean',
-            'date' => 'date',
-            'blob' => 'blob'
-        );
-        
-        switch($direction)
-        {
-            case self::CONVERT_TO_YENTU: 
-                $destinationType = $types[$type];
-                break;
-            
-            case self::CONVERT_TO_DRIVER: 
-                $destinationType = array_search($type, $types);
-                
-                break;
-        }
-        
-        if($destinationType == '')
-        {
-            throw new \yentu\DatabaseDriverException("Invalid data type {$type} requested"); 
-        }
-        else if($destinationType == 'varchar')
-        {
-            $destinationType .= $length === null ? '' : "($length)";
-        }
-        return $destinationType;        
-    } 
 }

@@ -11,7 +11,8 @@
     "autoload" : {
         "psr-4" : { 
             "yentu\\tests\\" : "tests/lib/",
-            "yentu\\" : "src/"
+            "yentu\\" : "src/",
+            "ntentan\\atiaa\\" : "src/dba/"
         }
     },
     "require": {

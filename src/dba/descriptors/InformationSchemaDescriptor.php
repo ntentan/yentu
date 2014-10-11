@@ -24,11 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\descriptors;
+namespace ntentan\atiaa\descriptors;
 
-use yentu\SchemaDescriptor;
-
-abstract class InformationSchema extends SchemaDescriptor
+abstract class InformationSchemaDescriptor extends \ntentan\atiaa\Descriptor
 {
     protected function getColumns(&$table)
     {

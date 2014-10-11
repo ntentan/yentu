@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ffcea6228676d535eedacdacfe4c238e",
+    "hash": "3671ce7a4a8a8f057a2fae4afa551269",
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "v0.3.0",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "d82a3cff8b05a3f74add773ed5238c791391a0ec"
+                "reference": "96cbda8e6cdd02fc97da0d1577c8c9ed419c8ca4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/d82a3cff8b05a3f74add773ed5238c791391a0ec",
-                "reference": "d82a3cff8b05a3f74add773ed5238c791391a0ec",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/96cbda8e6cdd02fc97da0d1577c8c9ed419c8ca4",
+                "reference": "96cbda8e6cdd02fc97da0d1577c8c9ed419c8ca4",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "A tool for parsing command line arguments",
-            "time": "2014-09-14 14:25:34"
+            "time": "2014-09-25 18:15:19"
         }
     ],
     "packages-dev": [
@@ -91,6 +91,8 @@
     "minimum-stability": "alpha",
     "stability-flags": [],
     "prefer-stable": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.4.0"
+    },
     "platform-dev": []
 }

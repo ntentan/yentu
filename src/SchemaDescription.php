@@ -9,10 +9,33 @@ class SchemaDescription implements \ArrayAccess
         'views' => array()
     );
     
-    private function __construct($description)
+    private function __construct($description, $manipulator)
     {
         $this->description = $description;
+        $this->description['tables'] = $this->convertColumnTypes(
+            $this->description['tables'], $manipulator
+        );
+        if(is_array($this->description['schema']['tables']))
+        {
+            $this->description['schema']['tables'] = $this->convertColumnTypes(
+                $this->description['schema']['tables'], $manipulator
+            );
+        }
         $this->flattenAllColumns();
+    }
+    
+    private function convertColumnTypes($tables, $manipulator)
+    {
+        foreach($tables as $i => $table)
+        {
+            foreach($table['columns'] as $j => $column)
+            {
+                $tables[$i]['columns'][$j]['type'] = $manipulator->convertTypes(
+                    $column['type'], DatabaseManipulator::CONVERT_TO_YENTU, $column['length']
+                );
+            }
+        }
+        return $tables;
     }
     
     public function offsetExists($offset) 
@@ -258,9 +281,9 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
         
-    public static function wrap($description)
+    public static function wrap($description, $manipulator)
     {
-        return new SchemaDescription($description);
+        return new SchemaDescription($description, $manipulator);
     }
 
     public function toArray()

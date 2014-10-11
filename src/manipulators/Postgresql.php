@@ -1,7 +1,7 @@
 <?php
-namespace yentu\drivers;
+namespace yentu\manipulators;
 
-class Postgresql extends Pdo
+class Postgresql extends \yentu\DatabaseManipulator
 {
     protected $defaultSchema = 'public';
     
@@ -89,9 +89,9 @@ class Postgresql extends Pdo
             sprintf('ALTER TABLE %s ADD COlUMN "%s" %s', 
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                    \yentu\descriptors\Postgresql::convertTypes(
+                    $this->convertTypes(
                         $details['type'], 
-                        \yentu\descriptors\Postgresql::CONVERT_TO_DRIVER,
+                        self::CONVERT_TO_DRIVER,
                         $details['length']
                     )
                 )
@@ -279,5 +279,43 @@ class Postgresql extends Pdo
     protected function quoteIdentifier($identifier)
     {
         return "\"$identifier\"";
-    }    
+    }
+
+    public function convertTypes($type, $direction, $length = null)
+    {
+        $types = array(
+            'integer' => 'integer',
+            'bigint' => 'bigint',
+            'character varying' => 'string',
+            'numeric' => 'double',
+            'timestamp with time zone' => 'timestamp',
+            'timestamp without time zone' => 'timestamp',
+            'text' => 'text',
+            'boolean' => 'boolean',
+            'date' => 'date',
+            'bytea' => 'blob'
+        );
+        
+        switch($direction)
+        {
+            case self::CONVERT_TO_YENTU: 
+                $destinationType = $types[$type];
+                break;
+            
+            case self::CONVERT_TO_DRIVER:
+                $destinationType = array_search($type, $types);
+                break;
+        }
+        
+        if($destinationType == '')
+        {
+            throw new \yentu\DatabaseDriverException("Invalid data type {$type} requested"); 
+        }
+        else if($destinationType == 'character varying')
+        {
+            $destinationType .= $length === null ? '' : "($length)";
+        }
+        
+        return $destinationType;
+    }
 }

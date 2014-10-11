@@ -2,7 +2,7 @@
 namespace yentu\commands;
 
 use yentu\database\DatabaseItem;
-use yentu\DatabaseDriver;
+use yentu\DatabaseManipulator;
 use yentu\ChangeLogger;
 use yentu\Yentu;
 use yentu\database\Schema;
@@ -19,7 +19,7 @@ class Migrate implements \yentu\Command
     
     public function run($options)
     {
-        $this->driver = ChangeLogger::wrap(DatabaseDriver::getConnection());
+        $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
         $filter = self::FILTER_UNRUN;
         
         if(isset($options['ignore-foreign-keys']))

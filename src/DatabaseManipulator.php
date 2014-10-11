@@ -1,15 +1,19 @@
 <?php
 namespace yentu;
 
-abstract class DatabaseDriver
+abstract class DatabaseManipulator
 {
-    private $description;
-    private $assertor;        
+    const CONVERT_TO_DRIVER = 'driver';
+    const CONVERT_TO_YENTU = 'yentu';
     
-    public function __construct($params) 
+    private $description;
+    private $assertor; 
+    private $connection;
+    
+    public function __construct($config) 
     {
-        $this->connect($params);
-        $this->description = $this->describe(); 
+        $this->connection = \ntentan\atiaa\Atiaa::getConnection($config);
+        $this->description = SchemaDescription::wrap($this->connection->describe(), $this); 
     }
         
     public function __call($name, $arguments)
@@ -27,6 +31,21 @@ abstract class DatabaseDriver
         }
     }
     
+    public function query($query, $bind = array())
+    {
+        return $this->connection->query($query, $bind);
+    }
+    
+    public function disconnect()
+    {
+        $this->connection->disconnect();
+    }
+    
+    public function getDefaultSchema()
+    {
+        return $this->connection->getDefaultSchema();
+    }
+    
     public function getAssertor()
     {
         if(!is_object($this->assertor))
@@ -35,10 +54,6 @@ abstract class DatabaseDriver
         }
         return $this->assertor;
     }
-        
-    abstract protected function describe();
-    abstract protected function connect($params);
-    abstract public function disconnect();
     
     abstract protected function _addSchema($name);
     abstract protected function _dropSchema($name);
@@ -61,6 +76,7 @@ abstract class DatabaseDriver
     abstract protected function _addView($details);
     abstract protected function _dropView($details);
     abstract protected function _changeViewDefinition($details);
+    abstract public function convertTypes($type, $direction, $length);
         
     protected function dropTableItem($details, $type)
     {
@@ -76,13 +92,14 @@ abstract class DatabaseDriver
         return $this->description;
     }
     
-    public static function getConnection($config = '')
+    public static function create($config = '')
     {
         if($config == '')
         {
             require Yentu::getPath("config/default.php");
         }
-        $class = "\\yentu\\drivers\\" . ucfirst($config['driver']);
+        
+        $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
         return new $class($config);
     }
     
