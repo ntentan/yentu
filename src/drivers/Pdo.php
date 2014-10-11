@@ -78,6 +78,11 @@ abstract class Pdo extends \yentu\DatabaseDriver
         return $return;
     }
     
+    public function quotedQuery($query, $bindData = false)
+    {
+        return $this->query($this->quoteQueryIdentifiers($query), $bindData);
+    }
+    
     private function expand($params)
     {
         $equated = array();
@@ -89,7 +94,7 @@ abstract class Pdo extends \yentu\DatabaseDriver
         return implode(';', $equated);
     }
     
-    public function quoteQuery($query)
+    public function quoteQueryIdentifiers($query)
     {
         return preg_replace_callback(
             '/\"([a-zA-Z\_ ]*)\"/', 

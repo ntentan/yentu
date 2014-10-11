@@ -32,18 +32,16 @@ abstract class InformationSchema extends SchemaDescriptor
 {
     protected function getColumns(&$table)
     {
-        return $this->driver->query(
-            $this->driver->quoteQuery(
-                'select 
-                    "column_name" as "name", 
-                    "data_type" as "type", 
-                    "is_nullable" as "nulls", 
-                    "column_default" as "default", 
-                    "character_maximum_length" as "length"
-                from "information_schema"."columns"
-                where "table_name" = ? and "table_schema"=?
-                order by "column_name"'
-            ),
+        return $this->driver->quotedQuery(
+            'select 
+                "column_name" as "name", 
+                "data_type" as "type", 
+                "is_nullable" as "nulls", 
+                "column_default" as "default", 
+                "character_maximum_length" as "length"
+            from "information_schema"."columns"
+            where "table_name" = ? and "table_schema"=?
+            order by "column_name"',
             array(
                 $table['name'],
                 $table['schema']
@@ -53,12 +51,10 @@ abstract class InformationSchema extends SchemaDescriptor
     
     protected function getTables($schema)
     {
-        return $this->driver->query(
-            $this->driver->quoteQuery(
-                'select "table_schema" as "schema", "table_name" as "name"
-                from "information_schema"."tables"
-                where table_schema = ? and table_type = ? order by "table_name"'
-            ),
+        return $this->driver->quotedQuery(
+            'select "table_schema" as "schema", "table_name" as "name"
+            from "information_schema"."tables"
+            where table_schema = ? and table_type = ? order by "table_name"',
             array($schema, 'BASE TABLE')
         );
     }  
@@ -75,27 +71,25 @@ abstract class InformationSchema extends SchemaDescriptor
 
     private function getConstraint($table, $type)
     {
-        return $this->driver->query(
-            $this->driver->quoteQuery('select "column_name" as "column", "pk"."constraint_name" as "name" 
-                from "information_schema"."table_constraints" "pk" 
-                join "information_schema"."key_column_usage" "c" on 
-                   "c"."table_name" = "pk"."table_name" and 
-                   "c"."constraint_name" = "pk"."constraint_name" and
-                   "c"."constraint_schema" = "pk"."table_schema"
-                where "pk"."table_name" = ? and pk.table_schema= ?
-                and constraint_type = ? order by "pk"."constraint_name", "column_name"'),
-                array($table['name'], $table['schema'], $type)
-            );
+        return $this->driver->quotedQuery(
+            'select "column_name" as "column", "pk"."constraint_name" as "name" 
+            from "information_schema"."table_constraints" "pk" 
+            join "information_schema"."key_column_usage" "c" on 
+               "c"."table_name" = "pk"."table_name" and 
+               "c"."constraint_name" = "pk"."constraint_name" and
+               "c"."constraint_schema" = "pk"."table_schema"
+            where "pk"."table_name" = ? and pk.table_schema= ?
+            and constraint_type = ? order by "pk"."constraint_name", "column_name"',
+            array($table['name'], $table['schema'], $type)
+        );
     }  
     
     protected function getViews(&$schema)
     {
-        return $this->driver->query(
-            $this->driver->quoteQuery(
-                'select "table_schema" as "schema", "table_name" as "name", "view_definition" as "definition"
-                from "information_schema"."views"
-                where "table_schema" = ? order by "table_name"'
-            ),
+        return $this->driver->quotedQuery(
+            'select "table_schema" as "schema", "table_name" as "name", "view_definition" as "definition"
+            from "information_schema"."views"
+            where "table_schema" = ? order by "table_name"',
             array($schema)
         );
     }    
