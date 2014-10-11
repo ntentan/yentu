@@ -11,13 +11,13 @@
     "autoload" : {
         "psr-4" : { 
             "yentu\\tests\\" : "tests/lib/",
-            "yentu\\" : "src/",
-            "ntentan\\atiaa\\" : "src/dba/"
+            "yentu\\" : "src/"
         }
     },
     "require": {
         "ekowabaka/clearice": "0.3.*",
-        "php" : ">=5.4.0"
+        "php" : ">=5.4.0",
+        "ntentan/atiaa": "dev-master"
     },
     "require-dev" : {
         "mikey179/vfsStream" : "v1.3.0"
