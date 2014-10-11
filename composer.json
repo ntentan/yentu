@@ -15,7 +15,8 @@
         }
     },
     "require": {
-        "ekowabaka/clearice": "0.3.*"
+        "ekowabaka/clearice": "0.3.*",
+        "php" : ">=5.4.0"
     },
     "require-dev" : {
         "mikey179/vfsStream" : "v1.3.0"
