@@ -338,7 +338,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 )
             );  
         }
-        catch(\ntentan\atiaa\DatabaseDriverException $e)
+        catch(\yentu\DatabaseManipulatorException $e)
         {
             $this->_dropAutoPrimaryKey(array(
                 'column' => $details['columns'][0],
