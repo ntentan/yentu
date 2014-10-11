@@ -10,7 +10,7 @@ class YentuException extends \Exception
         {
             if(realpath(Yentu::getPath('migrations')) === dirname($item['file']))
             {
-                $this->message .= " on line {$item['line']} of {$item['file']}";
+                $this->message .= ". Exception was thrown by action on line {$item['line']} of {$item['file']}";
                 break;
             }
         }

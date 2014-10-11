@@ -34,6 +34,7 @@ abstract class DatabaseManipulator
     public function query($query, $bind = array())
     {
         try{
+        Yentu::out("\n    > Running Query [$query]", Yentu::OUTPUT_LEVEL_3);
             return $this->connection->query($query, $bind);
         }
         catch(\ntentan\atiaa\DatabaseDriverException $e)

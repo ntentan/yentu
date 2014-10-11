@@ -62,8 +62,8 @@ class ChangeLogger
             }
             else
             {        
-                $return = $this->driver->$method($arguments[0]);
                 Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);  
+                $return = $this->driver->$method($arguments[0]);
                 $outputLevel = Yentu::getOutputLevel(); Yentu::setOutputLevel(Yentu::OUTPUT_LEVEL_0);
                 $this->driver->query(
                     'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',
