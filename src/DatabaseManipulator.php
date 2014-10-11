@@ -33,7 +33,13 @@ abstract class DatabaseManipulator
     
     public function query($query, $bind = array())
     {
-        return $this->connection->query($query, $bind);
+        try{
+            return $this->connection->query($query, $bind);
+        }
+        catch(\ntentan\atiaa\DatabaseDriverException $e)
+        {
+            throw new DatabaseManipulatorException($e->getMessage());
+        }
     }
     
     public function disconnect()

@@ -168,7 +168,7 @@ catch(\yentu\commands\CommandError $e)
         "\nThere was an error executing your command: " . $e->getMessage() . "\n"
     );
 }
-catch(\yentu\DatabaseDriverException $e)
+catch(\yentu\DatabaseManipulatorException $e)
 {
     fputs(
         STDERR,
