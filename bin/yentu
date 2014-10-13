@@ -3,13 +3,16 @@
 error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
+define('YENTU_VERSION', '0.1.0-alpha');
+$version = YENTU_VERSION;
+
 use clearice\ClearIce;
 use yentu\Yentu;
 
 ClearIce::addCommands(
     array(
         'command' => 'import',
-        'help' => 'import the schema of an existing database into a yentu migration'
+        'help' => 'import the schema of an existing database'
     ), 
     array(
         'command' => 'migrate',
@@ -17,15 +20,16 @@ ClearIce::addCommands(
     ), 
     array(
         'command' => 'init',
-        'help' => 'initialize the current directory (or the one specified through the  --home option) with yentu'
+        'help' => 'initialize the yentu directory'
     ), 
     array(
         'command' => 'create',
+        'usage' => 'create [name] [options]..',
         'help' => 'create a new migration'
     ),
     array(
         'command' => 'rollback',
-        'help' => 'rollback the previus migration which was run on the database'
+        'help' => 'rollback the previus migration which was run'
     ),
     array(
         'command' => 'status',
@@ -126,9 +130,9 @@ ClearIce::addOptions(
     )
 );
 
-ClearIce::setDescription("\nYentu Database Migrations\nYentu allows you to keep track of changes to your database schema through your source countrol system.");
-ClearIce::setFootnote("Report bugs to jainooson@gmail.com\n");
-
+ClearIce::setDescription("Yentu Database Migrations\nVersion $version");
+ClearIce::setFootnote("Report bugs to jainooson@gmail.com");
+ClearIce::setUsage("[command] [options]");
 ClearIce::addHelp();
 ClearIce::setStrict(true);
 $options = ClearIce::parse();
@@ -139,9 +143,8 @@ if(isset($options['verbose']))
 }
 
 $welcome = <<<WELCOME
-
-Yentu Database Migrations.
-By James Ekow Abaka Ainooson
+Yentu Database Migration Tool
+Version $version
 
 WELCOME;
 Yentu::out($welcome);
