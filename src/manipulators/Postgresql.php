@@ -172,7 +172,7 @@ class Postgresql extends \yentu\DatabaseManipulator
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s DROP CONSTRAINT "%s"',
+                'ALTER TABLE %s DROP CONSTRAINT "%s" CASCADE',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name']
             )
@@ -195,7 +195,7 @@ class Postgresql extends \yentu\DatabaseManipulator
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s DROP CONSTRAINT "%s"',
+                'ALTER TABLE %s DROP CONSTRAINT "%s" CASCADE',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name']
             )
