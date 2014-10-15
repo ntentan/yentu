@@ -42,7 +42,7 @@ class Yentu
     
     public static function getMigrationDetails($migration)
     {
-        preg_match("/(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php/", $migration, $details);
+        preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details);
         $details['file'] = $migration;
         return $details;
     }    
