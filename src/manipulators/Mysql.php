@@ -70,7 +70,7 @@ class Mysql extends \yentu\DatabaseManipulator
         
         if($destinationType == '')
         {
-            throw new \yentu\DatabaseDriverException("Invalid data type {$type} requested"); 
+            throw new \yentu\DatabaseManipulatorException("Invalid data type {$type} requested"); 
         }
         else if($destinationType == 'varchar')
         {
