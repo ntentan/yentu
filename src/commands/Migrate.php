@@ -65,12 +65,12 @@ class Migrate implements \yentu\Command
         $output = array();
         foreach($input as $migration)
         {
-            $run = reset($this->driver->query(
-                "SELECT count(*) FROM yentu_history WHERE migration = ? and version = ?", 
+            $run = $this->driver->query(
+                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ?", 
                 array($migration['migration'], $migration['timestamp'])
-            ));
+            );
             
-            if($run['count'] == 0)
+            if($run[0]['number_run'] == 0)
             {
                 $output[] = $migration;
             }

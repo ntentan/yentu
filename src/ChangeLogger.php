@@ -76,8 +76,8 @@ class ChangeLogger
         }
         else if(preg_match("/^does([A-Za-z]+)/", $method))
         {
-            $invokable = new \ReflectionMethod($this->driver->assertor, $method);
-            return $invokable->invokeArgs($this->driver->assertor, $arguments);
+            $invokable = new \ReflectionMethod($this->driver->getAssertor(), $method);
+            return $invokable->invokeArgs($this->driver->getAssertor(), $arguments);
         }
         else
         {

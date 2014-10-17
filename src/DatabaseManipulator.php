@@ -39,7 +39,7 @@ abstract class DatabaseManipulator
         }
     }
     
-    public function query($query, $bind = array())
+    public function query($query, $bind = false)
     {
         try{
         Yentu::out("\n    > Running Query [$query]", Yentu::OUTPUT_LEVEL_3);
