@@ -132,6 +132,7 @@ class Init implements Command
         }
         
         $db->createHistory();
+        $db->disconnect();
         $this->createConfigFile($params);
                 
         Yentu::out("Yentu successfully initialized.\n");

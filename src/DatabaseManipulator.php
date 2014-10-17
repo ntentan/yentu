@@ -111,6 +111,11 @@ abstract class DatabaseManipulator
         return $this->schemaDescription;
     }
     
+    /**
+     * 
+     * @param array<mixed> $config
+     * @return \yentu\DatabaseManipulator;
+     */
     public static function create($config = '')
     {
         if($config == '')
