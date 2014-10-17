@@ -10,7 +10,6 @@ class ChangeLogger
     private static $changes;
     private $skippedItemTypes = array();
     private $allowedItemTypes = array();
-    private $assertor;    
     
     public function skip($itemType)
     {
@@ -25,11 +24,7 @@ class ChangeLogger
     private function __construct(DatabaseManipulator $driver) 
     {
         $this->driver = $driver;
-        $this->assertor = $driver->getAssertor();        
-        if(!$this->assertor->doesTableExist(array('name' => 'yentu_history')))
-        {
-            $this->driver->createHistory();
-        }
+        $this->driver->createHistory();
     }
     
     public static function wrap($item)
@@ -81,8 +76,8 @@ class ChangeLogger
         }
         else if(preg_match("/^does([A-Za-z]+)/", $method))
         {
-            $invokable = new \ReflectionMethod($this->assertor, $method);
-            return $invokable->invokeArgs($this->assertor, $arguments);
+            $invokable = new \ReflectionMethod($this->driver->assertor, $method);
+            return $invokable->invokeArgs($this->driver->assertor, $arguments);
         }
         else
         {

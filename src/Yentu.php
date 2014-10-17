@@ -19,7 +19,6 @@ class Yentu
     private static $level = Yentu::OUTPUT_LEVEL_1;
     private static $streamResource;
 
-
     public static function setDefaultHome($home)
     {
         self::$home = $home;
@@ -37,15 +36,30 @@ class Yentu
     
     public static function getMigrations()
     {
-        return scandir(Yentu::getPath('migrations'), 0);        
+        $migrationFiles = scandir(Yentu::getPath('migrations'), 0);        
+        $migrations = array();
+        foreach($migrationFiles as $migration)
+        {
+            $details = self::getMigrationDetails($migration);
+            if($details === false) continue;
+            $migrations[] = $details;
+        }
+        
+        return $migrations;
     }
     
-    public static function getMigrationDetails($migration)
+    private static function getMigrationDetails($migration)
     {
-        preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details);
-        $details['file'] = $migration;
+        if(preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details))
+        {
+            $details['file'] = $migration;
+        }
+        else
+        {
+            $details = false;            
+        }
         return $details;
-    }    
+    }   
     
     public static function setOutputStreamUrl($url)
     {

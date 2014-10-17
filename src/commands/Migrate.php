@@ -39,7 +39,7 @@ class Migrate implements \yentu\Command
         
         $version = $this->driver->getVersion();
         
-        $migrations = $this->filter(Yentu::getMigrations(), $filter, $version);
+        $migrations = $this->filter(Yentu::getMigrations(), $filter);
         
         foreach($migrations as $migration)
         {
@@ -54,19 +54,23 @@ class Migrate implements \yentu\Command
         $this->driver->disconnect();
     }
     
-    private function filter($migrations, $type = self::FILTER_UNRUN, $version = null)
+    private function filter($migrations, $type = self::FILTER_UNRUN)
     {
         $filterMethod = "{$type}Filter";
-        return $this->$filterMethod($migrations, $version);
+        return $this->$filterMethod($migrations);
     }
     
-    private function unrunFilter($input, $version)
+    private function unrunFilter($input)
     {
         $output = array();
         foreach($input as $migration)
         {
-            $migration = Yentu::getMigrationDetails($migration);
-            if($migration['timestamp'] > $version)
+            $run = reset($this->driver->query(
+                "SELECT count(*) FROM yentu_history WHERE migration = ? and version = ?", 
+                array($migration['migration'], $migration['timestamp'])
+            ));
+            
+            if($run['count'] == 0)
             {
                 $output[] = $migration;
             }
@@ -74,13 +78,12 @@ class Migrate implements \yentu\Command
         return $output;
     }
     
-    private function lastSessionFilter($input, $version)
+    private function lastSessionFilter($input)
     {
         $versions = $this->driver->getSessionVersions($this->driver->getLastSession());
         $output = array();
         foreach($input as $migration)
         {
-            $migration = Yentu::getMigrationDetails($migration);
             if(array_search($migration['timestamp'], $versions) !== false)
             {
                 $output[] = $migration;

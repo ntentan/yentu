@@ -1,4 +1,3 @@
-
 Applying only foreign keys ...
 
 Applying 'import' migration

@@ -6,14 +6,22 @@ abstract class DatabaseManipulator
     const CONVERT_TO_DRIVER = 'driver';
     const CONVERT_TO_YENTU = 'yentu';
     
-    private $description;
+    private $schemaDescription;
     private $assertor; 
     private $connection;
     
     public function __construct($config) 
     {
         $this->connection = \ntentan\atiaa\Atiaa::getConnection($config);
-        $this->description = SchemaDescription::wrap($this->connection->describe(), $this); 
+        //$this->description = SchemaDescription::wrap($this->connection->describe(), $this); 
+    }
+    
+    public function __get($name)
+    {
+        if($name === 'description')
+        {
+            return $this->getDescription();
+        }
     }
         
     public function __call($name, $arguments)
@@ -96,7 +104,11 @@ abstract class DatabaseManipulator
     
     public function getDescription()
     {
-        return $this->description;
+        if(!is_object($this->schemaDescription))
+        {
+            $this->schemaDescription = SchemaDescription::wrap($this->connection->describe(), $this);
+        }
+        return $this->schemaDescription;
     }
     
     public static function create($config = '')
@@ -144,6 +156,12 @@ abstract class DatabaseManipulator
     
     public function createHistory()
     {
+        $history = $this->connection->describeTable('yentu_history');
+        if(count($history['yentu_history']['columns']) > 0)
+        {
+            return;
+        }
+        
         $level = Yentu::getOutputLevel();
         Yentu::setOutputLevel(Yentu::OUTPUT_LEVEL_0);
         $this->addTable(array('name' => 'yentu_history'));
