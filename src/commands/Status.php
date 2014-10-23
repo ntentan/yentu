@@ -16,7 +16,7 @@ class Status implements Command
         {
             ClearIce::setOutputLevel(Yentu::OUTPUT_LEVEL_2);
         }
-        $driver = \yentu\DatabaseDriver::getConnection();
+        $driver = \yentu\DatabaseManipulator::create();
         $version = $driver->getVersion();
         
         if($version == null)
@@ -57,7 +57,6 @@ class Status implements Command
         
         foreach($migrations as $migration)
         {
-            $migration = Yentu::getMigrationDetails($migration);
             $counter[$counting]++;
             $description = "{$migration['timestamp']} {$migration['migration']}";
             $run[$counting][] = $description;
