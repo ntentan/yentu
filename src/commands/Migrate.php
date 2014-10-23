@@ -9,6 +9,7 @@ use yentu\database\Schema;
 use yentu\database\Table;
 use yentu\database\View;
 use yentu\database\NullSchema;
+use clearice\ClearIce;
 
 class Migrate implements \yentu\Command
 {
@@ -24,13 +25,13 @@ class Migrate implements \yentu\Command
         
         if(isset($options['ignore-foreign-keys']))
         {
-            Yentu::out("Ignoring all foreign key constraints ...\n");
+            ClearIce::output("Ignoring all foreign key constraints ...\n");
             $this->driver->skip('ForeignKey');
         }
         
         if(isset($options['foreign-keys-only']))
         {
-            Yentu::out("Applying only foreign keys ...\n");
+            ClearIce::output("Applying only foreign keys ...\n");
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
         }
@@ -45,10 +46,10 @@ class Migrate implements \yentu\Command
         {
             ChangeLogger::setVersion($migration['timestamp']);
             ChangeLogger::setMigration($migration['migration']);                        
-            Yentu::out("\nApplying '{$migration['migration']}' migration\n");
+            ClearIce::output("\nApplying '{$migration['migration']}' migration\n");
             require Yentu::getPath("migrations/{$migration['file']}");
             DatabaseItem::purge();
-            Yentu::out("\n");
+            ClearIce::output("\n");
         }
         
         $this->driver->disconnect();

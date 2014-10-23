@@ -4,7 +4,7 @@ namespace yentu\commands;
 use yentu\ChangeReverser;
 use yentu\DatabaseManipulator;
 use yentu\database\DatabaseItem;
-use yentu\Yentu;
+use clearice\ClearIce;
 
 class Rollback implements \yentu\Command
 {
@@ -27,7 +27,7 @@ class Rollback implements \yentu\Command
         {
             if($previousMigration !== $operation['migration'])
             {
-                Yentu::out("\nRolling back '{$operation['migration']}' migration\n");  
+                ClearIce::output("\nRolling back '{$operation['migration']}' migration\n");  
                 $previousMigration = $operation['migration'];
             }
             try{

@@ -3,6 +3,7 @@ namespace yentu\commands;
 
 use yentu\Command;
 use yentu\Yentu;
+use clearice\ClearIce;
 
 /**
  * 
@@ -13,33 +14,33 @@ class Status implements Command
     {
         if($options['details'])
         {
-            Yentu::setOutputLevel(Yentu::OUTPUT_LEVEL_2);
+            ClearIce::setOutputLevel(Yentu::OUTPUT_LEVEL_2);
         }
         $driver = \yentu\DatabaseDriver::getConnection();
         $version = $driver->getVersion();
         
         if($version == null)
         {
-            Yentu::out("\nYou have not applied any migrations\n");
+            ClearIce::output("\nYou have not applied any migrations\n");
             return;
         }
         
         $migrationInfo = $this->getMigrationInfo($version);
         
         
-        Yentu::out("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
+        ClearIce::output("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
         $this->displayMigrations($migrationInfo['run']['previous']);
         
-        Yentu::out("\nLast migration applied:\n    {$migrationInfo['current']}\n");
+        ClearIce::output("\nLast migration applied:\n    {$migrationInfo['current']}\n");
         
         if($migrationInfo['counter']['yet'] > 0)
         {
-            Yentu::out("\nThere are {$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
+            ClearIce::output("\nThere are {$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
             $this->displayMigrations($migrationInfo['run']['yet']);
         }
         else
         {
-            Yentu::out("\nThere are no pending migrations.\n");
+            ClearIce::output("\nThere are no pending migrations.\n");
         }
     }
     
@@ -82,7 +83,7 @@ class Status implements Command
             {
                 continue;
             }
-            Yentu::out("    $description\n", Yentu::OUTPUT_LEVEL_2);
+            ClearIce::output("    $description\n", Yentu::OUTPUT_LEVEL_2);
         }        
     }
 }

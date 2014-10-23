@@ -63,7 +63,7 @@ class Import implements Command
         $this->newVersion = date('YmdHis', time());
         $path = Yentu::getPath("migrations/{$this->newVersion}_import.php");
         file_put_contents($path, $this->code);
-        Yentu::out("Created `$path`\n");
+        \clearice\ClearIce::output("Created `$path`\n");
         if(!$this->db->getAssertor()->doesTableExist('yentu_history'))
         {
             $this->db->createHistory();

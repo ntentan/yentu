@@ -1,6 +1,8 @@
 <?php
 namespace yentu;
 
+use clearice\ClearIce;
+
 abstract class DatabaseManipulator
 {
     const CONVERT_TO_DRIVER = 'driver';
@@ -42,7 +44,7 @@ abstract class DatabaseManipulator
     public function query($query, $bind = false)
     {
         try{
-        Yentu::out("\n    > Running Query [$query]", Yentu::OUTPUT_LEVEL_3);
+            ClearIce::output("\n    > Running Query [$query]", ClearIce::OUTPUT_LEVEL_3);
             return $this->connection->query($query, $bind);
         }
         catch(\ntentan\atiaa\DatabaseDriverException $e)
@@ -167,8 +169,8 @@ abstract class DatabaseManipulator
             return;
         }
         
-        $level = Yentu::getOutputLevel();
-        Yentu::setOutputLevel(Yentu::OUTPUT_LEVEL_0);
+        $level = ClearIce::getOutputLevel();
+        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
         $this->addTable(array('name' => 'yentu_history'));
         
         $this->addColumn(array('table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
@@ -179,6 +181,6 @@ abstract class DatabaseManipulator
         $this->addColumn(array('table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
         $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
         $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));
-        Yentu::setOutputLevel($level);
+        ClearIce::setOutputLevel($level);
     }
 }

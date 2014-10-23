@@ -1,6 +1,8 @@
 <?php
 namespace yentu;
 
+use clearice\ClearIce;
+
 class ChangeLogger
 {
     private $driver;
@@ -52,14 +54,15 @@ class ChangeLogger
                 (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
             )
             {
-                Yentu::out("S");
-                Yentu::out("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", Yentu::OUTPUT_LEVEL_2);
+                ClearIce::output("S");
+                ClearIce::output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", ClearIce::OUTPUT_LEVEL_2);
             }
             else
             {        
                 Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);  
                 $return = $this->driver->$method($arguments[0]);
-                $outputLevel = Yentu::getOutputLevel(); Yentu::setOutputLevel(Yentu::OUTPUT_LEVEL_0);
+                $outputLevel = ClearIce::getOutputLevel();                
+                ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
                 $this->driver->query(
                     'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',
                     array(
@@ -70,7 +73,7 @@ class ChangeLogger
                         self::$migration
                     )
                 );
-                Yentu::setOutputLevel($outputLevel);
+                ClearIce::setOutputLevel($outputLevel);
                 self::$changes++;
             }
         }

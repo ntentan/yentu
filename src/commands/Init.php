@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * The MIT License
  *
@@ -135,7 +134,7 @@ class Init implements Command
         $db->disconnect();
         $this->createConfigFile($params);
                 
-        Yentu::out("Yentu successfully initialized.\n");
+        ClearIce::output("Yentu successfully initialized.\n");
     }
 }
 

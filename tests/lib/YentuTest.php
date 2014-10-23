@@ -149,7 +149,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::setup('home');
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
-        \yentu\Yentu::setOutputStreamUrl(vfsStream::url('home/output.txt'));
+        \clearice\ClearIce::setStreamUrl('output', vfsStream::url('home/output.txt'));
     }
     
     protected function initYentu($name)

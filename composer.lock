@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "v0.3.1",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "96cbda8e6cdd02fc97da0d1577c8c9ed419c8ca4"
+                "reference": "9d1c4c51b2ec2bde686c6342159acd95e58dcceb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/96cbda8e6cdd02fc97da0d1577c8c9ed419c8ca4",
-                "reference": "96cbda8e6cdd02fc97da0d1577c8c9ed419c8ca4",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/9d1c4c51b2ec2bde686c6342159acd95e58dcceb",
+                "reference": "9d1c4c51b2ec2bde686c6342159acd95e58dcceb",
                 "shasum": ""
             },
             "require": {
@@ -43,8 +43,8 @@
                     "homepage": "http://ekowabaka.me"
                 }
             ],
-            "description": "A tool for parsing command line arguments",
-            "time": "2014-09-25 18:15:19"
+            "description": "A tool to help in the building of CLI apps. Provides command line parsing and simple console I/O interfaces.",
+            "time": "2014-10-22 09:55:49"
         },
         {
             "name": "ntentan/atiaa",

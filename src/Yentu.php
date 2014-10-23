@@ -1,22 +1,11 @@
 <?php
 namespace yentu;
 
+use clearice\ClearIce;
+
 class Yentu
 {
-    // Total silence. Like mute :-X
-    const OUTPUT_LEVEL_0 = 0;
-    
-    // General top level info.
-    const OUTPUT_LEVEL_1 = 1;
-    
-    // Details of operations being performed.
-    const OUTPUT_LEVEL_2 = 2;
-    
-    // Log every single query too.
-    const OUTPUT_LEVEL_3 = 3;
-    
     private static $home = './yentu';
-    private static $level = Yentu::OUTPUT_LEVEL_1;
     private static $streamResource;
 
     public static function setDefaultHome($home)
@@ -59,38 +48,6 @@ class Yentu
             $details = false;            
         }
         return $details;
-    }   
-    
-    public static function setOutputStreamUrl($url)
-    {
-        self::$streamResource = fopen($url, 'w');
-    }
-
-    /**
-     * 
-     * @param type $string
-     */
-    public static function out($string, $level = Yentu::OUTPUT_LEVEL_1)
-    {
-        if(!is_resource(self::$streamResource))
-        {
-            self::$streamResource = fopen('php://stdout', 'w');
-        }
-        if($level <= self::$level)
-        {
-            fputs(self::$streamResource, $string);
-            fflush(self::$streamResource);
-        }
-    }
-    
-    public static function setOutputLevel($level)
-    {
-        self::$level = $level;
-    }
-    
-    public static function getOutputLevel()
-    {
-        return self::$level;
     }
     
     public static function toCamelCase($string)
@@ -106,13 +63,13 @@ class Yentu
     
     public static function announce($command, $itemType, $arguments)
     {
-        Yentu::out(
+        ClearIce::output(
             "\n  - " . ucfirst("{$command}ing ") . 
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
             self::getDetails($command, $arguments),
-            self::OUTPUT_LEVEL_2
+            ClearIce::OUTPUT_LEVEL_2
         );
-        Yentu::out(".");
+        ClearIce::output(".");
     }
     
     private static function getDetails($name, $arguments)
@@ -137,4 +94,3 @@ class Yentu
         return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
     }    
 }
-

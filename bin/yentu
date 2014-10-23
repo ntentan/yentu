@@ -147,7 +147,7 @@ Yentu Database Migration Tool
 Version $version
 
 WELCOME;
-Yentu::out($welcome);
+ClearIce::output($welcome);
 
 try{
     if($options['__command__'])
@@ -193,12 +193,12 @@ function rollback_changes()
 {
     if(\yentu\ChangeLogger::getChanges() > 0)
     {
-        Yentu::out("\nAttempting to rollback all changes ... ");
-        Yentu::setOutputLevel(0);
+        ClearIce::output("\nAttempting to rollback all changes ... ");
+        ClearIce::setOutputLevel(0);
         $rollback = new \yentu\commands\Rollback();
         $rollback->run(array());
-        Yentu::setOutputLevel(1);        
-        Yentu::out("OK\n");
+        ClearIce::setOutputLevel(1);        
+        ClearIce::out("OK\n");
     }    
 }
 
