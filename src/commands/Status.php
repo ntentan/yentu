@@ -12,10 +12,6 @@ class Status implements Command
 {
     public function run($options)
     {
-        if($options['details'])
-        {
-            ClearIce::setOutputLevel(Yentu::OUTPUT_LEVEL_2);
-        }
         $driver = \yentu\DatabaseManipulator::create();
         $version = $driver->getVersion();
         
@@ -26,7 +22,6 @@ class Status implements Command
         }
         
         $migrationInfo = $this->getMigrationInfo($version);
-        
         
         ClearIce::output("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
         $this->displayMigrations($migrationInfo['run']['previous']);
@@ -46,27 +41,28 @@ class Status implements Command
     
     private function getMigrationInfo($version)
     {
+        $runMigrations = Yentu::getRunMirations();
         $migrations = Yentu::getMigrations();
-        $counter['previous'] = 0;
-        $counting = 'previous';
-        $current = '';
+        
+        $counter['previous'] = count($runMigrations);
+        end($runMigrations);
+        $current = "{$runMigrations[key($runMigrations)]['timestamp']} {$runMigrations[key($runMigrations)]['migration']}";
         $run = array(
             'previous' => array(),
             'yet' => array()
         );
         
-        foreach($migrations as $migration)
+        foreach($runMigrations as $timestamp => $migration)
         {
-            $counter[$counting]++;
-            $description = "{$migration['timestamp']} {$migration['migration']}";
-            $run[$counting][] = $description;
-            if($migration['timestamp'] == $version)
-            {
-                $current = $description;
-                $counting = 'yet';
-            }
+            unset($migrations[$timestamp]);
+            $run['previous'][] = "{$timestamp} {$migration['migration']}";
         }
         
+        foreach ($migrations as $migration)
+        {
+            $run['yet'][] = "{$timestamp} {$migration['migration']}";
+        }
+                
         return array(
             'counter' => $counter,
             'current' => $current,
@@ -82,7 +78,7 @@ class Status implements Command
             {
                 continue;
             }
-            ClearIce::output("    $description\n", Yentu::OUTPUT_LEVEL_2);
+            ClearIce::output("    $description\n");
         }        
     }
 }

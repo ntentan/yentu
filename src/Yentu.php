@@ -23,6 +23,22 @@ class Yentu
         return self::$home . "/$path";
     }
     
+    public static function getRunMirations()
+    {
+        $db = DatabaseManipulator::create();
+        $runMigrations = $db->query("SELECT DISTINCT version, migration FROM yentu_history ORDER BY version");
+        $migrations = array();
+        foreach($runMigrations as $migration)
+        {
+            $migrations[$migration['version']] = array(
+                'timestamp' => $migration['version'],
+                'migration' => $migration['migration']
+            );
+        }
+        
+        return $migrations;
+    }
+    
     public static function getMigrations()
     {
         $migrationFiles = scandir(Yentu::getPath('migrations'), 0);        
@@ -31,7 +47,10 @@ class Yentu
         {
             $details = self::getMigrationDetails($migration);
             if($details === false) continue;
-            $migrations[] = $details;
+            $migrations[$details['timestamp']] = $details;
+            unset($migrations[$details['timestamp']][0]);
+            unset($migrations[$details['timestamp']][1]);
+            unset($migrations[$details['timestamp']][2]);
         }
         
         return $migrations;
