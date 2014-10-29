@@ -198,7 +198,7 @@ function rollback_changes()
         $rollback = new \yentu\commands\Rollback();
         $rollback->run(array());
         ClearIce::setOutputLevel(1);        
-        ClearIce::out("OK\n");
+        ClearIce::output("OK\n");
     }    
 }
 

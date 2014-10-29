@@ -30,7 +30,7 @@ class Status implements Command
         
         if($migrationInfo['counter']['yet'] > 0)
         {
-            ClearIce::output("\nThere are {$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
+            ClearIce::output("\n{$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
             $this->displayMigrations($migrationInfo['run']['yet']);
         }
         else
@@ -62,6 +62,7 @@ class Status implements Command
         {
             $run['yet'][] = "{$timestamp} {$migration['migration']}";
         }
+        $counter['yet'] = count($run['yet']);
                 
         return array(
             'counter' => $counter,
