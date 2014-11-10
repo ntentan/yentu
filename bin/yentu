@@ -3,8 +3,6 @@
 error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
-define('YENTU_VERSION', '0.1.0-alpha');
-
 use clearice\ClearIce;
 use yentu\Yentu;
 
@@ -193,15 +191,15 @@ catch(\PDOException $e)
 
 function rollback_changes()
 {
+    ClearIce::output("\nAttempting to rollback all changes ... ");
     if(\yentu\ChangeLogger::getChanges() > 0)
     {
-        ClearIce::output("\nAttempting to rollback all changes ... ");
         ClearIce::setOutputLevel(0);
         $rollback = new \yentu\commands\Rollback();
         $rollback->run(array());
         ClearIce::setOutputLevel(1);        
-        ClearIce::output("OK\n");
     }    
+    ClearIce::output("OK\n");
 }
 
 ClearIce::output("\n");

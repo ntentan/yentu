@@ -1,12 +1,13 @@
 <?php
 namespace yentu;
 
+define('YENTU_VERSION', '0.1.0-alpha');
+
 use clearice\ClearIce;
 
 class Yentu
 {
     private static $home = './yentu';
-    private static $streamResource;
 
     public static function setDefaultHome($home)
     {
