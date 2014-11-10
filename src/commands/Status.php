@@ -12,6 +12,7 @@ class Status implements Command
 {
     public function run($options)
     {
+        Yentu::greet();
         $driver = \yentu\DatabaseManipulator::create();
         $version = $driver->getVersion();
         

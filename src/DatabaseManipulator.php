@@ -12,6 +12,7 @@ abstract class DatabaseManipulator
     private $assertor; 
     private $connection;
     private $dumpQuery;
+    private $disableQuery;
     
     public function __construct($config) 
     {
@@ -29,6 +30,11 @@ abstract class DatabaseManipulator
     public function setDumpQuery($dumpQuery)
     {
         $this->dumpQuery = $dumpQuery;
+    }
+    
+    public function setDisableQuery($disableQuery)
+    {
+        $this->disableQuery = $disableQuery;
     }
         
     public function __call($name, $arguments)
@@ -53,8 +59,13 @@ abstract class DatabaseManipulator
             {
                 echo "$query\n";
             }
+            
             ClearIce::output("\n    > Running Query [$query]", ClearIce::OUTPUT_LEVEL_3);
-            return $this->connection->query($query, $bind);
+            
+            if($this->disableQuery !== true)
+            {
+                return $this->connection->query($query, $bind);
+            }
         }
         catch(\ntentan\atiaa\DatabaseDriverException $e)
         {

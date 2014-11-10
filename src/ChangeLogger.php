@@ -13,6 +13,7 @@ class ChangeLogger
     private $skippedItemTypes = array();
     private $allowedItemTypes = array();
     private $dumpQueriesOnly;
+    private $dryRun;
     
     public function skip($itemType)
     {
@@ -26,6 +27,11 @@ class ChangeLogger
             ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
         }
         $this->dumpQueriesOnly = $dumpQueriesOnly;
+    }
+    
+    public function setDryRun($dryRun)
+    {
+        $this->dryRun = $dryRun;
     }
     
     public function allowOnly($itemType)
@@ -60,6 +66,8 @@ class ChangeLogger
         if(preg_match("/^(?<command>add|drop|change)(?<item_type>[a-zA-Z]+)/", $method, $matches))
         {
             $this->driver->setDumpQuery($this->dumpQueriesOnly);
+            $this->driver->setDisableQuery($this->dryRun);
+            
             if(
                 array_search($matches['item_type'], $this->skippedItemTypes) !== false || 
                 (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
@@ -72,7 +80,9 @@ class ChangeLogger
             {        
                 Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);  
                 $return = $this->driver->$method($arguments[0]);
+                
                 $this->driver->setDumpQuery(false);
+                
                 $outputLevel = ClearIce::getOutputLevel();                
                 ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
                 $this->driver->query(
@@ -87,6 +97,7 @@ class ChangeLogger
                 );
                 ClearIce::setOutputLevel($outputLevel);
                 self::$changes++;
+                $this->driver->setDisableQuery(false);
             }
         }
         else if(preg_match("/^does([A-Za-z]+)/", $method))

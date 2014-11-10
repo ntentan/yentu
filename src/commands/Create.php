@@ -7,6 +7,7 @@ class Create implements \yentu\Command
 {
     public function run($options)
     {
+        Yentu::greet();
         $this->createFile($options['stand_alones'][0]);
     }
     

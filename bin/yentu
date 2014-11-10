@@ -108,6 +108,11 @@ ClearIce::addOptions(
         'command' => 'migrate',
         'long' => 'dump-queries',
         'help' => 'just dump the query and perform no action'
+    ),
+    array(
+        'command' => 'migrate',
+        'long' => 'dry',
+        'help' => 'perform a dry run. Do not alter the database in anyway'
     )
 );
 

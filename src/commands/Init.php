@@ -102,6 +102,7 @@ class Init implements Command
     
     public function run($options)
     {
+        Yentu::greet();
         if(file_exists(Yentu::getPath('')))
         {
             throw new CommandError("Could not initialize yentu. Your project has already been initialized with yentu.");

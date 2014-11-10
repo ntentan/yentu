@@ -38,6 +38,7 @@ class Import implements Command
 
     public function run($options)
     {
+        Yentu::greet();
         $this->initializeCodeWriter();
         $files = scandir(Yentu::getPath("migrations"));
         if(count($files) > 2)

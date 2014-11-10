@@ -21,8 +21,8 @@ class Migrate implements \yentu\Command
     public function run($options)
     {
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
-        // Set the dump queries early so it can suppress the subsequent greeting
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
+        $this->driver->setDryRun($options['dry']);
         
         Yentu::greet();
         
