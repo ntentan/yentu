@@ -11,11 +11,11 @@ abstract class DatabaseManipulator
     private $schemaDescription;
     private $assertor; 
     private $connection;
+    private $dumpQuery;
     
     public function __construct($config) 
     {
         $this->connection = \ntentan\atiaa\Atiaa::getConnection($config);
-        //$this->description = SchemaDescription::wrap($this->connection->describe(), $this); 
     }
     
     public function __get($name)
@@ -24,6 +24,11 @@ abstract class DatabaseManipulator
         {
             return $this->getDescription();
         }
+    }
+    
+    public function setDumpQuery($dumpQuery)
+    {
+        $this->dumpQuery = $dumpQuery;
     }
         
     public function __call($name, $arguments)
@@ -44,6 +49,10 @@ abstract class DatabaseManipulator
     public function query($query, $bind = false)
     {
         try{
+            if($this->dumpQuery)
+            {
+                echo "$query\n";
+            }
             ClearIce::output("\n    > Running Query [$query]", ClearIce::OUTPUT_LEVEL_3);
             return $this->connection->query($query, $bind);
         }

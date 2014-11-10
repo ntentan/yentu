@@ -4,7 +4,6 @@ error_reporting(E_ALL ^ E_NOTICE);
 require "vendor/autoload.php";
 
 define('YENTU_VERSION', '0.1.0-alpha');
-$version = YENTU_VERSION;
 
 use clearice\ClearIce;
 use yentu\Yentu;
@@ -104,6 +103,11 @@ ClearIce::addOptions(
         'command' => 'migrate',
         'long' => 'foreign-keys-only',
         'help' => 'apply only database constraints'
+    ),
+    array(
+        'command' => 'migrate',
+        'long' => 'dump-queries',
+        'help' => 'just dump the query and perform no action'
     )
 );
 
@@ -141,13 +145,6 @@ if(isset($options['verbose']))
 {
     Yentu::setOutputLevel($options['verbose']);
 }
-
-$welcome = <<<WELCOME
-Yentu Database Migration Tool
-Version $version
-
-WELCOME;
-ClearIce::output($welcome);
 
 try{
     if($options['__command__'])

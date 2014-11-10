@@ -21,6 +21,11 @@ class Migrate implements \yentu\Command
     public function run($options)
     {
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
+        // Set the dump queries early so it can suppress the subsequent greeting
+        $this->driver->setDumpQueriesOnly($options['dump-queries']);
+        
+        Yentu::greet();
+        
         $filter = self::FILTER_UNRUN;
         
         if(isset($options['ignore-foreign-keys']))
@@ -37,8 +42,6 @@ class Migrate implements \yentu\Command
         }
         
         DatabaseItem::setDriver($this->driver);
-        
-        $version = $this->driver->getVersion();
         
         $migrations = $this->filter(Yentu::getMigrations(), $filter);
         

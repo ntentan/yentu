@@ -112,4 +112,15 @@ class Yentu
         }
         return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
     }    
+    
+    public static function greet()
+    {
+        $version = YENTU_VERSION;
+$welcome = <<<WELCOME
+Yentu Database Migration Tool
+Version $version
+
+WELCOME;
+        ClearIce::output($welcome);        
+    }
 }

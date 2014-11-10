@@ -5,11 +5,13 @@ use yentu\ChangeReverser;
 use yentu\DatabaseManipulator;
 use yentu\database\DatabaseItem;
 use clearice\ClearIce;
+use yentu\Yentu;
 
 class Rollback implements \yentu\Command
 {
     public function run($options) 
     {
+        Yentu::greet();
         $db = DatabaseManipulator::create();
         DatabaseItem::setDriver($db);
         ChangeReverser::setDriver($db);
