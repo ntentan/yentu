@@ -1,3 +1,6 @@
+Yentu Database Migration Tool
+Version test
+
 Applying only foreign keys ...
 
 Applying 'import' migration

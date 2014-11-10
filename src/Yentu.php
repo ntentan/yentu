@@ -8,6 +8,7 @@ use clearice\ClearIce;
 class Yentu
 {
     private static $home = './yentu';
+    public static $version = YENTU_VERSION;
 
     public static function setDefaultHome($home)
     {
@@ -116,7 +117,7 @@ class Yentu
     
     public static function greet()
     {
-        $version = YENTU_VERSION;
+        $version = Yentu::$version;
 $welcome = <<<WELCOME
 Yentu Database Migration Tool
 Version $version

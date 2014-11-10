@@ -27,6 +27,8 @@
 namespace yentu\tests;
 
 use org\bovigo\vfs\vfsStream;
+use clearice\ClearIce;
+use yentu\Yentu;
 
 error_reporting(E_ALL ^ E_NOTICE);
 
@@ -42,6 +44,8 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     
     public function setup()
     {
+        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);      
+        Yentu::$version = 'test';
         $drivers = array(
             'postgresql' => 'pgsql',
             'mysql' => 'mysql'

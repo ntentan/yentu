@@ -119,6 +119,7 @@ class InitTest extends \yentu\tests\YentuTest
         vfsStream::setup('home', 0444);
         $initCommand = new \yentu\commands\Init();
         \yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
+        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0); 
         $initCommand->run(
             array(
                 'driver' => 'postgresql',

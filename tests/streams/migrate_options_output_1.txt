@@ -1,4 +1,9 @@
+Yentu Database Migration Tool
+Version test
 Yentu successfully initialized.
+Yentu Database Migration Tool
+Version test
+
 Ignoring all foreign key constraints ...
 
 Applying 'import' migration

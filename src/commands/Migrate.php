@@ -30,13 +30,13 @@ class Migrate implements \yentu\Command
         
         if(isset($options['ignore-foreign-keys']))
         {
-            ClearIce::output("Ignoring all foreign key constraints ...\n");
+            ClearIce::output("\nIgnoring all foreign key constraints ...\n");
             $this->driver->skip('ForeignKey');
         }
         
         if(isset($options['foreign-keys-only']))
         {
-            ClearIce::output("Applying only foreign keys ...\n");
+            ClearIce::output("\nApplying only foreign keys ...\n");
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
         }
