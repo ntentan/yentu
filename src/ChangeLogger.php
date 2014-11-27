@@ -10,6 +10,7 @@ class ChangeLogger
     private static $migration;
     private static $session;
     private static $changes;
+    private static $defaultSchema;
     private $skippedItemTypes = array();
     private $allowedItemTypes = array();
     private $dumpQueriesOnly;
@@ -86,13 +87,14 @@ class ChangeLogger
                 $outputLevel = ClearIce::getOutputLevel();                
                 ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
                 $this->driver->query(
-                    'INSERT INTO yentu_history(session, version, method, arguments, migration) VALUES (?,?,?,?,?)',
+                    'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)',
                     array(
                         self::$session,
                         self::$version,
                         $method,
                         json_encode($arguments),
-                        self::$migration
+                        self::$migration,
+                        self::$defaultSchema
                     )
                 );
                 ClearIce::setOutputLevel($outputLevel);
@@ -112,6 +114,11 @@ class ChangeLogger
         }
         
         return $return;
+    }
+    
+    public function setDefaultSchema($defaultSchema)
+    {
+        self::$defaultSchema = $defaultSchema;
     }
     
     public static function getChanges()

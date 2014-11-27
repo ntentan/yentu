@@ -2,9 +2,7 @@
 namespace yentu\manipulators;
 
 class Postgresql extends \yentu\DatabaseManipulator
-{
-    protected $defaultSchema = 'public';
-    
+{   
     private function buildTableName($name, $schema)
     {
         return ($schema === false || $schema == '' ? '' : "\"{$schema}\".") . "\"$name\"";

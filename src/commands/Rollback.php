@@ -19,7 +19,7 @@ class Rollback implements \yentu\Command
         
         $session = $db->getLastSession();
         $operations = $db->query(
-            'SELECT id, method, arguments, migration FROM yentu_history WHERE session = ? ORDER BY id DESC',
+            'SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE session = ? ORDER BY id DESC',
             array(
                 $session
             )
@@ -29,7 +29,10 @@ class Rollback implements \yentu\Command
         {
             if($previousMigration !== $operation['migration'])
             {
-                ClearIce::output("\nRolling back '{$operation['migration']}' migration\n");  
+                ClearIce::output(
+                    "\nRolling back '{$operation['migration']}' migration" . 
+                    ($operation['default_schema'] != '' ? " on `{$operation['default_schema']}` schema" : ".") . "\n"
+                );  
                 $previousMigration = $operation['migration'];
             }
             try{
@@ -37,10 +40,10 @@ class Rollback implements \yentu\Command
             }
             catch(\yentu\DatabaseManipulatorException $e)
             {
-                if($operation['method'] != 'addView')
+                /*if($operation['method'] != 'addView')
                 {
                     throw $e;
-                }
+                }*/
             }
             $db->query('DELETE FROM yentu_history WHERE id = ?', array($operation['id']));
         }

@@ -28,13 +28,14 @@ class Yentu
     public static function getRunMirations()
     {
         $db = DatabaseManipulator::create();
-        $runMigrations = $db->query("SELECT DISTINCT version, migration FROM yentu_history ORDER BY version");
+        $runMigrations = $db->query("SELECT DISTINCT version, migration, default_schema FROM yentu_history ORDER BY version");
         $migrations = array();
         foreach($runMigrations as $migration)
         {
             $migrations[$migration['version']] = array(
                 'timestamp' => $migration['version'],
-                'migration' => $migration['migration']
+                'migration' => $migration['migration'],
+                'default_schema' => $migration['default_schema']
             );
         }
         

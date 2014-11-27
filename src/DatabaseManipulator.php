@@ -13,6 +13,7 @@ abstract class DatabaseManipulator
     private $connection;
     private $dumpQuery;
     private $disableQuery;
+    protected $defaultSchema;
     
     public function __construct($config) 
     {
@@ -198,6 +199,7 @@ abstract class DatabaseManipulator
         $this->addColumn(array('table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
         $this->addColumn(array('table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
         $this->addColumn(array('table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
+        $this->addColumn(array('table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
         $this->addColumn(array('table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
         $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
         $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));

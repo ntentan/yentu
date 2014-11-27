@@ -111,6 +111,12 @@ ClearIce::addOptions(
         'command' => 'migrate',
         'long' => 'dry',
         'help' => 'perform a dry run. Do not alter the database in anyway'
+    ),
+    array(
+        'command' => 'migrate',
+        'long' => 'default-schema',
+        'has_value' => true,
+        'help' => 'use this as the default schema for all migrations'
     )
 );
 

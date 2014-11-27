@@ -56,7 +56,8 @@ class Status implements Command
         foreach($runMigrations as $timestamp => $migration)
         {
             unset($migrations[$timestamp]);
-            $run['previous'][] = "{$timestamp} {$migration['migration']}";
+            $run['previous'][] = "{$timestamp} {$migration['migration']} " . 
+                ($migration['default_schema'] == '' ? '' : "on `{$migration['default_schema']}` schema");
         }
         
         foreach ($migrations as $migration)

@@ -8,26 +8,17 @@ use yentu\Yentu;
 use yentu\database\Schema;
 use yentu\database\Table;
 use yentu\database\View;
-use yentu\database\NullSchema;
 use clearice\ClearIce;
 
 class Migrate implements \yentu\Command
 {
     private $driver;
-    
+    private $defaultSchema = '';
     const FILTER_UNRUN = 'unrun';
     const FILTER_LAST_SESSION = 'lastSession';
     
-    public function run($options)
+    public function setupOptions($options, &$filter)
     {
-        $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
-        $this->driver->setDumpQueriesOnly($options['dump-queries']);
-        $this->driver->setDryRun($options['dry']);
-        
-        Yentu::greet();
-        
-        $filter = self::FILTER_UNRUN;
-        
         if(isset($options['ignore-foreign-keys']))
         {
             ClearIce::output("\nIgnoring all foreign key constraints ...\n");
@@ -39,7 +30,26 @@ class Migrate implements \yentu\Command
             ClearIce::output("\nApplying only foreign keys ...\n");
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
+        }    
+        
+        if(isset($options['default-schema']))
+        {
+            ClearIce::output("\nSetting `{$options['default-schema']}` as default schema.\n");
+            $this->driver->setDefaultSchema($options['default-schema']);
+            $this->defaultSchema = $options['default-schema'];
         }
+    }
+    
+    public function run($options)
+    {
+        $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
+        $this->driver->setDumpQueriesOnly($options['dump-queries']);
+        $this->driver->setDryRun($options['dry']);
+        
+        Yentu::greet();
+        
+        $filter = self::FILTER_UNRUN;
+        $this->setupOptions($options, $filter);
         
         DatabaseItem::setDriver($this->driver);
         
@@ -70,8 +80,8 @@ class Migrate implements \yentu\Command
         foreach($input as $migration)
         {
             $run = $this->driver->query(
-                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ?", 
-                array($migration['migration'], $migration['timestamp'])
+                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", 
+                array($migration['migration'], $migration['timestamp'], $this->defaultSchema)
             );
             
             if($run[0]['number_run'] == 0)
@@ -110,12 +120,12 @@ class Migrate implements \yentu\Command
     public function table($name)
     {
         DatabaseItem::purge();
-        return new Table($name, new NullSchema());
+        return new Table($name, new Schema($this->defaultSchema));
     }
     
     public function reftable($name)
     {
-        return new Table($name, new NullSchema());
+        return new Table($name, new Schema($this->defaultSchema));
     }
     
     public function query($query, $bindData = array())
@@ -127,6 +137,6 @@ class Migrate implements \yentu\Command
     public function view($name)
     {
         DatabaseItem::purge();
-        return new View($name, new NullSchema());
+        return new View($name, new Schema($this->defaultSchema));
     }
 }

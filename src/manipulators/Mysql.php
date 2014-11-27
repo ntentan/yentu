@@ -64,7 +64,6 @@ class Mysql extends \yentu\DatabaseManipulator
             
             case self::CONVERT_TO_DRIVER: 
                 $destinationType = array_search($type, $types);
-                
                 break;
         }
         
@@ -77,7 +76,7 @@ class Mysql extends \yentu\DatabaseManipulator
             $destinationType .= $length === null ? '' : "($length)";
         }
         return $destinationType;        
-    }     
+    }      
     
     private function buildTableName($name, $schema)
     {
