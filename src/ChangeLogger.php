@@ -10,7 +10,7 @@ class ChangeLogger
     private static $migration;
     private static $session;
     private static $changes;
-    private static $defaultSchema;
+    private static $defaultSchema = '';
     private $skippedItemTypes = array();
     private $allowedItemTypes = array();
     private $dumpQueriesOnly;

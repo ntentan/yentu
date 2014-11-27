@@ -9,7 +9,7 @@ class Schema extends DatabaseItem
     public function __construct($name)
     {
         $this->name = $name;
-        if(!$this->getDriver()->doesSchemaExist($name))
+        if(!$this->getDriver()->doesSchemaExist($name) && $name !== false)
         {        
             $this->getDriver()->addSchema($name);
         }

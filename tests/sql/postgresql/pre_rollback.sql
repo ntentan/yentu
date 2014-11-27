@@ -454,6 +454,7 @@ CREATE TABLE yentu_history (
     method character varying,
     arguments text,
     migration character varying,
+    default_schema character varying,
     id integer DEFAULT nextval('yentu_history_id_seq'::regclass) NOT NULL
 );
 

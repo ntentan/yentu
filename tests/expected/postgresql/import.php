@@ -30,140 +30,24 @@ $expectedDescription = array (
   ),
   'tables' => 
   array (
-    'audit_trail_data' => 
-    array (
-      'schema' => '',
-      'name' => 'audit_trail_data',
-      'columns' => 
-      array (
-        'audit_trail_data_id' => 
-        array (
-          'name' => 'audit_trail_data_id',
-          'type' => 'integer',
-          'nulls' => false,
-          'length' => NULL,
-        ),
-        'audit_trail_id' => 
-        array (
-          'name' => 'audit_trail_id',
-          'type' => 'integer',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => NULL,
-        ),
-        'data' => 
-        array (
-          'name' => 'data',
-          'type' => 'text',
-          'nulls' => true,
-          'default' => NULL,
-          'length' => NULL,
-        ),
-      ),
-      'primary_key' => 
-      array (
-        'audit_trail_data_id_pk' => 
-        array (
-          'columns' => 
-          array (
-            0 => 'audit_trail_data_id',
-          ),
-        ),
-      ),
-      'unique_keys' => 
-      array (
-      ),
-      'foreign_keys' => 
-      array (
-      ),
-      'indices' => 
-      array (
-      ),
-      'auto_increment' => true,
-    ),
-    'keystore' => 
-    array (
-      'schema' => '',
-      'name' => 'keystore',
-      'columns' => 
-      array (
-        'keystore_id' => 
-        array (
-          'name' => 'keystore_id',
-          'type' => 'integer',
-          'nulls' => false,
-          'length' => NULL,
-        ),
-        'key' => 
-        array (
-          'name' => 'key',
-          'type' => 'string',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => 255,
-        ),
-        'value' => 
-        array (
-          'name' => 'value',
-          'type' => 'text',
-          'nulls' => true,
-          'default' => NULL,
-          'length' => NULL,
-        ),
-      ),
-      'primary_key' => 
-      array (
-        'keystore_pkey' => 
-        array (
-          'columns' => 
-          array (
-            0 => 'keystore_id',
-          ),
-        ),
-      ),
-      'unique_keys' => 
-      array (
-        'keystore_key_key' => 
-        array (
-          'columns' => 
-          array (
-            0 => 'key',
-          ),
-        ),
-      ),
-      'foreign_keys' => 
-      array (
-      ),
-      'indices' => 
-      array (
-      ),
-      'auto_increment' => true,
-    ),
     'api_keys' => 
     array (
       'schema' => '',
       'name' => 'api_keys',
       'columns' => 
       array (
-        'api_key_id' => 
-        array (
-          'name' => 'api_key_id',
-          'type' => 'integer',
-          'nulls' => false,
-          'length' => NULL,
-        ),
-        'user_id' => 
-        array (
-          'name' => 'user_id',
-          'type' => 'integer',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => NULL,
-        ),
         'active' => 
         array (
           'name' => 'active',
           'type' => 'boolean',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'api_key_id' => 
+        array (
+          'name' => 'api_key_id',
+          'type' => 'integer',
           'nulls' => false,
           'default' => NULL,
           'length' => NULL,
@@ -183,6 +67,14 @@ $expectedDescription = array (
           'nulls' => false,
           'default' => NULL,
           'length' => 512,
+        ),
+        'user_id' => 
+        array (
+          'name' => 'user_id',
+          'type' => 'integer',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
         ),
       ),
       'primary_key' => 
@@ -229,20 +121,37 @@ $expectedDescription = array (
       'name' => 'audit_trail',
       'columns' => 
       array (
+        'audit_date' => 
+        array (
+          'name' => 'audit_date',
+          'type' => 'timestamp',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
+        ),
         'audit_trail_id' => 
         array (
           'name' => 'audit_trail_id',
           'type' => 'integer',
           'nulls' => false,
-          'length' => NULL,
-        ),
-        'user_id' => 
-        array (
-          'name' => 'user_id',
-          'type' => 'integer',
-          'nulls' => false,
           'default' => NULL,
           'length' => NULL,
+        ),
+        'data' => 
+        array (
+          'name' => 'data',
+          'type' => 'text',
+          'nulls' => true,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'description' => 
+        array (
+          'name' => 'description',
+          'type' => 'string',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => 4000,
         ),
         'item_id' => 
         array (
@@ -260,22 +169,6 @@ $expectedDescription = array (
           'default' => NULL,
           'length' => 64,
         ),
-        'description' => 
-        array (
-          'name' => 'description',
-          'type' => 'string',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => 4000,
-        ),
-        'audit_date' => 
-        array (
-          'name' => 'audit_date',
-          'type' => 'timestamp',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => NULL,
-        ),
         'type' => 
         array (
           'name' => 'type',
@@ -284,11 +177,11 @@ $expectedDescription = array (
           'default' => NULL,
           'length' => NULL,
         ),
-        'data' => 
+        'user_id' => 
         array (
-          'name' => 'data',
-          'type' => 'text',
-          'nulls' => true,
+          'name' => 'user_id',
+          'type' => 'integer',
+          'nulls' => false,
           'default' => NULL,
           'length' => NULL,
         ),
@@ -347,17 +240,145 @@ $expectedDescription = array (
       ),
       'auto_increment' => true,
     ),
+    'audit_trail_data' => 
+    array (
+      'schema' => '',
+      'name' => 'audit_trail_data',
+      'columns' => 
+      array (
+        'audit_trail_data_id' => 
+        array (
+          'name' => 'audit_trail_data_id',
+          'type' => 'integer',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'audit_trail_id' => 
+        array (
+          'name' => 'audit_trail_id',
+          'type' => 'integer',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'data' => 
+        array (
+          'name' => 'data',
+          'type' => 'text',
+          'nulls' => true,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+      ),
+      'primary_key' => 
+      array (
+        'audit_trail_data_id_pk' => 
+        array (
+          'columns' => 
+          array (
+            0 => 'audit_trail_data_id',
+          ),
+        ),
+      ),
+      'unique_keys' => 
+      array (
+      ),
+      'foreign_keys' => 
+      array (
+      ),
+      'indices' => 
+      array (
+      ),
+      'auto_increment' => true,
+    ),
+    'keystore' => 
+    array (
+      'schema' => '',
+      'name' => 'keystore',
+      'columns' => 
+      array (
+        'key' => 
+        array (
+          'name' => 'key',
+          'type' => 'string',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => 255,
+        ),
+        'keystore_id' => 
+        array (
+          'name' => 'keystore_id',
+          'type' => 'integer',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'value' => 
+        array (
+          'name' => 'value',
+          'type' => 'text',
+          'nulls' => true,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+      ),
+      'primary_key' => 
+      array (
+        'keystore_pkey' => 
+        array (
+          'columns' => 
+          array (
+            0 => 'keystore_id',
+          ),
+        ),
+      ),
+      'unique_keys' => 
+      array (
+        'keystore_key_key' => 
+        array (
+          'columns' => 
+          array (
+            0 => 'key',
+          ),
+        ),
+      ),
+      'foreign_keys' => 
+      array (
+      ),
+      'indices' => 
+      array (
+      ),
+      'auto_increment' => true,
+    ),
     'permissions' => 
     array (
       'schema' => '',
       'name' => 'permissions',
       'columns' => 
       array (
+        'module' => 
+        array (
+          'name' => 'module',
+          'type' => 'string',
+          'nulls' => true,
+          'default' => NULL,
+          'length' => 4000,
+        ),
+        'permission' => 
+        array (
+          'name' => 'permission',
+          'type' => 'string',
+          'nulls' => true,
+          'default' => NULL,
+          'length' => 4000,
+        ),
         'permission_id' => 
         array (
           'name' => 'permission_id',
           'type' => 'integer',
           'nulls' => false,
+          'default' => NULL,
           'length' => NULL,
         ),
         'role_id' => 
@@ -368,14 +389,6 @@ $expectedDescription = array (
           'default' => NULL,
           'length' => NULL,
         ),
-        'permission' => 
-        array (
-          'name' => 'permission',
-          'type' => 'string',
-          'nulls' => true,
-          'default' => NULL,
-          'length' => 4000,
-        ),
         'value' => 
         array (
           'name' => 'value',
@@ -383,14 +396,6 @@ $expectedDescription = array (
           'nulls' => false,
           'default' => NULL,
           'length' => NULL,
-        ),
-        'module' => 
-        array (
-          'name' => 'module',
-          'type' => 'string',
-          'nulls' => true,
-          'default' => NULL,
-          'length' => 4000,
         ),
       ),
       'primary_key' => 
@@ -442,6 +447,7 @@ $expectedDescription = array (
           'name' => 'role_id',
           'type' => 'integer',
           'nulls' => false,
+          'default' => NULL,
           'length' => NULL,
         ),
         'role_name' => 
@@ -480,36 +486,13 @@ $expectedDescription = array (
       'name' => 'users',
       'columns' => 
       array (
-        'user_id' => 
+        'email' => 
         array (
-          'name' => 'user_id',
-          'type' => 'integer',
-          'nulls' => false,
-          'length' => NULL,
-        ),
-        'user_name' => 
-        array (
-          'name' => 'user_name',
+          'name' => 'email',
           'type' => 'string',
           'nulls' => false,
           'default' => NULL,
           'length' => 64,
-        ),
-        'password' => 
-        array (
-          'name' => 'password',
-          'type' => 'string',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => 64,
-        ),
-        'role_id' => 
-        array (
-          'name' => 'role_id',
-          'type' => 'integer',
-          'nulls' => true,
-          'default' => NULL,
-          'length' => NULL,
         ),
         'first_name' => 
         array (
@@ -535,6 +518,38 @@ $expectedDescription = array (
           'default' => NULL,
           'length' => 64,
         ),
+        'password' => 
+        array (
+          'name' => 'password',
+          'type' => 'string',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => 64,
+        ),
+        'role_id' => 
+        array (
+          'name' => 'role_id',
+          'type' => 'integer',
+          'nulls' => true,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'user_id' => 
+        array (
+          'name' => 'user_id',
+          'type' => 'integer',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => NULL,
+        ),
+        'user_name' => 
+        array (
+          'name' => 'user_name',
+          'type' => 'string',
+          'nulls' => false,
+          'default' => NULL,
+          'length' => 64,
+        ),
         'user_status' => 
         array (
           'name' => 'user_status',
@@ -542,14 +557,6 @@ $expectedDescription = array (
           'nulls' => true,
           'default' => '2',
           'length' => NULL,
-        ),
-        'email' => 
-        array (
-          'name' => 'email',
-          'type' => 'string',
-          'nulls' => false,
-          'default' => NULL,
-          'length' => 64,
         ),
       ),
       'primary_key' => 

@@ -13,7 +13,7 @@ use clearice\ClearIce;
 class Migrate implements \yentu\Command
 {
     private $driver;
-    private $defaultSchema = '';
+    private $defaultSchema = false;
     const FILTER_UNRUN = 'unrun';
     const FILTER_LAST_SESSION = 'lastSession';
     

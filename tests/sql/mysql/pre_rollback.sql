@@ -280,6 +280,7 @@ CREATE TABLE yentu_history (
     method varchar(255),
     arguments text,
     migration varchar(255),
+    default_schema varchar(255),
     id integer NOT NULL AUTO_INCREMENT PRIMARY KEY 
 );
 

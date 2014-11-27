@@ -184,25 +184,25 @@ abstract class DatabaseManipulator
     
     public function createHistory()
     {
-        $history = $this->connection->describeTable('yentu_history');
-        if(count($history['yentu_history']['columns']) > 0)
-        {
-            return;
+        try{
+            $this->connection->describeTable('yentu_history');
         }
-        
-        $level = ClearIce::getOutputLevel();
-        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
-        $this->addTable(array('name' => 'yentu_history'));
-        
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));     
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
-        $this->addColumn(array('table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
-        $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
-        $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));
-        ClearIce::setOutputLevel($level);
+        catch(\ntentan\atiaa\DescriptionException $e)
+        {
+            $level = ClearIce::getOutputLevel();
+            ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+            $this->addTable(array('name' => 'yentu_history'));
+
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));     
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
+            $this->addColumn(array('table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
+            $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
+            $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));
+            ClearIce::setOutputLevel($level);
+        }
     }
 }
