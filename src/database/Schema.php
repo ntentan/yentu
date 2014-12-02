@@ -5,6 +5,7 @@ namespace yentu\database;
 class Schema extends DatabaseItem
 {
     private $name;
+    private $isReference;
     
     public function __construct($name)
     {
@@ -15,9 +16,21 @@ class Schema extends DatabaseItem
         }
     }
     
+    public function isReference()
+    {
+        return $this->isReference;
+    }
+    
+    public function setIsReference($isReference)
+    {
+        $this->isReference = $isReference;
+    }
+    
     public function table($name)
     {
-        return $this->create('table', $name, $this);
+        $table = $this->create('table', $name, $this);
+        $table->setIsReference($this->isReference);
+        return $table;
     }
     
     public function view($name)

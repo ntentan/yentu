@@ -35,9 +35,23 @@ class ForeignKey extends DatabaseItem
         }
     }
     
+    /**
+     * 
+     * @param \yentu\database\Table $table
+     * @return \yentu\database\ForeignKey
+     */
     public function references($table)
     {
-        $this->foreignTable = $table;
+        if($table->isReference())
+        {
+            $this->foreignTable = $table;
+        }
+        else
+        {
+            throw new \yentu\DatabaseManipulatorException(
+                "References cannot be created from a non referencing table."
+            );
+        }
         return $this;
     }
     
@@ -70,11 +84,15 @@ class ForeignKey extends DatabaseItem
 
     public function commitNew() 
     {
-        if($this->name == '')
+        if($this->name == '' && is_object($this->foreignTable))
         {
             $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . 
                 '_' . $this->foreignTable->getName() . 
                 '_'. implode('_', $this->foreignColumns) . '_fk';
+        }
+        else if(!is_object($this->foreignTable))
+        {
+            throw new \yentu\DatabaseManipulatorException("No references defined for foreign key");
         }
 
         $this->getDriver()->addForeignKey($this->buildDescription());        

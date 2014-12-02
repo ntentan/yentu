@@ -114,7 +114,9 @@ class Migrate implements \yentu\Command
     
     public function refschema($name)
     {
-        return new Schema($name);
+        $schema = new Schema($name);
+        $schema->setIsReference(true);
+        return $schema;
     }
     
     public function table($name)
@@ -125,7 +127,9 @@ class Migrate implements \yentu\Command
     
     public function reftable($name)
     {
-        return new Table($name, new Schema($this->defaultSchema));
+        $table = new Table($name, new Schema($this->defaultSchema));
+        $table->setIsReference(true);
+        return $table;
     }
     
     public function query($query, $bindData = array())

@@ -163,7 +163,7 @@ abstract class DatabaseManipulator
     
     public function getLastSession()
     {
-        $session = $this->query("SELECT session FROM yentu_history ORDER BY version DESC LIMIT 1");
+        $session = $this->query("SELECT session FROM yentu_history ORDER BY id DESC LIMIT 1");
         return $session[0]['session'];
     }
     

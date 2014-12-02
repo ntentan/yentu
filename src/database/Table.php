@@ -6,6 +6,7 @@ class Table extends DatabaseItem
     private $schema;
     private $name;
     private $primaryKeyColumns;
+    private $isReference;
     
     public function __construct($name,  $schema) 
     {
@@ -17,6 +18,16 @@ class Table extends DatabaseItem
             $this->getDriver()->addTable($this->buildDescription());
             $this->new = true;
         }
+    }
+    
+    public function setIsReference($isReference)
+    {
+        $this->isReference = $isReference;
+    }
+    
+    public function isReference()
+    {
+        return $this->isReference;
     }
     
     public function column($name)

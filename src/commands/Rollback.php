@@ -18,11 +18,10 @@ class Rollback implements \yentu\Command
         $previousMigration = '';
         
         $session = $db->getLastSession();
+        
         $operations = $db->query(
             'SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE session = ? ORDER BY id DESC',
-            array(
-                $session
-            )
+            array($session)
         );
         
         foreach($operations as $operation)
