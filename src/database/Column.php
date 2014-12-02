@@ -18,7 +18,8 @@ class Column extends DatabaseItem
             'table' => $this->table->getName(),
             'schema' => $this->table->getSchema()->getName(),
             'nulls' => $this->nulls,
-            'length' => $this->length
+            'length' => $this->length,
+            'default' => $this->default
         );
     }
     
@@ -66,6 +67,10 @@ class Column extends DatabaseItem
     
     public function defaultValue($default)
     {
+        if(!$this->isNew())
+        {
+            $this->addChange('default', $default);
+        }
         $this->default = $default;
         return $this;
     }

@@ -95,6 +95,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 )
             );
         $this->_changeColumnNulls($details);
+        $this->_changeColumnDefault($details);
     }
     
     protected function _dropColumn($details)
@@ -108,6 +109,33 @@ class Postgresql extends \yentu\DatabaseManipulator
         );
     }
     
+    protected function _changeColumnDefault($details)
+    {
+        if($details['default'] != '' || $details['to']['default'] != '')
+        {
+            if(isset($details['to']))
+            {
+                $details = $details['to'];
+            }            
+            $this->query(
+                sprintf(
+                    "ALTER TABLE %s ALTER COLUMN %s SET DEFAULT %s",
+                    $this->buildTableName($details['table'], $details['schema']),
+                    $details['name'], 
+                    $details['default']
+                )
+            );
+        }
+        else if($details['to']['default'] == '' && $details['from']['default'] != '')
+        {
+            $this->query(
+                "ALTER TABLE %s ALTER COLUMN %s DROP DEFAULT",
+                $this->buildTableName($details['table'], $details['schema']),
+                $details['name']
+            );
+        }
+    }
+    
     /**
      * 
      * @param array $details
@@ -117,7 +145,7 @@ class Postgresql extends \yentu\DatabaseManipulator
         if($details['to']['nulls'] === false || $details['nulls'] === false)
         {
             // Remove the to key to make it possible for this function to be run
-            // bu the _addColumn method
+            // by the _addColumn method
             if(isset($details['to']))
             {
                 $details = $details['to'];

@@ -185,6 +185,14 @@ catch(\yentu\DatabaseManipulatorException $e)
     );
     rollback_changes();
 }
+catch(\ntentan\atiaa\DescriptionException $e)
+{
+    fputs(
+        STDERR,
+        "\n\nFailed to perform database action: " . $e->getMessage() . "\n"
+    );
+    rollback_changes();
+}
 catch (\yentu\SyntaxErrorException $e)
 {
     ClearIce::error("\n\nError found in syntax: {$e->getMessage()}\n");

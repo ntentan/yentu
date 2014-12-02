@@ -100,6 +100,7 @@ abstract class DatabaseManipulator
     abstract protected function _addColumn($details);
     abstract protected function _changeColumnNulls($details);
     abstract protected function _changeColumnName($details);
+    abstract protected function _changeColumnDefault($details);
     abstract protected function _dropColumn($details);
     abstract protected function _addPrimaryKey($details);
     abstract protected function _dropPrimaryKey($details);
