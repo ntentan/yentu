@@ -152,7 +152,7 @@ $options = ClearIce::parse();
 
 if(isset($options['verbose']))
 {
-    Yentu::setOutputLevel($options['verbose']);
+    ClearIce::setOutputLevel($options['verbose']);
 }
 
 try{
