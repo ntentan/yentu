@@ -14,6 +14,7 @@ class Migrate implements \yentu\Command
 {
     private $driver;
     private $defaultSchema = false;
+    private $lastSession;
     const FILTER_UNRUN = 'unrun';
     const FILTER_LAST_SESSION = 'lastSession';
     
@@ -21,25 +22,31 @@ class Migrate implements \yentu\Command
     {
         if(isset($options['ignore-foreign-keys']))
         {
-            ClearIce::output("\nIgnoring all foreign key constraints ...\n");
+            ClearIce::output("Ignoring all foreign key constraints ...\n");
             $this->driver->skip('ForeignKey');
         }
         
         if(isset($options['foreign-keys-only']))
         {
-            ClearIce::output("\nApplying only foreign keys ...\n");
+            ClearIce::output("Applying only foreign keys ...\n");
+            $this->lastSession = $this->driver->getLastSession();
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
-        }    
-        
-        if(isset($options['default-schema']))
-        {
-            ClearIce::output("\nSetting `{$options['default-schema']}` as default schema.\n");
-            $this->driver->setDefaultSchema($options['default-schema']);
-            $this->defaultSchema = $options['default-schema'];
-        }
+        }            
+        $this->setDefaultSchema($options);
     }
     
+    private function setDefaultSchema($options)
+    {
+        if(isset($options['default-schema']))
+        {
+            ClearIce::output("Setting `{$options['default-schema']}` as default schema.\n");
+            $this->driver->setDefaultSchema($options['default-schema']);
+            $this->defaultSchema = $options['default-schema'];
+        }        
+    }
+
+
     public function run($options)
     {
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
@@ -50,19 +57,22 @@ class Migrate implements \yentu\Command
         
         $filter = self::FILTER_UNRUN;
         $this->setupOptions($options, $filter);
-        
         DatabaseItem::setDriver($this->driver);
         
-        $migrations = $this->filter(Yentu::getMigrations(), $filter);
-        
-        foreach($migrations as $migration)
+        foreach(Yentu::getMigrationPathsInfo() as $path)
         {
-            ChangeLogger::setVersion($migration['timestamp']);
-            ChangeLogger::setMigration($migration['migration']);                        
-            ClearIce::output("\nApplying '{$migration['migration']}' migration\n");
-            require Yentu::getPath("migrations/{$migration['file']}");
-            DatabaseItem::purge();
-            ClearIce::output("\n");
+            ClearIce::output("Running migrations from `{$path['home']}`\n");
+            $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
+            $this->setDefaultSchema($path);
+            foreach($migrations as $migration)
+            {
+                ChangeLogger::setVersion($migration['timestamp']);
+                ChangeLogger::setMigration($migration['migration']);                        
+                ClearIce::output("\nApplying '{$migration['migration']}' migration\n");
+                require "{$path['home']}/{$migration['file']}";
+                DatabaseItem::purge();
+                ClearIce::output("\n");
+            }
         }
         
         $this->driver->disconnect();
@@ -94,7 +104,7 @@ class Migrate implements \yentu\Command
     
     private function lastSessionFilter($input)
     {
-        $versions = $this->driver->getSessionVersions($this->driver->getLastSession());
+        $versions = $this->driver->getSessionVersions($this->lastSession);
         $output = array();
         foreach($input as $migration)
         {

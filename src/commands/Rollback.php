@@ -29,8 +29,8 @@ class Rollback implements \yentu\Command
             if($previousMigration !== $operation['migration'])
             {
                 ClearIce::output(
-                    "\nRolling back '{$operation['migration']}' migration" . 
-                    ($operation['default_schema'] != '' ? " on `{$operation['default_schema']}` schema" : ".") . "\n"
+                    "Rolling back '{$operation['migration']}' migration" . 
+                    ($operation['default_schema'] != '' ? " on `{$operation['default_schema']}` schema." : ".") . "\n"
                 );  
                 $previousMigration = $operation['migration'];
             }

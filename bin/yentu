@@ -155,6 +155,8 @@ if(isset($options['verbose']))
     ClearIce::setOutputLevel($options['verbose']);
 }
 
+pcntl_signal(SIGINT, "rollback_changes");
+
 try{
     if($options['__command__'])
     {

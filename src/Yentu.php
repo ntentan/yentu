@@ -25,6 +25,18 @@ class Yentu
         return self::$home . "/$path";
     }
     
+    public static function getMigrationPathsInfo()
+    {
+        require Yentu::getPath("config/default.php");
+        return array_merge(array(
+                array(
+                'home' => Yentu::getPath('migrations')
+                )
+            ),
+            is_array($other_migrations) ? $other_migrations : array()
+        );
+    }
+    
     public static function getRunMirations()
     {
         $db = DatabaseManipulator::create();
@@ -42,9 +54,9 @@ class Yentu
         return $migrations;
     }
     
-    public static function getMigrations()
+    public static function getMigrations($path)
     {
-        $migrationFiles = scandir(Yentu::getPath('migrations'), 0);        
+        $migrationFiles = scandir($path, 0);        
         $migrations = array();
         foreach($migrationFiles as $migration)
         {
@@ -122,6 +134,7 @@ class Yentu
 $welcome = <<<WELCOME
 Yentu Database Migration Tool
 Version $version
+
 
 WELCOME;
         ClearIce::output($welcome);        
