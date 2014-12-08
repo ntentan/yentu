@@ -62,8 +62,8 @@ class Migrate implements \yentu\Command
         foreach(Yentu::getMigrationPathsInfo() as $path)
         {
             ClearIce::output("Running migrations from `{$path['home']}`\n");
-            $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
             $this->setDefaultSchema($path);
+            $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
             foreach($migrations as $migration)
             {
                 ChangeLogger::setVersion($migration['timestamp']);
