@@ -319,7 +319,8 @@ class Postgresql extends \yentu\DatabaseManipulator
             'text' => 'text',
             'boolean' => 'boolean',
             'date' => 'date',
-            'bytea' => 'blob'
+            'bytea' => 'blob',
+            'oid' => 'bigint'
         );
         
         switch($direction)
