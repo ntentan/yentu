@@ -22,7 +22,7 @@ class Status implements Command
             return;
         }
         
-        $migrationInfo = $this->getMigrationInfo($version);
+        $migrationInfo = $this->getMigrationInfo();
         
         ClearIce::output("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
         $this->displayMigrations($migrationInfo['run']['previous']);
@@ -40,10 +40,10 @@ class Status implements Command
         }
     }
     
-    private function getMigrationInfo($version)
+    private function getMigrationInfo()
     {
         $runMigrations = Yentu::getRunMirations();
-        $migrations = Yentu::getMigrations();
+        $migrations = Yentu::getAllMigrations();
         
         $counter['previous'] = count($runMigrations);
         end($runMigrations);
@@ -60,7 +60,7 @@ class Status implements Command
                 ($migration['default_schema'] == '' ? '' : "on `{$migration['default_schema']}` schema");
         }
         
-        foreach ($migrations as $migration)
+        foreach ($migrations as $timestamp => $migration)
         {
             $run['yet'][] = "{$timestamp} {$migration['migration']}";
         }

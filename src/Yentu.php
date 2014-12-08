@@ -54,6 +54,16 @@ class Yentu
         return $migrations;
     }
     
+    public static function getAllMigrations()
+    {
+        $migrations = array();
+        foreach(self::getMigrationPathsInfo() as $migration)
+        {
+            $migrations = $migrations + self::getMigrations($migration['home']);
+        }
+        return $migrations;
+    }
+    
     public static function getMigrations($path)
     {
         $migrationFiles = scandir($path, 0);        
