@@ -13,7 +13,7 @@ class Index extends \yentu\database\DatabaseItem
     {
         $this->columns = $columns;
         $this->table = $table;
-        $name = $this->getDriver()->doesForeignKeyExist(array(
+        $name = $this->getDriver()->doesIndexExist(array(
             'schema' => $table->getSchema()->getName(),
             'table' => $table->getName(),
             'columns' => $columns
@@ -42,6 +42,10 @@ class Index extends \yentu\database\DatabaseItem
     
     public function commitNew() 
     {
+        if($this->name == '')
+        {
+            $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . '_idx';
+        }        
         $this->getDriver()->addIndex($this->buildDescription());
     }
 

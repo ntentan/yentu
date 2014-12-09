@@ -40,12 +40,27 @@ class Migrate implements \yentu\Command
     {
         if(isset($options['default-schema']))
         {
-            ClearIce::output("Setting `{$options['default-schema']}` as default schema.\n");
             $this->driver->setDefaultSchema($options['default-schema']);
             $this->defaultSchema = $options['default-schema'];
         }        
     }
 
+    private function announceMigration($migrations, $path)
+    {
+        $size = count($migrations);
+        if($size > 0)
+        {
+            if(isset($path['default-schema']))
+            {
+                $defaultSchema = $path['default-schema'];
+            }
+            ClearIce::output("Running $size migration(s) from '{$path['home']}' with '$defaultSchema' as the default schema.\n");
+        }  
+        else
+        {
+            ClearIce::output("No migrations to run from '{$path['home']}'\n");
+        }
+    }
 
     public function run($options)
     {
@@ -61,9 +76,10 @@ class Migrate implements \yentu\Command
         
         foreach(Yentu::getMigrationPathsInfo() as $path)
         {
-            ClearIce::output("Running migrations from `{$path['home']}`\n");
             $this->setDefaultSchema($path);
             $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
+            $this->announceMigration($migrations, $path);
+            
             foreach($migrations as $migration)
             {
                 ChangeLogger::setVersion($migration['timestamp']);
