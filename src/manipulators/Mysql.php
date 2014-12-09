@@ -222,11 +222,11 @@ class Mysql extends \yentu\DatabaseManipulator
             $this->query(sprintf('USE `%s`', $this->getDefaultSchema()));
         }          
     }
-
-    protected function _changeColumnName($details)
+    
+    private function changeColumn($details)
     {
         $this->query(
-            sprintf('ALTER TABLE %s CHANGE `%s` `%s` %s %s',
+            sprintf('ALTER TABLE %s CHANGE `%s` `%s` %s %s %s',
                $this->buildTableName($details['to']['table'], $details['to']['schema']),
                 $details['from']['name'],                 
                 $details['to']['name'], 
@@ -235,27 +235,26 @@ class Mysql extends \yentu\DatabaseManipulator
                     self::CONVERT_TO_DRIVER,
                     $details['to']['length'] == '' ? 255 : $details['to']['length']
                 ),
-                $details['to']['nulls'] === false ? 'NOT NULL' : ''
+                $details['to']['nulls'] === false ? 'NOT NULL' : '',
+                $details['to']['default'] === null ? '' : "DEFAULT {$details['to']['default']}"
             )
-        );   
+        );
+    }
+
+    protected function _changeColumnName($details)
+    {
+        $this->changeColumn($details);
     }
 
     protected function _changeColumnNulls($details)
     {
-        $details = $details['to'];
-        $this->query(
-            sprintf('ALTER TABLE %s MODIFY `%s` %s %s',
-               $this->buildTableName($details['table'], $details['schema']),
-                $details['name'], 
-                $this->convertTypes(
-                    $details['type'], 
-                    self::CONVERT_TO_DRIVER,
-                    $details['length'] == '' ? 255 : $details['length']
-                ),
-                $details['nulls'] === false ? 'NOT NULL' : ''
-            )
-        );     
+        $this->changeColumn($details);   
     }
+
+    protected function _changeColumnDefault($details)
+    {
+        $this->changeColumn($details);      
+    }    
 
     protected function _changeViewDefinition($details)
     {

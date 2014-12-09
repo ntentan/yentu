@@ -1,8 +1,11 @@
 Yentu Database Migration Tool
 Version test
+
 Yentu successfully initialized.
 Yentu Database Migration Tool
 Version test
+
+Running migrations from `vfs://home/yentu/migrations`
 
 Applying 'import' migration
 .........................................................................................................................................................................................................................................................................................
