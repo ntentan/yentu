@@ -54,7 +54,11 @@ class Migrate implements \yentu\Command
             {
                 $defaultSchema = $path['default-schema'];
             }
-            ClearIce::output("Running $size migration(s) from '{$path['home']}' with '$defaultSchema' as the default schema.\n");
+            ClearIce::output("Running $size migration(s) from '{$path['home']}'"); 
+            if($defaultSchema != '')
+            {
+                ClearIce::output(" with '$defaultSchema' as the default schema.\n");
+            }
         }  
         else
         {
