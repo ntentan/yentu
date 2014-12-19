@@ -15,7 +15,7 @@
         }
     },
     "require": {
-        "ekowabaka/clearice": "0.3.*",
+        "ekowabaka/clearice": "0.4.*",
         "php" : ">=5.4.0",
         "ntentan/atiaa": "dev-master"
     },
