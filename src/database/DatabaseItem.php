@@ -8,7 +8,7 @@ abstract class DatabaseItem
     private static $encapsulatedStack = array();
     
     /**
-     *
+     * 
      * @var \yentu\DatabaseDriver
      */
     private static $driver;

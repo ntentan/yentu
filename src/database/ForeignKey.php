@@ -49,7 +49,9 @@ class ForeignKey extends DatabaseItem
         else
         {
             throw new \yentu\DatabaseManipulatorException(
-                "References cannot be created from a non referencing table."
+                "References cannot be created from a non referencing table. "
+                . "Please use either a \$this->reftable() or \$this->refschema() "
+                . "construct to link a referenced table"
             );
         }
         return $this;

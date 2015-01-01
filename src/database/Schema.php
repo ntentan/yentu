@@ -28,7 +28,14 @@ class Schema extends DatabaseItem
     
     public function table($name)
     {
-        $table = $this->create('table', $name, $this);
+        if($this->isReference)
+        {
+            $table = new Table($name, $this);
+        }
+        else
+        {
+            $table = $this->create('table', $name, $this);
+        }
         $table->setIsReference($this->isReference);
         return $table;
     }

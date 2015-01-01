@@ -10,6 +10,10 @@ use yentu\database\Table;
 use yentu\database\View;
 use clearice\ClearIce;
 
+/**
+ * The migrate command for the yentu database migration system. This class is
+ * responsible for creating and updating items 
+ */
 class Migrate implements \yentu\Command
 {
     private $driver;
