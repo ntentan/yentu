@@ -283,6 +283,16 @@ class SchemaDescription implements \ArrayAccess
         unset($table['foreign_keys'][$details['name']]);
         $this->setTable($details, $table);
     }
+    
+    public function executeQuery()
+    {
+        
+    }
+    
+    public function reverseQuery()
+    {
+        
+    }
         
     public static function wrap($description, $manipulator)
     {

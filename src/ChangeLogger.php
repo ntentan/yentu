@@ -64,7 +64,7 @@ class ChangeLogger
     
     public function __call($method, $arguments) 
     {
-        if(preg_match("/^(?<command>add|drop|change)(?<item_type>[a-zA-Z]+)/", $method, $matches))
+        if(preg_match("/^(?<command>add|drop|change|execute|reverse)(?<item_type>[a-zA-Z]+)/", $method, $matches))
         {
             $this->driver->setDumpQuery($this->dumpQueriesOnly);
             $this->driver->setDisableQuery($this->dryRun);

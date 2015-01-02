@@ -20,12 +20,14 @@ class ChangeReverser
     private static function reverseMethod($method)
     {
         return preg_replace_callback(
-            "/^(?<action>add|drop)/", 
+            "/^(?<action>add|drop|reverse|execute)/", 
             function($matches){
                 switch($matches['action'])
                 {
                     case 'add': return 'drop';
                     case 'drop': return 'add';
+                    case 'reverse': return 'execute';
+                    case 'execute': return 'reverse';
                 }
             }, $method
         );

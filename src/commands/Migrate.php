@@ -8,6 +8,7 @@ use yentu\Yentu;
 use yentu\database\Schema;
 use yentu\database\Table;
 use yentu\database\View;
+use yentu\database\Query;
 use clearice\ClearIce;
 
 /**
@@ -169,7 +170,7 @@ class Migrate implements \yentu\Command
     public function query($query, $bindData = array())
     {
         DatabaseItem::purge();
-        return $this->driver->query($query, $bindData);
+        return new Query($query, $bindData);
     }
     
     public function view($name)

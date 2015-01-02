@@ -25,7 +25,8 @@ abstract class DatabaseItem
         'unique_key' => 'UniqueKey',
         'index' => 'Index',
         'view' => 'View',
-        'view_definition' => 'ViewDefinition'
+        'view_definition' => 'ViewDefinition',
+        'query' => 'Query'
     );
     
     protected function addChange($attribute, $value)

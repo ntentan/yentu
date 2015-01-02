@@ -40,7 +40,7 @@ abstract class DatabaseManipulator
         
     public function __call($name, $arguments)
     {
-        if(preg_match("/^(add|drop|change)/", $name))
+        if(preg_match("/^(add|drop|change|executeQuery|reverseQuery)/", $name))
         {
             $this->description->$name($arguments[0]);
             $name = "_$name";
@@ -115,6 +115,17 @@ abstract class DatabaseManipulator
     abstract protected function _addView($details);
     abstract protected function _dropView($details);
     abstract protected function _changeViewDefinition($details);
+    
+    protected function _executeQuery($details)
+    {
+        $this->query($details['query'], $details['bind_data']);
+    }
+    
+    protected function _reverseQuery($details)
+    {
+        
+    }
+    
     abstract public function convertTypes($type, $direction, $length);
         
     protected function dropTableItem($details, $type)
