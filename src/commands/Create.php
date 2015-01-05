@@ -19,6 +19,22 @@ class Create implements \yentu\Command
         }
     }
     
+    private function checkPermission()
+    {
+        if(!file_exists(Yentu::getPath("migrations/")))
+        {
+            throw new CommandError("The migrations directory `" . Yentu::getPath("migrations/") . "` does not exist.");
+        }
+        if(!is_dir(Yentu::getPath("migrations/")))
+        {
+            throw new CommandError(Yentu::getPath("migrations/") . ' is not a directory');
+        }
+        if(!is_writable(Yentu::getPath("migrations/")))
+        {
+            throw new CommandError("You do not have the permission to write to " . Yentu::getPath("migrations/"));
+        }
+    }
+    
     private function checkName($name)
     {
         if($name == '')
@@ -40,6 +56,7 @@ class Create implements \yentu\Command
     {
         $this->checkExisting($name);
         $this->checkName($name);
+        $this->checkPermission();
         
         $timestamp = \yentu\Timestamp::get();
         $code = new \yentu\CodeWriter();
