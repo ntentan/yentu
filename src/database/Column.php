@@ -85,5 +85,11 @@ class Column extends DatabaseItem
         $this->length = $length;
         return $this;
     }
+    
+    public function drop()
+    {
+        $this->getDriver()->dropColumn($this->buildDescription());
+        return $this;
+    }
 }
 
