@@ -6,7 +6,6 @@ Yentu Database Migration Tool
 Version test
 
 Ignoring all foreign key constraints ...
-Running migrations from `vfs://home/yentu/migrations`
-
+Running 1 migration(s) from 'vfs://home/yentu/migrations'
 Applying 'import' migration
 ...................................................................................................................................................................................................................................................................SSSSSSSSSSSSSSSSSSSSSS

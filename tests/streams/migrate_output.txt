@@ -5,7 +5,6 @@ Yentu successfully initialized.
 Yentu Database Migration Tool
 Version test
 
-Running migrations from `vfs://home/yentu/migrations`
-
+Running 1 migration(s) from 'vfs://home/yentu/migrations'
 Applying 'import' migration
 .........................................................................................................................................................................................................................................................................................

@@ -20,7 +20,8 @@
         "ntentan/atiaa": "dev-master"
     },
     "require-dev" : {
-        "mikey179/vfsStream" : "v1.3.0"
+        "mikey179/vfsStream" : "1.*",
+        "phpunit/phpunit" : "4.*"
     },
     "bin" : ["bin/yentu"],
     "minimum-stability": "alpha"
