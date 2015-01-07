@@ -4,27 +4,28 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cccd050dbc5a0c315b3563d4a988dbde",
+    "hash": "3b4253ed7d9f1a8cc482ddd233f8526d",
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "v0.3.2",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "9d1c4c51b2ec2bde686c6342159acd95e58dcceb"
+                "reference": "02a6b3fdc11e51a4f7284a72d6c6fef839b86132"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/9d1c4c51b2ec2bde686c6342159acd95e58dcceb",
-                "reference": "9d1c4c51b2ec2bde686c6342159acd95e58dcceb",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/02a6b3fdc11e51a4f7284a72d6c6fef839b86132",
+                "reference": "02a6b3fdc11e51a4f7284a72d6c6fef839b86132",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "mikey179/vfsstream": "v1.3.0"
+                "mikey179/vfsstream": "1.*",
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
             "autoload": {
@@ -44,7 +45,7 @@
                 }
             ],
             "description": "A tool to help in the building of CLI apps. Provides command line parsing and simple console I/O interfaces.",
-            "time": "2014-10-22 09:55:49"
+            "time": "2014-12-19 11:12:05"
         },
         {
             "name": "ntentan/atiaa",
@@ -52,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/atiaa.git",
-                "reference": "a27abc23d7251a01918ef4721863308bbf1b346f"
+                "reference": "f5ef7d427689316527e2f0823af373ef63ee2880"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/a27abc23d7251a01918ef4721863308bbf1b346f",
-                "reference": "a27abc23d7251a01918ef4721863308bbf1b346f",
+                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/f5ef7d427689316527e2f0823af373ef63ee2880",
+                "reference": "f5ef7d427689316527e2f0823af373ef63ee2880",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +81,7 @@
                 }
             ],
             "description": "A slim wrapper around PDO to provide some extra utilities",
-            "time": "2014-11-27 10:35:24"
+            "time": "2014-12-10 18:12:46"
         }
     ],
     "packages-dev": [
@@ -129,6 +130,7 @@
         "ntentan/atiaa": 20
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "php": ">=5.4.0"
     },
