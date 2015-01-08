@@ -107,7 +107,6 @@ class Yentu
     
     public static function announce($command, $itemType, $arguments)
     {
-        //if($command == 'reverse') return;
         ClearIce::output(
             "\n  - " . ucfirst("{$command}ing ") . 
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .

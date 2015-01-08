@@ -9,7 +9,9 @@ class ChangeLogger
     private static $version;
     private static $migration;
     private static $session;
-    private static $changes;
+    private $changes;
+    private $expectedOperations = 1;
+    private $operations;
     private static $defaultSchema = '';
     private $skippedItemTypes = array();
     private $allowedItemTypes = array();
@@ -83,9 +85,8 @@ class ChangeLogger
                 $return = $this->driver->$method($arguments[0]);
                 
                 $this->driver->setDumpQuery(false);
-                
-                $outputLevel = ClearIce::getOutputLevel();                
-                ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+                             
+                ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
                 $this->driver->query(
                     'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)',
                     array(
@@ -97,10 +98,13 @@ class ChangeLogger
                         self::$defaultSchema
                     )
                 );
-                ClearIce::setOutputLevel($outputLevel);
-                self::$changes++;
+                ClearIce::popOutputLevel();
+                $this->changes++;
                 $this->driver->setDisableQuery(false);
             }
+            
+            $this->operations++;
+            $this->outputProgress();
         }
         else if(preg_match("/^does([A-Za-z]+)/", $method))
         {
@@ -116,14 +120,44 @@ class ChangeLogger
         return $return;
     }
     
+    public function outputProgress()
+    {
+        if($this->expectedOperations > 0)
+        {
+            if($this->operations % 70 === 0)
+            {
+                ClearIce::output(sprintf(" %4d%%\n", $this->operations / $this->expectedOperations * 100));
+            }
+            else
+            {
+                ClearIce::output(sprintf(" %4d%%\n", $this->operations / $this->expectedOperations * 100), ClearIce::OUTPUT_LEVEL_2);
+            }
+        }
+    }
+    
     public function setDefaultSchema($defaultSchema)
     {
         self::$defaultSchema = $defaultSchema;
     }
     
-    public static function getChanges()
+    public function getChanges()
     {
-        return self::$changes;
+        return $this->changes;
+    }
+    
+    public function getOperations()
+    {
+        return $this->operations;
+    }
+    
+    public function __clone()
+    {
+        $this->driver = clone $this->driver;
+    }
+    
+    public function setExpectedOperations($expectedOperations)
+    {
+        $this->expectedOperations = $expectedOperations;
     }
 }
 

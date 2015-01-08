@@ -91,6 +91,7 @@ class Migrate implements \yentu\Command
             
             foreach($migrations as $migration)
             {
+                $this->countOperations("{$path['home']}/{$migration['file']}");
                 ChangeLogger::setVersion($migration['timestamp']);
                 ChangeLogger::setMigration($migration['migration']);                        
                 ClearIce::output("\nApplying '{$migration['migration']}' migration\n");
@@ -107,6 +108,19 @@ class Migrate implements \yentu\Command
     {
         $filterMethod = "{$type}Filter";
         return $this->$filterMethod($migrations);
+    }
+    
+    private function countOperations($migrationFile)
+    {
+        $dryDriver = clone $this->driver;
+        ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+        DatabaseItem::setDriver($dryDriver);
+        $dryDriver->setDryRun(true);
+        require "$migrationFile";
+        DatabaseItem::purge();
+        DatabaseItem::setDriver($this->driver);        
+        ClearIce::popOutputLevel();
+        $this->driver->setExpectedOperations($dryDriver->getOperations());
     }
     
     private function unrunFilter($input)
@@ -177,5 +191,10 @@ class Migrate implements \yentu\Command
     {
         DatabaseItem::purge();
         return new View($name, new Schema($this->defaultSchema));
+    }
+    
+    public function getChanges()
+    {
+        return $this->driver->getChanges();
     }
 }

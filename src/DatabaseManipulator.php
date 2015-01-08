@@ -217,4 +217,12 @@ abstract class DatabaseManipulator
             ClearIce::setOutputLevel($level);
         }
     }
+    
+    public function __clone()
+    {
+        if(is_object($this->schemaDescription))
+        {
+            $this->schemaDescription = clone $this->schemaDescription;
+        }
+    }
 }
