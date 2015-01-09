@@ -138,6 +138,11 @@ class Yentu
         return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
     }    
     
+    public static function startTimer()
+    {
+        
+    }
+    
     public static function greet()
     {
         $version = Yentu::$version;

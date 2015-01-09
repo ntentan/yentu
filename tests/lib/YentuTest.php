@@ -63,6 +63,10 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $GLOBALS['DB_HOST'] = $GLOBALS["{$prefix}_HOST"];
         $GLOBALS['DEFAULT_SCHEMA'] = $this->testDefaultSchema == '' ? 
             $this->testDatabase : $this->testDefaultSchema;
+        
+        $timer = $this->getMockBuilder("\\yenty\\Timer")->setMethods(array('stopInstance', 'startInstance'))->getMock();
+        $timer->method('stopInstance')->willReturn(10.0000);
+        \yentu\Timer::setInstance($timer);        
     }
     
     public function tearDown()

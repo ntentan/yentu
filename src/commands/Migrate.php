@@ -76,6 +76,7 @@ class Migrate implements \yentu\Command
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
         $this->driver->setDryRun($options['dry']);
+        $totalOperations = 0;
         
         Yentu::greet();
         
@@ -83,6 +84,7 @@ class Migrate implements \yentu\Command
         $this->setupOptions($options, $filter);
         DatabaseItem::setDriver($this->driver);
         
+        \yentu\Timer::start();
         foreach(Yentu::getMigrationPathsInfo() as $path)
         {
             $this->setDefaultSchema($path);
@@ -98,8 +100,14 @@ class Migrate implements \yentu\Command
                 require "{$path['home']}/{$migration['file']}";
                 DatabaseItem::purge();
                 ClearIce::output("\n");
+                $totalOperations += $this->driver->resetOperations();
             }
         }
+        
+        $elapsed = \yentu\Timer::stop();
+        ClearIce::output("\nMigration took " . \yentu\Timer::pretty($elapsed) . "\n");
+        ClearIce::output($this->driver->getChanges() . " operations performed\n");
+        ClearIce::output($totalOperations - $this->driver->getChanges() . " operations skipped\n");
         
         $this->driver->disconnect();
     }
@@ -120,7 +128,7 @@ class Migrate implements \yentu\Command
         DatabaseItem::purge();
         DatabaseItem::setDriver($this->driver);        
         ClearIce::popOutputLevel();
-        $this->driver->setExpectedOperations($dryDriver->getOperations());
+        $this->driver->setExpectedOperations($dryDriver->resetOperations());
     }
     
     private function unrunFilter($input)

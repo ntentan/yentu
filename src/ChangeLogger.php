@@ -124,13 +124,13 @@ class ChangeLogger
     {
         if($this->expectedOperations > 0)
         {
-            if($this->operations % 70 === 0)
+            if($this->operations % 74 === 0)
             {
-                ClearIce::output(sprintf(" %4d%%\n", $this->operations / $this->expectedOperations * 100));
+                ClearIce::output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100));
             }
             else
             {
-                ClearIce::output(sprintf(" %4d%%\n", $this->operations / $this->expectedOperations * 100), ClearIce::OUTPUT_LEVEL_2);
+                ClearIce::output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100), ClearIce::OUTPUT_LEVEL_2);
             }
         }
     }
@@ -145,9 +145,11 @@ class ChangeLogger
         return $this->changes;
     }
     
-    public function getOperations()
+    public function resetOperations()
     {
-        return $this->operations;
+        $operations = $this->operations;
+        $this->operations = 0;
+        return $operations;
     }
     
     public function __clone()
