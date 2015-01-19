@@ -205,4 +205,17 @@ class Migrate implements \yentu\Command
     {
         return $this->driver->getChanges();
     }
+    
+    public function reverse()
+    {
+        ClearIce::output("\nAttempting to reverse all changes ... ");
+        if($this->getChanges() > 0)
+        {
+            ClearIce::setOutputLevel(0);
+            $rollback = new \yentu\commands\Rollback();
+            $rollback->run(array());
+            ClearIce::setOutputLevel(1);        
+        }    
+        ClearIce::output("OK\n");        
+    }
 }

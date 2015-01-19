@@ -185,7 +185,7 @@ catch(\yentu\DatabaseManipulatorException $e)
         STDERR,
         "\n\nFailed to perform database action: " . $e->getMessage() . "\n"
     );
-    rollback_changes();
+    $command->reverse();
 }
 catch(\ntentan\atiaa\DescriptionException $e)
 {
@@ -193,29 +193,16 @@ catch(\ntentan\atiaa\DescriptionException $e)
         STDERR,
         "\n\nFailed to perform database action: " . $e->getMessage() . "\n"
     );
-    rollback_changes();
+    $command->reverse();
 }
 catch (\yentu\SyntaxErrorException $e)
 {
     ClearIce::error("\n\nError found in syntax: {$e->getMessage()}\n");
-    rollback_changes();
+    $command->reverse();
 }
 catch(\PDOException $e)
 {
     ClearIce::error("\n\nFailed to connect to database:" . $e->getMessage() . "\n");
-}
-
-function rollback_changes()
-{
-    ClearIce::output("\nAttempting to rollback all changes ... ");
-    if(\yentu\ChangeLogger::getChanges() > 0)
-    {
-        ClearIce::setOutputLevel(0);
-        $rollback = new \yentu\commands\Rollback();
-        $rollback->run(array());
-        ClearIce::setOutputLevel(1);        
-    }    
-    ClearIce::output("OK\n");
 }
 
 ClearIce::output("\n");
