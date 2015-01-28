@@ -168,11 +168,14 @@ class SchemaDescription implements \ArrayAccess
     private function flattenColumns($items, $key = false)
     {
         $flattened = array();
-        foreach($items as $name => $item)
+        if(is_array($items))
         {
-            foreach($key === false ? $item : $item[$key] as $column)
+            foreach($items as $name => $item)
             {
-                $flattened[$column] = $name;
+                foreach($key === false ? $item : $item[$key] as $column)
+                {
+                    $flattened[$column] = $name;
+                }
             }
         }
         return $flattened;
