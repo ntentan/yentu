@@ -202,7 +202,7 @@ abstract class DatabaseManipulator
         catch(\ntentan\atiaa\DescriptionException $e)
         {
             $level = ClearIce::getOutputLevel();
-            ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+            ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
             $this->addTable(array('name' => 'yentu_history'));
 
             $this->addColumn(array('table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
@@ -214,7 +214,7 @@ abstract class DatabaseManipulator
             $this->addColumn(array('table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
             $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
             $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));
-            ClearIce::setOutputLevel($level);
+            ClearIce::popOutputLevel();
         }
     }
     

@@ -18,6 +18,7 @@ use clearice\ClearIce;
 class Migrate implements \yentu\Command
 {
     private $driver;
+    private $dryDriver;
     private $defaultSchema = false;
     private $lastSession;
     const FILTER_UNRUN = 'unrun';
@@ -73,13 +74,16 @@ class Migrate implements \yentu\Command
 
     public function run($options)
     {
+        if($options['dump-queries'] !== true)
+        {
+            Yentu::greet();
+        }
+        
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
         $this->driver->setDryRun($options['dry']);
         $totalOperations = 0;
-        
-        Yentu::greet();
-        
+                
         $filter = self::FILTER_UNRUN;
         $this->setupOptions($options, $filter);
         DatabaseItem::setDriver($this->driver);
@@ -120,15 +124,18 @@ class Migrate implements \yentu\Command
     
     private function countOperations($migrationFile)
     {
-        $dryDriver = clone $this->driver;
+        if($this->dryDriver === null)
+        {
+            $this->dryDriver = clone $this->driver;
+            $this->dryDriver->setDryRun(true);
+        }
         ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
-        DatabaseItem::setDriver($dryDriver);
-        $dryDriver->setDryRun(true);
+        DatabaseItem::setDriver($this->dryDriver);
         require "$migrationFile";
         DatabaseItem::purge();
         DatabaseItem::setDriver($this->driver);        
         ClearIce::popOutputLevel();
-        $this->driver->setExpectedOperations($dryDriver->resetOperations());
+        $this->driver->setExpectedOperations($this->dryDriver->resetOperations());
     }
     
     private function unrunFilter($input)
@@ -208,13 +215,13 @@ class Migrate implements \yentu\Command
     
     public function reverse()
     {
-        ClearIce::output("\nAttempting to reverse all changes ... ");
+        ClearIce::output("Attempting to reverse all changes ... ");
         if($this->getChanges() > 0)
         {
-            ClearIce::setOutputLevel(0);
+            ClearIce::pushOutputLevel(0);
             $rollback = new \yentu\commands\Rollback();
             $rollback->run(array());
-            ClearIce::setOutputLevel(1);        
+            ClearIce::popOutputLevel();        
         }    
         ClearIce::output("OK\n");        
     }

@@ -184,6 +184,10 @@ class SchemaDescription implements \ArrayAccess
     public function addColumn($details)
     {
         $table = $this->getTable($details);
+        if($details['type'] == '')
+        {
+            throw new DatabaseManipulatorException("Please specify a data type for the '{$details['name']}' column of the '{$table['name']}' table");
+        }
         $table['columns'][$details['name']] = array(
             'name' => $details['name'],
             'type' => $details['type'],

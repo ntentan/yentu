@@ -30,7 +30,7 @@ class DatabaseAssertor
     private $description;
     
     public function __construct($description)
-    {
+    {        
         $this->description = $description;
     }
     
