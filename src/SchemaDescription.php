@@ -217,6 +217,13 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
     
+    public function changeColumnDefault($details)
+    {
+        $table = $this->getTable($details);
+        $table['columns'][$details['to']['name']]['default'] = $details['to']['default'];
+        $this->setTable($details, $table);
+    }
+    
     public function addPrimaryKey($details)
     {
         $table = $this->getTable($details);
