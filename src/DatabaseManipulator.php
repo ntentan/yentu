@@ -17,7 +17,7 @@ abstract class DatabaseManipulator
     
     public function __construct($config) 
     {
-        $this->connection = \ntentan\atiaa\Atiaa::getConnection($config);
+        $this->connection = \ntentan\atiaa\Driver::getConnection($config);
     }
     
     public function __get($name)
@@ -199,9 +199,8 @@ abstract class DatabaseManipulator
         try{
             $this->connection->describeTable('yentu_history');
         }
-        catch(\ntentan\atiaa\DescriptionException $e)
+        catch(\ntentan\atiaa\TableNotFoundException $e)
         {
-            $level = ClearIce::getOutputLevel();
             ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
             $this->addTable(array('name' => 'yentu_history'));
 
