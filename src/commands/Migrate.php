@@ -108,10 +108,13 @@ class Migrate implements \yentu\Command
             }
         }
         
-        $elapsed = \yentu\Timer::stop();
-        ClearIce::output("\nMigration took " . \yentu\Timer::pretty($elapsed) . "\n");
-        ClearIce::output($this->driver->getChanges() . " operations performed\n");
-        ClearIce::output($totalOperations - $this->driver->getChanges() . " operations skipped\n");
+        if($this->driver->getChanges())
+        {
+            $elapsed = \yentu\Timer::stop();
+            ClearIce::output("\nMigration took " . \yentu\Timer::pretty($elapsed) . "\n");
+            ClearIce::output($this->driver->getChanges() . " operations performed\n");
+            ClearIce::output($totalOperations - $this->driver->getChanges() . " operations skipped\n");
+        }
         
         $this->driver->disconnect();
     }
