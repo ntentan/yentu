@@ -62,6 +62,6 @@ class Create implements \yentu\Command
         $code = new \yentu\CodeWriter();
         $path = Yentu::getPath("migrations/{$timestamp}_{$name}.php");
         file_put_contents($path, $code);
-        \clearice\ClearIce::output("\nAdded $path for new migration.\n");
+        \clearice\ClearIce::output("Added $path for new migration.\n");
     }
 }
