@@ -1,6 +1,9 @@
 <?php
 namespace yentu\database;
 
+/**
+ * @todo In future make the view definitions changeable
+ */
 class View extends \yentu\database\DatabaseItem
 {
     private $name;
