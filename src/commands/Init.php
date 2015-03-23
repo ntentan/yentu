@@ -118,9 +118,9 @@ class Init implements Command
         {
             global $argv;
             throw new CommandError(
-                "Ooops! You didn't provide any parameters. Please execute "
-                . "`{$argv[0]} init -i` to execute command interractively. "
-                . "You can also try `{$argv[0]} init --help` for more information.\n"
+                "You didn't provide any parameters for initialization. Please execute "
+                . "`{$argv[0]} init -i` to initialize yentu interractively. "
+                . "You can also try `{$argv[0]} init --help` for more information."
             );
         }
         

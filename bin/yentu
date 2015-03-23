@@ -173,7 +173,7 @@ try{
 catch(\yentu\commands\CommandError $e)
 {
     ClearIce::resetOutputLevel();
-    ClearIce::error("There was an error executing your command: " . $e->getMessage() . "\n");
+    ClearIce::error("Error! " . $e->getMessage() . "\n");
 }
 catch(\yentu\DatabaseManipulatorException $e)
 {
@@ -196,5 +196,5 @@ catch (\yentu\SyntaxErrorException $e)
 catch(\PDOException $e)
 {
     ClearIce::resetOutputLevel();
-    ClearIce::error("Failed to connect to database:" . $e->getMessage() . "\n");
+    ClearIce::error("Failed to connect to database: " . $e->getMessage() . "\n");
 }

@@ -159,6 +159,7 @@ abstract class DatabaseManipulator
         }
         
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
+        unset($config['variables']);
         return new $class($config);
     }
     

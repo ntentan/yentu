@@ -30,7 +30,8 @@ class Yentu
         require Yentu::getPath("config/default.php");
         return array_merge(array(
                 array(
-                'home' => Yentu::getPath('migrations')
+                    'home' => Yentu::getPath('migrations'),
+                    'variables' => $config['variables']
                 )
             ),
             is_array($other_migrations) ? $other_migrations : array()
