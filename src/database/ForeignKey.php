@@ -8,13 +8,18 @@ class ForeignKey extends DatabaseItem
     private $foreignTable;
     private $foreignColumns;
     private $name;
-    private $onDelete = 'NO ACTION';
-    private $onUpdate = 'NO ACTION';
+    private $onDelete;
+    private $onUpdate;
+    
+    public static $defaultOnDelete = 'NO ACTION';
+    public static $defaultOnUpdate = 'NO ACTION';
     
     public function __construct($columns, $table) 
     {
         $this->table = $table;
         $this->columns = $columns;
+        $this->onDelete = self::$defaultOnDelete;
+        $this->onUpdate = self::$defaultOnUpdate;
         
         // Prevent the committing of the foreign key even if the context
         // switches

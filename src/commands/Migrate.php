@@ -34,6 +34,7 @@ use yentu\database\Table;
 use yentu\database\View;
 use yentu\database\Query;
 use clearice\ClearIce;
+use yentu\database\ForeignKey;
 
 /**
  * The migrate command for the yentu database migration system. This class is
@@ -63,7 +64,18 @@ class Migrate implements \yentu\Command
             $this->lastSession = $this->driver->getLastSession();
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
-        }            
+        }    
+        
+        if(isset($options['default-ondelete-action']))
+        {
+            ForeignKey::$defaultOnDelete = $options['default-ondelete-action'];
+        }
+        
+        if(isset($options['default-onupdate-action']))
+        {
+            ForeignKey::$defaultOnUpdate = $options['default-onupdate-action'];
+        }
+        
         $this->setDefaultSchema($options);
     }
     

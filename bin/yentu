@@ -117,7 +117,19 @@ ClearIce::addOptions(
         'long' => 'default-schema',
         'has_value' => true,
         'help' => 'use this as the default schema for all migrations'
-    )
+    ),
+    array(
+        'command' => 'migrate',
+        'long' => 'default-ondelete',
+        'help' => 'the default cascade action for foreign key deletes',
+        'has_value' => true
+    ),
+    array(
+        'command' => 'migrate',
+        'long' => 'default-onupdate',
+        'help' => 'the default cascade action for foreign key updates',
+        'has_value' => true
+    )        
 );
 
 ClearIce::addOptions(
