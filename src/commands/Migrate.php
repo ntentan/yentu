@@ -270,6 +270,13 @@ class Migrate implements \yentu\Command
     
     public function variable($name)
     {
-        return $this->variables[$name];
+        if(isset($this->variables[$name]))
+        {
+            return $this->variables[$name];
+        }
+        else
+        {
+            throw new CommandError("Variable $name is undefined.");
+        }
     }
 }
