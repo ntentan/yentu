@@ -18,11 +18,6 @@ class Import implements Command
     private $foreignKeys = array();
     private $newVersion;
     
-    public function __construct($driver = null)
-    {
-        $this->db = $driver === null ? DatabaseManipulator::create() : $driver;
-    }
-    
     private function initializeCodeWriter()
     {
         if(!is_object($this->code))
@@ -37,8 +32,9 @@ class Import implements Command
     }
 
     public function run($options)
-    {
+    {        
         Yentu::greet();
+        $this->db = DatabaseManipulator::create();
         $this->initializeCodeWriter();
         $files = scandir(Yentu::getPath("migrations"));
         if(count($files) > 2)

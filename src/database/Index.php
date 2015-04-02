@@ -44,7 +44,7 @@ class Index extends \yentu\database\DatabaseItem
     {
         if($this->name == '')
         {
-            $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . '_idx';
+            $this->name = substr($this->table->getName() . '_' . implode('_', $this->columns), 0, 60) . '_idx';
         }        
         $this->getDriver()->addIndex($this->buildDescription());
     }
