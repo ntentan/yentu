@@ -28,5 +28,5 @@ namespace yentu;
 
 interface Command
 {
-    public function run($options);
+    public function run($options=array());
 }

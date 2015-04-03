@@ -9,7 +9,7 @@ use yentu\Yentu;
 
 class Rollback implements \yentu\Command
 {
-    public function run($options) 
+    public function run($options=array()) 
     {
         Yentu::greet();
         $db = DatabaseManipulator::create();

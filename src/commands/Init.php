@@ -100,7 +100,7 @@ class Init implements Command
         file_put_contents(Yentu::getPath("config/default.php"), $configFile);        
     }
     
-    public function run($options)
+    public function run($options=array())
     {
         Yentu::greet();
         if(file_exists(Yentu::getPath('')))

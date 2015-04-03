@@ -109,7 +109,7 @@ class Migrate implements \yentu\Command
         }
     }
 
-    public function run($options)
+    public function run($options=array())
     {
         if($options['dump-queries'] !== true)
         {

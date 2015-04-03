@@ -10,7 +10,7 @@ use clearice\ClearIce;
  */
 class Status implements Command
 {
-    public function run($options)
+    public function run($options=array())
     {
         Yentu::greet();
         $driver = \yentu\DatabaseManipulator::create();

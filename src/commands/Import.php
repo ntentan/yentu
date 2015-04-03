@@ -31,7 +31,7 @@ class Import implements Command
        $this->code = $code; 
     }
 
-    public function run($options)
+    public function run($options=array())
     {        
         Yentu::greet();
         $this->db = DatabaseManipulator::create();
