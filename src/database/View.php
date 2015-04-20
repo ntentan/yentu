@@ -35,7 +35,8 @@ class View extends \yentu\database\DatabaseItem
     
     public function definition($definition)
     {
-        return $this->create('view_definition', $this->name, $definition, $this->schema);
+        $this->addChange('definition', $definition);
+        return $this;
     }
     
     public function view($name)

@@ -45,8 +45,7 @@ class Postgresql extends \yentu\DatabaseManipulator
     
     protected function _changeViewDefinition($details)
     {
-        $this->_dropView($details['from']);
-        $this->_addView($details['to']);
+        $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $this->buildTableName($details['to']['name'], $details['to']['schema']), $details['to']['definition']));
     }
 
     protected function _dropTable($details) 
