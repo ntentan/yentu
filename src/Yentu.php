@@ -1,8 +1,6 @@
 <?php
 namespace yentu;
 
-define('YENTU_VERSION', '0.1.0-alpha');
-
 use clearice\ClearIce;
 
 class Yentu
@@ -139,7 +137,7 @@ class Yentu
         return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
     }    
     
-    public static function startTimer()
+    public static function getVersion()
     {
         
     }
