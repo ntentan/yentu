@@ -2,7 +2,6 @@ language: php
 php:
  - "5.4"
  - "5.5"
- - "hhvm"
  - "7"
 env:
  - YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost'
@@ -17,11 +16,7 @@ matrix:
   - php: "5.6"
     env: YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
   - php: "5.6"
-    env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
- exclude:
-  - php: "hhvm"
-    env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='mysql:host=localhost'
-
+    env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost' COVERAGE=yes
  
 services:
  - postgresql
