@@ -3,6 +3,7 @@ php:
  - "5.4"
  - "5.5"
  - "7"
+ - "hhvm"
 env:
  - YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost'
  - YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost'
@@ -12,6 +13,8 @@ before_script:
 matrix:
  allow_failures:
   - php: "7"
+  - php: "hhvm"
+  
  include:
   - php: "5.6"
     env: YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
@@ -23,4 +26,4 @@ services:
  - mysql
 
 script: vendor/bin/phpunit --coverage-clover coverage.clover --configuration tests/config/travis.xml
-after_script: if [ "$COVERAGE" == "yes" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --access-token="93e209791d440d1069195255daaa32ce84f96e88ced6d40490b1352dca34f96c" --format=php-clover coverage.clover fi
+after_script: if [ "$COVERAGE" == "yes" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --access-token="93e209791d440d1069195255daaa32ce84f96e88ced6d40490b1352dca34f96c" --format=php-clover coverage.clover; fi
