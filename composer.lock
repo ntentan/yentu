@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b5334154f066b6ee27584b9905a4bc0a",
+    "hash": "20306f9b9b6457bb882ef03b1707cb97",
     "packages": [
         {
             "name": "ekowabaka/clearice",
@@ -49,7 +49,7 @@
         },
         {
             "name": "ntentan/atiaa",
-            "version": "dev-master",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/atiaa.git",
@@ -1206,9 +1206,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ntentan/atiaa": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
