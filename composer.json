@@ -17,11 +17,12 @@
     "require": {
         "ekowabaka/clearice": "0.4.*",
         "php" : ">=5.4.0",
-        "ntentan/atiaa": "0.*"
+        "ntentan/atiaa": "dev-master"
     },
     "require-dev" : {
         "mikey179/vfsStream" : "1.*",
-        "phpunit/phpunit" : "4.*"
+        "phpunit/phpunit" : "4.*",
+        "mockery/mockery": "0.9.*"
     },
     "bin" : ["bin/yentu"]
 }

@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="../bootstrap.php">
-    <php>
-        <var name="POSTGRESQL_USER" value="postgres" />          
-        <var name="POSTGRESQL_PASSWORD" value="" />
-        <var name="POSTGRESQL_HOST" value="localhost" />
-                  
-        <var name="MYSQL_USER" value="root" />          
-        <var name="MYSQL_PASSWORD" value="" />  
-        <var name="MYSQL_HOST" value="localhost" />        
-    </php>
     <testsuites>
         <testsuite name="Main Test Suite">
             <directory>../cases</directory>    

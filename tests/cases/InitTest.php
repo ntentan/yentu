@@ -67,6 +67,7 @@ class InitTest extends \yentu\tests\YentuTest
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu/migrations")));
         $this->assertEquals(true, is_file(vfsStream::url('home/yentu/config/default.php')));
         
+        // provides $config below
         require(vfsStream::url('home/yentu/config/default.php'));
         
         $this->assertEquals(array(
@@ -95,7 +96,7 @@ class InitTest extends \yentu\tests\YentuTest
         
         file_put_contents(vfsStream::url("home/responses.in"),
             "{$GLOBALS['DRIVER']}\n"
-            . "localhost\n"
+            . "{$GLOBALS['DB_HOST']}\n"
             . "\n"
             . "{$GLOBALS['DB_NAME']}\n"
             . "{$GLOBALS['DB_USER']}\n"
