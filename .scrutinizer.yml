@@ -3,7 +3,8 @@ tools:
     php_pdepend: true
     php_analyzer: true
     external_code_coverage:
-        timeout: 600    # Timeout in seconds.    
+        timeout: 1200    # Timeout in seconds.    
+        runs: 2
 filter:
     excluded_paths: [bin/*, tests/*]
 
