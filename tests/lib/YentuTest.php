@@ -58,6 +58,9 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         if(getenv('YENTU_FILE') === false)
         {
             $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}"; 
+            $GLOBALS['DB_NAME'] = $this->testDatabase;
+            $GLOBALS['DEFAULT_SCHEMA'] = (string)getenv('YENTU_DEFAULT_SCHEMA') == '' ? 
+                $this->testDatabase : (string)getenv('YENTU_DEFAULT_SCHEMA');
         }
         else
         {
@@ -65,12 +68,9 @@ class YentuTest extends \PHPUnit_Framework_TestCase
             $GLOBALS['DB_FILE'] = getenv('YENTU_FILE');
         }
         
-        $GLOBALS['DB_NAME'] = $this->testDatabase;
-        $GLOBALS['DB_USER'] = getenv('YENTU_USER');
-        $GLOBALS['DB_PASSWORD'] = getenv('YENTU_PASSWORD');
-        $GLOBALS['DB_HOST'] = getenv('YENTU_HOST');
-        $GLOBALS['DEFAULT_SCHEMA'] = getenv('YENTU_DEFAULT_SCHEMA') == '' ? 
-            $this->testDatabase : getenv('YENTU_DEFAULT_SCHEMA');
+        $GLOBALS['DB_USER'] = (string)getenv('YENTU_USER');
+        $GLOBALS['DB_PASSWORD'] = (string)getenv('YENTU_PASSWORD');
+        $GLOBALS['DB_HOST'] = (string)getenv('YENTU_HOST');
         
         $timer = $this->getMockBuilder("\\yentu\\Timer")->setMethods(array('stopInstance', 'startInstance'))->getMock();
         $timer->method('stopInstance')->willReturn(10.0000);

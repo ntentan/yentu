@@ -32,8 +32,14 @@ class SqliteInfo extends \yentu\tests\SchemaInfo
         
     }
 
-    public function getColumnDetails($table) {
-        
+    public function columnExists($column) 
+    {
+        $columns = $this->pdo->query("PRAGMA table_info({$this->table['table']})")->fetchAll(\PDO::FETCH_ASSOC);
+        foreach($columns as $tableColumn)
+        {
+            if($column === $tableColumn['name']) return true;
+        }
+        return false;
     }
 
     public function schemaExists($table) {

@@ -33,12 +33,11 @@ abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
      * @var \PDO
      */
     protected $pdo;
-    protected $table;
     private $negate;
     
     /**
      *
-     * @var \yentu\tests\lib\SchemaInfo
+     * @var \yentu\tests\SchemaInfo
      */
     protected $schemaInfo;
     
@@ -64,14 +63,15 @@ abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
     {
         if(is_string($table))
         {
-            $this->table = array(
+            $table = array(
                 'table' => $table,
                 'schema' => $GLOBALS['DEFAULT_SCHEMA']
             );
         }
         else
         {
-            $this->table = $table;
+            $table = $table;
         }
+        $this->schemaInfo->setTable($table);
     }
 }

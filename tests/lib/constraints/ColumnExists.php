@@ -27,18 +27,9 @@ namespace yentu\tests\constraints;
 
 class ColumnExists extends \yentu\tests\YentuConstraint
 {   
-    public function matches($other)
-    {
-        
-        $response = $this->pdo->query(
-            sprintf(
-                "SELECT * FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s'",
-                $this->table['table'], 
-                $this->table['schema'],
-                $other
-            )
-        );
-        return $this->processResult($response->rowCount() === 1);
+    public function matches($column)
+    {        
+        return $this->processResult($this->schemaInfo->columnExists($column));
     }
     
     public function toString()

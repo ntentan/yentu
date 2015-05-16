@@ -32,8 +32,17 @@ class InformationSchemaInfo extends \yentu\tests\SchemaInfo
         
     }
 
-    public function getColumnDetails($table) {
-        
+    public function columnExists($column) 
+    {
+        $response = $this->pdo->query(
+            sprintf(
+                "SELECT count(*) as c FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s'",
+                $this->table['table'], 
+                $this->table['schema'],
+                $column
+            )
+        )->fetchAll(\PDO::FETCH_ASSOC);
+        return $response[0]['c'] == 1;
     }
 
     public function schemaExists($table) {

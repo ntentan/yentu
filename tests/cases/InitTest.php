@@ -50,7 +50,8 @@ class InitTest extends \yentu\tests\YentuTest
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS['DB_NAME'],
                 'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
+                'password' => $GLOBALS['DB_PASSWORD'],
+                'file' => $GLOBALS['DB_FILE']
             )
         );
         $this->runAssertions();
@@ -76,7 +77,8 @@ class InitTest extends \yentu\tests\YentuTest
             'port' => '',
             'dbname' => $GLOBALS['DB_NAME'],
             'user' => $GLOBALS['DB_USER'],
-            'password' => $GLOBALS['DB_PASSWORD']
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'file' => $GLOBALS['DB_FILE']
         ), $config);      
         
         $this->assertTableExists('yentu_history');
@@ -177,7 +179,7 @@ class InitTest extends \yentu\tests\YentuTest
      */    
     public function testExistingDb()
     {
-        $this->pdo->query('CREATE TABLE yentu_history(dummy INT)');
+        $this->pdo->query('CREATE TABLE yentu_history(dummy INTEGER)');
         $initCommand = new \yentu\commands\Init();
         \yentu\Yentu::setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
@@ -186,7 +188,8 @@ class InitTest extends \yentu\tests\YentuTest
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS['DB_NAME'],
                 'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
+                'password' => $GLOBALS['DB_PASSWORD'],
+                'file' => $GLOBALS['DB_FILE']
             )
         );            
     }
