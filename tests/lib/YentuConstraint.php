@@ -36,6 +36,12 @@ abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
     protected $table;
     private $negate;
     
+    /**
+     *
+     * @var \yentu\tests\lib\SchemaInfo
+     */
+    protected $schemaInfo;
+    
     public function negate()
     {
         $this->negate = true;
@@ -49,6 +55,9 @@ abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
     public function setPDO($pdo)
     {
         $this->pdo = $pdo;
+        $schemaInfoClass = "\\yentu\\tests\\schema_info\\" . ucfirst(getenv('YENTU_DRIVER')) . "Info";
+        $this->schemaInfo = new $schemaInfoClass();
+        $this->schemaInfo->setPDO($pdo);
     }
     
     public function setTable($table)

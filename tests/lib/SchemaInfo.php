@@ -1,8 +1,9 @@
 <?php
+
 /* 
  * The MIT License
  *
- * Copyright 2014 ekow.
+ * Copyright 2015 ekow.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\constraints;
+namespace yentu\tests;
 
-class TableExists extends \yentu\tests\YentuConstraint
-{   
-    public function matches($table)
+abstract class SchemaInfo
+{
+    protected $pdo;
+    
+    public function setPDO($pdo)
     {
-        return $this->processResult($this->schemaInfo->tableExists($table));
+        $this->pdo = $pdo;
     }
     
-    public function toString()
-    {
-        return 'is an existing database table';
-    }
+    abstract public function tableExists($table);
+    abstract public function schemaExists($table);
+    abstract public function foreignKeyExists($table);
+    abstract public function getColumnDetails($table);
 }

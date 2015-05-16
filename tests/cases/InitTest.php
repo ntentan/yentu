@@ -94,14 +94,25 @@ class InitTest extends \yentu\tests\YentuTest
         ClearIce::setStreamUrl('output', vfsStream::url("home/standard.out"));
         ClearIce::setStreamUrl('input', vfsStream::url("home/responses.in"));
         
-        file_put_contents(vfsStream::url("home/responses.in"),
-            "{$GLOBALS['DRIVER']}\n"
-            . "{$GLOBALS['DB_HOST']}\n"
-            . "\n"
-            . "{$GLOBALS['DB_NAME']}\n"
-            . "{$GLOBALS['DB_USER']}\n"
-            . "{$GLOBALS['DB_PASSWORD']}\n"
-        );
+        // Write the input for the interractive test
+        if(getenv('YENTU_HOST') === false)
+        {
+            file_put_contents(vfsStream::url("home/responses.in"),
+                "{$GLOBALS['DRIVER']}\n"
+                . "{$GLOBALS['DB_FILE']}\n"
+            );            
+        }
+        else
+        {
+            file_put_contents(vfsStream::url("home/responses.in"),
+                "{$GLOBALS['DRIVER']}\n"
+                . "{$GLOBALS['DB_HOST']}\n"
+                . "\n"
+                . "{$GLOBALS['DB_NAME']}\n"
+                . "{$GLOBALS['DB_USER']}\n"
+                . "{$GLOBALS['DB_PASSWORD']}\n"
+            );
+        }
         
         $initCommand = new \yentu\commands\Init;
         \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));

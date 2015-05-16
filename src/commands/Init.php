@@ -44,33 +44,43 @@ class Init implements Command
                     'required' => true,
                     'answers' => array(
                         'postgresql',
-                        'mysql'
+                        'mysql',
+                        'sqlite'
                     )
                 )
             );
             
-            $params['host'] = ClearIce::getResponse('Database host', array(
-                    'required' => true,
-                    'default' => 'localhost'
-                )
-            );
-            
-            $params['port'] = ClearIce::getResponse('Database port');
-            
-            $params['dbname'] = ClearIce::getResponse('Database name', array(
+            if($params['driver'] === 'sqlite')
+            {
+                $params['file'] = ClearIce::getResponse('Database file',[
                     'required' => true
-                )
-            );
-            
-            $params['user'] = ClearIce::getResponse('Database user name', array(
-                    'required' => true
-                )
-            );            
-            
-            $params['password'] = ClearIce::getResponse('Database password', array(
-                    'required' => FALSE
-                )
-            );            
+                ]);
+            }
+            else
+            {
+                $params['host'] = ClearIce::getResponse('Database host', array(
+                        'required' => true,
+                        'default' => 'localhost'
+                    )
+                );
+
+                $params['port'] = ClearIce::getResponse('Database port');
+
+                $params['dbname'] = ClearIce::getResponse('Database name', array(
+                        'required' => true
+                    )
+                );
+
+                $params['user'] = ClearIce::getResponse('Database user name', array(
+                        'required' => true
+                    )
+                );            
+
+                $params['password'] = ClearIce::getResponse('Database password', array(
+                        'required' => FALSE
+                    )
+                );
+            }
         }
         else
         {
@@ -94,6 +104,7 @@ class Init implements Command
         $configFile->add("'dbname' => '{$params['dbname']}',");
         $configFile->add("'user' => '{$params['user']}',");
         $configFile->add("'password' => '{$params['password']}',");
+        $configFile->add("'file' => '{$params['file']}',");
         $configFile->decreaseIndent();
         $configFile->add(');');
         

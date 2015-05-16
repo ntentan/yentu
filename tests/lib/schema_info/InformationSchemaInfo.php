@@ -1,8 +1,9 @@
 <?php
+
 /* 
  * The MIT License
  *
- * Copyright 2014 ekow.
+ * Copyright 2015 ekow.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +24,41 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\constraints;
+namespace yentu\tests\schema_info;
 
-class TableExists extends \yentu\tests\YentuConstraint
-{   
-    public function matches($table)
-    {
-        return $this->processResult($this->schemaInfo->tableExists($table));
+class InformationSchemaInfo extends \yentu\tests\SchemaInfo
+{
+    public function foreignKeyExists($table) {
+        
     }
-    
-    public function toString()
+
+    public function getColumnDetails($table) {
+        
+    }
+
+    public function schemaExists($table) {
+        
+    }
+
+    public function tableExists($table) 
     {
-        return 'is an existing database table';
+        if(is_string($table))
+        {
+            $table = array(
+                'table' => $table,
+                'schema' => $GLOBALS['DEFAULT_SCHEMA']
+            );
+        }
+        
+        $response = $this->pdo->query(
+            sprintf(
+                "SELECT count(*) as c FROM information_schema.tables  where table_name = '%s' and table_schema = '%s'",
+                $table['table'], 
+                $table['schema']
+            )
+        );      
+        
+        $count = $response->fetchAll(\PDO::FETCH_ASSOC);
+        return $count[0]['c'] == 1;
     }
 }

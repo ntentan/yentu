@@ -54,7 +54,17 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         
         $GLOBALS['DRIVER'] = getenv('YENTU_DRIVER');
         $GLOBALS['DB_DSN'] = getenv('YENTU_BASE_DSN');
-        $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}"; 
+        
+        if(getenv('YENTU_FILE') === false)
+        {
+            $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}"; 
+        }
+        else
+        {
+            $GLOBALS['DB_FULL_DSN'] = $GLOBALS['DB_DSN'];
+            $GLOBALS['DB_FILE'] = getenv('YENTU_FILE');
+        }
+        
         $GLOBALS['DB_NAME'] = $this->testDatabase;
         $GLOBALS['DB_USER'] = getenv('YENTU_USER');
         $GLOBALS['DB_PASSWORD'] = getenv('YENTU_PASSWORD');
@@ -136,6 +146,13 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     
     protected function createDb($name)
     {
+        if(getenv('YENTU_FILE') !== false) {
+            if(file_exists(getenv('YENTU_FILE')))
+            {
+                unlink(getenv('YENTU_FILE'));
+            }
+            return;
+        }
         $pdo = new \PDO($GLOBALS["DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     
         $pdo->exec("DROP DATABASE IF EXISTS $name");
@@ -168,7 +185,8 @@ class YentuTest extends \PHPUnit_Framework_TestCase
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $name,
                 'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
+                'password' => $GLOBALS['DB_PASSWORD'],
+                'file' => $GLOBALS['DB_FILE']
             )
         );            
     }
@@ -184,5 +202,13 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->createDb($GLOBALS['DB_NAME']);
         $this->connect($GLOBALS["DB_FULL_DSN"]);
         $this->initYentu($GLOBALS['DB_NAME']);
+    }
+    
+    protected function skipSchemaTests()
+    {
+        if(getenv('YENTU_SKIP_SCHEMAS') === 'yes')
+        {
+            $this->markTestSkipped();
+        }        
     }
 }

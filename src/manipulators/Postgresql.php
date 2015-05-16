@@ -325,11 +325,11 @@ class Postgresql extends \yentu\DatabaseManipulator
         switch($direction)
         {
             case self::CONVERT_TO_YENTU: 
-                $destinationType = $types[$type];
+                $destinationType = $types[strtolower($type)];
                 break;
             
             case self::CONVERT_TO_DRIVER:
-                $destinationType = array_search($type, $types);
+                $destinationType = array_search(strtolower($type), $types);
                 break;
         }
         

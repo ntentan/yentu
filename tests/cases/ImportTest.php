@@ -54,12 +54,14 @@ class ImportTest extends \yentu\tests\YentuTest
         
         require "tests/expected/{$GLOBALS['DRIVER']}/import.php";
         $descriptionArray = $description->toArray();
+        
         unset($descriptionArray['tables']['yentu_history']);
         $this->assertEquals($expectedDescription, $descriptionArray);
     }
     
     public function testSchemaImport()
     {
+        $this->skipSchemaTests();
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->pdo->query('DROP SCHEMA IF EXISTS hr');
         $this->pdo->query('DROP SCHEMA IF EXISTS common');
@@ -111,6 +113,7 @@ class ImportTest extends \yentu\tests\YentuTest
     
     public function testDatabaseNotExisting()
     {
+        $this->skipSchemaTests();
         $this->connect($GLOBALS['DB_FULL_DSN']);   
         try{
             $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
