@@ -52,4 +52,14 @@ class SqliteInfo extends \yentu\tests\SchemaInfo
         return $count[0]['c'] == '1';
     }
 
+    public function columnNulable($column, $nullability) 
+    {
+        $columns = $this->pdo->query("PRAGMA table_info({$this->table['table']})")->fetchAll(\PDO::FETCH_ASSOC);
+        foreach($columns as $tableColumn)
+        {
+            var_dump($tableColumn);
+        }
+        return false;        
+    }
+
 }

@@ -70,4 +70,18 @@ class InformationSchemaInfo extends \yentu\tests\SchemaInfo
         $count = $response->fetchAll(\PDO::FETCH_ASSOC);
         return $count[0]['c'] == 1;
     }
+
+    public function columnNulable($column, $nullability) 
+    {
+        $response = $this->pdo->query(
+            sprintf("SELECT count(*) as c FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s' and is_nullable = '%s'",
+                $this->table['table'], 
+                $this->table['schema'],
+                $column,
+                $nullability ? 'YES' : 'NO'
+            )
+        )->fetchAll(\PDO::FETCH_ASSOC);
+        return $response[0]['c'] == 1;
+    }
+
 }

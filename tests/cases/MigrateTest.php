@@ -65,7 +65,8 @@ class MigrateTest extends \yentu\tests\YentuTest
     
     
     public function testSchemaMigration()
-    {        
+    {
+        $this->skipSchemaTests();
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));        
         $migrate = new \yentu\commands\Migrate();
         $migrate->run(array());

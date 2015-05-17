@@ -43,6 +43,7 @@ abstract class SchemaInfo
     
     abstract public function tableExists($table);
     abstract public function schemaExists($table);
-    abstract public function foreignKeyExists($table);
-    abstract public function columnExists($table);
+    abstract public function foreignKeyExists($field);
+    abstract public function columnExists($column);
+    abstract public function columnNulable($column, $nullability);
 }

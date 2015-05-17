@@ -37,20 +37,81 @@ class Sqlite extends \yentu\DatabaseManipulator
     
     protected function _addAutoPrimaryKey($details) 
     {
+        $this->rebuildTableFromDefinition($details['table']);
+    }
+    
+    private function getConstraintQuery($constraints, $type, $autoIncrement = false)
+    {
+        $query = '';
+        foreach($constraints as $name => $constraint)
+        {
+            $query = ", CONSTRAINT $name $type (" . implode($constraint['columns']) . ")";
+        }
+        return $query;
+    }
+    
+    private function rebuildTableFromDefinition($tableName, $options = null)
+    {
+        $description = $this->getDescription();
+        $table = $description['tables'][$tableName];
+        $dummyTable = "__yentu_{$table['name']}";
+        $query = "CREATE TABLE $dummyTable (";
+        $comma = '';
+        $primaryKeyAdded = false;
         
+        if($table['auto_increment'])
+        {
+            $key = reset($table['primary_key']);
+            $primaryKeyColumn = $key['columns'][0];
+        }
+        
+        foreach($table['columns'] as $column)
+        {
+            $query .= $comma . $this->getColumnDef($column);
+            if($column['name'] === $primaryKeyColumn)
+            {
+                $query .= ' PRIMARY KEY AUTOINCREMENT';
+                $primaryKeyAdded = true;
+            }
+            $comma = ', ';
+        }
+        
+        if(!$primaryKeyAdded)
+        {
+            $query .= $this->getConstraintQuery($table['primary_key'], 'PRIMARY KEY', $table['auto_increment']);
+        }
+        $query .= $this->getConstraintQuery($table['unique_keys'], 'UNIQUE');
+        $query .= $this->getConstraintQuery($table['indices'], 'INDEX');
+        
+        $query .= ')';
+        
+        $this->query($query);
+        
+        if(isset($options['new_column']))
+        {
+            $this->query("INSERT INTO $dummyTable SELECT *, ? FROM {$table['name']}", $options['new_column']['default']);
+        }
+        else
+        {
+            $this->query("INSERT INTO $dummyTable SELECT * FROM {$table['name']}");
+        }
+        $this->query("DROP TABLE {$table['name']}");
+        $this->query("ALTER TABLE $dummyTable RENAME TO {$table['name']}");
     }
     
     private function getColumnDef($details)
     {
-        return sprintf(
-            "%s %s %s", $details['name'], 
+        return trim(sprintf(
+            "%s %s %s %s", 
+            $details['name'], 
             $this->convertTypes(
                 $details['type'], 
                 self::CONVERT_TO_DRIVER, 
                 $details['length']
             ),
-            $details['nulls'] === false ? 'NOT NULL' : ''
-        );
+            $details['nulls'] === false ? 'NOT NULL' : '',
+            $details['default'] === null ? null : "DEFAULT {$details['default']}"
+        ));
     }
 
     protected function _addColumn($details) 
@@ -65,25 +126,33 @@ class Sqlite extends \yentu\DatabaseManipulator
             );
             unset($this->placeholders[$details['table']]);
         }
-        else
+        else if($details['nulls'] === null || $details['nulls'] == true || ($details['nulls'] === false && $details['default'] !== null))
         {
             $this->query("ALTER TABLE {$details['table']} ADD COLUMN " . $this->getColumnDef($details));
+        }
+        else
+        {
+            $this->rebuildTableFromDefinition($details['table'], ['new_column' => $details]);
         }
     }
 
     protected function _addForeignKey($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _addIndex($details) {
+        $this->rebuildTableFromDefinition($details['table']);
         
     }
 
-    protected function _addPrimaryKey($details) {
-        
+    protected function _addPrimaryKey($details) 
+    {
+        $this->rebuildTableFromDefinition($details['table']);
     }
 
     protected function _addSchema($name) {
+        throw new \Exception("Implement");
         
     }
 
@@ -93,63 +162,78 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->placeholders[$details['name']] = true;
     }
 
-    protected function _addUniqueKey($details) {
-        
+    protected function _addUniqueKey($details) 
+    {
+        $this->rebuildTableFromDefinition($details['table']);
     }
 
     protected function _addView($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _changeColumnDefault($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _changeColumnName($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _changeColumnNulls($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _changeViewDefinition($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropAutoPrimaryKey($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropColumn($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropForeignKey($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropIndex($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropPrimaryKey($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropSchema($name) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropTable($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropUniqueKey($details) {
+        throw new \Exception("Implement");
         
     }
 
     protected function _dropView($details) {
+        throw new \Exception("Implement");
         
     }
 
@@ -164,7 +248,8 @@ class Sqlite extends \yentu\DatabaseManipulator
             ['text', 'text'],
             ['blob', 'blob'],
             ['integer', 'boolean'],
-            ['integer', 'bigint']
+            ['integer', 'bigint'],
+            ['text', 'date']
         ];
         
         $type = strtolower($type);

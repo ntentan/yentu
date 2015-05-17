@@ -28,7 +28,7 @@ namespace yentu\tests\constraints;
 
 class ColumnNullability extends \yentu\tests\YentuConstraint
 {
-    private $nullability = 'YES';
+    private $nullability = true;
     
     public function setNullability($nullability)
     {
@@ -37,15 +37,7 @@ class ColumnNullability extends \yentu\tests\YentuConstraint
     
     public function matches($other)
     {
-        $response = $this->pdo->query(
-            sprintf(
-                "SELECT * FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s' and is_nullable = '{$this->nullability}'",
-                $this->table['table'], 
-                $this->table['schema'],
-                $other
-            )
-        );
-        return $this->processResult($response->rowCount() === 1);
+        return $this->processResult($this->schemaInfo->columnNulable($other, $this->nullability));
     }
     
     public function toString()

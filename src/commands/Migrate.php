@@ -33,8 +33,9 @@ use yentu\database\Schema;
 use yentu\database\Table;
 use yentu\database\View;
 use yentu\database\Query;
-use clearice\ClearIce;
 use yentu\database\ForeignKey;
+
+use clearice\ClearIce;
 
 /**
  * The migrate command for the yentu database migration system. This class is

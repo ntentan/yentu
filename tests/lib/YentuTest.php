@@ -125,7 +125,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $constraint = new constraints\ColumnNullability();
         $constraint->setPDO($this->pdo);
         $constraint->setTable($table);
-        $constraint->setNullability('NO');
+        $constraint->setNullability(false);
         $this->assertThat($column, $constraint, $message);
     }  
     
@@ -146,18 +146,21 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     
     protected function createDb($name)
     {
-        if(getenv('YENTU_FILE') !== false) {
+        if(getenv('YENTU_FILE') !== false) 
+        {
             if(file_exists(getenv('YENTU_FILE')))
             {
                 unlink(getenv('YENTU_FILE'));
             }
-            return;
         }
-        $pdo = new \PDO($GLOBALS["DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     
-        $pdo->exec("DROP DATABASE IF EXISTS $name");
-        $pdo->exec("CREATE DATABASE $name"); 
-        $pdo = null;        
+        else
+        {
+            $pdo = new \PDO($GLOBALS["DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);  
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);     
+            $pdo->exec("DROP DATABASE IF EXISTS $name");
+            $pdo->exec("CREATE DATABASE $name"); 
+            $pdo = null;        
+        }
     }
     
     protected function initDb($dsn, $queries)
