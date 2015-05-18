@@ -28,8 +28,23 @@ namespace yentu\tests\schema_info;
 
 class InformationSchemaInfo extends \yentu\tests\SchemaInfo
 {
-    public function foreignKeyExists($table) {
+    public function foreignKeyExists($table) 
+    {
+        if(!isset($table['schema']))
+        {
+            $table['schema'] = $GLOBALS['DEFAULT_SCHEMA'];
+        }
         
+        $response = $this->getPDO()->query(
+            sprintf(
+                "SELECT count(*) as c FROM information_schema.table_constraints WHERE table_name = '%s' and table_schema = '%s' and constraint_name = '%s' and constraint_type='FOREIGN KEY'",
+                $table['table'], 
+                $table['schema'],
+                $table['name']
+            )
+        )->fetchAll(\PDO::FETCH_ASSOC);
+        
+        return $response[0]['c'] == 1;
     }
 
     public function columnExists($column) 

@@ -193,9 +193,9 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->query("CREATE VIEW {$details['name']} AS {$details['definition']}");
     }
 
-    protected function _changeColumnDefault($details) {
-        throw new \Exception("Implement");
-        
+    protected function _changeColumnDefault($details) 
+    {
+        $this->rebuildTableFromDefinition($details['to']['table']);    
     }
 
     protected function _changeColumnName($details) {
@@ -207,9 +207,10 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->rebuildTableFromDefinition($details['to']['table']);    
     }
 
-    protected function _changeViewDefinition($details) {
-        throw new \Exception("Implement");
-        
+    protected function _changeViewDefinition($details) 
+    {
+        $this->query("DROP VIEW {$details['to']['name']}");
+        $this->_addView($details['to']);
     }
 
     protected function _dropAutoPrimaryKey($details) {
