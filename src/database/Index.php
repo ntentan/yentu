@@ -55,8 +55,8 @@ class Index extends \yentu\database\DatabaseItem
             'table' => $this->table->getName(),
             'schema' => $this->table->getSchema()->getName(),
             'columns' => $this->columns,
-            'name' => $this->name
+            'name' => $this->name,
+            'unique' => $this->unique
         );
     }
-
 }

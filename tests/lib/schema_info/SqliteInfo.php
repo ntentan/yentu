@@ -34,7 +34,7 @@ class SqliteInfo extends \yentu\tests\SchemaInfo
 
     public function columnExists($column) 
     {
-        $columns = $this->pdo->query("PRAGMA table_info({$this->table['table']})")->fetchAll(\PDO::FETCH_ASSOC);
+        $columns = $this->getPDO()->query("PRAGMA table_info({$this->table['table']})")->fetchAll(\PDO::FETCH_ASSOC);
         foreach($columns as $tableColumn)
         {
             if($column === $tableColumn['name']) return true;
@@ -48,16 +48,19 @@ class SqliteInfo extends \yentu\tests\SchemaInfo
 
     public function tableExists($table) 
     {
-        $count = $this->pdo->query("SELECT count(*) as c FROM sqlite_master WHERE name = '$table'")->fetchAll(\PDO::FETCH_ASSOC);
+        $count = $this->getPDO()->query("SELECT count(*) as c FROM sqlite_master WHERE name = '$table'")->fetchAll(\PDO::FETCH_ASSOC);
         return $count[0]['c'] == '1';
     }
 
     public function columnNulable($column, $nullability) 
     {
-        $columns = $this->pdo->query("PRAGMA table_info({$this->table['table']})")->fetchAll(\PDO::FETCH_ASSOC);
+        $columns = $this->getPDO()->query("PRAGMA table_info({$this->table['table']})")->fetchAll(\PDO::FETCH_ASSOC);
         foreach($columns as $tableColumn)
         {
-            var_dump($tableColumn);
+            if($column == $tableColumn['name'])
+            {
+                return ($tableColumn['notnull'] == '1' ? false : true) === $nullability;
+            }
         }
         return false;        
     }

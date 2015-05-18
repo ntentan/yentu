@@ -205,23 +205,43 @@ class SchemaDescription implements \ArrayAccess
     
     public function changeColumnNulls($details)
     {
-        $table = $this->getTable($details);
+        $table = $this->getTable($details['to']);
         $table['columns'][$details['to']['name']]['nulls'] = $details['to']['nulls'];
-        $this->setTable($details, $table);
+        $this->setTable($details['to'], $table);
     }
     
     public function changeColumnName($details)
     {
-        $table = $this->getTable($details);
-        $table['columns'][$details['to']['name']]['name'] = $details['to']['name'];
-        $this->setTable($details, $table);
+        $table = $this->getTable($details['to']);
+        $column = $table['columns'][$details['from']['name']];
+        $column['name'] = $details['to']['name'];
+        unset($table['columns'][$details['from']['name']]);
+        $table['columns'][$details['to']['name']] = $column;
+        
+        // Rename all indices
+        foreach($table['unique_keys'] as $name => $key)
+        {
+            $position = array_search($details['from']['name'], $key['columns']);
+            if($position !== false)
+            {
+                $table['unique_keys'][$name]['columns'][$position] = $column['name'];
+            }
+        }
+        
+        // Rename all unique keys
+        
+        // Rename all foreign keys
+        
+        // rename all primary keys
+        
+        $this->setTable($details['to'], $table);
     }
     
     public function changeColumnDefault($details)
     {
-        $table = $this->getTable($details);
+        $table = $this->getTable($details['to']);
         $table['columns'][$details['to']['name']]['default'] = $details['to']['default'];
-        $this->setTable($details, $table);
+        $this->setTable($details['to'], $table);
     }
     
     public function addPrimaryKey($details)

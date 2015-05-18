@@ -40,12 +40,33 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->rebuildTableFromDefinition($details['table']);
     }
     
-    private function getConstraintQuery($constraints, $type, $autoIncrement = false)
+    private function getConstraintQuery($constraint, $type, $name)
+    {
+        return ", CONSTRAINT $name $type (" . implode($constraint['columns']) . ")";
+    }
+    
+    
+    private function generateConstraintsQueries($constraints, $type)
     {
         $query = '';
         foreach($constraints as $name => $constraint)
         {
-            $query = ", CONSTRAINT $name $type (" . implode($constraint['columns']) . ")";
+            $query .= $this->getConstraintQuery($constraint, $type, $name);
+        }
+        return $query;
+    }
+    
+    private function getFKConstraintQuery($constraints)
+    {
+        $query = '';
+        foreach($constraints as $name => $constraint)
+        {
+            $query .= $this->getConstraintQuery($constraint, 'FOREIGN KEY', $name) . 
+                sprintf(
+                    " REFERENCES {$constraint['foreign_table']} (" . implode($constraint['foreign_columns']) . ") %s %s",
+                    isset($constraint['on_delete']) ? "ON DELETE {$constraint['on_delete']}" : '',
+                    isset($constraint['on_update']) ? "ON UPDATE {$constraint['on_update']}" : ''
+                );
         }
         return $query;
     }
@@ -78,10 +99,11 @@ class Sqlite extends \yentu\DatabaseManipulator
         
         if(!$primaryKeyAdded)
         {
-            $query .= $this->getConstraintQuery($table['primary_key'], 'PRIMARY KEY', $table['auto_increment']);
+            $query .= $this->generateConstraintsQueries($table['primary_key'], 'PRIMARY KEY', $table['auto_increment']);
         }
-        $query .= $this->getConstraintQuery($table['unique_keys'], 'UNIQUE');
-        $query .= $this->getConstraintQuery($table['indices'], 'INDEX');
+        $query .= $this->generateConstraintsQueries($table['unique_keys'], 'UNIQUE');
+        $query .= $this->generateConstraintsQueries($table['indices'], 'INDEX');
+        $query .= $this->getFKConstraintQuery($table['foreign_keys']);
         
         $query .= ')';
         
@@ -136,14 +158,13 @@ class Sqlite extends \yentu\DatabaseManipulator
         }
     }
 
-    protected function _addForeignKey($details) {
-        throw new \Exception("Implement");
-        
+    protected function _addForeignKey($details) 
+    {
+        $this->rebuildTableFromDefinition($details['table']);
     }
 
     protected function _addIndex($details) {
-        $this->rebuildTableFromDefinition($details['table']);
-        
+        $this->query("CREATE INDEX {$details['name']} ON {$details['table']} (" . implode($details['columns']) .")");
     }
 
     protected function _addPrimaryKey($details) 
@@ -167,9 +188,9 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->rebuildTableFromDefinition($details['table']);
     }
 
-    protected function _addView($details) {
-        throw new \Exception("Implement");
-        
+    protected function _addView($details) 
+    {
+        $this->query("CREATE VIEW {$details['name']} AS {$details['definition']}");
     }
 
     protected function _changeColumnDefault($details) {
@@ -178,13 +199,12 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _changeColumnName($details) {
-        throw new \Exception("Implement");
-        
+        $this->rebuildTableFromDefinition($details['to']['table']);    
     }
 
-    protected function _changeColumnNulls($details) {
-        throw new \Exception("Implement");
-        
+    protected function _changeColumnNulls($details) 
+    {
+        $this->rebuildTableFromDefinition($details['to']['table']);    
     }
 
     protected function _changeViewDefinition($details) {

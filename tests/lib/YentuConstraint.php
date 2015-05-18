@@ -56,7 +56,6 @@ abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
         $this->pdo = $pdo;
         $schemaInfoClass = "\\yentu\\tests\\schema_info\\" . ucfirst(getenv('YENTU_DRIVER')) . "Info";
         $this->schemaInfo = new $schemaInfoClass();
-        $this->schemaInfo->setPDO($pdo);
     }
     
     public function setTable($table)

@@ -28,7 +28,11 @@ namespace yentu\tests;
 
 abstract class SchemaInfo
 {
-    protected $pdo;
+    /**
+     *
+     * @var \PDO
+     */
+    private $pdo;
     protected $table;
     
     public function setTable($table)
@@ -36,14 +40,21 @@ abstract class SchemaInfo
         $this->table = $table;
     }
     
-    public function setPDO($pdo)
+    protected function getPDO()
     {
-        $this->pdo = $pdo;
+        $this->pdo = null;
+        $this->pdo = new \PDO($GLOBALS['DB_FULL_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);
+        return $this->pdo;
     }
-    
+
     abstract public function tableExists($table);
     abstract public function schemaExists($table);
     abstract public function foreignKeyExists($field);
     abstract public function columnExists($column);
     abstract public function columnNulable($column, $nullability);
+    
+    public function __destruct() 
+    {
+        $this->pdo = null;
+    }
 }

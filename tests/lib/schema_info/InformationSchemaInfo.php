@@ -34,7 +34,7 @@ class InformationSchemaInfo extends \yentu\tests\SchemaInfo
 
     public function columnExists($column) 
     {
-        $response = $this->pdo->query(
+        $response = $this->getPDO()->query(
             sprintf(
                 "SELECT count(*) as c FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s'",
                 $this->table['table'], 
@@ -59,7 +59,7 @@ class InformationSchemaInfo extends \yentu\tests\SchemaInfo
             );
         }
         
-        $response = $this->pdo->query(
+        $response = $this->getPDO()->query(
             sprintf(
                 "SELECT count(*) as c FROM information_schema.tables  where table_name = '%s' and table_schema = '%s'",
                 $table['table'], 
@@ -73,7 +73,7 @@ class InformationSchemaInfo extends \yentu\tests\SchemaInfo
 
     public function columnNulable($column, $nullability) 
     {
-        $response = $this->pdo->query(
+        $response = $this->getPDO()->query(
             sprintf("SELECT count(*) as c FROM information_schema.columns  where table_name = '%s' and table_schema = '%s' and column_name = '%s' and is_nullable = '%s'",
                 $this->table['table'], 
                 $this->table['schema'],
@@ -83,5 +83,4 @@ class InformationSchemaInfo extends \yentu\tests\SchemaInfo
         )->fetchAll(\PDO::FETCH_ASSOC);
         return $response[0]['c'] == 1;
     }
-
 }
