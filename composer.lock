@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/atiaa.git",
-                "reference": "0b2decfe16b2b067208fc58cf31aebca0b66d02d"
+                "reference": "7f1a7450217643f336e4b0ea98b21405bdae2cc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/0b2decfe16b2b067208fc58cf31aebca0b66d02d",
-                "reference": "0b2decfe16b2b067208fc58cf31aebca0b66d02d",
+                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/7f1a7450217643f336e4b0ea98b21405bdae2cc4",
+                "reference": "7f1a7450217643f336e4b0ea98b21405bdae2cc4",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
                 }
             ],
             "description": "A slim wrapper around PDO to provide some extra utilities",
-            "time": "2015-05-21 21:58:41"
+            "time": "2015-05-22 12:11:13"
         }
     ],
     "packages-dev": [
