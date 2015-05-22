@@ -53,7 +53,6 @@ class MigrateTest extends \yentu\tests\YentuTest
         {
             $this->assertTableExists($table);        
         }
-        
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
         $migrate = new \yentu\commands\Migrate();
         $this->assertColumnNullable('role_name', 'roles');

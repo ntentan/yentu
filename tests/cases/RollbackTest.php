@@ -43,11 +43,11 @@ class RollbackTest extends \yentu\tests\YentuTest
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS["DB_NAME"],
                 'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
+                'password' => $GLOBALS['DB_PASSWORD'],
+                'file' => $GLOBALS['DB_FILE']
             )
         );
     }
-
     
     public function testRollback()
     {

@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "20306f9b9b6457bb882ef03b1707cb97",
+    "hash": "b5334154f066b6ee27584b9905a4bc0a",
     "packages": [
         {
             "name": "ekowabaka/clearice",
@@ -49,16 +49,16 @@
         },
         {
             "name": "ntentan/atiaa",
-            "version": "v0.1.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/atiaa.git",
-                "reference": "6eea97929c55b93736df635fb36d5b65cfa2ec6c"
+                "reference": "0b2decfe16b2b067208fc58cf31aebca0b66d02d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/6eea97929c55b93736df635fb36d5b65cfa2ec6c",
-                "reference": "6eea97929c55b93736df635fb36d5b65cfa2ec6c",
+                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/0b2decfe16b2b067208fc58cf31aebca0b66d02d",
+                "reference": "0b2decfe16b2b067208fc58cf31aebca0b66d02d",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
                 }
             ],
             "description": "A slim wrapper around PDO to provide some extra utilities",
-            "time": "2015-05-15 08:48:03"
+            "time": "2015-05-21 21:58:41"
         }
     ],
     "packages-dev": [
@@ -1206,7 +1206,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ntentan/atiaa": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

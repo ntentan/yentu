@@ -1,5 +1,4 @@
 <?php
-
 /*
  * The MIT License
  *
@@ -42,12 +41,13 @@ class Sqlite extends \yentu\DatabaseManipulator
     
     private function getConstraintQuery($constraint, $type, $name)
     {
-        return ", CONSTRAINT $name $type (" . implode($constraint['columns']) . ")";
+        return ", CONSTRAINT $name $type (" . implode(', ', $constraint['columns']) . ")";
     }
     
     
     private function generateConstraintsQueries($constraints, $type)
     {
+        if(!is_array($constraints)) return null;
         $query = '';
         foreach($constraints as $name => $constraint)
         {
@@ -59,11 +59,13 @@ class Sqlite extends \yentu\DatabaseManipulator
     private function getFKConstraintQuery($constraints)
     {
         $query = '';
+        if(!is_array($constraints)) return null;
         foreach($constraints as $name => $constraint)
         {
+            //var_dump($constraint);
             $query .= $this->getConstraintQuery($constraint, 'FOREIGN KEY', $name) . 
                 sprintf(
-                    " REFERENCES {$constraint['foreign_table']} (" . implode($constraint['foreign_columns']) . ") %s %s",
+                    " REFERENCES {$constraint['foreign_table']} (" . implode(', ', $constraint['foreign_columns']) . ") %s %s",
                     isset($constraint['on_delete']) ? "ON DELETE {$constraint['on_delete']}" : '',
                     isset($constraint['on_update']) ? "ON UPDATE {$constraint['on_update']}" : ''
                 );
@@ -71,33 +73,60 @@ class Sqlite extends \yentu\DatabaseManipulator
         return $query;
     }
     
+    private function getFieldListColumn($column, $options, $comma)
+    {
+        if($column['name'] == $options['new_column']['name'])
+        {
+            $return = '';
+        }
+        else if($column['name'] == $options['renamed_column']['to']['name'])
+        {
+            $return = $comma . $options['renamed_column']['from']['name'];
+        }
+        else
+        {
+            $return = $comma . $column['name'];
+        }
+        
+        return $return;
+    }
+    
     private function rebuildTableFromDefinition($tableName, $options = null)
     {
+        $this->query("PRAGMA foreign_keys=OFF");
         $description = $this->getDescription();
         $table = $description['tables'][$tableName];
         $dummyTable = "__yentu_{$table['name']}";
         $query = "CREATE TABLE $dummyTable (";
+        $fieldList = '';
         $comma = '';
         $primaryKeyAdded = false;
         
-        if($table['auto_increment'])
+        if($table['auto_increment'] && isset($table['primary_key']))
         {
             $key = reset($table['primary_key']);
             $primaryKeyColumn = $key['columns'][0];
         }
-        
-        foreach($table['columns'] as $column)
+        if(count($table['columns']))
         {
-            $query .= $comma . $this->getColumnDef($column);
-            if($column['name'] === $primaryKeyColumn)
+            foreach($table['columns'] as $column)
             {
-                $query .= ' PRIMARY KEY AUTOINCREMENT';
-                $primaryKeyAdded = true;
+                $query .= $comma . $this->getColumnDef($column);
+                $fieldList .= $this->getFieldListColumn($column, $options, $comma);
+                if($column['name'] === $primaryKeyColumn)
+                {
+                    $query .= ' PRIMARY KEY AUTOINCREMENT';
+                    $primaryKeyAdded = true;
+                }
+                $comma = ', ';
             }
-            $comma = ', ';
+        }
+        else
+        {
+            $query .= '__yentu_placeholder_col INTEGER';
         }
         
-        if(!$primaryKeyAdded)
+        if(!$primaryKeyAdded && isset($table['primary_key']))
         {
             $query .= $this->generateConstraintsQueries($table['primary_key'], 'PRIMARY KEY', $table['auto_increment']);
         }
@@ -111,14 +140,16 @@ class Sqlite extends \yentu\DatabaseManipulator
         
         if(isset($options['new_column']))
         {
-            $this->query("INSERT INTO $dummyTable SELECT *, ? FROM {$table['name']}", $options['new_column']['default']);
+            $this->query("INSERT INTO $dummyTable SELECT {$fieldList} , ? FROM {$table['name']}", $options['new_column']['default']);
         }
-        else
+        else if(count($table['columns']) > 0)
         {
-            $this->query("INSERT INTO $dummyTable SELECT * FROM {$table['name']}");
+            $this->query("INSERT INTO $dummyTable SELECT {$fieldList} FROM {$table['name']}");
         }
+                
         $this->query("DROP TABLE {$table['name']}");
         $this->query("ALTER TABLE $dummyTable RENAME TO {$table['name']}");
+        $this->query("PRAGMA foreign_keys=ON");
     }
     
     private function getColumnDef($details)
@@ -173,7 +204,7 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _addSchema($name) {
-        throw new \Exception("Implement");
+        
         
     }
 
@@ -198,8 +229,9 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->rebuildTableFromDefinition($details['to']['table']);    
     }
 
-    protected function _changeColumnName($details) {
-        $this->rebuildTableFromDefinition($details['to']['table']);    
+    protected function _changeColumnName($details) 
+    {
+        $this->rebuildTableFromDefinition($details['to']['table'], ['renamed_column' => $details]);    
     }
 
     protected function _changeColumnNulls($details) 
@@ -213,49 +245,47 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->_addView($details['to']);
     }
 
-    protected function _dropAutoPrimaryKey($details) {
-        throw new \Exception("Implement");
-        
+    protected function _dropAutoPrimaryKey($details) 
+    {
+        $this->rebuildTableFromDefinition($details['table']);    
     }
 
     protected function _dropColumn($details) {
-        throw new \Exception("Implement");
+        $this->rebuildTableFromDefinition($details['table']);
         
     }
 
-    protected function _dropForeignKey($details) {
-        throw new \Exception("Implement");
-        
+    protected function _dropForeignKey($details) 
+    {    
+        $this->rebuildTableFromDefinition($details['table']);
     }
 
-    protected function _dropIndex($details) {
-        throw new \Exception("Implement");
-        
+    protected function _dropIndex($details) 
+    {
+        $this->query("DROP INDEX {$details['name']}");
     }
 
-    protected function _dropPrimaryKey($details) {
-        throw new \Exception("Implement");
-        
+    protected function _dropPrimaryKey($details) 
+    {
+        $this->rebuildTableFromDefinition($details['table']);    
     }
 
     protected function _dropSchema($name) {
-        throw new \Exception("Implement");
+        
         
     }
 
     protected function _dropTable($details) {
-        throw new \Exception("Implement");
-        
+        $this->query("DROP TABLE {$details['name']}");
     }
 
     protected function _dropUniqueKey($details) {
-        throw new \Exception("Implement");
-        
+        $this->rebuildTableFromDefinition($details['table']);
     }
 
-    protected function _dropView($details) {
-        throw new \Exception("Implement");
-        
+    protected function _dropView($details) 
+    {
+        $this->query("DROP VIEW {$details['name']}");
     }
 
     public function convertTypes($type, $direction, $length) 

@@ -178,7 +178,7 @@ $expectedDescription = array (
       ),
       'foreign_keys' => 
       array (
-        'users_roles_fk' => 
+        'users_roles_0_fk' => 
         array (
           'schema' => '',
           'table' => 'users',
@@ -264,7 +264,7 @@ $expectedDescription = array (
       ),
       'foreign_keys' => 
       array (
-        'api_keys_users_fk' => 
+        'api_keys_users_0_fk' => 
         array (
           'schema' => '',
           'table' => 'api_keys',
@@ -374,7 +374,7 @@ $expectedDescription = array (
       ),
       'foreign_keys' => 
       array (
-        'audit_trail_users_fk' => 
+        'audit_trail_users_0_fk' => 
         array (
           'schema' => '',
           'table' => 'audit_trail',
@@ -590,7 +590,7 @@ $expectedDescription = array (
       ),
       'foreign_keys' => 
       array (
-        'permissions_roles_fk' => 
+        'permissions_roles_0_fk' => 
         array (
           'schema' => '',
           'table' => 'permissions',

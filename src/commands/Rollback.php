@@ -34,16 +34,7 @@ class Rollback implements \yentu\Command
                 );  
                 $previousMigration = $operation['migration'];
             }
-            try{
-                ChangeReverser::call($operation['method'], json_decode($operation['arguments'], true));
-            }
-            catch(\yentu\DatabaseManipulatorException $e)
-            {
-                /*if($operation['method'] != 'addView')
-                {
-                    throw $e;
-                }*/
-            }
+            ChangeReverser::call($operation['method'], json_decode($operation['arguments'], true));
             $db->query('DELETE FROM yentu_history WHERE id = ?', array($operation['id']));
         }
     }

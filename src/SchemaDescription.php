@@ -200,6 +200,15 @@ class SchemaDescription implements \ArrayAccess
     {
         $table = $this->getTable($details);
         unset($table['columns'][$details['name']]);
+        
+        foreach($table['foreign_keys'] as $i => $foreignKey)
+        {
+            if(array_search($details['name'], $foreignKey['columns']) !== false)
+            {
+                unset($table['foreign_keys'][$i]);
+            }
+        }
+        
         $this->setTable($details, $table);
     }    
     
@@ -286,7 +295,21 @@ class SchemaDescription implements \ArrayAccess
     public function dropUniqueKey($details)
     {
         $table = $this->getTable($details);
-        unset($table['unique_keys'][$details['name']]);
+        if(isset($table['unique_keys'][$details['name']]))
+        {
+            unset($table['unique_keys'][$details['name']]);
+        }
+        else
+        {
+            // Deal with special edge cases as in SQLite where unique keys are not named
+            foreach($table['unique_keys'] as $i => $key)
+            {
+                if($key['columns'] == $details['columns'])
+                {
+                    unset($table['unique_keys'][$i]);
+                }
+            }
+        }
         $this->setTable($details, $table);        
     }
     
