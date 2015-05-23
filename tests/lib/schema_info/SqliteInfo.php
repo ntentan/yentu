@@ -38,7 +38,7 @@ class SqliteInfo extends \yentu\tests\SchemaInfo
         $tableQuery = $this->getPDO()->query(
             "SELECT sql FROM sqlite_master WHERE name = '{$table['table']}'"
         )->fetchAll(\PDO::FETCH_ASSOC);
-        if(preg_match("/CONSTRAINT\s+{$table['name']}\s+FOREIGN KEY/", $tableQuery[0]['sql']))
+        if(preg_match("/CONSTRAINT\s+`{$table['name']}`\s+FOREIGN KEY/", $tableQuery[0]['sql']))
         {
             return true;
         }

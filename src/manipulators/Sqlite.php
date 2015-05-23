@@ -26,9 +26,9 @@
 namespace yentu\manipulators;
 
 /**
- * Description of Sqlite
+ * SQLite Database Structure Manipulator for the yentu migration engine.
  *
- * @author ekow
+ * @author Ekow Abaka Ainooson
  */
 class Sqlite extends \yentu\DatabaseManipulator
 {
@@ -39,33 +39,54 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->rebuildTableFromDefinition($details['table']);
     }
     
-    private function getConstraintQuery($constraint, $type, $name)
+    /**
+     * Generate a query stub to represent the constraints section of a full
+     * query (usually a CREATE TABLE or ADD COlUMN query).
+     * 
+     * @param array<string> $columns An array of the names of columns in the constraint.
+     * @param string $type The type of constraint `FOREIGN KEY`, `UNIQUE` etc.
+     * @param string $name The name of the constraint.
+     * @return string
+     */
+    private function getConstraintQuery($columns, $type, $name)
     {
-        return ", CONSTRAINT $name $type (" . implode(', ', $constraint['columns']) . ")";
+        return ", CONSTRAINT `$name` $type (`" . implode('`, `', $columns) . "`)";
     }
     
-    
+    /**
+     * Generate all the constraint queries of a table.
+     * This function is used when executing UNIQUE or PRIMARY KEY constraints.
+     * 
+     * @param array<array> $constraints An array of details of all constraints.
+     * @param string $type The type of constraint 'FOREIGN KEY' ... etc.
+     * @return string
+     */
     private function generateConstraintsQueries($constraints, $type)
     {
         if(!is_array($constraints)) return null;
         $query = '';
         foreach($constraints as $name => $constraint)
         {
-            $query .= $this->getConstraintQuery($constraint, $type, $name);
+            $query .= $this->getConstraintQuery($constraint['columns'], $type, $name);
         }
         return $query;
     }
     
+    /**
+     * Generate the query for a foreign key constraint.
+     * 
+     * @param array<array> $constraints
+     * @return string
+     */
     private function getFKConstraintQuery($constraints)
     {
         $query = '';
         if(!is_array($constraints)) return null;
         foreach($constraints as $name => $constraint)
         {
-            //var_dump($constraint);
-            $query .= $this->getConstraintQuery($constraint, 'FOREIGN KEY', $name) . 
+            $query .= $this->getConstraintQuery($constraint['columns'], 'FOREIGN KEY', $name) . 
                 sprintf(
-                    " REFERENCES {$constraint['foreign_table']} (" . implode(', ', $constraint['foreign_columns']) . ") %s %s",
+                    " REFERENCES `{$constraint['foreign_table']}` (`" . implode('`, `', $constraint['foreign_columns']) . "`) %s %s",
                     isset($constraint['on_delete']) ? "ON DELETE {$constraint['on_delete']}" : '',
                     isset($constraint['on_update']) ? "ON UPDATE {$constraint['on_update']}" : ''
                 );
@@ -73,6 +94,23 @@ class Sqlite extends \yentu\DatabaseManipulator
         return $query;
     }
     
+    /**
+     * Generate an SQL query field list to be used in a query for moving data
+     * between a table and its altered counterpart.
+     * This function is called when reconstructing SQLite tables.
+     * New columns would be ignored as their default value would be appended.
+     * Renamed columns would return the old name of the column with the new 
+     * name as an alias. Fields which are not altered in any way are returned
+     * just as they are.
+     * 
+     * @param array $column An array containing information about the column
+     * @param array $options Contains information about the current operation.
+     *     Through this variable we can know whether a new column has been
+     *     added or an existing column has been renamed.
+     * @param string $comma The comma state. Helps in comma placements for 
+     *     correct query generation.
+     * @return string
+     */
     private function getFieldListColumn($column, $options, $comma)
     {
         if($column['name'] == $options['new_column']['name'])
@@ -81,23 +119,38 @@ class Sqlite extends \yentu\DatabaseManipulator
         }
         else if($column['name'] == $options['renamed_column']['to']['name'])
         {
-            $return = $comma . $options['renamed_column']['from']['name'];
+            $return = $comma . "`{$options['renamed_column']['from']['name']}` as `{$options['renamed_column']['to']['name']}`";
         }
         else
         {
-            $return = $comma . $column['name'];
+            $return = $comma . "`{$column['name']}`";
         }
         
         return $return;
     }
     
+    /**
+     * Rebuids an entire table based on the current state of yentu's schema
+     * description.
+     * In order to work around SQLite's lack of full table altering routines,
+     * this function does the work of creating new tables based on altered 
+     * versions of old tables and moves data between the old and new tables.
+     * It takes advantage of the fact that yentu maintains an internal schema
+     * description of all operations performed.
+     * 
+     * @param string $tableName The name of the table to rebuild.
+     * @param array $options An array which contains extra details about the 
+     *     operation which led to the rebuilding of the table. Currently the
+     *     only options that are of interest are those that are passed when
+     *     adding new columns and those that are passed when modifying existing
+     *     columns.
+     */
     private function rebuildTableFromDefinition($tableName, $options = null)
     {
-        $this->query("PRAGMA foreign_keys=OFF");
         $description = $this->getDescription();
         $table = $description['tables'][$tableName];
         $dummyTable = "__yentu_{$table['name']}";
-        $query = "CREATE TABLE $dummyTable (";
+        $query = "CREATE TABLE `$dummyTable` (";
         $fieldList = '';
         $comma = '';
         $primaryKeyAdded = false;
@@ -123,7 +176,8 @@ class Sqlite extends \yentu\DatabaseManipulator
         }
         else
         {
-            $query .= '__yentu_placeholder_col INTEGER';
+            // put back the placeholder column so the table can stand
+            $query .= '`__yentu_placeholder_col` INTEGER';
         }
         
         if(!$primaryKeyAdded && isset($table['primary_key']))
@@ -140,22 +194,27 @@ class Sqlite extends \yentu\DatabaseManipulator
         
         if(isset($options['new_column']))
         {
-            $this->query("INSERT INTO $dummyTable SELECT {$fieldList} , ? FROM {$table['name']}", $options['new_column']['default']);
+            $this->query("INSERT INTO `$dummyTable` SELECT {$fieldList} , ? FROM `{$table['name']}`", $options['new_column']['default']);
         }
         else if(count($table['columns']) > 0)
         {
-            $this->query("INSERT INTO $dummyTable SELECT {$fieldList} FROM {$table['name']}");
+            $this->query("INSERT INTO `$dummyTable` SELECT {$fieldList} FROM `{$table['name']}`");
         }
                 
-        $this->query("DROP TABLE {$table['name']}");
-        $this->query("ALTER TABLE $dummyTable RENAME TO {$table['name']}");
-        $this->query("PRAGMA foreign_keys=ON");
+        $this->query("DROP TABLE `{$table['name']}`");
+        $this->query("ALTER TABLE `$dummyTable` RENAME TO `{$table['name']}`");
     }
     
+    /**
+     * Generate an SQL query stub which represent a column definition.
+     * 
+     * @param array $details
+     * @return string
+     */
     private function getColumnDef($details)
     {
         return trim(sprintf(
-            "%s %s %s %s", 
+            "`%s` %s %s %s", 
             $details['name'], 
             $this->convertTypes(
                 $details['type'], 
@@ -171,8 +230,8 @@ class Sqlite extends \yentu\DatabaseManipulator
     {
         if($this->placeholders[$details['table']])
         {
-            $this->query("DROP TABLE {$details['table']}");
-            $this->query(sprintf("CREATE TABLE %s (%s)",
+            $this->query("DROP TABLE `{$details['table']}`");
+            $this->query(sprintf("CREATE TABLE `%s` (%s)",
                     $details['table'],
                     $this->getColumnDef($details)
                 )
@@ -181,7 +240,7 @@ class Sqlite extends \yentu\DatabaseManipulator
         }
         else if($details['nulls'] === null || $details['nulls'] == true || ($details['nulls'] === false && $details['default'] !== null))
         {
-            $this->query("ALTER TABLE {$details['table']} ADD COLUMN " . $this->getColumnDef($details));
+            $this->query("ALTER TABLE `{$details['table']}` ADD COLUMN " . $this->getColumnDef($details));
         }
         else
         {
@@ -195,7 +254,7 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _addIndex($details) {
-        $this->query("CREATE INDEX {$details['name']} ON {$details['table']} (" . implode($details['columns']) .")");
+        $this->query("CREATE INDEX `{$details['name']}` ON `{$details['table']}` (`" . implode("`, `", $details['columns']) ."`)");
     }
 
     protected function _addPrimaryKey($details) 
@@ -210,7 +269,7 @@ class Sqlite extends \yentu\DatabaseManipulator
 
     protected function _addTable($details) 
     {
-        $this->query("CREATE TABLE {$details['name']} (__yentu_placeholder_col INTEGER)");
+        $this->query("CREATE TABLE `{$details['name']}` (`__yentu_placeholder_col` INTEGER)");
         $this->placeholders[$details['name']] = true;
     }
 
@@ -221,7 +280,7 @@ class Sqlite extends \yentu\DatabaseManipulator
 
     protected function _addView($details) 
     {
-        $this->query("CREATE VIEW {$details['name']} AS {$details['definition']}");
+        $this->query("CREATE VIEW `{$details['name']}` AS {$details['definition']}");
     }
 
     protected function _changeColumnDefault($details) 
@@ -241,7 +300,7 @@ class Sqlite extends \yentu\DatabaseManipulator
 
     protected function _changeViewDefinition($details) 
     {
-        $this->query("DROP VIEW {$details['to']['name']}");
+        $this->query("DROP VIEW `{$details['to']['name']}`");
         $this->_addView($details['to']);
     }
 
@@ -262,7 +321,7 @@ class Sqlite extends \yentu\DatabaseManipulator
 
     protected function _dropIndex($details) 
     {
-        $this->query("DROP INDEX {$details['name']}");
+        $this->query("DROP INDEX `{$details['name']}`");
     }
 
     protected function _dropPrimaryKey($details) 
@@ -276,7 +335,7 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _dropTable($details) {
-        $this->query("DROP TABLE {$details['name']}");
+        $this->query("DROP TABLE `{$details['name']}`");
     }
 
     protected function _dropUniqueKey($details) {
@@ -285,7 +344,7 @@ class Sqlite extends \yentu\DatabaseManipulator
 
     protected function _dropView($details) 
     {
-        $this->query("DROP VIEW {$details['name']}");
+        $this->query("DROP VIEW `{$details['name']}`");
     }
 
     public function convertTypes($type, $direction, $length) 

@@ -78,6 +78,16 @@ class Mysql extends \yentu\DatabaseManipulator
         return $destinationType;        
     }      
     
+    /**
+     * Returns an identifier quoted table name.
+     * In cases where a schema is not available, just the table is returned.
+     * However, in cases where both a schema and a table are available a dot
+     * separated version of the name is returned.
+     * 
+     * @param string $name
+     * @param string $schema
+     * @return string
+     */
     private function buildTableName($name, $schema)
     {
         return ($schema === false || $schema == '' ? '' : "`{$schema}`.") . "`$name`";
@@ -85,6 +95,7 @@ class Mysql extends \yentu\DatabaseManipulator
     
     public function connect($params)
     {
+        // Enforce the database name to be set as the default schema
         if($params['dbname'] != '')
         {
             $this->defaultSchema = $params['dbname'];
