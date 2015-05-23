@@ -148,6 +148,7 @@ class Sqlite extends \yentu\DatabaseManipulator
     private function rebuildTableFromDefinition($tableName, $options = null)
     {
         $description = $this->getDescription();
+        $this->query("PRAGMA foreign_keys=OFF");
         $table = $description['tables'][$tableName];
         $dummyTable = "__yentu_{$table['name']}";
         $query = "CREATE TABLE `$dummyTable` (";
@@ -203,6 +204,7 @@ class Sqlite extends \yentu\DatabaseManipulator
                 
         $this->query("DROP TABLE `{$table['name']}`");
         $this->query("ALTER TABLE `$dummyTable` RENAME TO `{$table['name']}`");
+        $this->query("PRAGMA foreign_keys=ON");
     }
     
     /**
