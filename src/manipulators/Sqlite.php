@@ -53,6 +53,14 @@ class Sqlite extends \yentu\DatabaseManipulator
         return ", CONSTRAINT `$name` $type (`" . implode('`, `', $columns) . "`)";
     }
     
+    private function createIndices($indices, $table)
+    {
+        foreach($indices as $name => $index)
+        {
+            $this->_addIndex(['name' => $name, 'table' => $table, 'columns' => $index['columns']]);
+        }
+    }
+    
     /**
      * Generate all the constraint queries of a table.
      * This function is used when executing UNIQUE or PRIMARY KEY constraints.
@@ -186,7 +194,6 @@ class Sqlite extends \yentu\DatabaseManipulator
             $query .= $this->generateConstraintsQueries($table['primary_key'], 'PRIMARY KEY', $table['auto_increment']);
         }
         $query .= $this->generateConstraintsQueries($table['unique_keys'], 'UNIQUE');
-        $query .= $this->generateConstraintsQueries($table['indices'], 'INDEX');
         $query .= $this->getFKConstraintQuery($table['foreign_keys']);
         
         $query .= ')';
@@ -204,6 +211,7 @@ class Sqlite extends \yentu\DatabaseManipulator
                 
         $this->query("DROP TABLE `{$table['name']}`");
         $this->query("ALTER TABLE `$dummyTable` RENAME TO `{$table['name']}`");
+        $this->createIndices($table['indices'], $table['name']);
         $this->query("PRAGMA foreign_keys=ON");
     }
     
