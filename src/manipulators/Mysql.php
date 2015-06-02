@@ -246,7 +246,7 @@ class Mysql extends \yentu\DatabaseManipulator
                     self::CONVERT_TO_DRIVER,
                     $details['to']['length'] == '' ? 255 : $details['to']['length']
                 ),
-                $details['to']['nulls'] === false ? 'NOT NULL' : '',
+                $details['to']['nulls'] === false ? 'NOT NULL' : 'NULL',
                 $details['to']['default'] === null ? '' : "DEFAULT {$details['to']['default']}"
             )
         );

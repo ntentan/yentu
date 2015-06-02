@@ -258,6 +258,11 @@ class Migrate implements \yentu\Command
     
     public function reverse()
     {
+        if($this->driver === null) 
+        {
+            return;
+        }
+        
         ClearIce::output("Attempting to reverse all changes ... ");
         if($this->getChanges() > 0)
         {
