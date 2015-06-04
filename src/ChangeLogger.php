@@ -6,9 +6,9 @@ use clearice\ClearIce;
 class ChangeLogger
 {
     private $driver;
-    private static $version;
-    private static $migration;
-    private static $session;
+    private $version;
+    private $migration;
+    private $session;
     private $changes;
     private $expectedOperations = 1;
     private $operations;
@@ -17,6 +17,7 @@ class ChangeLogger
     private $allowedItemTypes = array();
     private $dumpQueriesOnly;
     private $dryRun;
+    private $skipOnErrors = false;
     
     public function skip($itemType)
     {
@@ -44,24 +45,63 @@ class ChangeLogger
 
     private function __construct(DatabaseManipulator $driver) 
     {
+        $this->session = sha1(rand() . time());
         $this->driver = $driver;
         $this->driver->createHistory();
     }
     
     public static function wrap($item)
     {
-        self::$session = sha1(rand() . time());
         return new ChangeLogger($item);
     }
     
-    public static function setVersion($version)
+    public function setVersion($version)
     {
-        self::$version = $version;
+        $this->version = $version;
     }
     
-    public static function setMigration($migration)
+    public function setMigration($migration)
     {
-        self::$migration = $migration;
+        $this->migration = $migration;
+    }
+    
+    private function performOperation($method, $matches, $arguments)
+    {
+        try{
+            $return = $this->driver->$method($arguments[0]);
+            Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);  
+
+            $this->driver->setDumpQuery(false);
+
+            ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+            $this->driver->query(
+                'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)',
+                array(
+                    $this->session,
+                    $this->version,
+                    $method,
+                    json_encode($arguments),
+                    $this->migration,
+                    self::$defaultSchema
+                )
+            );
+            ClearIce::popOutputLevel();
+            $this->changes++;
+            $this->driver->setDisableQuery(false);  
+        }
+        catch(\yentu\DatabaseManipulatorException $e)
+        {
+            if($this->skipOnErrors)
+            {
+                ClearIce::output("E");
+                ClearIce::output("rror " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", ClearIce::OUTPUT_LEVEL_2);                
+            }
+            else
+            {
+                throw $e;
+            }
+        }
+        return $return;
     }
     
     public function __call($method, $arguments) 
@@ -81,26 +121,7 @@ class ChangeLogger
             }
             else
             {        
-                Yentu::announce($matches['command'], $matches['item_type'], $arguments[0]);  
-                $return = $this->driver->$method($arguments[0]);
-                
-                $this->driver->setDumpQuery(false);
-                             
-                ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
-                $this->driver->query(
-                    'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)',
-                    array(
-                        self::$session,
-                        self::$version,
-                        $method,
-                        json_encode($arguments),
-                        self::$migration,
-                        self::$defaultSchema
-                    )
-                );
-                ClearIce::popOutputLevel();
-                $this->changes++;
-                $this->driver->setDisableQuery(false);
+                $return = $this->performOperation($method, $matches, $arguments);
             }
             
             $this->operations++;
@@ -160,6 +181,11 @@ class ChangeLogger
     public function setExpectedOperations($expectedOperations)
     {
         $this->expectedOperations = $expectedOperations;
+    }
+    
+    public function setSkipOnErrors($skipOnErrors)
+    {
+        $this->skipOnErrors = $skipOnErrors;
     }
 }
 

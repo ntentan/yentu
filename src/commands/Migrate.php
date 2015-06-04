@@ -53,19 +53,28 @@ class Migrate implements \yentu\Command
     
     public function setupOptions($options, &$filter)
     {
-        if(isset($options['ignore-foreign-keys']))
+        if(isset($options['no-foreign-keys']))
         {
             ClearIce::output("Ignoring all foreign key constraints ...\n");
             $this->driver->skip('ForeignKey');
         }
         
-        if(isset($options['foreign-keys-only']))
+        if(isset($options['only-foreign-keys']))
         {
             ClearIce::output("Applying only foreign keys ...\n");
             $this->lastSession = $this->driver->getLastSession();
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
         }    
+        
+        if(isset($options['force-foreign-keys']))
+        {
+            ClearIce::output("Applying only foreign keys and skipping on errors ...\n");
+            $this->lastSession = $this->driver->getLastSession();
+            $this->driver->setSkipOnErrors($options['force-foreign-keys']);            
+            $this->driver->allowOnly('ForeignKey');
+            $filter = self::FILTER_LAST_SESSION;
+        }
         
         if(isset($options['default-ondelete-action']))
         {
@@ -117,9 +126,11 @@ class Migrate implements \yentu\Command
             Yentu::greet();
         }
         
+        
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
         $this->driver->setDryRun($options['dry']);
+        
         $totalOperations = 0;
                 
         $filter = self::FILTER_UNRUN;
@@ -138,8 +149,8 @@ class Migrate implements \yentu\Command
             foreach($migrations as $migration)
             {
                 $this->countOperations("{$path['home']}/{$migration['file']}");
-                ChangeLogger::setVersion($migration['timestamp']);
-                ChangeLogger::setMigration($migration['migration']);                        
+                $this->driver->setVersion($migration['timestamp']);
+                $this->driver->setMigration($migration['migration']);                        
                 ClearIce::output("\nApplying '{$migration['migration']}' migration\n");
                 require "{$path['home']}/{$migration['file']}";
                 DatabaseItem::purge();

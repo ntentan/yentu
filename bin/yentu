@@ -94,13 +94,18 @@ ClearIce::addOptions(
 ClearIce::addOptions(
     array(
         'command' => 'migrate',
-        'long' => 'ignore-foreign-keys',
-        'help' => 'do not apply any database constraints'
+        'long' => 'no-foreign-keys',
+        'help' => 'do not apply any database foriegn-key constraints'
     ),
     array(
         'command' => 'migrate',
-        'long' => 'foreign-keys-only',
-        'help' => 'apply only database constraints'
+        'long' => 'only-foreign-keys',
+        'help' => 'apply only database foreign-key constraints (fails on errors)'
+    ),
+    array(
+        'command' => 'migrate',
+        'long' => 'force-foreign-keys',
+        'help' => 'apply only database foreign-key constraints'
     ),
     array(
         'command' => 'migrate',
@@ -187,7 +192,7 @@ catch(\yentu\commands\CommandError $e)
     ClearIce::resetOutputLevel();
     ClearIce::error("Error! " . $e->getMessage() . "\n");
 }
-catch(\yentu\DatabaseManipulatorException $e)
+/*catch(\yentu\DatabaseManipulatorException $e)
 {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
@@ -198,7 +203,7 @@ catch(\ntentan\atiaa\DescriptionException $e)
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
     $command->reverse();
-}
+}*/
 catch (\yentu\SyntaxErrorException $e)
 {
     ClearIce::resetOutputLevel();
