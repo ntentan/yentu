@@ -192,7 +192,13 @@ catch(\yentu\commands\CommandError $e)
     ClearIce::resetOutputLevel();
     ClearIce::error("Error! " . $e->getMessage() . "\n");
 }
-/*catch(\yentu\DatabaseManipulatorException $e)
+catch(\ntentan\atiaa\DatabaseDriverException $e)
+{
+    ClearIce::resetOutputLevel();
+    ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
+    $command->reverse();
+}
+catch(\yentu\DatabaseManipulatorException $e)
 {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
@@ -203,7 +209,7 @@ catch(\ntentan\atiaa\DescriptionException $e)
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
     $command->reverse();
-}*/
+}
 catch (\yentu\SyntaxErrorException $e)
 {
     ClearIce::resetOutputLevel();
