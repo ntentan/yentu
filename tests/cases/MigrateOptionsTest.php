@@ -42,7 +42,7 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
         
         $migrate = new \yentu\commands\Migrate();
-        $migrate->run(array('ignore-foreign-keys' => true));
+        $migrate->run(array('no-foreign-keys' => true));
         $this->assertEquals(
             file_get_contents("tests/streams/migrate_options_output_1.txt"), 
             file_get_contents(vfsStream::url('home/output.txt'))
@@ -55,7 +55,7 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
  
         file_put_contents(vfsStream::url("home/output.txt"), '');
         
-        $migrate->run(array('foreign-keys-only' => true));
+        $migrate->run(array('only-foreign-keys' => true));
         $this->assertEquals(
             file_get_contents("tests/streams/migrate_options_output_2.txt"), 
             file_get_contents(vfsStream::url('home/output.txt'))

@@ -247,7 +247,9 @@ class Mysql extends \yentu\DatabaseManipulator
                     $details['to']['length'] == '' ? 255 : $details['to']['length']
                 ),
                 $details['to']['nulls'] === false ? 'NOT NULL' : 'NULL',
-                $details['to']['default'] === null ? 'DEFAULT NULL' : "DEFAULT {$details['to']['default']}"
+                $details['to']['default'] === null ? 
+                    ($details['to']['nulls'] === false ? '' : 'DEFAULT NULL') : 
+                    "DEFAULT {$details['to']['default']}"
             )
         );
     }
