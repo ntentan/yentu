@@ -148,5 +148,11 @@ class Init implements Command
                 
         ClearIce::output("Yentu successfully initialized.\n");
     }
+
+    public function reverse()
+    {
+        
+    }
+
 }
 
