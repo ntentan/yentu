@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "20306f9b9b6457bb882ef03b1707cb97",
+    "content-hash": "e9288d1d9f1230b26c66afaeccfd4480",
     "packages": [
         {
             "name": "ekowabaka/clearice",

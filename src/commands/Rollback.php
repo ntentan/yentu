@@ -7,7 +7,7 @@ use yentu\database\DatabaseItem;
 use clearice\ClearIce;
 use yentu\Yentu;
 
-class Rollback implements \yentu\Command
+class Rollback implements \clearice\Command
 {
     public function run($options=array()) 
     {
