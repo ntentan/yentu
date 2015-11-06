@@ -97,6 +97,7 @@ abstract class DatabaseManipulator
     abstract protected function _dropSchema($name);
     abstract protected function _addTable($details);
     abstract protected function _dropTable($details);
+    abstract protected function _changeTableName($details);
     abstract protected function _addColumn($details);
     abstract protected function _changeColumnNulls($details);
     abstract protected function _changeColumnName($details);
