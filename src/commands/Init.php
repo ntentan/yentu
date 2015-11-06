@@ -25,7 +25,7 @@
 
 namespace yentu\commands;
 
-use yentu\Command;
+use clearice\Command;
 use yentu\Yentu;
 use clearice\ClearIce;
 

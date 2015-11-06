@@ -43,8 +43,8 @@ class Mysql extends \yentu\DatabaseManipulator
             'char' => 'string',
             
             'double' => 'double',
-            'timestamp' => 'timestamp',
             'datetime' => 'timestamp',
+            'timestamp' => 'timestamp',
             
             'text' => 'text',
             'tinytext' => 'text',
@@ -273,6 +273,11 @@ class Mysql extends \yentu\DatabaseManipulator
     protected function _changeViewDefinition($details)
     {
         $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $this->buildTableName($details['to']['name'], $details['to']['schema']), $details['to']['definition']));
+    }
+    
+    protected function _changeTableName($details)
+    {
+        
     }
 
     protected function _dropAutoPrimaryKey($details)

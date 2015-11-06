@@ -120,7 +120,6 @@ abstract class DatabaseItem
     
     public function commit()
     {
-        var_dump('committing');
         if($this->isNew())
         {
             $this->commitNew();
@@ -128,7 +127,6 @@ abstract class DatabaseItem
         
         foreach($this->changes as $change)
         {
-            var_dump($change);
             self::$driver->$change['method']($change['args']);
         }
 
