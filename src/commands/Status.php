@@ -1,14 +1,13 @@
 <?php
 namespace yentu\commands;
 
-use yentu\Command;
 use yentu\Yentu;
 use clearice\ClearIce;
 
 /**
  * 
  */
-class Status implements Command
+class Status implements \clearice\Command
 {
     public function run($options=array())
     {

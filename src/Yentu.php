@@ -142,6 +142,13 @@ class Yentu
         
     }
     
+    public static function reverseCommand($command)
+    {
+        if($command instanceof \yentu\Reversible){
+            $command->reverse();
+        }
+    }
+    
     public static function greet()
     {
         $version = Yentu::$version;

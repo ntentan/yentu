@@ -26,7 +26,7 @@
 
 namespace yentu;
 
-interface Command
+interface Reversible
 {
-    public function run($options=array());
+    public function reverse();
 }

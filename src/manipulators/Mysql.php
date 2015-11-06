@@ -44,6 +44,7 @@ class Mysql extends \yentu\DatabaseManipulator
             
             'double' => 'double',
             'timestamp' => 'timestamp',
+            'datetime' => 'timestamp',
             
             'text' => 'text',
             'tinytext' => 'text',

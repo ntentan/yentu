@@ -196,25 +196,25 @@ catch(\ntentan\atiaa\DatabaseDriverException $e)
 {
     ClearIce::resetOutputLevel();
     ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
-    $command->reverse();
+    Yentu::reverseCommand($command);
 }
 catch(\yentu\DatabaseManipulatorException $e)
 {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
-    $command->reverse();
+    Yentu::reverseCommand($command);
 }
 catch(\ntentan\atiaa\DescriptionException $e)
 {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
-    $command->reverse();
+    Yentu::reverseCommand($command);
 }
 catch (\yentu\SyntaxErrorException $e)
 {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error found in syntax: {$e->getMessage()}\n");
-    $command->reverse();
+    Yentu::reverseCommand($command);
 }
 catch(\PDOException $e)
 {

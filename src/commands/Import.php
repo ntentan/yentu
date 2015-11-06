@@ -3,10 +3,9 @@ namespace yentu\commands;
 
 use yentu\DatabaseManipulator;
 use yentu\CodeWriter;
-use yentu\Command;
 use yentu\Yentu;
 
-class Import implements Command
+class Import implements \clearice\Command, \yentu\Reversible
 {
     /**
      *
@@ -225,5 +224,11 @@ class Import implements Command
             $this->code->add("->$type('$constraint')->name('$name')");
         }
     }
+
+    public function reverse()
+    {
+        
+    }
+
 }
 
