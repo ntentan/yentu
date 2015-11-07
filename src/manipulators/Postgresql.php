@@ -346,7 +346,12 @@ class Postgresql extends \yentu\DatabaseManipulator
     }
 
     protected function _changeTableName($details) {
-        
+        $this->query(sprintf(
+                "ALTER TABLE %s RENAME TO %s", 
+                $this->buildTableName($details['from']['name'], $details['from']['schema']),
+                $this->buildTableName($details['to']['name'], $details['to']['schema'])
+            )
+        );
     }
 
 }

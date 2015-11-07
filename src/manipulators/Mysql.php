@@ -277,7 +277,13 @@ class Mysql extends \yentu\DatabaseManipulator
     
     protected function _changeTableName($details)
     {
-        
+        $this->query(
+            sprintf(
+                "RENAME TABLE %s TO %s", 
+                $this->buildTableName($details['from']['name'], $details['from']['schema']), 
+                $this->buildTableName($details['to']['name'], $details['to']['schema']
+            )
+        ));
     }
 
     protected function _dropAutoPrimaryKey($details)

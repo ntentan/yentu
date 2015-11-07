@@ -136,6 +136,7 @@ abstract class DatabaseItem
     public function rename($newName)
     {
         $this->addChange('name', $newName);
+        return $this;
     }    
     
     abstract public function commitNew();

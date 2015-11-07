@@ -118,6 +118,11 @@ class Migrate implements \clearice\Command, \yentu\Reversible
             ClearIce::output("No migrations to run from '{$path['home']}'\n");
         }
     }
+    
+    public function begin()
+    {
+        return new \yentu\database\Begin($this->defaultSchema);
+    }
 
     public function run($options=array())
     {
@@ -136,7 +141,7 @@ class Migrate implements \clearice\Command, \yentu\Reversible
         $filter = self::FILTER_UNRUN;
         $this->setupOptions($options, $filter);
         DatabaseItem::setDriver($this->driver);
-        
+                
         \yentu\Timer::start();
         $migrationPaths = Yentu::getMigrationPathsInfo();
         foreach($migrationPaths as $path)

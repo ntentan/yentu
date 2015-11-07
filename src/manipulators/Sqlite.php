@@ -400,7 +400,12 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _changeTableName($details) {
-        
+        $this->query(
+            sprintf(
+                "ALTER TABLE `%s` RENAME TO `%s`",  
+                $details['from']['name'], $details['to']['name']
+            )
+        );        
     }
 
 }

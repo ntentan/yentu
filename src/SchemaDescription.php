@@ -82,6 +82,15 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable(array('schema'=>$details['schema'], 'table'=>$details['name']), $table);
     }
     
+    public function changeTableName($details)
+    {
+        $query = $details['from'];
+        $query['table'] = $details['from']['name'];
+        $table = $this->getTable($query);
+        $table['name'] = $details['to']['name'];
+        $this->setTable($details['from'], $table);
+    }
+    
     public function addView($details)
     {
         $view = array(
