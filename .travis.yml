@@ -6,7 +6,7 @@ php:
  - "7"
  - "hhvm"
 env:
- - YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost'
+ - YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_SKIP_SCHEMAS=yes YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost'
  - YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost'
  - YENTU_DRIVER=sqlite YENTU_FILE=sqlite.db YENTU_SKIP_SCHEMAS=yes YENTU_BASE_DSN='sqlite:sqlite.db'
 before_script: 
@@ -19,7 +19,7 @@ matrix:
   
  include:
   - php: "5.6"
-    env: YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
+    env: YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_SKIP_SCHEMAS=yes YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
   - php: "5.6"
     env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost' COVERAGE=yes
   - php: "5.6"
