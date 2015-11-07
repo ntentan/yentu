@@ -398,4 +398,9 @@ class Sqlite extends \yentu\DatabaseManipulator
         }
         return $destinationType;              
     }
+
+    protected function _changeTableName($details) {
+        
+    }
+
 }
