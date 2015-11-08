@@ -24,6 +24,8 @@
  * THE SOFTWARE.
  */
 
-begin()
-    ->table('some_table')->rename('some_other_table')
-->end();
+function begin()
+{
+    global $migrateCommand;
+    return $migrateCommand->getBegin();
+}

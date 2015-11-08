@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-$this->begin()
+begin()
     ->table('some_table')
         ->column('id')->type('integer')->nulls(false)
         ->column('some_field')->type('string')

@@ -119,18 +119,20 @@ class Migrate implements \clearice\Command, \yentu\Reversible
         }
     }
     
-    public function begin()
+    public function getBegin()
     {
         return new \yentu\database\Begin($this->defaultSchema);
     }
 
     public function run($options=array())
     {
+        global $migrateCommand;
+        $migrateCommand = $this;
+        
         if($options['dump-queries'] !== true)
         {
             Yentu::greet();
         }
-        
         
         $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
         $this->driver->setDumpQueriesOnly($options['dump-queries']);

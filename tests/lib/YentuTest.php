@@ -44,6 +44,8 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     
     public function setup()
     {
+        require_once "src/globals.php";
+        
         ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);      
         Yentu::$version = 'test';
         $drivers = array(
