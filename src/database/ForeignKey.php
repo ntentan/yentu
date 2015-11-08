@@ -144,6 +144,9 @@ class ForeignKey extends DatabaseItem
 
     protected function buildDescription()
     {
+        if($this->foreignTable === null) {
+            throw new \yentu\DatabaseManipulatorException("No references defined for foreign key 1");
+        }
         return array(
             'columns' => $this->columns,
             'table' => $this->table->getName(),
