@@ -3,7 +3,7 @@ namespace yentu\commands;
 
 use yentu\Yentu;
 
-class Create implements \yentu\Command
+class Create implements \clearice\Command
 {
     public function run($options=array())
     {
