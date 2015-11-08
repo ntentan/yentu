@@ -350,6 +350,20 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
     
+    public function changeForeignKeyOnDelete($details)
+    {
+        $table = $this->getTable($details['from']);
+        $table['foreign_keys'][$details['from']['name']]['on_delete'] = $details['to']['on_delete'];
+        $this->setTable($details['from'], $table);
+    }
+    
+    public function changeForeignKeyOnUpdate($details)
+    {
+        $table = $this->getTable($details['from']);
+        $table['foreign_keys'][$details['from']['name']]['on_update'] = $details['to']['on_update'];
+        $this->setTable($details['from'], $table);
+    }    
+    
     public function executeQuery()
     {
         

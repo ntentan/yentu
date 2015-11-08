@@ -117,6 +117,18 @@ abstract class DatabaseManipulator
     abstract protected function _dropView($details);
     abstract protected function _changeViewDefinition($details);
     
+    protected function _changeForeignKeyOnDelete($details)
+    {
+        $this->_dropForeignKey($details['from']);
+        $this->_addForeignKey($details['to']);
+    }
+    
+    protected function _changeForeignKeyOnUpdate($details)
+    {
+        $this->_dropForeignKey($details['from']);
+        $this->_addForeignKey($details['to']);
+    }
+    
     protected function _executeQuery($details)
     {
         $this->query($details['query'], $details['bind']);
@@ -138,6 +150,10 @@ abstract class DatabaseManipulator
         }
     }
     
+    /**
+     * 
+     * @return SchemaDescription
+     */
     public function getDescription()
     {
         if(!is_object($this->schemaDescription))

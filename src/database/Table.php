@@ -3,6 +3,10 @@ namespace yentu\database;
 
 class Table extends DatabaseItem
 {
+    /**
+     *
+     * @var Schema
+     */
     private $schema;
     private $primaryKeyColumns;
     private $isReference;
@@ -59,6 +63,10 @@ class Table extends DatabaseItem
         return $this->name;
     }
     
+    /**
+     * 
+     * @return Schema
+     */
     public function getSchema()
     {
         return $this->schema;

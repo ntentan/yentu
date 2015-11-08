@@ -159,7 +159,7 @@ class Mysql extends \yentu\DatabaseManipulator
     {
         $this->query(
             sprintf(
-                'ALTER TABLE %s ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s (`%s`) MATCH FULL ON DELETE %s ON UPDATE %s',
+                'ALTER TABLE %s ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s (`%s`) ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
                 implode('`,`', $details['columns']), 
