@@ -4,9 +4,11 @@ namespace yentu\database;
 class Table extends DatabaseItem
 {
     private $schema;
-    private $name;
     private $primaryKeyColumns;
     private $isReference;
+    
+    // Description
+    public $name;
     
     public function __construct($name,  $schema) 
     {

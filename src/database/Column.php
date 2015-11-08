@@ -3,12 +3,14 @@ namespace yentu\database;
 
 class Column extends DatabaseItem
 {
-    private $name;
     private $type;
     private $table;
-    private $nulls;
-    private $default;
     private $length;
+
+    // Description items
+    public $nulls;
+    public $name;
+    public $default;
     
     protected function buildDescription()
     {
@@ -55,24 +57,12 @@ class Column extends DatabaseItem
     
     public function nulls($nulls)
     {
-       
-        if(!$this->isNew())
-        {
-            $this->addChange('nulls', $nulls);
-        }
-        
-        $this->nulls = $nulls;
-        return $this;
+       return $this->addChange('nulls', 'nulls', $nulls);
     }
     
     public function defaultValue($default)
     {
-        if(!$this->isNew())
-        {
-            $this->addChange('default', $default);
-        }
-        $this->default = $default;
-        return $this;
+        return $this->addChange('default', 'default', $default);
     }
 
     public function commitNew() 

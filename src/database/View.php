@@ -8,7 +8,8 @@ class View extends \yentu\database\DatabaseItem
 {
     private $name;
     private $schema;
-    private $definition;
+    
+    public $definition;
     
     public function __construct($name, $schema) 
     {
@@ -33,12 +34,9 @@ class View extends \yentu\database\DatabaseItem
     
     public function definition($definition)
     {
-        $this->definition = $definition;
-        if(!$this->new)
-        {
-            $this->addChange('definition', $definition);
-        }
-        else
+        $this->addChange('definition', 'definition', $definition);
+        
+        if($this->isNew())
         {
             $this->getDriver()->addView($this->buildDescription());
         }

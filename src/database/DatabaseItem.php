@@ -29,21 +29,26 @@ abstract class DatabaseItem
         'query' => 'Query'
     );
     
-    protected function addChange($attribute, $value)
+    protected function addChange($property, $attribute, $value, $callback = null)
     {
-        $currentDescription = $this->buildDescription();
-        $newDescription = $currentDescription;
-        $newDescription[$attribute] = $value;
-        $class = new \ReflectionClass($this);
-        $name = $class->getShortName();
+        if(!$this->isNew()){
+            $currentDescription = $this->buildDescription();
+            $newDescription = $currentDescription;
+            $newDescription[$attribute] = $value;
+            $class = new \ReflectionClass($this);
+            $name = $class->getShortName();
+
+            $this->changes[] = array(
+                'method' => "change{$name}". str_replace('_', '', $attribute), 
+                'args' => array(
+                    'from' => $currentDescription,
+                    'to' => $newDescription
+                )
+            );   
+        }
         
-        $this->changes[] = array(
-            'method' => "change{$name}". str_replace('_', '', $attribute), 
-            'args' => array(
-                'from' => $currentDescription,
-                'to' => $newDescription
-            )
-        );   
+        (new \ReflectionProperty($this, $property))->setValue($this, $value);
+        return $this;
     }
     
     public function isNew()
@@ -135,8 +140,7 @@ abstract class DatabaseItem
     
     public function rename($newName)
     {
-        $this->addChange('name', $newName);
-        return $this;
+        return $this->addChange('name', 'name', $newName);
     }    
     
     abstract public function commitNew();
