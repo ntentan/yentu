@@ -20,9 +20,9 @@
         "ntentan/atiaa": "0.*"
     },
     "require-dev" : {
-        "mikey179/vfsStream" : "1.*",
-        "phpunit/phpunit" : "4.*",
-        "mockery/mockery": "0.9.*"
+        "mikey179/vfsStream" : "@stable",
+        "phpunit/phpunit" : "@stable",
+        "mockery/mockery": "@stable"
     },
     "bin" : ["bin/yentu"]
 }

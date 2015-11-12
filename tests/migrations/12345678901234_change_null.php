@@ -24,8 +24,9 @@
  * THE SOFTWARE.
  */
 
-$this->table('roles')
-    ->column('role_name')->type('string')->nulls(false);
-
-$this->table('users')
-    ->column('user_name')->rename('username');
+begin()
+    ->table('roles')
+        ->column('role_name')->type('string')->nulls(false)
+    ->table('users')
+        ->column('user_name')->rename('username')
+->end();

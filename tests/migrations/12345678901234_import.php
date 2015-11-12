@@ -23,8 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-$this->table('users')
+begin()
+    ->table('users')
     ->column('branch_id')->type('integer')->nulls(true)
     ->column('picture_id')->type('integer')->nulls(true)
     ->column('department_id')->type('integer')->nulls(true)
@@ -307,138 +307,137 @@ $this->table('users')
     ->primaryKey('location_id')->name('location_id_pk')
     ->autoIncrement()
         
-->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)");
-$this->view('countries_view')->definition("SELECT * FROM countries JOIN regions USING (country_id)");
+->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)")
+->view('countries_view')->definition("SELECT * FROM countries JOIN regions USING (country_id)")
 
-$this->table('users')
+->table('users')
     ->foreignKey('branch_id')
-    ->references($this->reftable('branches'))
-    ->columns('branch_id');
-
-$this->table('users')
-    ->foreignKey('department_id')
-    ->references($this->reftable('departments'))
-    ->columns('department_id');
-
-$this->table('users')
-    ->foreignKey('role_id')
-    ->references($this->reftable('roles'))
-    ->columns('role_id')
-    ->name('users_role_id_fk');
-
-$this->table('temporary_roles')
-    ->foreignKey('new_role_id')
-    ->references($this->reftable('roles'))
-    ->columns('role_id')
-    ->name('temporary_rol_new_role_id_fk');
-
-$this->table('temporary_roles')
-    ->foreignKey('original_role_id')
-    ->references($this->reftable('roles'))
-    ->columns('role_id')
-    ->name('temporary_rol_orig_role_id_fk');
-
-$this->table('temporary_roles')
-    ->foreignKey('user_id')
-    ->references($this->reftable('users'))
-    ->columns('user_id')
-    ->name('temporary_roles_user_id_fk');
-
-$this->table('suppliers')
-    ->foreignKey('user_id')
-    ->references($this->reftable('users'))
-    ->columns('user_id')
-    ->name('suppliers_user_id_fk');
-
-$this->table('permissions')
-    ->foreignKey('role_id')
-    ->references($this->reftable('roles'))
-    ->columns('role_id')
-    ->name('permissios_role_id_fk');
-
-$this->table('notes')
-    ->foreignKey('user_id')
-    ->references($this->reftable('users'))
-    ->columns('user_id')
-    ->name('notes_user_id_fk');
-
-$this->table('regions')
-    ->foreignKey('country_id')
-    ->references($this->reftable('countries'))
-    ->columns('country_id')
-    ->name('regions_country_id_fk');
-
-$this->table('note_attachments')
-    ->foreignKey('note_id')
-    ->references($this->reftable('notes'))
-    ->columns('note_id')
-    ->name('note_attachments_note_id_fkey');
-
-$this->table('clients')
-    ->foreignKey('branch_id')
-    ->references($this->reftable('branches'))
+    ->references(reftable('branches'))
     ->columns('branch_id')
-    ->name('clients_branch_id_fkey');
 
-$this->table('clients')
-    ->foreignKey('city_id')
-    ->references($this->reftable('cities'))
-    ->columns('city_id')
-    ->name('clients_city_id_fk');
+->table('users')
+    ->foreignKey('department_id')
+    ->references(reftable('departments'))
+    ->columns('department_id')
 
-$this->table('clients')
-    ->foreignKey('country_id')
-    ->references($this->reftable('countries'))
-    ->columns('country_id')
-    ->name('clients_country_id_fk');
+->table('users')
+    ->foreignKey('role_id')
+    ->references(reftable('roles'))
+    ->columns('role_id')
+    ->name('users_role_id_fk')
 
-$this->table('clients')
-    ->foreignKey('id_type_id')
-    ->references($this->reftable('identification_types'))
-    ->columns('id_type_id')
-    ->name('clients_id_type_id_fk');
+->table('temporary_roles')
+    ->foreignKey('new_role_id')
+    ->references(reftable('roles'))
+    ->columns('role_id')
+    ->name('temporary_rol_new_role_id_fk')
 
-$this->table('clients')
-    ->foreignKey('nationality_id')
-    ->references($this->reftable('countries'))
-    ->columns('country_id')
-    ->name('clients_nationality_id_fk');
+->table('temporary_roles')
+    ->foreignKey('original_role_id')
+    ->references(reftable('roles'))
+    ->columns('role_id')
+    ->name('temporary_rol_orig_role_id_fk')
 
-$this->table('client_users')
-    ->foreignKey('main_client_id')
-    ->references($this->reftable('clients'))
-    ->columns('main_client_id')
-    ->name('client_users_main_client_id_fk');
-
-$this->table('client_joint_accounts')
-    ->foreignKey('id_type_id')
-    ->references($this->reftable('identification_types'))
-    ->columns('id_type_id')
-    ->name('client_joint_id_type_id_fk');
-
-$this->table('client_joint_accounts')
-    ->foreignKey('main_client_id')
-    ->references($this->reftable('clients'))
-    ->columns('main_client_id')
-    ->name('client_joint_main_client_id_fk');
-
-$this->table('cities')
-    ->foreignKey('region_id')
-    ->references($this->reftable('regions'))
-    ->columns('region_id')
-    ->name('cities_region_id_fk');
-
-$this->table('bank_branches')
-    ->foreignKey('bank_id')
-    ->references($this->reftable('banks'))
-    ->columns('bank_id')
-    ->name('branch_bank_id_fk');
-
-$this->table('api_keys')
+->table('temporary_roles')
     ->foreignKey('user_id')
-    ->references($this->reftable('users'))
+    ->references(reftable('users'))
     ->columns('user_id')
-    ->name('api_keys_user_id_fkey');
+    ->name('temporary_roles_user_id_fk')
 
+->table('suppliers')
+    ->foreignKey('user_id')
+    ->references(reftable('users'))
+    ->columns('user_id')
+    ->name('suppliers_user_id_fk')
 
+->table('permissions')
+    ->foreignKey('role_id')
+    ->references(reftable('roles'))
+    ->columns('role_id')
+    ->name('permissios_role_id_fk')
+
+->table('notes')
+    ->foreignKey('user_id')
+    ->references(reftable('users'))
+    ->columns('user_id')
+    ->name('notes_user_id_fk')
+
+->table('regions')
+    ->foreignKey('country_id')
+    ->references(reftable('countries'))
+    ->columns('country_id')
+    ->name('regions_country_id_fk')
+
+->table('note_attachments')
+    ->foreignKey('note_id')
+    ->references(reftable('notes'))
+    ->columns('note_id')
+    ->name('note_attachments_note_id_fkey')
+
+->table('clients')
+    ->foreignKey('branch_id')
+    ->references(reftable('branches'))
+    ->columns('branch_id')
+    ->name('clients_branch_id_fkey')
+
+->table('clients')
+    ->foreignKey('city_id')
+    ->references(reftable('cities'))
+    ->columns('city_id')
+    ->name('clients_city_id_fk')
+
+->table('clients')
+    ->foreignKey('country_id')
+    ->references(reftable('countries'))
+    ->columns('country_id')
+    ->name('clients_country_id_fk')
+
+->table('clients')
+    ->foreignKey('id_type_id')
+    ->references(reftable('identification_types'))
+    ->columns('id_type_id')
+    ->name('clients_id_type_id_fk')
+
+->table('clients')
+    ->foreignKey('nationality_id')
+    ->references(reftable('countries'))
+    ->columns('country_id')
+    ->name('clients_nationality_id_fk')
+
+->table('client_users')
+    ->foreignKey('main_client_id')
+    ->references(reftable('clients'))
+    ->columns('main_client_id')
+    ->name('client_users_main_client_id_fk')
+
+->table('client_joint_accounts')
+    ->foreignKey('id_type_id')
+    ->references(reftable('identification_types'))
+    ->columns('id_type_id')
+    ->name('client_joint_id_type_id_fk')
+
+->table('client_joint_accounts')
+    ->foreignKey('main_client_id')
+    ->references(reftable('clients'))
+    ->columns('main_client_id')
+    ->name('client_joint_main_client_id_fk')
+
+->table('cities')
+    ->foreignKey('region_id')
+    ->references(reftable('regions'))
+    ->columns('region_id')
+    ->name('cities_region_id_fk')
+
+->table('bank_branches')
+    ->foreignKey('bank_id')
+    ->references(reftable('banks'))
+    ->columns('bank_id')
+    ->name('branch_bank_id_fk')
+
+->table('api_keys')
+    ->foreignKey('user_id')
+    ->references(reftable('users'))
+    ->columns('user_id')
+    ->name('api_keys_user_id_fkey')
+->end();
 

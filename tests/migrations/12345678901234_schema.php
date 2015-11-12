@@ -24,7 +24,8 @@
  * THE SOFTWARE.
  */
 
-$this->schema('schema')->table('users')
+begin()
+->schema('schema')->table('users')
     ->column('branch_id')->type('integer')->nulls(true)
     ->column('picture_id')->type('integer')->nulls(true)
     ->column('department_id')->type('integer')->nulls(true)
@@ -272,12 +273,12 @@ $this->schema('schema')->table('users')
     ->column('audit_trail_id')->type('integer')->nulls(false)
     ->primaryKey('audit_trail_id')->name('audit_trail_audit_id_pk')
     ->autoIncrement()
-    ->index('item_id')->name('audit_trail_item_id_idx');
+    ->index('item_id')->name('audit_trail_item_id_idx')
         
-$this->schema('schema')->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)");
+    ->schema('schema')->view('users_view')->definition("SELECT * FROM users JOIN roles USING (role_id)")
 
         
-$this->schema('geo')->table('regions')
+    ->schema('geo')->table('regions')
     ->column('country_id')->type('integer')->nulls(false)
     ->column('name')->type('string')->nulls(false)
     ->column('region_code')->type('string')->nulls(false)
@@ -312,137 +313,138 @@ $this->schema('geo')->table('regions')
     ->primaryKey('location_id')->name('location_id_pk')
     ->autoIncrement()
         
-->view('countries_view')->definition("SELECT * FROM countries JOIN regions USING (country_id)");
+->view('countries_view')->definition("SELECT * FROM countries JOIN regions USING (country_id)")
 
 
-$this->schema('schema')->table('users')
+->schema('schema')->table('users')
     ->foreignKey('branch_id')
-    ->references($this->refschema('schema')->table('branches'))
+    ->references(refschema('schema')->table('branches'))
     ->columns('branch_id')
-    ->name('users_branch_id_fk');
+    ->name('users_branch_id_fk')
 
-$this->schema('schema')->table('users')
+->schema('schema')->table('users')
     ->foreignKey('department_id')
-    ->references($this->refschema('schema')->table('departments'))
+    ->references(refschema('schema')->table('departments'))
     ->columns('department_id')
-    ->name('users_dept_id_fk');
+    ->name('users_dept_id_fk')
 
-$this->schema('schema')->table('users')
+->schema('schema')->table('users')
     ->foreignKey('role_id')
-    ->references($this->refschema('schema')->table('roles'))
+    ->references(refschema('schema')->table('roles'))
     ->columns('role_id')
-    ->name('users_role_id_fk');
+    ->name('users_role_id_fk')
 
-$this->schema('schema')->table('temporary_roles')
+->schema('schema')->table('temporary_roles')
     ->foreignKey('new_role_id')
-    ->references($this->refschema('schema')->table('roles'))
+    ->references(refschema('schema')->table('roles'))
     ->columns('role_id')
-    ->name('temporary_rol_new_role_id_fk');
+    ->name('temporary_rol_new_role_id_fk')
 
-$this->schema('schema')->table('temporary_roles')
+->schema('schema')->table('temporary_roles')
     ->foreignKey('original_role_id')
-    ->references($this->refschema('schema')->table('roles'))
+    ->references(refschema('schema')->table('roles'))
     ->columns('role_id')
-    ->name('temporary_rol_orig_role_id_fk');
+    ->name('temporary_rol_orig_role_id_fk')
 
-$this->schema('schema')->table('temporary_roles')
+->schema('schema')->table('temporary_roles')
     ->foreignKey('user_id')
-    ->references($this->refschema('schema')->table('users'))
+    ->references(refschema('schema')->table('users'))
     ->columns('user_id')
-    ->name('temporary_roles_user_id_fk');
+    ->name('temporary_roles_user_id_fk')
 
-$this->schema('schema')->table('suppliers')
+->schema('schema')->table('suppliers')
     ->foreignKey('user_id')
-    ->references($this->refschema('schema')->table('users'))
+    ->references(refschema('schema')->table('users'))
     ->columns('user_id')
-    ->name('suppliers_user_id_fk');
+    ->name('suppliers_user_id_fk')
 
-$this->schema('schema')->table('permissions')
+->schema('schema')->table('permissions')
     ->foreignKey('role_id')
-    ->references($this->refschema('schema')->table('roles'))
+    ->references(refschema('schema')->table('roles'))
     ->columns('role_id')
-    ->name('permissios_role_id_fk');
+    ->name('permissios_role_id_fk')
 
-$this->schema('schema')->table('notes')
+->schema('schema')->table('notes')
     ->foreignKey('user_id')
-    ->references($this->refschema('schema')->table('users'))
+    ->references(refschema('schema')->table('users'))
     ->columns('user_id')
-    ->name('notes_user_id_fk');
+    ->name('notes_user_id_fk')
 
-$this->schema('geo')->table('regions')
+->schema('geo')->table('regions')
     ->foreignKey('country_id')
-    ->references($this->refschema('geo')->table('countries'))
+    ->references(refschema('geo')->table('countries'))
     ->columns('country_id')
-    ->name('regions_country_id_fk');
+    ->name('regions_country_id_fk')
 
-$this->schema('schema')->table('note_attachments')
+->schema('schema')->table('note_attachments')
     ->foreignKey('note_id')
-    ->references($this->refschema('schema')->table('notes'))
+    ->references(refschema('schema')->table('notes'))
     ->columns('note_id')
-    ->name('note_attachments_note_id_fkey');
+    ->name('note_attachments_note_id_fkey')
 
-$this->schema('schema')->table('clients')
+->schema('schema')->table('clients')
     ->foreignKey('branch_id')
-    ->references($this->refschema('schema')->table('branches'))
+    ->references(refschema('schema')->table('branches'))
     ->columns('branch_id')
-    ->name('clients_branch_id_fkey');
+    ->name('clients_branch_id_fkey')
 
-$this->schema('schema')->table('clients')
+->schema('schema')->table('clients')
     ->foreignKey('city_id')
-    ->references($this->refschema('geo')->table('cities'))
+    ->references(refschema('geo')->table('cities'))
     ->columns('city_id')
-    ->name('clients_city_id_fk');
+    ->name('clients_city_id_fk')
 
-$this->schema('schema')->table('clients')
+->schema('schema')->table('clients')
     ->foreignKey('country_id')
-    ->references($this->refschema('geo')->table('countries'))
+    ->references(refschema('geo')->table('countries'))
     ->columns('country_id')
-    ->name('clients_country_id_fk');
+    ->name('clients_country_id_fk')
 
-$this->schema('schema')->table('clients')
+->schema('schema')->table('clients')
     ->foreignKey('id_type_id')
-    ->references($this->refschema('schema')->table('identification_types'))
+    ->references(refschema('schema')->table('identification_types'))
     ->columns('id_type_id')
-    ->name('clients_id_type_id_fk');
+    ->name('clients_id_type_id_fk')
 
-$this->schema('schema')->table('clients')
+->schema('schema')->table('clients')
     ->foreignKey('nationality_id')
-    ->references($this->refschema('geo')->table('countries'))
+    ->references(refschema('geo')->table('countries'))
     ->columns('country_id')
-    ->name('clients_nationality_id_fk');
+    ->name('clients_nationality_id_fk')
 
-$this->schema('schema')->table('client_users')
+->schema('schema')->table('client_users')
     ->foreignKey('main_client_id')
-    ->references($this->refschema('schema')->table('clients'))
+    ->references(refschema('schema')->table('clients'))
     ->columns('main_client_id')
-    ->name('client_users_main_client_id_fk');
+    ->name('client_users_main_client_id_fk')
 
-$this->schema('schema')->table('client_joint_accounts')
+->schema('schema')->table('client_joint_accounts')
     ->foreignKey('id_type_id')
-    ->references($this->refschema('schema')->table('identification_types'))
+    ->references(refschema('schema')->table('identification_types'))
     ->columns('id_type_id')
-    ->name('client_joint_id_type_id_fk');
+    ->name('client_joint_id_type_id_fk')
 
-$this->schema('schema')->table('client_joint_accounts')
+->schema('schema')->table('client_joint_accounts')
     ->foreignKey('main_client_id')
-    ->references($this->refschema('schema')->table('clients'))
+    ->references(refschema('schema')->table('clients'))
     ->columns('main_client_id')
-    ->name('client_joint_main_client_id_fk');
+    ->name('client_joint_main_client_id_fk')
 
-$this->schema('geo')->table('cities')
+->schema('geo')->table('cities')
     ->foreignKey('region_id')
-    ->references($this->refschema('geo')->table('regions'))
+    ->references(refschema('geo')->table('regions'))
     ->columns('region_id')
-    ->name('cities_region_id_fk');
+    ->name('cities_region_id_fk')
 
-$this->schema('schema')->table('bank_branches')
+->schema('schema')->table('bank_branches')
     ->foreignKey('bank_id')
-    ->references($this->refschema('schema')->table('banks'))
+    ->references(refschema('schema')->table('banks'))
     ->columns('bank_id')
-    ->name('branch_bank_id_fk');
+    ->name('branch_bank_id_fk')
 
-$this->schema('schema')->table('api_keys')
+->schema('schema')->table('api_keys')
     ->foreignKey('user_id')
-    ->references($this->refschema('schema')->table('users'))
+    ->references(refschema('schema')->table('users'))
     ->columns('user_id')
-    ->name('api_keys_user_id_fkey');
+    ->name('api_keys_user_id_fkey')
+->end();
