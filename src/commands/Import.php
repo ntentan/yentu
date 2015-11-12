@@ -42,6 +42,7 @@ class Import implements \clearice\Command, \yentu\Reversible
         }
         $description = $this->db->getDescription();
         
+        $this->code->add('begin()');
         if(isset($description['schemata']))
         {
             $this->importSchemata($description['schemata']);
@@ -56,6 +57,8 @@ class Import implements \clearice\Command, \yentu\Reversible
         }
         
         $this->importForeignKeys();
+        $this->code->add('->end();');
+        
         $this->newVersion = date('YmdHis', time());
         $path = Yentu::getPath("migrations/{$this->newVersion}_import.php");
         file_put_contents($path, $this->code);
@@ -80,11 +83,11 @@ class Import implements \clearice\Command, \yentu\Reversible
         $refprefix = $ref === true ? 'ref' : '';
         if($description["{$prefix}schema"] == false)
         {
-            return "\$this->{$refprefix}table('{$description["{$prefix}table"]}')";
+            return "\->{$refprefix}table('{$description["{$prefix}table"]}')";
         }
         else
         {
-            return "\$this->{$refprefix}schema('{$description["{$prefix}schema"]}')->table('{$description["{$prefix}table"]}')";
+            return "\->{$refprefix}schema('{$description["{$prefix}schema"]}')->table('{$description["{$prefix}table"]}')";
         }
     }
     
@@ -148,11 +151,10 @@ class Import implements \clearice\Command, \yentu\Reversible
         
         foreach($schemata as $schema)
         {
-            $this->code->add("\$this->schema('{$schema['name']}')");
+            $this->code->add("\->schema('{$schema['name']}')");
             $this->code->addIndent();
             $this->importTables($schema['tables']);
             $this->importViews($schema['views']);
-            $this->code->add(';');
             $this->code->decreaseIndent(); 
         }        
         
@@ -164,14 +166,7 @@ class Import implements \clearice\Command, \yentu\Reversible
         foreach($views as $view)
         {
             $definition = sprintf('->definition("%s")', str_replace('"', '\"', $view['definition']));
-            if($this->hasSchema)
-            {
-                $this->code->add("->view('{$view['name']}')$definition");
-            }
-            else
-            {
-                $this->code->add("\$this->view('{$view['name']}')$definition");
-            }
+            $this->code->add("->view('{$view['name']}')$definition");
             $this->code->ln();
         }
     }
@@ -181,14 +176,8 @@ class Import implements \clearice\Command, \yentu\Reversible
         foreach($tables as $table)
         {
             if($table['name'] == 'yentu_history') continue;
-            if($this->hasSchema)
-            {
-                $this->code->add("->table('{$table['name']}')");
-            }
-            else
-            {
-                $this->code->add("\$this->table('{$table['name']}')");
-            }
+            
+            $this->code->add("->table('{$table['name']}')");
             $this->code->addIndent();
             
             $this->importColumns($table['columns']);
@@ -200,11 +189,6 @@ class Import implements \clearice\Command, \yentu\Reversible
             }
             $this->importConstraints('unique', $table['unique_keys']);
             $this->importConstraints('index', $table['indices']);
-            
-            if(!$this->hasSchema)
-            {
-                $this->code->add(';');                
-            }
             
             $this->code->decreaseIndent();
             $this->code->ln();
