@@ -1,7 +1,7 @@
 <?php
 namespace yentu\database;
 
-class Query extends DatabaseItem implements \ArrayAccess, \Iterator
+class Query extends DatabaseItem
 {
     private $results;
     
@@ -33,41 +33,4 @@ class Query extends DatabaseItem implements \ArrayAccess, \Iterator
     {
         
     }
-
-    public function current() {
-        
-    }
-
-    public function key() {
-        
-    }
-
-    public function next() {
-        
-    }
-
-    public function offsetExists($offset) {
-        
-    }
-
-    public function offsetGet($offset) {
-        
-    }
-
-    public function offsetSet($offset, $value) {
-        
-    }
-
-    public function offsetUnset($offset) {
-        
-    }
-
-    public function rewind() {
-        
-    }
-
-    public function valid() {
-        
-    }
-
 }

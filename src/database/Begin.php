@@ -62,4 +62,10 @@ class Begin extends DatabaseItem
     public function end() {
         DatabaseItem::purge();
     }
+    
+    public function query($query, $bindData = array())
+    {
+        //return new Query($query, $bindData);
+        return $this->create('query', $query, $bindData);
+    }    
 }

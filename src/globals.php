@@ -29,3 +29,18 @@ function begin()
     global $migrateCommand;
     return $migrateCommand->getBegin();
 }
+
+function refschema($name)
+{
+    $schema = new yentu\database\Schema($name);
+    $schema->setIsReference(true);
+    return $schema;
+}
+
+function reftable($name)
+{
+    global $defaultSchema;
+    $table = new yentu\database\Table($name, new yentu\database\Schema($defaultSchema));
+    $table->setIsReference(true);
+    return $table;
+}

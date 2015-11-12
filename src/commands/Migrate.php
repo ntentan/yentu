@@ -29,10 +29,6 @@ use yentu\database\DatabaseItem;
 use yentu\DatabaseManipulator;
 use yentu\ChangeLogger;
 use yentu\Yentu;
-use yentu\database\Schema;
-use yentu\database\Table;
-use yentu\database\View;
-use yentu\database\Query;
 use yentu\database\ForeignKey;
 
 use clearice\ClearIce;
@@ -91,10 +87,12 @@ class Migrate implements \clearice\Command, \yentu\Reversible
     
     private function setDefaultSchema($options)
     {
+        global $defaultSchema;
         if(isset($options['default-schema']))
         {
             $this->driver->setDefaultSchema($options['default-schema']);
             $this->defaultSchema = $options['default-schema'];
+            $defaultSchema = $this->defaultSchema;
         }        
     }
 
@@ -229,44 +227,6 @@ class Migrate implements \clearice\Command, \yentu\Reversible
             }
         }
         return $output;
-    }
-    
-    public function schema($name)
-    {
-        DatabaseItem::purge();
-        return new Schema($name);
-    }
-    
-    public function refschema($name)
-    {
-        $schema = new Schema($name);
-        $schema->setIsReference(true);
-        return $schema;
-    }
-    
-    public function table($name)
-    {
-        DatabaseItem::purge();
-        return new Table($name, new Schema($this->defaultSchema));
-    }
-    
-    public function reftable($name)
-    {
-        $table = new Table($name, new Schema($this->defaultSchema));
-        $table->setIsReference(true);
-        return $table;
-    }
-    
-    public function query($query, $bindData = array())
-    {
-        DatabaseItem::purge();
-        return new Query($query, $bindData);
-    }
-    
-    public function view($name)
-    {
-        DatabaseItem::purge();
-        return new View($name, new Schema($this->defaultSchema));
     }
     
     public function getChanges()

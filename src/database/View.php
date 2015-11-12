@@ -25,6 +25,7 @@ class View extends \yentu\database\DatabaseItem
     public function drop()
     {
         $this->getDriver()->dropView($this->buildDescription());
+        return $this;
     }
     
     public function commitNew() 
