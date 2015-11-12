@@ -43,7 +43,6 @@ class Migrate implements \clearice\Command, \yentu\Reversible
     private $dryDriver;
     private $defaultSchema = false;
     private $lastSession;
-    private $variables = array();
     const FILTER_UNRUN = 'unrun';
     const FILTER_LAST_SESSION = 'lastSession';
     
@@ -125,6 +124,8 @@ class Migrate implements \clearice\Command, \yentu\Reversible
     public function run($options=array())
     {
         global $migrateCommand;
+        global $migrateVariables;
+        
         $migrateCommand = $this;
         
         if($options['dump-queries'] !== true)
@@ -147,7 +148,7 @@ class Migrate implements \clearice\Command, \yentu\Reversible
         foreach($migrationPaths as $path)
         {
             $this->setDefaultSchema($path);
-            $this->variables = $path['variables'];
+            $migrateVariables = $path['variables'];
             $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             
@@ -250,17 +251,5 @@ class Migrate implements \clearice\Command, \yentu\Reversible
             ClearIce::popOutputLevel();        
         }    
         ClearIce::output("OK\n");        
-    }
-    
-    public function variable($name)
-    {
-        if(isset($this->variables[$name]))
-        {
-            return $this->variables[$name];
-        }
-        else
-        {
-            throw new CommandError("Variable $name is undefined.");
-        }
     }
 }

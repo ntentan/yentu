@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2015 ekow.
@@ -24,6 +24,9 @@
  * THE SOFTWARE.
  */
 
+use yentu\database\Table;
+use yentu\database\Schema;
+
 function begin()
 {
     global $migrateCommand;
@@ -40,7 +43,18 @@ function refschema($name)
 function reftable($name)
 {
     global $defaultSchema;
-    $table = new yentu\database\Table($name, new yentu\database\Schema($defaultSchema));
+    $table = new Table($name, new Schema($defaultSchema));
     $table->setIsReference(true);
     return $table;
+}
+
+function variable($name)
+{
+    global $migrateVariables;
+
+    if (isset($migrateVariables[$name])) {
+        return $migrateVariables[$name];
+    } else {
+        throw new CommandError("Variable $name is undefined.");
+    }
 }
