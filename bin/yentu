@@ -138,6 +138,15 @@ ClearIce::addOptions(
     )        
 );
 
+ClearIce::addCommands(
+    array(
+        'command' => 'rollback',
+        'long' => 'default-schema',
+        'has_value' => true,
+        'help' => 'reverse only migrations in this default-schema'
+    )
+);
+
 ClearIce::addOptions(
     array(
         'short' => 'h',
