@@ -7,6 +7,16 @@ class Postgresql extends \yentu\DatabaseManipulator
     {
         return ($schema === false || $schema == '' ? '' : "\"{$schema}\".") . "\"$name\"";
     }
+    
+    private function setSearchField($details)
+    {
+        if($details['schema'] != null)
+        {
+            $this->query(
+                sprintf('SET search_path TO "%s", public', $details['schema'])
+            );
+        }        
+    }
 
     protected function getDriverName() 
     {
@@ -30,12 +40,7 @@ class Postgresql extends \yentu\DatabaseManipulator
     
     protected function _addView($details)
     {
-        if($details['schema'] != null)
-        {
-            $this->query(
-                sprintf('SET search_path TO "%s", public', $details['schema'])
-            );
-        }
+        $this->setSearchField($details);
         $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
     }
     
@@ -45,6 +50,7 @@ class Postgresql extends \yentu\DatabaseManipulator
     
     protected function _changeViewDefinition($details)
     {
+        $this->setSearchField($details);
         $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $this->buildTableName($details['to']['name'], $details['to']['schema']), $details['to']['definition']));
     }
 
