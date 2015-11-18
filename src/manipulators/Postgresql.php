@@ -50,7 +50,7 @@ class Postgresql extends \yentu\DatabaseManipulator
     
     protected function _changeViewDefinition($details)
     {
-        $this->setSearchField($details);
+        $this->setSearchField($details['to']);
         $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $this->buildTableName($details['to']['name'], $details['to']['schema']), $details['to']['definition']));
     }
 
