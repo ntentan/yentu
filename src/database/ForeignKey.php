@@ -30,12 +30,16 @@ class ForeignKey extends DatabaseItem
         // Prevent the committing of the foreign key even if the context
         // switches
 
-        if(!$this->getDriver()->doesForeignKeyExist([
+        $name = $this->getDriver()->doesForeignKeyExist([
             'schema' => $table->getSchema()->getName(),
             'table' => $table->getName(),
             'columns' => $columns
-        ])) {
+        ]);
+        if($name === false) {
             $this->new = true;
+        } else {
+            $this->name = $name;
+            $this->nameSet = true;
         }
     }
 

@@ -70,7 +70,7 @@ class DatabaseAssertor
         }
         else if(isset($details['name']))
         {
-            return isset($table[$type][$details['name']]);
+            return isset($table[$type][$details['name']]) ? $table[$type][$details['name']] : false;
         }        
     }
     
