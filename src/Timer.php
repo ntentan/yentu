@@ -26,18 +26,34 @@
 
 namespace yentu;
 
+/**
+ * Timer class contains routines for timing yentu migrations.
+ */
 class Timer
 {
+    /**
+     * The stored start time.
+     * @var double 
+     */
     private $startTime;
+    
+    /**
+     * Singleton instance.
+     * @var Timer 
+     */
     private static $instance;
     
+    /**
+     * Set the singleton instance.
+     * @param Timer $instance
+     */
     public static function setInstance($instance)
     {
         self::$instance = $instance;
     }
     
     /**
-     * 
+     * Gets an instance of the Timer.
      * @return \yentu\Timer
      */
     private static function instance()
@@ -49,16 +65,29 @@ class Timer
         return self::$instance;
     }
     
+    /**
+     * Start the timer.
+     */
     public function startInstance()
     {
         $this->startTime = microtime(true);
     }
     
+    /**
+     * Stop the timer and return the time elapsed since it was started.
+     * @return double
+     */
     public function stopInstance()
     {
         return microtime(true) - $this->startTime;
     }
     
+    /**
+     * Print the time elasped in a pretty format.
+     * 
+     * @param double $time
+     * @return string
+     */
     public static function pretty($time)
     {
         $millis = ($time - floor($time)) * 1000;
@@ -66,11 +95,18 @@ class Timer
         return $secs > 0 ? "{$secs} seconds" : "{$millis} milliseconds";
     }
     
+    /**
+     * Start the embedded timer instance.
+     */
     public static function start()
     {
         self::instance()->startInstance();
     }
     
+    /**
+     * Stop the embeded timer instance and return the time elasped.
+     * @return double
+     */
     public static function stop()
     {
         return self::instance()->stopInstance();

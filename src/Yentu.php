@@ -1,28 +1,90 @@
 <?php
+/*
+ * The MIT License
+ *
+ * Copyright 2015 James Ekow Abaka Ainooson.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace yentu;
 
 use clearice\ClearIce;
 
+/**
+ * Utility class for yentu related functions.
+ */
 class Yentu
 {
+    /**
+     * The current home for yentu.
+     * @see Yentu::setDefaultHome()
+     * @var string
+     */
     private static $home = './yentu';
+    
+    /**
+     * Current version of yentu.
+     * @var string
+     */
     public static $version = YENTU_VERSION;
 
+    /**
+     * Set the current home of yentu.
+     * The home of yentu contains is a directory which contains the yentu 
+     * configurations and migrations. Configurations are stored in the config
+     * sub directory and the migrations are stored in the migrations sub
+     * directory. 
+     * @param string $home
+     */
     public static function setDefaultHome($home)
     {
         self::$home = $home;
     }    
     
+    /**
+     * Returns the current home of yentu.
+     * @see Yentu::setDefaultHome()
+     * @return string
+     */
     public static function getDefaultHome()
     {
         return self::$home;
     }
     
+    /**
+     * Returns a path relative to the current yentu home.
+     * @param string $path
+     * @return string
+     */
     public static function getPath($path)
     {
         return self::$home . "/$path";
     }
     
+    /**
+     * Returns information about all migration paths.
+     * Yentu can be configured to use multiple migration homes, for multiple
+     * database configurations. This makes it possible to use a single command
+     * to run multiple migrations accross multiple databases.
+     * @return array
+     */
     public static function getMigrationPathsInfo()
     {
         require Yentu::getPath("config/default.php");
@@ -36,6 +98,12 @@ class Yentu
         );
     }
     
+    /**
+     * Returns an array of all migrations that have been run on the database.
+     * The information returned includes the timestamp, the name of the migration
+     * and the default schema on which it was run.
+     * @return array
+     */
     public static function getRunMirations()
     {
         $db = DatabaseManipulator::create();
@@ -53,6 +121,11 @@ class Yentu
         return $migrations;
     }
     
+    /**
+     * Returns an array of all migrations, in all configured migrations 
+     * directories.
+     * @return array
+     */
     public static function getAllMigrations()
     {
         $migrations = array();
@@ -63,6 +136,12 @@ class Yentu
         return $migrations;
     }
     
+    /**
+     * Return an array of all migrations available.
+     * 
+     * @param string $path
+     * @return array
+     */
     public static function getMigrations($path)
     {
         $migrationFiles = scandir($path, 0);        
@@ -80,6 +159,14 @@ class Yentu
         return $migrations;
     }
     
+    /**
+     * Return the details of a migration extracted from the file name.
+     * This method uses a regular expression to extract the timestamp and
+     * migration name from the migration script.
+     * 
+     * @param string $migration
+     * @return array
+     */
     private static function getMigrationDetails($migration)
     {
         if(preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details))
@@ -93,17 +180,14 @@ class Yentu
         return $details;
     }
     
-    public static function toCamelCase($string)
-    {
-        $segments = explode('_', $string);
-        $camel = '';
-        foreach($segments as $segment)
-        {
-            $camel+=ucfirst($segment);
-        }
-        return $camel;
-    }
-    
+    /**
+     * Announce a migration based on the command and the arguments called for
+     * the migration.
+     * 
+     * @param string $command The action being performed
+     * @param string $itemType The type of item
+     * @param array $arguments The arguments of the 
+     */
     public static function announce($command, $itemType, $arguments)
     {
         ClearIce::output(
@@ -115,6 +199,13 @@ class Yentu
         ClearIce::output(".");
     }
     
+    /**
+     * Convert the arguments of a migration event to a string description.
+     * 
+     * @param string $name
+     * @param array $arguments
+     * @return string
+     */
     private static function getDetails($name, $arguments)
     {
         if($name == 'add')
@@ -137,18 +228,21 @@ class Yentu
         return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
     }    
     
-    public static function getVersion()
-    {
-        
-    }
-    
+    /**
+     * Reverses a command which is reversible.
+     * 
+     * @param \yentu\Reversible $command
+     */
     public static function reverseCommand($command)
     {
-        if($command instanceof \yentu\Reversible){
+        if($command instanceof \yentu\Reversible) {
             $command->reverse();
         }
     }
     
+    /**
+     * Display the greeting for the CLI user interface.
+     */
     public static function greet()
     {
         $version = Yentu::$version;

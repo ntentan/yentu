@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
-error_reporting(E_ALL ^ E_NOTICE);
+/**
+ * 
+ */
 require "vendor/autoload.php";
 require __DIR__ . "/../src/globals.php";
 

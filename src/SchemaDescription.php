@@ -1,16 +1,55 @@
 <?php
 
+/* 
+ * The MIT License
+ *
+ * Copyright 2015 James Ekow Abaka Ainooson.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace yentu;
 
+/**
+ * Class which holds the description of the schema.
+ * This class holds a parallel copy of the schema description used as a basis
+ * for determining changes during migrations.
+ */
 class SchemaDescription implements \ArrayAccess
 {
 
+    /**
+     * Schema description that this class wraps.
+     * @var array
+     */
     private $description = array(
         'schemata' => array(),
         'tables' => array(),
         'views' => array()
     );
 
+    /**
+     * Create a new instance of the schema description.
+     * 
+     * @param array $description
+     * @param DatabaseManipulator $manipulator
+     */
     private function __construct($description, $manipulator)
     {
         $this->description = $description;
@@ -27,6 +66,14 @@ class SchemaDescription implements \ArrayAccess
         $this->flattenAllColumns();
     }
 
+    /**
+     * Convert the column types between generic yentu types and native database
+     * types on the tables 
+     * 
+     * @param array $tables
+     * @param DatabaseManipulator $manipulator
+     * @return array
+     */
     private function convertColumnTypes($tables, $manipulator)
     {
         foreach ($tables as $i => $table) {
@@ -38,7 +85,7 @@ class SchemaDescription implements \ArrayAccess
         }
         return $tables;
     }
-
+    
     public function offsetExists($offset)
     {
         return isset($this->description[$offset]);
@@ -59,6 +106,10 @@ class SchemaDescription implements \ArrayAccess
         
     }
 
+    /**
+     * Add a schema to the schema description.
+     * @param  $name
+     */
     public function addSchema($name)
     {
         $this->description['schemata'][$name] = array(
@@ -67,11 +118,21 @@ class SchemaDescription implements \ArrayAccess
         );
     }
 
+    /**
+     * Drop the schema from the schema description.
+     * @param string $name
+     */
     public function dropSchema($name)
     {
         unset($this->description['schemata'][$name]);
     }
 
+    /**
+     * Add a table to the schema description. 
+     * The table array contains the `columns`, `primary_key`, `unique_keys`,
+     * `foreign_keys` and `indices`.
+     * @param array $details
+     */
     public function addTable($details)
     {
         $table = array(

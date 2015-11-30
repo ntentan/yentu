@@ -66,7 +66,7 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
             $this->assertForignKeyExists($fkey);
         }        
     }
-    
+        
     private $fkeys = array(
         array("table" => "users", "name" => "users_branch_id_branches_branch_id_fk"),
         array("table" => "users", "name" => "users_department_id_departments_department_id_fk"),
