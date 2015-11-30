@@ -147,6 +147,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable(array('schema' => $details['schema'], 'table' => $details['name']), $table);
     }
 
+    /**
+     * Change the name of a table. 
+     * The details contains two separate 
+     * @param array $details
+     */
     public function changeTableName($details)
     {
         // Use the from details to query for the existing table
