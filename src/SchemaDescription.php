@@ -172,6 +172,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details['to'], $table);
     }
 
+    /**
+     * Add a view to the schema description.
+     * 
+     * @param array $details
+     */
     public function addView($details)
     {
         $view = array(
@@ -186,11 +191,21 @@ class SchemaDescription implements \ArrayAccess
         }
     }
 
+    /**
+     * Drop a view from the description.
+     * 
+     * @param array $details
+     */
     public function dropView($details)
     {
         $this->dropTable($details, 'views');
     }
 
+    /**
+     * Change the definition of a view in the schema description.
+     * 
+     * @param type $details
+     */
     public function changeViewDefinition($details)
     {
         $viewDetails = array(
@@ -202,6 +217,12 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($viewDetails, $view, 'view');
     }
 
+    /**
+     * Drop a table from the schema description.
+     * 
+     * @param array $details
+     * @param string $type
+     */
     public function dropTable($details, $type = 'tables')
     {
         if ($details['schema'] != '') {
@@ -211,6 +232,13 @@ class SchemaDescription implements \ArrayAccess
         }
     }
 
+    /**
+     * Get a table from the schema description.
+     * 
+     * @param array $details
+     * @param string $type
+     * @return array
+     */
     public function getTable($details, $type = 'table')
     {
         if ($details['schema'] == '') {
@@ -220,6 +248,13 @@ class SchemaDescription implements \ArrayAccess
         }
     }
 
+    /**
+     * Replace a table on the schema description with a new one.
+     * 
+     * @param array $details
+     * @param string $table
+     * @param type $type
+     */
     private function setTable($details, $table, $type = 'table')
     {
         if ($details['schema'] == '') {
@@ -230,6 +265,10 @@ class SchemaDescription implements \ArrayAccess
         $this->flattenAllColumns();
     }
 
+    /**
+     * Flatten all table constraints to make it easy to address them through
+     * a single linear array.
+     */
     private function flattenAllColumns()
     {
         foreach ($this->description['schemata'] as $schemaName => $schema) {
@@ -241,6 +280,13 @@ class SchemaDescription implements \ArrayAccess
         }
     }
 
+    /**
+     * Flatten column keys so they can be accessed linearly in an array.
+     * 
+     * @param type $items
+     * @param type $key
+     * @return type
+     */
     private function flattenColumns($items, $key = false)
     {
         $flattened = array();
@@ -254,6 +300,12 @@ class SchemaDescription implements \ArrayAccess
         return $flattened;
     }
 
+    /**
+     * Add a column to a table.
+     * 
+     * @param array $details
+     * @throws DatabaseManipulatorException
+     */
     public function addColumn($details)
     {
         $table = $this->getTable($details);
@@ -268,6 +320,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Drop a column from a table in the schema description.
+     * 
+     * @param array $details
+     */
     public function dropColumn($details)
     {
         $table = $this->getTable($details);
@@ -282,6 +339,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Change the null state of a column.
+     * 
+     * @param array $details
+     */
     public function changeColumnNulls($details)
     {
         $table = $this->getTable($details['to']);
@@ -289,6 +351,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details['to'], $table);
     }
 
+    /**
+     * Change the name of a column.
+     * 
+     * @param array $details
+     */
     public function changeColumnName($details)
     {
         $table = $this->getTable($details['to']);
@@ -312,6 +379,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details['to'], $table);
     }
 
+    /**
+     * Change the default value of the column.
+     * 
+     * @param array $details
+     */
     public function changeColumnDefault($details)
     {
         $table = $this->getTable($details['to']);
@@ -319,6 +391,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details['to'], $table);
     }
 
+    /**
+     * Add a primary key to a table in the schema description.
+     * 
+     * @param array $details
+     */
     public function addPrimaryKey($details)
     {
         $table = $this->getTable($details);
@@ -330,6 +407,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Drop a primarykey from a table in the schema description.
+     * 
+     * @param array $details
+     */
     public function dropPrimaryKey($details)
     {
         $table = $this->getTable($details);
@@ -337,6 +419,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Make the primary key auto increment.
+     * 
+     * @param array $details
+     */
     public function addAutoPrimaryKey($details)
     {
         $table = $this->getTable($details);
@@ -344,6 +431,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Prevent the primary key from auto incrementing.
+     * 
+     * @param array $details
+     */
     public function dropAutoPrimaryKey($details)
     {
         $table = $this->getTable($details);
@@ -351,6 +443,12 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Add a unique constraint to a set of columns of a given table in the
+     * schema description.
+     * 
+     * @param array $details
+     */
     public function addUniqueKey($details)
     {
         $table = $this->getTable($details);
@@ -358,6 +456,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Drop a unique key from a table in the schema description.
+     * 
+     * @param type $details
+     */
     public function dropUniqueKey($details)
     {
         $table = $this->getTable($details);
@@ -374,6 +477,11 @@ class SchemaDescription implements \ArrayAccess
         $this->setTable($details, $table);
     }
 
+    /**
+     * Add an index to the table.
+     * 
+     * @param array $details
+     */
     public function addIndex($details)
     {
         $table = $this->getTable($details);
