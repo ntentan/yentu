@@ -185,7 +185,7 @@ if(isset($options['verbose']))
 }
 
 try{
-    if($options['__command__'])
+    if(isset($options['__command__']))
     {
         if($options['home']) Yentu::setDefaultHome($options['home']);
         

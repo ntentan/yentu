@@ -22,7 +22,8 @@
     "require-dev" : {
         "mikey179/vfsStream" : "@stable",
         "phpunit/phpunit" : "4.*",
-        "mockery/mockery": "@stable"
+        "mockery/mockery": "@stable",
+        "phing/phing" : "@stable"
     },
     "bin" : ["bin/yentu"]
 }

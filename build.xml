@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Yentu" default="package" basedir="." description="Database migration tool">
+    <property name="build.dir" value="./build"/>
+    <target name="clean">
+        <delete dir="${build.dir}" />
+    </target>
+    <target name="package">
+        <echo msg="Creating phar archive"/>
+        <mkdir dir="${build.dir}" />
+        <pharpackage 
+            clistub='./bin/yentu' 
+            destfile='./build/yentu.phar'  
+            compression='bzip2'
+            basedir='./'>
+            <fileset dir='./'>
+                <include name="src**" />
+                <include name="bin/yentu" />
+            </fileset>
+        </pharpackage>
+    </target>    
+</project>
