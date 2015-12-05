@@ -43,7 +43,7 @@ class Yentu
      * Current version of yentu.
      * @var string
      */
-    public static $version = YENTU_VERSION;
+    const VERSION = '0.1.0';
 
     /**
      * Set the current home of yentu.
@@ -245,7 +245,7 @@ class Yentu
      */
     public static function greet()
     {
-        $version = Yentu::$version;
+        $version = Yentu::getVersion();
 $welcome = <<<WELCOME
 Yentu Database Migration Tool
 Version $version
@@ -253,5 +253,15 @@ Version $version
 
 WELCOME;
         ClearIce::output($welcome);        
+    }
+    
+    public static function getVersion()
+    {
+        if(defined('PHING_BUILD_VERSION')) {
+            return PHING_BUILD_VERSION;
+        } else {
+            $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
+            return $version->getVersion();            
+        }
     }
 }

@@ -15,9 +15,10 @@
         }
     },
     "require": {
-        "ekowabaka/clearice": "0.4.*",
+        "ekowabaka/clearice": "0.*",
         "php" : ">=5.4.0",
-        "ntentan/atiaa": "0.*"
+        "ntentan/atiaa": "0.*",
+        "sebastian/version": "1.*"
     },
     "require-dev" : {
         "mikey179/vfsStream" : "@stable",

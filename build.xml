@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Yentu" default="package" basedir="." description="Database migration tool">
+<project name="Yentu Migration Tool" default="package" basedir="." description="Database migration tool">
+    
     <property name="build.dir" value="./build"/>
+    <property name="php.path" value="/usr/bin/php" />
+    <property name="php.composer" value="/usr/local/bin/composer" />
+    
     <target name="clean">
         <delete dir="${build.dir}" />
     </target>
     <target name="package">
         <echo msg="Creating phar archive"/>
         <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.dir}/src" />
+        <copy todir="${build.dir}/src" >
+            <fileset dir="./">
+                <include name="composer.json" />
+                <include name="src**" />
+            </fileset>
+        </copy>
+        <resolvepath propertyName = "repo.target" file="${build.dir}/src" />
+        <exec command="git describe --tags" outputProperty="build.version" />
+        <echo msg="&lt;?php define('PHING_BUILD_VERSION', '${build.version}'); require('src/cli.php');" file="${repo.target}/stub.php" />
+        <composer command="install" php="${php.path}" composer="${php.composer}">
+            <arg line="--working-dir ${repo.target}" />
+            <arg line="--prefer-dist" />
+            <arg line="--optimize-autoloader" />
+            <arg line="--no-dev" />
+        </composer>
         <pharpackage 
-            clistub='./bin/yentu' 
-            destfile='./build/yentu.phar'  
+            clistub='${repo.target}/stub.php' 
+            destfile='${build.dir}/yentu.phar'  
             compression='bzip2'
-            basedir='./'>
-            <fileset dir='./'>
+            basedir='${repo.target}'>
+            <fileset dir='${repo.target}'>
                 <include name="src**" />
                 <include name="bin/yentu" />
+                <include name="vendor**" />
+                <include name="stub.php" />
             </fileset>
         </pharpackage>
+        <delete dir="${repo.target}" />
     </target>    
 </project>
