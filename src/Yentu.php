@@ -1,4 +1,5 @@
 <?php
+
 /*
  * The MIT License
  *
@@ -32,13 +33,14 @@ use clearice\ClearIce;
  */
 class Yentu
 {
+
     /**
      * The current home for yentu.
      * @see Yentu::setDefaultHome()
      * @var string
      */
     private static $home = './yentu';
-    
+
     /**
      * Current version of yentu.
      * @var string
@@ -56,8 +58,8 @@ class Yentu
     public static function setDefaultHome($home)
     {
         self::$home = $home;
-    }    
-    
+    }
+
     /**
      * Returns the current home of yentu.
      * @see Yentu::setDefaultHome()
@@ -67,7 +69,7 @@ class Yentu
     {
         return self::$home;
     }
-    
+
     /**
      * Returns a path relative to the current yentu home.
      * @param string $path
@@ -77,7 +79,7 @@ class Yentu
     {
         return self::$home . "/$path";
     }
-    
+
     /**
      * Returns information about all migration paths.
      * Yentu can be configured to use multiple migration homes, for multiple
@@ -88,16 +90,19 @@ class Yentu
     public static function getMigrationPathsInfo()
     {
         require Yentu::getPath("config/default.php");
+
+        $variables = isset($config['variables']) ? $config['variables'] : [];
+        $otherMigrations = isset($other_migrations) ? $other_migrations : [];
+
         return array_merge(array(
-                array(
-                    'home' => Yentu::getPath('migrations'),
-                    'variables' => $config['variables']
-                )
-            ),
-            is_array($other_migrations) ? $other_migrations : array()
+            array(
+                'home' => Yentu::getPath('migrations'),
+                'variables' => $variables
+            )
+                ), $otherMigrations
         );
     }
-    
+
     /**
      * Returns an array of all migrations that have been run on the database.
      * The information returned includes the timestamp, the name of the migration
@@ -109,18 +114,17 @@ class Yentu
         $db = DatabaseManipulator::create();
         $runMigrations = $db->query("SELECT DISTINCT version, migration, default_schema FROM yentu_history ORDER BY version");
         $migrations = array();
-        foreach($runMigrations as $migration)
-        {
+        foreach ($runMigrations as $migration) {
             $migrations[$migration['version']] = array(
                 'timestamp' => $migration['version'],
                 'migration' => $migration['migration'],
                 'default_schema' => $migration['default_schema']
             );
         }
-        
+
         return $migrations;
     }
-    
+
     /**
      * Returns an array of all migrations, in all configured migrations 
      * directories.
@@ -129,13 +133,12 @@ class Yentu
     public static function getAllMigrations()
     {
         $migrations = array();
-        foreach(self::getMigrationPathsInfo() as $migration)
-        {
+        foreach (self::getMigrationPathsInfo() as $migration) {
             $migrations = $migrations + self::getMigrations($migration['home']);
         }
         return $migrations;
     }
-    
+
     /**
      * Return an array of all migrations available.
      * 
@@ -144,21 +147,21 @@ class Yentu
      */
     public static function getMigrations($path)
     {
-        $migrationFiles = scandir($path, 0);        
+        $migrationFiles = scandir($path, 0);
         $migrations = array();
-        foreach($migrationFiles as $migration)
-        {
+        foreach ($migrationFiles as $migration) {
             $details = self::getMigrationDetails($migration);
-            if($details === false) continue;
+            if ($details === false)
+                continue;
             $migrations[$details['timestamp']] = $details;
             unset($migrations[$details['timestamp']][0]);
             unset($migrations[$details['timestamp']][1]);
             unset($migrations[$details['timestamp']][2]);
         }
-        
+
         return $migrations;
     }
-    
+
     /**
      * Return the details of a migration extracted from the file name.
      * This method uses a regular expression to extract the timestamp and
@@ -169,17 +172,14 @@ class Yentu
      */
     private static function getMigrationDetails($migration)
     {
-        if(preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details))
-        {
+        if (preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details)) {
             $details['file'] = $migration;
-        }
-        else
-        {
-            $details = false;            
+        } else {
+            $details = false;
         }
         return $details;
     }
-    
+
     /**
      * Announce a migration based on the command and the arguments called for
      * the migration.
@@ -191,43 +191,45 @@ class Yentu
     public static function announce($command, $itemType, $arguments)
     {
         ClearIce::output(
-            "\n  - " . ucfirst("{$command}ing ") . 
+            "\n  - " . ucfirst("{$command}ing ") .
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
-            self::getDetails($command, $arguments),
-            ClearIce::OUTPUT_LEVEL_2
+            self::getDetails($command, $arguments), ClearIce::OUTPUT_LEVEL_2
         );
         ClearIce::output(".");
     }
-    
+
     /**
      * Convert the arguments of a migration event to a string description.
      * 
-     * @param string $name
+     * @param string $command
      * @param array $arguments
      * @return string
      */
-    private static function getDetails($name, $arguments)
+    private static function getDetails($command, $arguments)
     {
-        if($name == 'add')
-        {
+        if ($command == 'add') {
             $dir = 'to';
-        }
-        else if($name == 'drop')
-        {
+        } else if ($command == 'drop') {
             $dir = 'from';
         }
-        
-        if(isset($arguments['table']) && isset($arguments['schema']))
-        {
-            $destination = "table '{$arguments['schema']}.{$arguments['table']}'";
-        }
-        elseif(isset($arguments['schema']) && !isset($arguments['table']))
-        {
+
+        if (isset($arguments['table']) && isset($arguments['schema'])) {
+            $destination = "table " . 
+                ($arguments['schema'] != '' ? "{$arguments['schema']}." : '' ) .
+                "{$arguments['table']}'";
+        } elseif (isset($arguments['schema']) && !isset($arguments['table'])) {
             $destination = "schema '{$arguments['schema']}'";
         }
-        return is_string($arguments) ? " $arguments" : "'{$arguments["name"]}' $dir $destination";
-    }    
-    
+
+        if (isset($arguments['column'])) {
+            $item = $arguments['column'];
+        } else {
+            $item = $arguments['name'];
+        }
+        
+        return is_string($arguments) ? " $arguments" : "'$item' $dir $destination";
+    }
+
     /**
      * Reverses a command which is reversible.
      * 
@@ -235,33 +237,34 @@ class Yentu
      */
     public static function reverseCommand($command)
     {
-        if($command instanceof \yentu\Reversible) {
+        if ($command instanceof \yentu\Reversible) {
             $command->reverse();
         }
     }
-    
+
     /**
      * Display the greeting for the CLI user interface.
      */
     public static function greet()
     {
         $version = Yentu::getVersion();
-$welcome = <<<WELCOME
+        $welcome = <<<WELCOME
 Yentu Database Migration Tool
 Version $version
 
 
 WELCOME;
-        ClearIce::output($welcome);        
+        ClearIce::output($welcome);
     }
-    
+
     public static function getVersion()
     {
-        if(defined('PHING_BUILD_VERSION')) {
+        if (defined('PHING_BUILD_VERSION')) {
             return PHING_BUILD_VERSION;
         } else {
             $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
-            return $version->getVersion();            
+            return $version->getVersion();
         }
     }
+
 }

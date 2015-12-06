@@ -98,6 +98,7 @@ class Migrate implements \clearice\Command, \yentu\Reversible
     private function announceMigration($migrations, $path)
     {
         $size = count($migrations);
+        $defaultSchema = null;
         if($size > 0)
         {
             if(isset($path['default-schema']))
@@ -120,11 +121,23 @@ class Migrate implements \clearice\Command, \yentu\Reversible
     {
         return new \yentu\database\Begin($this->defaultSchema);
     }
+    
+    private static function fillOptions(&$options)
+    {
+        if(!isset($options['dump-queries'])) {
+            $options['dump-queries'] = false;
+        }
+        if(!isset($options['dry'])) {
+            $options['dry'] = false;
+        }
+    }
 
     public function run($options=array())
     {
         global $migrateCommand;
         global $migrateVariables;
+        
+        self::fillOptions($options);
         
         $migrateCommand = $this;
         
