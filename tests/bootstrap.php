@@ -27,3 +27,4 @@
 // Bootstrap for running the test on a local machine.
 
 chdir(__DIR__ . "/../");
+define('PHING_BUILD_VERSION', 'test');

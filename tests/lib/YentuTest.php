@@ -47,7 +47,6 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         require_once "src/globals.php";
         
         ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);      
-        Yentu::$version = 'test';
         $drivers = array(
             'postgresql' => 'pgsql',
             'mysql' => 'mysql',
