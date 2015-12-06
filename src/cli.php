@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2015 ekow.
@@ -47,11 +47,11 @@ ClearIce::addCommands(
         'command' => 'create',
         'usage' => 'create [name] [options]..',
         'help' => 'create a new migration'
-    ),
+    ), 
     array(
         'command' => 'rollback',
         'help' => 'rollback the previus migration which was run'
-    ),
+    ), 
     array(
         'command' => 'status',
         'help' => 'display the current status of the migrations'
@@ -64,48 +64,48 @@ ClearIce::addOptions(
         'short' => 'd',
         'long' => 'skip-defaults',
         'help' => 'do not import the default values of the columns'
-    ),
+    ), 
     array(
         'command' => 'init',
         'short' => 'i',
-        'long' => 'interractive', 
+        'long' => 'interractive',
         'help' => 'initialize yentu interractively'
-    ),
+    ), 
     array(
         'command' => 'init',
         'short' => 'd',
         'long' => 'driver',
         'help' => 'database platform. Supports postgresql',
         'has_value' => true
-    ),
+    ), 
     array(
         'command' => 'init',
         'short' => 'h',
         'long' => 'host',
         'help' => 'the hostname of the target database',
         'has_value' => true
-    ),
+    ), 
     array(
         'command' => 'init',
         'short' => 'p',
         'long' => 'port',
         'help' => 'the port of the target database',
         'has_value' => true
-    ),        
+    ), 
     array(
         'command' => 'init',
         'short' => 'n',
         'long' => 'dbname',
         'help' => 'the name of the target database',
         'has_value' => true
-    ),        
+    ), 
     array(
         'command' => 'init',
         'short' => 'u',
         'long' => 'user',
         'help' => 'the user name on the target database',
         'has_value' => true
-    ),        
+    ), 
     array(
         'command' => 'init',
         'short' => 'p',
@@ -125,40 +125,40 @@ ClearIce::addOptions(
         'command' => 'migrate',
         'long' => 'only-foreign-keys',
         'help' => 'apply only database foreign-key constraints (fails on errors)'
-    ),
+    ), 
     array(
         'command' => 'migrate',
         'long' => 'force-foreign-keys',
         'help' => 'apply only database foreign-key constraints'
-    ),
+    ), 
     array(
         'command' => 'migrate',
         'long' => 'dump-queries',
         'help' => 'just dump the query and perform no action'
-    ),
+    ), 
     array(
         'command' => 'migrate',
         'long' => 'dry',
         'help' => 'perform a dry run. Do not alter the database in anyway'
-    ),
+    ), 
     array(
         'command' => 'migrate',
         'long' => 'default-schema',
         'has_value' => true,
         'help' => 'use this as the default schema for all migrations'
-    ),
+    ), 
     array(
         'command' => 'migrate',
         'long' => 'default-ondelete',
         'help' => 'the default cascade action for foreign key deletes',
         'has_value' => true
-    ),
+    ), 
     array(
         'command' => 'migrate',
         'long' => 'default-onupdate',
         'help' => 'the default cascade action for foreign key updates',
         'has_value' => true
-    )        
+    )
 );
 
 ClearIce::addCommands(
@@ -176,7 +176,7 @@ ClearIce::addOptions(
         'long' => 'home',
         'help' => 'specifies where the yentu configurations are found',
         'has_value' => true
-    ),
+    ), 
     array(
         'short' => 'v',
         'long' => 'verbose',
@@ -200,57 +200,43 @@ ClearIce::addHelp();
 ClearIce::setStrict(true);
 $options = ClearIce::parse();
 
-if(isset($options['verbose']))
-{
+if (isset($options['verbose'])) {
     ClearIce::setOutputLevel($options['verbose']);
 }
 
-try{
-    if(isset($options['__command__']))
-    {
-        if($options['home']) Yentu::setDefaultHome($options['home']);
-        
+try {
+    if (isset($options['__command__'])) {
+        if (isset($options['home'])) {
+            Yentu::setDefaultHome($options['home']);
+        }
+
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
         $command = new $class();
         $command->run($options);
-    }
-    else
-    {
+    } else {
         ClearIce::output(ClearIce::getHelpMessage());
     }
-}
-catch(\yentu\commands\CommandError $e)
-{
+} catch (\yentu\commands\CommandError $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error! " . $e->getMessage() . "\n");
-}
-catch(\ntentan\atiaa\DatabaseDriverException $e)
-{
+} catch (\ntentan\atiaa\DatabaseDriverException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
-}
-catch(\yentu\DatabaseManipulatorException $e)
-{
+} catch (\yentu\DatabaseManipulatorException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
-}
-catch(\ntentan\atiaa\DescriptionException $e)
-{
+} catch (\ntentan\atiaa\DescriptionException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
-}
-catch (\yentu\SyntaxErrorException $e)
-{
+} catch (\yentu\SyntaxErrorException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error found in syntax: {$e->getMessage()}\n");
     Yentu::reverseCommand($command);
-}
-catch(\PDOException $e)
-{
+} catch (\PDOException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to connect to database: " . $e->getMessage() . "\n");
 }

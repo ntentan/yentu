@@ -119,7 +119,7 @@ class Mysql extends \yentu\DatabaseManipulator
                     $this->convertTypes(
                         $column['type'], 
                         self::CONVERT_TO_DRIVER,
-                        $column['length'] == '' ? 255 : $column['length']
+                        isset($column['length']) ? $column['length'] : 255
                     ),
                     $column['nulls'] === false ? 'NOT NULL' : ''
                 )
