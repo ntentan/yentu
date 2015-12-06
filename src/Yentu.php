@@ -221,13 +221,17 @@ class Yentu
             $destination = "schema '{$arguments['schema']}'";
         }
 
+        if(is_string($arguments)) {
+            return $arguments;
+        }
+        
         if (isset($arguments['column'])) {
             $item = $arguments['column'];
         } else {
             $item = $arguments['name'];
         }
         
-        return is_string($arguments) ? " $arguments" : "'$item' $dir $destination";
+        return "'$item' $dir $destination";
     }
 
     /**
