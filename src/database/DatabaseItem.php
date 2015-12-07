@@ -132,7 +132,7 @@ abstract class DatabaseItem
         
         foreach($this->changes as $change)
         {
-            self::{$driver->$change['method']}($change['args']);
+            self::$driver->{$change['method']}($change['args']);
         }
 
         return $this;
