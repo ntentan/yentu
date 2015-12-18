@@ -222,7 +222,7 @@ abstract class DatabaseManipulator
         try{
             $this->connection->describeTable('yentu_history');
         }
-        catch(\ntentan\atiaa\TableNotFoundException $e)
+        catch(\ntentan\atiaa\exceptions\TableNotFoundException $e)
         {
             ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
             $this->addTable(array('name' => 'yentu_history'));
