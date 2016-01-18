@@ -123,7 +123,7 @@ class Mysql extends \yentu\DatabaseManipulator
                     ),
                     $column['nulls'] === false ? 'NOT NULL' : ''
                 )
-            );       
+            );          
         }
         else
         {
@@ -162,9 +162,9 @@ class Mysql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s (`%s`) ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                implode('`,`', $details['columns']), 
+                implode('`,`', $details['columns']->getArray()), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
-                implode('","', $details['foreign_columns']),
+                implode('","', $details['foreign_columns']->getArray()),
                 $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'],
                 $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
             )
@@ -191,7 +191,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 $this->buildTableName($details['table'], $details['schema']),
                 implode('`,`', $details['columns']->getArray())
             )
-        );        
+        );   
         if(is_array($this->autoIncrementPending))
         {
             $this->_addAutoPrimaryKey($this->autoIncrementPending);
@@ -311,10 +311,11 @@ class Mysql extends \yentu\DatabaseManipulator
         if(count($description['tables'][$details['table']]['columns']) === 0)
         {
             $this->_addColumn(
-                array(
-                    'table' => $details['table'],
-                    'name' => '__yentu_placeholder_col',
-                    'type' => 'integer'
+                \yentu\Parameters::wrap(array(
+                        'table' => $details['table'],
+                        'name' => '__yentu_placeholder_col',
+                        'type' => 'integer'
+                    )
                 )
             );
         }

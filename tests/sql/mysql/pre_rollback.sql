@@ -250,7 +250,7 @@ CREATE TABLE temporary_roles (
     original_role_id integer,
     active boolean,
     expires timestamp,
-    created timestamp,
+    created timestamp default current_timestamp,
     user_id integer,
     new_role_id integer,
     temporary_role_id integer NOT NULL AUTO_INCREMENT PRIMARY KEY 

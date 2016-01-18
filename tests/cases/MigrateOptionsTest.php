@@ -50,7 +50,7 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
         
         foreach($this->fkeys as $fkey)
         {
-            $this->assertForignKeyDoesntExist($fkey);
+            $this->assertForeignKeyDoesntExist($fkey);
         }
  
         file_put_contents(vfsStream::url("home/output.txt"), '');
@@ -63,7 +63,7 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
         
         foreach($this->fkeys as $fkey)
         {
-            $this->assertForignKeyExists($fkey);
+            $this->assertForeignKeyExists($fkey);
         }        
     }
         

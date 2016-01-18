@@ -67,6 +67,8 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         {
             $GLOBALS['DB_FULL_DSN'] = $GLOBALS['DB_DSN'];
             $GLOBALS['DB_FILE'] = getenv('YENTU_FILE');
+            $GLOBALS['DB_NAME'] = '';
+            $GLOBALS['DEFAULT_SCHEMA'] = '';
         }
         
         $GLOBALS['DB_USER'] = (string)getenv('YENTU_USER');
@@ -130,14 +132,14 @@ class YentuTest extends \PHPUnit_Framework_TestCase
         $this->assertThat($column, $constraint, $message);
     }  
     
-    public function assertForignKeyExists($table, $message = '')
+    public function assertForeignKeyExists($table, $message = '')
     {
         $constraint = new constraints\ForeignKeyExists();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }    
     
-    public function assertForignKeyDoesntExist($table, $message = '')
+    public function assertForeignKeyDoesntExist($table, $message = '')
     {
         $constraint = new constraints\ForeignKeyExists();
         $constraint->negate();

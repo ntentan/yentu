@@ -93,7 +93,12 @@ class SchemaDescription implements \ArrayAccess
 
     public function offsetGet($offset)
     {
-        return $this->description[$offset];
+        $return = $this->description[$offset];
+        if(is_array($return)) {
+            $return = Parameters::wrap($this->description[$offset]);
+            $this->description[$offset] = $return;
+        }
+        return $return;
     }
 
     public function offsetSet($offset, $value)
@@ -103,7 +108,7 @@ class SchemaDescription implements \ArrayAccess
 
     public function offsetUnset($offset)
     {
-        
+        unset($this->description[$offset]);
     }
 
     /**
@@ -185,7 +190,9 @@ class SchemaDescription implements \ArrayAccess
         );
 
         if ($details['schema'] != '') {
-            $this->description['schemata'][$details['schema']]['views'][$details['name']] = $view;
+            $schemata = $this->description['schemata']->getArray();
+            $schemata[$details['schema']]['views'][$details['name']] = $view;
+            $this->description['schemata'] = $schemata;
         } else {
             $this->description['views'][$details['name']] = $view;
         }
@@ -451,7 +458,7 @@ class SchemaDescription implements \ArrayAccess
      */
     public function addUniqueKey($details)
     {
-        $table = $this->getTable($details);
+        $table = $this->getTable($details)->getArray();
         $table['unique_keys'][$details['name']]['columns'] = $details['columns'];
         $this->setTable($details, $table);
     }
@@ -484,7 +491,7 @@ class SchemaDescription implements \ArrayAccess
      */
     public function addIndex($details)
     {
-        $table = $this->getTable($details);
+        $table = $this->getTable($details)->getArray();
         $table['indices'][$details['name']]['columns'] = $details['columns'];
         $this->setTable($details, $table);
     }
@@ -539,7 +546,7 @@ class SchemaDescription implements \ArrayAccess
         return new SchemaDescription($description, $manipulator);
     }
 
-    public function toArray()
+    public function getArray()
     {
         return $this->description;
     }

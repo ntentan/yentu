@@ -31,10 +31,11 @@ class PrimaryKey extends BasicKey
         }
         
         $this->getDriver()->addAutoPrimaryKey(
-            array(
-                'table' => $this->table->getName(),
-                'schema' => $this->table->getSchema()->getName(),
-                'column' => $this->columns[0]
+            \yentu\Parameters::wrap(array(
+                    'table' => $this->table->getName(),
+                    'schema' => $this->table->getSchema()->getName(),
+                    'column' => $this->columns[0]
+                )
             )
         );
         return $this;

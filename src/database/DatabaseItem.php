@@ -38,13 +38,13 @@ abstract class DatabaseItem
             $class = new \ReflectionClass($this);
             $name = $class->getShortName();
 
-            $this->changes[] = array(
+            $this->changes[] = \yentu\Parameters::wrap(array(
                 'method' => "change{$name}". str_replace('_', '', $attribute), 
                 'args' => array(
                     'from' => $currentDescription,
                     'to' => $newDescription
                 )
-            );   
+            ));   
         }
         
         (new \ReflectionProperty($this, $property))->setValue($this, $value);

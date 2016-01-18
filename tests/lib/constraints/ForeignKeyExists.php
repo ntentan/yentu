@@ -35,6 +35,6 @@ class ForeignKeyExists extends \yentu\tests\YentuConstraint
     
     public function toString()
     {
-        return 'is an existing database table';
+        return 'is an existing database foreign key';
     }
 }

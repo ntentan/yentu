@@ -26,13 +26,17 @@
 
 namespace yentu;
 
-class Parameters implements \ArrayAccess
+class Parameters implements \ArrayAccess, \Countable
 {
     private $parameters;
+    private $position = 0;
+    private $keys = [];
     
-    private function __construct($parameters, $defaults)
+    private function __construct($parameters, $defaults = [])
     {
         $this->parameters = $parameters;
+        $this->position = 0;
+        $this->keys = array_keys($this->parameters);
         foreach($defaults as $key => $value) {
             if(!isset($this->parameters[$key])) {
                 $this->parameters[$key] = $value;
@@ -42,7 +46,11 @@ class Parameters implements \ArrayAccess
     
     public static function wrap($parameters, $defaults = []) 
     {
-        return new Parameters($parameters, $defaults);
+        if(is_array($parameters)) {
+            return new Parameters($parameters, $defaults);
+        } else {
+            return $parameters;
+        }
     }
     
     public function get($key, $default = null)
@@ -57,7 +65,11 @@ class Parameters implements \ArrayAccess
     
     public function getArray()
     {
-        return $this->parameters;
+        $array = [];
+        foreach($this->parameters as $key => $value) {
+            $array[$key] = is_a($value, '\yentu\Parameters') ? $value->getArray() : $value;
+        }
+        return $array;
     }
 
     public function offsetExists($key)
@@ -78,5 +90,15 @@ class Parameters implements \ArrayAccess
     public function offsetUnset($key)
     {
         unset($this->parameters[$key]);
+    }
+    
+    public function usetItem($key)
+    {
+        unset($this->parameters[$key]);
+    }
+
+    public function count()
+    {
+        return count($this->parameters);
     }
 }

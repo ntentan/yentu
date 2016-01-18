@@ -144,7 +144,10 @@ abstract class DatabaseManipulator
         
     protected function dropTableItem($details, $type)
     {
-        unset($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type][$details['name']]);
+        //unset($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type][$details['name']]);
+        if($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type]) {
+            $this->description['schemata'][$details['schema']]['tables'][$details['table']][$type]->unsetItem($details['name']);
+        }
         foreach($details['columns'] as $column)
         {
             unset($this->description['schemata'][$details['schema']]['tables'][$details['table']]["flat_$type"][$column]);

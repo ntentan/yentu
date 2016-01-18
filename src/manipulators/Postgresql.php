@@ -56,7 +56,7 @@ class Postgresql extends \yentu\DatabaseManipulator
 
     protected function _dropTable($details) 
     {
-        $table = $this->query(
+        $primaryKey = $this->query(
             "select column_default from 
                 information_schema.table_constraints pk 
                 join information_schema.key_column_usage c on 
@@ -70,14 +70,15 @@ class Postgresql extends \yentu\DatabaseManipulator
 
                 where pk.table_name = ? and pk.table_schema=?
                 and constraint_type = 'PRIMARY KEY'",
-            array($details['name'], $details['schema'])
+            array($details['name'], $details['schema'] == '' ? $this->getDefaultSchema() : $details['schema'])
         );
-        
         $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
-        if(preg_match("/nextval\(\'(?<sequence>.*)\'\:\:regclass\)/i", $table[0]['column_default'], $matches))
-        {
-            $this->query(sprintf('DROP SEQUENCE IF EXISTS "%s"', $matches['sequence']));
-        }        
+        
+        if($primaryKey) {
+            if(preg_match("/nextval\(\'(?<sequence>.*)\'\:\:regclass\)/i", $primaryKey[0]['column_default'], $matches)) {
+                $this->query(sprintf('DROP SEQUENCE IF EXISTS "%s"', $matches['sequence']));
+            }        
+        }
     }
 
     public function describe() 
@@ -194,7 +195,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT "%s" PRIMARY KEY ("%s")',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode('","', $details['columns'])
+                implode('","', $details['columns']->getArray())
             )
         );
     }
@@ -217,7 +218,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT "%s" UNIQUE ("%s")',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode('","', $details['columns'])
+                implode('","', $details['columns']->getArray())
             )
         );
     }
@@ -275,9 +276,9 @@ class Postgresql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT "%s" FOREIGN KEY ("%s") REFERENCES %s ("%s") MATCH FULL ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                implode('","', $details['columns']), 
+                implode('","', $details['columns']->getArray()), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
-                implode('","', $details['foreign_columns']),
+                implode('","', $details['foreign_columns']->getArray()),
                 $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'],
                 $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
             )
@@ -297,7 +298,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('", "', $details['columns'])
+                implode('", "', $details['columns']->getArray())
             )
         );
     }

@@ -53,10 +53,16 @@ class ImportTest extends \yentu\tests\YentuTest
         );
         
         require "tests/expected/{$GLOBALS['DRIVER']}/import.php";
-        $descriptionArray = $description->toArray();
+        $descriptionArray = $description->getArray();
         
         unset($descriptionArray['tables']['yentu_history']);
-        $this->assertEquals($expectedDescription, $descriptionArray);
+        $this->assertEquals(
+            $expectedDescription, 
+            [
+                'schemata' => $descriptionArray['schemata']->getArray(),
+                'tables' => $descriptionArray['tables']->getArray(),
+                'views' => $descriptionArray['views']->getArray()
+            ]);
     }
     
     public function testSchemaImport()

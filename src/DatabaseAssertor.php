@@ -105,10 +105,12 @@ class DatabaseAssertor
         }
         
         // too complex 
-        return $details['schema'] == false? 
-            isset($this->description['views'][$details['name']]) ? $this->description['views'][$details['name']]['definition'] : false :
-            isset($this->description['schemata'][$details['schema']]['views'][$details['name']]) ?
-                $this->description['schemata'][$details['schema']]['views'][$details['name']]['definition'] : FALSE;
+        if($details['schema'] == false) {
+            return isset($this->description['views'][$details['name']]) ? $this->description['views'][$details['name']]['definition'] : false ;
+        } else {
+            return (isset($this->description['schemata'][$details['schema']]['views'][$details['name']]) ?
+                $this->description['schemata'][$details['schema']]['views'][$details['name']]['definition'] : false);
+        }
     }
     
     private function getTableDetails($schema, $table)

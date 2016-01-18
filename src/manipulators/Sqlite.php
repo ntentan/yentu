@@ -163,18 +163,20 @@ class Sqlite extends \yentu\DatabaseManipulator
         $fieldList = '';
         $comma = '';
         $primaryKeyAdded = false;
+        $primaryKeyColumn = '';
         
         if($table['auto_increment'] && isset($table['primary_key']))
         {
-            $key = reset($table['primary_key']);
+            $key = $table['primary_key'][0];
             $primaryKeyColumn = $key['columns'][0];
         }
         if(count($table['columns']))
         {
-            foreach($table['columns'] as $column)
+            foreach($table['columns']->getArray() as $tableColumn)
             {
+                $column = \yentu\Parameters::wrap($tableColumn);
                 $query .= $comma . $this->getColumnDef($column);
-                $fieldList .= $this->getFieldListColumn($column, $options, $comma);
+                $fieldList .= $this->getFieldListColumn($column, \yentu\Parameters::wrap($options), $comma);
                 if($column['name'] === $primaryKeyColumn)
                 {
                     $query .= ' PRIMARY KEY AUTOINCREMENT';
@@ -238,7 +240,7 @@ class Sqlite extends \yentu\DatabaseManipulator
 
     protected function _addColumn($details) 
     {
-        if($this->placeholders[$details['table']])
+        if(isset($this->placeholders[$details['table']]))
         {
             $this->query("DROP TABLE `{$details['table']}`");
             $this->query(sprintf("CREATE TABLE `%s` (%s)",
@@ -264,7 +266,7 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _addIndex($details) {
-        $this->query("CREATE INDEX `{$details['name']}` ON `{$details['table']}` (`" . implode("`, `", $details['columns']) ."`)");
+        $this->query("CREATE INDEX `{$details['name']}` ON `{$details['table']}` (`" . implode("`, `", $details['columns']->getArray()) ."`)");
     }
 
     protected function _addPrimaryKey($details) 
