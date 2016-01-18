@@ -58,7 +58,7 @@ class DatabaseAssertor
     {
         $table = $this->getTableDetails($details['schema'], $details['table']);
         return isset($table['columns'][$details['name']]) ? 
-            $table['columns'][$details['name']] : false;
+            Parameters::wrap($table['columns'][$details['name']]) : false;
     }
     
     private function doesItemExist($details, $type)

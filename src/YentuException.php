@@ -34,6 +34,9 @@ class YentuException extends \Exception
         parent::__construct($message);
         foreach($this->getTrace() as $item)
         {
+            if(!isset($item['file'])) {
+                continue;
+            }
             if(realpath(Yentu::getPath('migrations')) === dirname($item['file']))
             {
                 $this->message .= ". Exception was thrown by action on line {$item['line']} of {$item['file']}";

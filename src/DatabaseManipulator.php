@@ -42,10 +42,11 @@ abstract class DatabaseManipulator
     {
         if(preg_match("/^(add|drop|change|executeQuery|reverseQuery)/", $name))
         {
-            $this->description->$name($arguments[0]);
+            $details = Parameters::wrap($arguments[0]);
+            $this->description->$name($details);
             $name = "_$name";
             new \ReflectionMethod($this, $name);
-            return $this->$name($arguments[0]);
+            return $this->$name($details);
         }
         else
         {
@@ -227,13 +228,13 @@ abstract class DatabaseManipulator
             ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
             $this->addTable(array('name' => 'yentu_history'));
 
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));     
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
-            $this->addColumn(array('table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
+            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
+            $this->addColumn(array('nulls'=> false, 'length' => null, 'table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));     
+            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
+            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
+            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
+            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
+            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
             $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
             $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));
             ClearIce::popOutputLevel();

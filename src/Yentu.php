@@ -193,7 +193,7 @@ class Yentu
         ClearIce::output(
             "\n  - " . ucfirst("{$command}ing ") .
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
-            self::getDetails($command, $arguments), ClearIce::OUTPUT_LEVEL_2
+            self::getDetails($command, Parameters::wrap($arguments)), ClearIce::OUTPUT_LEVEL_2
         );
         ClearIce::output(".");
     }
@@ -207,6 +207,9 @@ class Yentu
      */
     private static function getDetails($command, $arguments)
     {
+        $dir = '';
+        $destination = '';
+        
         if ($command == 'add') {
             $dir = 'to';
         } else if ($command == 'drop') {

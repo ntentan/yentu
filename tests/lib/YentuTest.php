@@ -28,9 +28,8 @@ namespace yentu\tests;
 
 use org\bovigo\vfs\vfsStream;
 use clearice\ClearIce;
-use yentu\Yentu;
 
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL);
 
 class YentuTest extends \PHPUnit_Framework_TestCase
 {
@@ -62,6 +61,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
             $GLOBALS['DB_NAME'] = $this->testDatabase;
             $GLOBALS['DEFAULT_SCHEMA'] = (string)getenv('YENTU_DEFAULT_SCHEMA') == '' ? 
                 $this->testDatabase : (string)getenv('YENTU_DEFAULT_SCHEMA');
+            $GLOBALS['DB_FILE'] = '';
         }
         else
         {

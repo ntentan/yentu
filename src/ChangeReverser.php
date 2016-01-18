@@ -13,7 +13,7 @@ class ChangeReverser
     public static function call($method, $arguments) 
     {
         $method = self::reverseMethod($method);
-        $arguments = self::reverseArguments($arguments[0]);
+        $arguments = Parameters::wrap(self::reverseArguments($arguments[0]));
         return self::$driver->$method($arguments);
     }    
     

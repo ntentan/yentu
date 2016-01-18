@@ -1,8 +1,9 @@
 <?php
-/*
+
+/* 
  * The MIT License
  *
- * Copyright 2015 James Ekow Abaka Ainooson.
+ * Copyright 2014 ekow.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,20 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
-
-/**
- * Timestamp class.
- */
-class Timestamp
-{
-    /**
-     * Returns the timestamp used for the filename.
-     * @return string
-     */
-    public static function get()
-    {
-        return date('YmdHis', time());
-    }
-}
-
+begin()
+    ->table('roles')
+        ->column('role_name')->type('string')->nulls(false)
+    ->table('users')
+        ->column('user_name')->rename('username')
+->end();

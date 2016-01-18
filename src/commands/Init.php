@@ -38,7 +38,7 @@ class Init implements Command
 {
     private function getParams($options)
     {
-        if($options['interractive']) 
+        if(isset($options['interractive']))
         {   
             $params['driver'] = ClearIce::getResponse('Database type', array(
                     'required' => true,
@@ -91,6 +91,7 @@ class Init implements Command
     
     public function createConfigFile($params)
     {
+        $params = \yentu\Parameters::wrap($params);
         mkdir(Yentu::getPath(''));
         mkdir(Yentu::getPath('config'));
         mkdir(Yentu::getPath('migrations'));

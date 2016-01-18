@@ -179,7 +179,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('`, `', $details['columns'])
+                implode('`, `', $details['columns']->getArray())
             )
         );        
     }
@@ -189,7 +189,7 @@ class Mysql extends \yentu\DatabaseManipulator
         $this->query(
             sprintf('ALTER TABLE %s ADD PRIMARY KEY (`%s`)',
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('`,`', $details['columns'])
+                implode('`,`', $details['columns']->getArray())
             )
         );        
         if(is_array($this->autoIncrementPending))
@@ -217,7 +217,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT `%s` UNIQUE (`%s`)',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode('`,`', $details['columns'])
+                implode('`,`', $details['columns']->getArray())
             )
         );        
     }
