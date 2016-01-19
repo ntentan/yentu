@@ -337,9 +337,15 @@ class SchemaDescription implements \ArrayAccess
         $table = $this->getTable($details);
         unset($table['columns'][$details['name']]);
 
-        foreach ($table['foreign_keys'] as $i => $foreignKey) {
+        foreach ($table['foreign_keys']->getArray() as $i => $foreignKey) {
             if (array_search($details['name'], $foreignKey['columns']) !== false) {
                 unset($table['foreign_keys'][$i]);
+            }
+        }
+
+        foreach ($table['unique_keys']->getArray() as $i => $uniqueKey) {
+            if (array_search($details['name'], $uniqueKey['columns']) !== false) {
+                unset($table['unique_keys'][$i]);
             }
         }
 

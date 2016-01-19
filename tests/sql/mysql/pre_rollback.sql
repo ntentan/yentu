@@ -249,7 +249,7 @@ CREATE TABLE temporary_roles (
     tag varchar(255),
     original_role_id integer,
     active boolean,
-    expires timestamp,
+    expires timestamp default current_timestamp,
     created timestamp default current_timestamp,
     user_id integer,
     new_role_id integer,

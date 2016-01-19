@@ -25,6 +25,8 @@
 
 namespace yentu\manipulators;
 
+use yentu\Parameters;
+
 /**
  * SQLite Database Structure Manipulator for the yentu migration engine.
  *
@@ -39,6 +41,17 @@ class Sqlite extends \yentu\DatabaseManipulator
         $this->rebuildTableFromDefinition($details['table']);
     }
     
+    private function renameColumns(&$columns, $options)
+    {
+        if(isset($options['renamed_column'])) {
+            foreach($columns as $i => $column) {
+                if($options['renamed_column']['from']['name'] === $column) {
+                    $columns[$i] = $options['renamed_column']['to']['name'];
+                }
+            }
+        }
+    }
+    
     /**
      * Generate a query stub to represent the constraints section of a full
      * query (usually a CREATE TABLE or ADD COlUMN query).
@@ -48,8 +61,9 @@ class Sqlite extends \yentu\DatabaseManipulator
      * @param string $name The name of the constraint.
      * @return string
      */
-    private function getConstraintQuery($columns, $type, $name)
+    private function getConstraintQuery($columns, $type, $name, $options)
     {
+        $this->renameColumns($columns, $options);
         return ", CONSTRAINT `$name` $type (`" . implode('`, `', $columns) . "`)";
     }
     
@@ -69,14 +83,13 @@ class Sqlite extends \yentu\DatabaseManipulator
      * @param string $type The type of constraint 'FOREIGN KEY' ... etc.
      * @return string
      */
-    private function generateConstraintsQueries($constraintDetails, $type)
+    private function generateConstraintsQueries($constraintDetails, $type, $options)
     {
         $query = '';
         $constraints = $constraintDetails->getArray();
         foreach($constraints as $name => $constraint)
         {
-            //var_dump($constraint);
-            $query .= $this->getConstraintQuery($constraint['columns'], $type, $name);
+            $query .= $this->getConstraintQuery($constraint['columns'], $type, $name, $options);
         }
         return $query;
     }
@@ -87,13 +100,14 @@ class Sqlite extends \yentu\DatabaseManipulator
      * @param array<array> $constraintDetails
      * @return string
      */
-    private function getFKConstraintQuery($constraintDetails)
+    private function getFKConstraintQuery($constraintDetails, $options)
     {
         $query = '';
         $constraints = $constraintDetails->getArray();
         foreach($constraints as $name => $constraint)
         {
-            $query .= $this->getConstraintQuery($constraint['columns'], 'FOREIGN KEY', $name) . 
+            $this->renameColumns($constraint['foreign_columns'], $options);
+            $query .= $this->getConstraintQuery($constraint['columns'], 'FOREIGN KEY', $name, $options) . 
                 sprintf(
                     " REFERENCES `{$constraint['foreign_table']}` (`" . implode('`, `', $constraint['foreign_columns']) . "`) %s %s",
                     isset($constraint['on_delete']) ? "ON DELETE {$constraint['on_delete']}" : '',
@@ -175,9 +189,9 @@ class Sqlite extends \yentu\DatabaseManipulator
         {
             foreach($table['columns']->getArray() as $tableColumn)
             {
-                $column = \yentu\Parameters::wrap($tableColumn);
+                $column = Parameters::wrap($tableColumn);
                 $query .= $comma . $this->getColumnDef($column);
-                $fieldList .= $this->getFieldListColumn($column, \yentu\Parameters::wrap($options), $comma);
+                $fieldList .= $this->getFieldListColumn($column, Parameters::wrap($options), $comma);
                 if($column['name'] === $primaryKeyColumn)
                 {
                     $query .= ' PRIMARY KEY AUTOINCREMENT';
@@ -194,10 +208,10 @@ class Sqlite extends \yentu\DatabaseManipulator
         
         if(!$primaryKeyAdded && isset($table['primary_key']))
         {
-            $query .= $this->generateConstraintsQueries($table['primary_key'], 'PRIMARY KEY', $table['auto_increment']);
+            $query .= $this->generateConstraintsQueries($table['primary_key'], 'PRIMARY KEY', $options);
         }
-        $query .= $this->generateConstraintsQueries($table['unique_keys'], 'UNIQUE');
-        $query .= $this->getFKConstraintQuery($table['foreign_keys']);
+        $query .= $this->generateConstraintsQueries($table['unique_keys'], 'UNIQUE', $options);
+        $query .= $this->getFKConstraintQuery($table['foreign_keys'], $options);
         
         $query .= ')';
         
@@ -412,3 +426,4 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
 }
+
