@@ -83,10 +83,9 @@ class Sqlite extends \yentu\DatabaseManipulator
      * @param string $type The type of constraint 'FOREIGN KEY' ... etc.
      * @return string
      */
-    private function generateConstraintsQueries($constraintDetails, $type, $options)
+    private function generateConstraintsQueries($constraints, $type, $options)
     {
         $query = '';
-        $constraints = $constraintDetails->getArray();
         foreach($constraints as $name => $constraint)
         {
             $query .= $this->getConstraintQuery($constraint['columns'], $type, $name, $options);
@@ -100,10 +99,9 @@ class Sqlite extends \yentu\DatabaseManipulator
      * @param array<array> $constraintDetails
      * @return string
      */
-    private function getFKConstraintQuery($constraintDetails, $options)
+    private function getFKConstraintQuery($constraints, $options)
     {
         $query = '';
-        $constraints = $constraintDetails->getArray();
         foreach($constraints as $name => $constraint)
         {
             $this->renameColumns($constraint['foreign_columns'], $options);
@@ -136,19 +134,20 @@ class Sqlite extends \yentu\DatabaseManipulator
      */
     private function getFieldListColumn($column, $options, $comma)
     {
-        if($column['name'] == $options['new_column']['name'])
-        {
-            $return = '';
-        }
-        else if($column['name'] == $options['renamed_column']['to']['name'])
-        {
-            $return = $comma . "`{$options['renamed_column']['from']['name']}` as `{$options['renamed_column']['to']['name']}`";
-        }
-        else
-        {
-            $return = $comma . "`{$column['name']}`";
+        $return = false;
+        if(isset($options['new_column'])) {
+            if($column['name'] == $options['new_column']['name']) {
+                $return = '';
+            }
+        } else if(isset($options['renamed_column'])) {
+            if($column['name'] == $options['renamed_column']['to']['name']) {
+                $return = $comma . "`{$options['renamed_column']['from']['name']}` as `{$options['renamed_column']['to']['name']}`";
+            }
         }
         
+        if($return === false) {
+            $return = $comma . "`{$column['name']}`";
+        }
         return $return;
     }
     
@@ -168,11 +167,13 @@ class Sqlite extends \yentu\DatabaseManipulator
      *     adding new columns and those that are passed when modifying existing
      *     columns.
      */
-    private function rebuildTableFromDefinition($tableName, $options = null)
+    private function rebuildTableFromDefinition($tableName, $options = [])
     {
-        $description = $this->getDescription();
         $this->query("PRAGMA foreign_keys=OFF");
-        $table = $description['tables'][$tableName];
+        $table = Parameters::wrap(
+            $this->getDescription()->getTable(['table' => $tableName, 'schema' => false]),
+            ['auto_increment']
+        );
         $dummyTable = "__yentu_{$table['name']}";
         $query = "CREATE TABLE `$dummyTable` (";
         $fieldList = '';
@@ -180,18 +181,17 @@ class Sqlite extends \yentu\DatabaseManipulator
         $primaryKeyAdded = false;
         $primaryKeyColumn = '';
         
-        if($table['auto_increment'] && isset($table['primary_key']))
+        if($table['auto_increment'] && isset($table['primary_key'][0]))
         {
             $key = $table['primary_key'][0];
             $primaryKeyColumn = $key['columns'][0];
         }
         if(count($table['columns']))
         {
-            foreach($table['columns']->getArray() as $tableColumn)
+            foreach($table['columns'] as $column)
             {
-                $column = Parameters::wrap($tableColumn);
                 $query .= $comma . $this->getColumnDef($column);
-                $fieldList .= $this->getFieldListColumn($column, Parameters::wrap($options), $comma);
+                $fieldList .= $this->getFieldListColumn($column, $options, $comma);
                 if($column['name'] === $primaryKeyColumn)
                 {
                     $query .= ' PRIMARY KEY AUTOINCREMENT';
@@ -240,6 +240,7 @@ class Sqlite extends \yentu\DatabaseManipulator
      */
     private function getColumnDef($details)
     {
+        $details = Parameters::wrap($details, ['length', 'default']);
         return trim(sprintf(
             "`%s` %s %s %s", 
             $details['name'], 
@@ -281,7 +282,7 @@ class Sqlite extends \yentu\DatabaseManipulator
     }
 
     protected function _addIndex($details) {
-        $this->query("CREATE INDEX `{$details['name']}` ON `{$details['table']}` (`" . implode("`, `", $details['columns']->getArray()) ."`)");
+        $this->query("CREATE INDEX `{$details['name']}` ON `{$details['table']}` (`" . implode("`, `", $details['columns']) ."`)");
     }
 
     protected function _addPrimaryKey($details) 

@@ -165,7 +165,7 @@ class SchemaDescription implements \ArrayAccess
         $table = $this->getTable($query);
         
         // unset the existing table from the description array
-        if ($details['schema'] == '') {
+        if ($details['from']['schema'] == '') {
             unset($this->description["tables"][$details['from']['name']]);
         } else {
             unset($this->description['schemata'][$details['from']['schema']]["tables"][$details['from']['name']]);
@@ -190,7 +190,7 @@ class SchemaDescription implements \ArrayAccess
         );
 
         if ($details['schema'] != '') {
-            $schemata = $this->description['schemata']->getArray();
+            $schemata = $this->description['schemata'];
             $schemata[$details['schema']]['views'][$details['name']] = $view;
             $this->description['schemata'] = $schemata;
         } else {
@@ -337,13 +337,13 @@ class SchemaDescription implements \ArrayAccess
         $table = $this->getTable($details);
         unset($table['columns'][$details['name']]);
 
-        foreach ($table['foreign_keys']->getArray() as $i => $foreignKey) {
+        foreach ($table['foreign_keys'] as $i => $foreignKey) {
             if (array_search($details['name'], $foreignKey['columns']) !== false) {
                 unset($table['foreign_keys'][$i]);
             }
         }
 
-        foreach ($table['unique_keys']->getArray() as $i => $uniqueKey) {
+        foreach ($table['unique_keys'] as $i => $uniqueKey) {
             if (array_search($details['name'], $uniqueKey['columns']) !== false) {
                 unset($table['unique_keys'][$i]);
             }
@@ -464,7 +464,7 @@ class SchemaDescription implements \ArrayAccess
      */
     public function addUniqueKey($details)
     {
-        $table = $this->getTable($details)->getArray();
+        $table = $this->getTable($details);
         $table['unique_keys'][$details['name']]['columns'] = $details['columns'];
         $this->setTable($details, $table);
     }
@@ -497,7 +497,7 @@ class SchemaDescription implements \ArrayAccess
      */
     public function addIndex($details)
     {
-        $table = $this->getTable($details)->getArray();
+        $table = $this->getTable($details);
         $table['indices'][$details['name']]['columns'] = $details['columns'];
         $this->setTable($details, $table);
     }

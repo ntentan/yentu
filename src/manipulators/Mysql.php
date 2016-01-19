@@ -26,6 +26,8 @@
 
 namespace yentu\manipulators;
 
+use yentu\Parameters;
+
 class Mysql extends \yentu\DatabaseManipulator
 {
     private $autoIncrementPending;
@@ -106,9 +108,8 @@ class Mysql extends \yentu\DatabaseManipulator
     
     protected function _addAutoPrimaryKey($details)
     {
-        $description = $this->getDescription();
-        $table = $description['tables'][$details['table']];
-        $column = ($description['tables'][$details['table']]['columns'][$details['column']]);
+        $table = $this->getDescription()->getTable($details);
+        $column = ($table['columns'][$details['column']]);
         
         if(count($table['primary_key']) > 0)
         {
@@ -162,9 +163,9 @@ class Mysql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s (`%s`) ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                implode('`,`', $details['columns']->getArray()), 
+                implode('`,`', $details['columns']), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
-                implode('","', $details['foreign_columns']->getArray()),
+                implode('","', $details['foreign_columns']),
                 $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'],
                 $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
             )
@@ -179,7 +180,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('`, `', $details['columns']->getArray())
+                implode('`, `', $details['columns'])
             )
         );        
     }
@@ -189,7 +190,7 @@ class Mysql extends \yentu\DatabaseManipulator
         $this->query(
             sprintf('ALTER TABLE %s ADD PRIMARY KEY (`%s`)',
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('`,`', $details['columns']->getArray())
+                implode('`,`', $details['columns'])
             )
         );   
         if(is_array($this->autoIncrementPending))
@@ -217,7 +218,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT `%s` UNIQUE (`%s`)',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode('`,`', $details['columns']->getArray())
+                implode('`,`', $details['columns'])
             )
         );        
     }
@@ -311,11 +312,12 @@ class Mysql extends \yentu\DatabaseManipulator
         if(count($description['tables'][$details['table']]['columns']) === 0)
         {
             $this->_addColumn(
-                \yentu\Parameters::wrap(array(
+                Parameters::wrap(array(
                         'table' => $details['table'],
                         'name' => '__yentu_placeholder_col',
                         'type' => 'integer'
-                    )
+                    ),
+                    ['schema', 'length', 'nulls']
                 )
             );
         }

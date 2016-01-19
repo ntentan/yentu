@@ -1,6 +1,8 @@
 <?php
 namespace yentu\manipulators;
 
+use yentu\Parameters;
+
 class Postgresql extends \yentu\DatabaseManipulator
 {   
     private function buildTableName($name, $schema)
@@ -117,28 +119,25 @@ class Postgresql extends \yentu\DatabaseManipulator
     
     protected function _changeColumnDefault($details)
     {
-        if($details['default'] != '' || $details['to']['default'] != '')
-        {
-            if(isset($details['to']))
-            {
-                $details = $details['to'];
-            }            
-            $this->query(
-                sprintf(
-                    "ALTER TABLE %s ALTER COLUMN %s SET DEFAULT %s",
-                    $this->buildTableName($details['table'], $details['schema']),
-                    $details['name'], 
-                    $details['default']
-                )
-            );
-        }
-        else if($details['to']['default'] == '' && $details['from']['default'] != '')
-        {
-            $this->query(
-                "ALTER TABLE %s ALTER COLUMN %s DROP DEFAULT",
-                $this->buildTableName($details['table'], $details['schema']),
-                $details['name']
-            );
+        $details = Parameters::wrap($details, ['default']);
+        $query = 'ALTER TABLE %s ALTER COLUMN "%s" ';
+        if($details['default'] != '') {
+            $tableName = $this->buildTableName($details['table'], $details['schema']);
+            $columnName = $details['name'];
+            $default = "SET DEFAULT {$details['default']}";
+            $this->query(sprintf($query . $default, $tableName, $columnName));
+            
+        } else if(isset($details['to'])) {
+            if($details['to']['default'] != '') {
+                $tableName = $this->buildTableName($details['to']['table'], $details['to']['schema']);
+                $columnName = $details['to']['name'];
+                $default = "SET DEFAULT {$details['to']['default']}";                
+            } else if($details['to']['default'] == '' && $details['from']['default'] != '') {
+                $tableName = $this->buildTableName($details['to']['table'], $details['to']['schema']);
+                $columnName = $details['to']['name'];
+                $default = "DROP DEFAULT";                
+            }
+            $this->query(sprintf($query . $default, $tableName, $columnName));
         }
     }
     
@@ -148,30 +147,28 @@ class Postgresql extends \yentu\DatabaseManipulator
      */
     protected function _changeColumnNulls($details)
     {
-        if($details['to']['nulls'] === false || $details['nulls'] === false)
+        $details = Parameters::wrap($details, ['nulls']);
+        $query = 'ALTER TABLE %s ALTER COLUMN "%s" ';
+        
+        if($details['nulls'] === false)
         {
-            // Remove the to key to make it possible for this function to be run
-            // by the _addColumn method
-            if(isset($details['to']))
-            {
-                $details = $details['to'];
-            }
-            
-            $this->query(
-                sprintf('ALTER TABLE %s ALTER COLUMN "%s" SET NOT NULL',
-                    $this->buildTableName($details['table'], $details['schema']),
-                    $details['name']
-                )
-            );
+            $tableName = $this->buildTableName($details['table'], $details['schema']);
+            $columnName = $details['name'];
+            $null = ' SET NOT NULL';
+            $this->query(sprintf($query . $null, $tableName, $columnName));
         }
         else if(isset($details['to']))
         {
-            $this->query(
-                sprintf('ALTER TABLE %s ALTER COLUMN "%s" DROP NOT NULL',
-                    $this->buildTableName($details['to']['table'], $details['to']['schema']),
-                    $details['to']['name']
-                )
-            );            
+            if($details['to']['nulls'] === false) {
+                $tableName = $this->buildTableName($details['to']['table'], $details['to']['schema']);
+                $columnName = $details['to']['name'];
+                $null = ' SET NOT NULL';
+            } else {
+                $tableName = $this->buildTableName($details['to']['table'], $details['to']['schema']);
+                $columnName = $details['to']['name'];
+                $null = ' DROP NOT NULL';
+            }
+            $this->query(sprintf($query . $null, $tableName, $columnName));
         }
     }    
     
@@ -195,7 +192,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT "%s" PRIMARY KEY ("%s")',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode('","', $details['columns']->getArray())
+                implode('","', $details['columns'])
             )
         );
     }
@@ -218,7 +215,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT "%s" UNIQUE ("%s")',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'],
-                implode('","', $details['columns']->getArray())
+                implode('","', $details['columns'])
             )
         );
     }
@@ -233,7 +230,7 @@ class Postgresql extends \yentu\DatabaseManipulator
             )
         );
         
-        $this->dropTableItem($details, $type);
+        //$this->dropTableItem($details, $type);
     }
     
     protected function _dropUniqueKey($details) 
@@ -276,9 +273,9 @@ class Postgresql extends \yentu\DatabaseManipulator
                 'ALTER TABLE %s ADD CONSTRAINT "%s" FOREIGN KEY ("%s") REFERENCES %s ("%s") MATCH FULL ON DELETE %s ON UPDATE %s',
                 $this->buildTableName($details['table'], $details['schema']),
                 $details['name'], 
-                implode('","', $details['columns']->getArray()), 
+                implode('","', $details['columns']), 
                 $this->buildTableName($details['foreign_table'], $details['foreign_schema']),
-                implode('","', $details['foreign_columns']->getArray()),
+                implode('","', $details['foreign_columns']),
                 $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'],
                 $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
             )
@@ -298,7 +295,7 @@ class Postgresql extends \yentu\DatabaseManipulator
                 $details['unique'] ? 'UNIQUE' : '',
                 $details['name'],
                 $this->buildTableName($details['table'], $details['schema']),
-                implode('", "', $details['columns']->getArray())
+                implode('", "', $details['columns'])
             )
         );
     }

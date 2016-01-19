@@ -91,7 +91,10 @@ class Init implements Command
     
     public function createConfigFile($params)
     {
-        $params = \yentu\Parameters::wrap($params);
+        $params = \yentu\Parameters::wrap(
+            $params,
+            ['port', 'file', 'host', 'dbname', 'user', 'password']
+        );
         mkdir(Yentu::getPath(''));
         mkdir(Yentu::getPath('config'));
         mkdir(Yentu::getPath('migrations'));

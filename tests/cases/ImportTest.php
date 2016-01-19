@@ -59,9 +59,9 @@ class ImportTest extends \yentu\tests\YentuTest
         $this->assertEquals(
             $expectedDescription, 
             [
-                'schemata' => $descriptionArray['schemata']->getArray(),
-                'tables' => $descriptionArray['tables']->getArray(),
-                'views' => $descriptionArray['views']->getArray()
+                'schemata' => $descriptionArray['schemata'],
+                'tables' => $descriptionArray['tables'],
+                'views' => $descriptionArray['views']
             ]);
     }
     

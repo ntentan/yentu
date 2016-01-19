@@ -209,6 +209,10 @@ class Yentu
     {
         $dir = '';
         $destination = '';
+        $arguments = Parameters::wrap(
+            $arguments,
+            ['name' => null]
+        );
         
         if ($command == 'add') {
             $dir = 'to';

@@ -142,17 +142,15 @@ abstract class DatabaseManipulator
     
     abstract public function convertTypes($type, $direction, $length);
         
-    protected function dropTableItem($details, $type)
+    /*protected function dropTableItem($details, $type)
     {
-        //unset($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type][$details['name']]);
-        if($this->description['schemata'][$details['schema']]['tables'][$details['table']][$type]) {
-            $this->description['schemata'][$details['schema']]['tables'][$details['table']][$type]->unsetItem($details['name']);
-        }
+        $table = $this->description->getTable($details);
+        var_dump($table);
         foreach($details['columns'] as $column)
         {
-            unset($this->description['schemata'][$details['schema']]['tables'][$details['table']]["flat_$type"][$column]);
+            //$table = $t["flat_$type"][$column];
         }
-    }
+    }*/
     
     /**
      * 
@@ -229,17 +227,17 @@ abstract class DatabaseManipulator
         catch(\ntentan\atiaa\exceptions\TableNotFoundException $e)
         {
             ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
-            $this->addTable(array('name' => 'yentu_history'));
+            $this->addTable(array('schema' => '', 'name' => 'yentu_history'));
 
-            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
-            $this->addColumn(array('nulls'=> false, 'length' => null, 'table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));     
-            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
-            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
-            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
-            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
-            $this->addColumn(array('nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
-            $this->addPrimaryKey(array('table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
-            $this->addAutoPrimaryKey(array('table' => 'yentu_history', 'column' => 'id'));
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> false, 'length' => null, 'table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));     
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));  
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));  
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'migration', 'type' => 'string')); 
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string')); 
+            $this->addColumn(array('default' => null, 'schema' => '', 'nulls'=> true, 'length' => null, 'table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
+            $this->addPrimaryKey(array('schema' => '', 'table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
+            $this->addAutoPrimaryKey(array('schema' => '', 'table' => 'yentu_history', 'column' => 'id'));
             ClearIce::popOutputLevel();
         }
     }

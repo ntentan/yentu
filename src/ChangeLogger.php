@@ -118,7 +118,7 @@ class ChangeLogger
             )
             {
                 ClearIce::output("S");
-                ClearIce::output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", ClearIce::OUTPUT_LEVEL_2);
+                ClearIce::output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", ClearIce::OUTPUT_LEVEL_2);
             }
             else
             {        
