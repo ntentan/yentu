@@ -69,12 +69,13 @@ class Sqlite extends \yentu\DatabaseManipulator
      * @param string $type The type of constraint 'FOREIGN KEY' ... etc.
      * @return string
      */
-    private function generateConstraintsQueries($constraints, $type)
+    private function generateConstraintsQueries($constraintDetails, $type)
     {
-        if(!is_array($constraints)) return null;
         $query = '';
+        $constraints = $constraintDetails->getArray();
         foreach($constraints as $name => $constraint)
         {
+            //var_dump($constraint);
             $query .= $this->getConstraintQuery($constraint['columns'], $type, $name);
         }
         return $query;
@@ -83,13 +84,13 @@ class Sqlite extends \yentu\DatabaseManipulator
     /**
      * Generate the query for a foreign key constraint.
      * 
-     * @param array<array> $constraints
+     * @param array<array> $constraintDetails
      * @return string
      */
-    private function getFKConstraintQuery($constraints)
+    private function getFKConstraintQuery($constraintDetails)
     {
         $query = '';
-        if(!is_array($constraints)) return null;
+        $constraints = $constraintDetails->getArray();
         foreach($constraints as $name => $constraint)
         {
             $query .= $this->getConstraintQuery($constraint['columns'], 'FOREIGN KEY', $name) . 

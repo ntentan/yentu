@@ -63,11 +63,32 @@ class Parameters implements \ArrayAccess, \Countable
         return $return;
     }
     
+    private function cleanArray($array)
+    {
+        $output = [];
+        foreach($array as $key => $value) {
+            if(is_a($value, "\\yentu\\Parameters")) {
+                $output[$key] = $value->getArray();
+            } else if (is_array($value)) {
+                $output[$key] = $this->cleanArray($value);
+            } else {
+                $output[$key] = $value;
+            }            
+        }
+        return $output;
+    }
+    
     public function getArray()
     {
         $array = [];
         foreach($this->parameters as $key => $value) {
-            $array[$key] = is_a($value, '\yentu\Parameters') ? $value->getArray() : $value;
+            if(is_a($value, "\\yentu\\Parameters")) {
+                $array[$key] = $value->getArray();
+            } else if (is_array($value)) {
+                $array[$key] = $this->cleanArray($value);
+            } else {
+                $array[$key] = $value;
+            }
         }
         return $array;
     }
