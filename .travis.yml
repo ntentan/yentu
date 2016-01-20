@@ -14,7 +14,6 @@ before_script:
  
 matrix:
  allow_failures:
-  - php: "7"
   - php: "hhvm"
   
  include:
@@ -24,6 +23,9 @@ matrix:
     env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost' COVERAGE=yes
   - php: "5.6"
     env: YENTU_DRIVER=sqlite YENTU_FILE=sqlite.db YENTU_SKIP_SCHEMAS=yes YENTU_BASE_DSN='sqlite:sqlite.db' COVERAGE=yes
+ exclude:
+  - php: "hhvm"
+    env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost'
  
 services:
  - postgresql
