@@ -147,6 +147,7 @@ class Yentu
      */
     public static function getMigrations($path)
     {
+        if(!file_exists($path)) return [];
         $migrationFiles = scandir($path, 0);
         $migrations = array();
         foreach ($migrationFiles as $migration) {

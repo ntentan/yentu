@@ -80,14 +80,14 @@ class Import implements \clearice\Command, \yentu\Reversible
     
     private function generateSchemaCode($description, $ref = false, $prefix = '')
     {
-        $refprefix = $ref === true ? 'ref' : '';
+        $refprefix = $ref === true ? 'ref' : '->';
         if($description["{$prefix}schema"] == false)
         {
-            return "\->{$refprefix}table('{$description["{$prefix}table"]}')";
+            return "{$refprefix}table('{$description["{$prefix}table"]}')";
         }
         else
         {
-            return "\->{$refprefix}schema('{$description["{$prefix}schema"]}')->table('{$description["{$prefix}table"]}')";
+            return "{$refprefix}schema('{$description["{$prefix}schema"]}')->table('{$description["{$prefix}table"]}')";
         }
     }
     
@@ -113,7 +113,7 @@ class Import implements \clearice\Command, \yentu\Reversible
                 $this->code->add("->onUpdate('{$foreignKey['on_update']}')");
             }
             
-            $this->code->add("->name('$name');");
+            $this->code->add("->name('$name')");
             $this->code->decreaseIndent();
             $this->code->ln();
         }
@@ -151,7 +151,7 @@ class Import implements \clearice\Command, \yentu\Reversible
         
         foreach($schemata as $schema)
         {
-            $this->code->add("\->schema('{$schema['name']}')");
+            $this->code->add("->schema('{$schema['name']}')");
             $this->code->addIndent();
             $this->importTables($schema['tables']);
             $this->importViews($schema['views']);
