@@ -55,7 +55,7 @@ class ForeignKey extends DatabaseItem
         } else {
             throw new \yentu\DatabaseManipulatorException(
             "References cannot be created from a non referencing table. "
-            . "Please use either a \->reftable() or \->refschema() "
+            . "Please use either a reftable() or refschema() "
             . "construct to link a referenced table"
             );
         }
@@ -88,13 +88,21 @@ class ForeignKey extends DatabaseItem
         );
         return $this;
     }
+    
+    private function validate()
+    {
+        if(!is_array($this->foreignColumns)) {
+            throw new \yentu\SyntaxErrorException("No foreign columns specified for foreign key");
+        }
+    }
 
     public function commitNew()
     {
+        $this->validate();
         if ($this->name == '' && is_object($this->foreignTable)) {
             $this->name = $this->table->getName() . '_' . implode('_', $this->columns) .
-                    '_' . $this->foreignTable->getName() .
-                    '_' . implode('_', $this->foreignColumns) . '_fk';
+                '_' . $this->foreignTable->getName() .
+                '_' . implode('_', $this->foreignColumns) . '_fk';
         } else if ($this->foreignTable === null && $this->nameSet) {
             // Do nothing
         } else if (!is_object($this->foreignTable)) {

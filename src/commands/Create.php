@@ -58,7 +58,7 @@ class Create implements \clearice\Command
         $this->checkName($name);
         $this->checkPermission();
         
-        $timestamp = \yentu\Timestamp::get();
+        $timestamp = date('YmdHis', time());
         $code = new \yentu\CodeWriter();
         $path = Yentu::getPath("migrations/{$timestamp}_{$name}.php");
         file_put_contents($path, $code);

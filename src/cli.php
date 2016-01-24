@@ -172,7 +172,7 @@ ClearIce::addCommands(
 
 ClearIce::addOptions(
     array(
-        'short' => 'h',
+        'short' => 'y',
         'long' => 'home',
         'help' => 'specifies where the yentu configurations are found',
         'has_value' => true
