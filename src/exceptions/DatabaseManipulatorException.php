@@ -1,5 +1,5 @@
 <?php
-namespace yentu;
+namespace yentu\exceptions;
 
 class DatabaseManipulatorException extends YentuException
 {

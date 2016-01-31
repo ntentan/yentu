@@ -339,7 +339,7 @@ class Postgresql extends \yentu\DatabaseManipulator
         
         if($destinationType == '')
         {
-            throw new \yentu\DatabaseManipulatorException("Invalid data type {$type} requested"); 
+            throw new \yentu\exceptions\DatabaseManipulatorException("Invalid data type {$type} requested"); 
         }
         else if($destinationType == 'character varying')
         {

@@ -28,6 +28,7 @@ namespace yentu\commands;
 use clearice\Command;
 use yentu\Yentu;
 use clearice\ClearIce;
+use yentu\exceptions\CommandException;
 
 /**
  * The init command class. This command intiates a project for yentu migration
@@ -120,11 +121,11 @@ class Init implements Command
         Yentu::greet();
         if(file_exists(Yentu::getPath('')))
         {
-            throw new CommandError("Could not initialize yentu. Your project has already been initialized with yentu.");
+            throw new CommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
         }
         else if(!is_writable(dirname(Yentu::getPath(''))))
         {
-            throw new CommandError("Your current directory is not writable.");
+            throw new CommandException("Your current directory is not writable.");
         }
         
         $params = $this->getParams($options);
@@ -132,7 +133,7 @@ class Init implements Command
         if(count($params) == 0 && defined('STDOUT'))
         {
             global $argv;
-            throw new CommandError(
+            throw new CommandException(
                 "You didn't provide any parameters for initialization. Please execute "
                 . "`{$argv[0]} init -i` to initialize yentu interractively. "
                 . "You can also try `{$argv[0]} init --help` for more information."
@@ -143,7 +144,7 @@ class Init implements Command
         
         if($db->getAssertor()->doesTableExist('yentu_history'))
         {
-            throw new CommandError("Could not initialize yentu. Your database has already been initialized with yentu.");
+            throw new CommandException("Could not initialize yentu. Your database has already been initialized with yentu.");
         }
         
         $db->createHistory();

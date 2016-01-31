@@ -2,6 +2,7 @@
 namespace yentu\commands;
 
 use yentu\Yentu;
+use yentu\exceptions\CommandException;
 
 class Create implements \clearice\Command
 {
@@ -15,7 +16,7 @@ class Create implements \clearice\Command
     {
         if(count(glob(Yentu::getPath("migrations/*_{$name}.php"))) > 0)
         {
-            throw new CommandError("A migration already exists with the name {$name}");
+            throw new CommandException("A migration already exists with the name {$name}");
         }
     }
     
@@ -23,15 +24,15 @@ class Create implements \clearice\Command
     {
         if(!file_exists(Yentu::getPath("migrations/")))
         {
-            throw new CommandError("The migrations directory `" . Yentu::getPath("migrations/") . "` does not exist.");
+            throw new CommandException("The migrations directory `" . Yentu::getPath("migrations/") . "` does not exist.");
         }
         if(!is_dir(Yentu::getPath("migrations/")))
         {
-            throw new CommandError(Yentu::getPath("migrations/") . ' is not a directory');
+            throw new CommandException(Yentu::getPath("migrations/") . ' is not a directory');
         }
         if(!is_writable(Yentu::getPath("migrations/")))
         {
-            throw new CommandError("You do not have the permission to write to " . Yentu::getPath("migrations/"));
+            throw new CommandException("You do not have the permission to write to " . Yentu::getPath("migrations/"));
         }
     }
     
@@ -39,13 +40,13 @@ class Create implements \clearice\Command
     {
         if($name == '')
         {
-            throw new CommandError(
+            throw new CommandException(
                 "Please provide a name for your new migration"
             );            
         }        
         else if(!preg_match("/[a-z][a-z0-9\_]*/", $name))
         {
-            throw new CommandError(
+            throw new CommandException(
                 "Migration names must always start with a lowercase alphabet and "
                 . "can only consist of lower case alphabets, numbers and underscores." 
             );            

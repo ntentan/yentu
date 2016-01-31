@@ -317,7 +317,7 @@ class SchemaDescription implements \ArrayAccess
     {
         $table = $this->getTable($details);
         if ($details['type'] == '') {
-            throw new DatabaseManipulatorException("Please specify a data type for the '{$details['name']}' column of the '{$table['name']}' table");
+            throw new exceptions\DatabaseManipulatorException("Please specify a data type for the '{$details['name']}' column of the '{$table['name']}' table");
         }
         $table['columns'][$details['name']] = array(
             'name' => $details['name'],

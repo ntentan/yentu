@@ -38,7 +38,7 @@ class Import implements \clearice\Command, \yentu\Reversible
         $files = scandir(Yentu::getPath("migrations"));
         if(count($files) > 2)
         {
-            throw new CommandError("Cannot run imports. Your migrations directory is not empty");
+            throw new \yentu\exceptions\CommandException("Cannot run imports. Your migrations directory is not empty");
         }
         $description = $this->db->getDescription();
         

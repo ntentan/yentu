@@ -89,7 +89,7 @@ class ChangeLogger
             $this->changes++;
             $this->driver->setDisableQuery(false);  
         }
-        catch(\yentu\DatabaseManipulatorException $e)
+        catch(\yentu\exceptions\DatabaseManipulatorException $e)
         {
             if($this->skipOnErrors)
             {

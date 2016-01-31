@@ -53,7 +53,7 @@ class ForeignKey extends DatabaseItem
         if ($table->isReference()) {
             $this->foreignTable = $table;
         } else {
-            throw new \yentu\DatabaseManipulatorException(
+            throw new \yentu\exceptions\DatabaseManipulatorException(
             "References cannot be created from a non referencing table. "
             . "Please use either a reftable() or refschema() "
             . "construct to link a referenced table"
@@ -92,7 +92,7 @@ class ForeignKey extends DatabaseItem
     private function validate()
     {
         if(!is_array($this->foreignColumns)) {
-            throw new \yentu\SyntaxErrorException("No foreign columns specified for foreign key");
+            throw new \yentu\exceptions\SyntaxErrorException("No foreign columns specified for foreign key");
         }
     }
 
@@ -106,7 +106,7 @@ class ForeignKey extends DatabaseItem
         } else if ($this->foreignTable === null && $this->nameSet) {
             // Do nothing
         } else if (!is_object($this->foreignTable)) {
-            throw new \yentu\DatabaseManipulatorException("No references defined for foreign key");
+            throw new \yentu\exceptions\DatabaseManipulatorException("No references defined for foreign key");
         }
 
         $this->getDriver()->addForeignKey($this->buildDescription());
@@ -157,7 +157,7 @@ class ForeignKey extends DatabaseItem
     protected function buildDescription()
     {
         if($this->foreignTable === null) {
-            throw new \yentu\DatabaseManipulatorException("No references defined for foreign key 1");
+            throw new \yentu\exceptions\DatabaseManipulatorException("No references defined for foreign key 1");
         }
         return array(
             'columns' => $this->columns,

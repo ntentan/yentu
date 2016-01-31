@@ -126,7 +126,7 @@ class InitTest extends \yentu\tests\YentuTest
     }
     
     /**
-     * @expectedException \yentu\commands\CommandError
+     * @expectedException \yentu\exceptions\CommandException
      */
     public function testUnwritable()
     {
@@ -146,7 +146,7 @@ class InitTest extends \yentu\tests\YentuTest
     }
     
     /**
-     * @expectedException \yentu\commands\CommandError
+     * @expectedException \yentu\exceptions\CommandException
      */    
     public function testExistingDir()
     {
@@ -165,7 +165,7 @@ class InitTest extends \yentu\tests\YentuTest
     }
     
     /**
-     * @expectedException \yentu\commands\CommandError
+     * @expectedException \yentu\exceptions\CommandException
      */     
     public function testNoParams()
     {
@@ -175,7 +175,7 @@ class InitTest extends \yentu\tests\YentuTest
     }
     
     /**
-     * @expectedException \yentu\commands\CommandError
+     * @expectedException \yentu\exceptions\CommandException
      */    
     public function testExistingDb()
     {

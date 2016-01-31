@@ -217,14 +217,14 @@ try {
     } else {
         ClearIce::output(ClearIce::getHelpMessage());
     }
-} catch (\yentu\commands\CommandError $e) {
+} catch (\yentu\exceptions\CommandException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error! " . $e->getMessage() . "\n");
 } catch (\ntentan\atiaa\DatabaseDriverException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
-} catch (\yentu\DatabaseManipulatorException $e) {
+} catch (\yentu\exceptions\DatabaseManipulatorException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
@@ -232,7 +232,7 @@ try {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
-} catch (\yentu\SyntaxErrorException $e) {
+} catch (\yentu\exceptions\SyntaxErrorException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error found in syntax: {$e->getMessage()}\n");
     Yentu::reverseCommand($command);

@@ -79,7 +79,7 @@ abstract class DatabaseItem
     {   
         if(!is_object($this->encapsulated))
         {
-            throw new \yentu\SyntaxErrorException("Failed to call method '{$method}'");
+            throw new \yentu\exceptions\SyntaxErrorException("Failed to call method '{$method}'");
         }
         else if (method_exists($this->encapsulated, $method))
         {

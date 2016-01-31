@@ -108,7 +108,7 @@ class ImportTest extends \yentu\tests\YentuTest
     }    
         
     /**
-     * @expectedException \yentu\commands\CommandError
+     * @expectedException \yentu\exceptions\CommandException
      */
     public function testImportNonEmptyMigrations()
     {

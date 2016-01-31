@@ -26,6 +26,7 @@
 
 use yentu\database\Table;
 use yentu\database\Schema;
+use yentu\exceptions\CommandException;
 
 function begin()
 {
@@ -55,6 +56,6 @@ function variable($name)
     if (isset($migrateVariables[$name])) {
         return $migrateVariables[$name];
     } else {
-        throw new CommandError("Variable $name is undefined.");
+        throw new CommandException("Variable $name is undefined.");
     }
 }

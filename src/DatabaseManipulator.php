@@ -71,7 +71,7 @@ abstract class DatabaseManipulator
         }
         catch(\ntentan\atiaa\DatabaseDriverException $e)
         {
-            throw new DatabaseManipulatorException($e->getMessage());
+            throw new exceptions\DatabaseManipulatorException($e->getMessage());
         }
     }
     
@@ -179,7 +179,7 @@ abstract class DatabaseManipulator
         }
         else if(!file_exists($defaultConfigFile) && !is_array($config))
         {
-            throw new commands\CommandError("Could not find configuration file at '$defaultConfigFile'");
+            throw new exceptions\CommandException("Could not find configuration file at '$defaultConfigFile'");
         }
         
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);

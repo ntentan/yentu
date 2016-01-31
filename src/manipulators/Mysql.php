@@ -72,7 +72,7 @@ class Mysql extends \yentu\DatabaseManipulator
         
         if($destinationType == '')
         {
-            throw new \yentu\DatabaseManipulatorException("Invalid data type {$type} requested"); 
+            throw new \yentu\exceptions\DatabaseManipulatorException("Invalid data type {$type} requested"); 
         }
         else if($destinationType == 'varchar')
         {
@@ -363,7 +363,7 @@ class Mysql extends \yentu\DatabaseManipulator
                 )
             );  
         }
-        catch(\yentu\DatabaseManipulatorException $e)
+        catch(\yentu\exceptions\DatabaseManipulatorException $e)
         {
             $this->_dropAutoPrimaryKey(array(
                 'column' => $details['columns'][0],

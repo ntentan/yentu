@@ -1,5 +1,6 @@
 <?php
-/*
+
+/* 
  * The MIT License
  *
  * Copyright 2015 James Ekow Abaka Ainooson.
@@ -23,25 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
+namespace yentu\exceptions;
+
 /**
- * Exceptions thrown by Yentu
+ * An exception that is thrown when a sytax error is found in a migration script.
  */
-class YentuException extends \Exception
+class SyntaxErrorException extends YentuException
 {
-    public function __construct($message)
-    {
-        parent::__construct($message);
-        foreach($this->getTrace() as $item)
-        {
-            if(!isset($item['file'])) {
-                continue;
-            }
-            if(realpath(Yentu::getPath('migrations')) === dirname($item['file']))
-            {
-                $this->message .= ". Exception was thrown by action on line {$item['line']} of {$item['file']}";
-                break;
-            }
-        }
-    }
+
 }
