@@ -29,6 +29,7 @@ require __DIR__ . "/../src/globals.php";
 
 use clearice\ClearIce;
 use yentu\Yentu;
+use yentu\Config;
 
 ClearIce::addCommands(
     array(
@@ -212,6 +213,7 @@ try {
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
+        Config::init(Yentu::getDefaultHome('config'));
         $command = new $class();
         $command->run($options);
     } else {
