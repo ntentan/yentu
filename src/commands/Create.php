@@ -9,7 +9,11 @@ class Create implements \clearice\Command
     public function run($options=array())
     {
         Yentu::greet();
-        $this->createFile($options['stand_alones'][0]);
+        if(isset($options['stand_alones'])) {
+            $this->createFile($options['stand_alones'][0]);
+        } else {
+            $this->checkName(null);
+        }
     }
     
     private function checkExisting($name)
