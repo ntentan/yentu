@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../bootstrap.php">
+    <php>
+        <env name="YENTU_DRIVER" value="sqlite" />
+        <env name="YENTU_FILE" value="sqlite.db" />      
+        <env name="YENTU_BASE_DSN" value="sqlite:sqlite.db" />
+        <env name="YENTU_SKIP_SCHEMAS" value="yes" />
+    </php>
+    <testsuites>
+        <testsuite name="Main Test Suite">
+            <directory>../cases</directory>    
+        </testsuite>
+    </testsuites>
+</phpunit>

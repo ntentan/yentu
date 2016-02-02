@@ -186,13 +186,13 @@ abstract class DatabaseManipulator
     public function getVersion() 
     {
         $version = $this->query("SELECT MAX(version) as version FROM yentu_history");
-        return $version[0]['version'];
+        return isset($version[0]) ? $version[0]['version'] : null;
     }
     
     public function getLastSession()
     {
         $session = $this->query("SELECT session FROM yentu_history ORDER BY id DESC LIMIT 1");
-        return $session[0]['session'];
+        return isset($session[0]['session']) ? $session[0]['session'] : null;
     }
     
     public function getSessionVersions($session)

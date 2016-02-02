@@ -78,6 +78,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->pdo = null;
+        \yentu\Config::reset();
     }
     
     public function assertSchemaExists($schema, $message = '')

@@ -92,16 +92,16 @@
         },
         {
             "name": "ntentan/config",
-            "version": "v0.1.0",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/config.git",
-                "reference": "9f49e1ade3ee108868026cd3832f011cb8ff9544"
+                "reference": "c2f0e47d46884c774db46f2531512df6488f31e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/config/zipball/9f49e1ade3ee108868026cd3832f011cb8ff9544",
-                "reference": "9f49e1ade3ee108868026cd3832f011cb8ff9544",
+                "url": "https://api.github.com/repos/ntentan/config/zipball/c2f0e47d46884c774db46f2531512df6488f31e4",
+                "reference": "c2f0e47d46884c774db46f2531512df6488f31e4",
                 "shasum": ""
             },
             "require-dev": {
@@ -126,7 +126,7 @@
                 }
             ],
             "description": "Configurations manager for ntentan",
-            "time": "2016-01-31 19:16:40"
+            "time": "2016-02-02 22:44:48"
         },
         {
             "name": "sebastian/version",
@@ -816,16 +816,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.21",
+            "version": "4.8.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "ea76b17bced0500a28098626b84eda12dbcf119c"
+                "reference": "dfb11aa5236376b4fc63853cf746af39fe780e72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ea76b17bced0500a28098626b84eda12dbcf119c",
-                "reference": "ea76b17bced0500a28098626b84eda12dbcf119c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dfb11aa5236376b4fc63853cf746af39fe780e72",
+                "reference": "dfb11aa5236376b4fc63853cf746af39fe780e72",
                 "shasum": ""
             },
             "require": {
@@ -884,7 +884,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-12-12 07:45:58"
+            "time": "2016-02-02 09:01:21"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

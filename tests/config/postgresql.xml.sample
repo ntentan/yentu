@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../bootstrap.php">
+    <php>
+        <env name="YENTU_DRIVER" value="postgresql" />
+        <env name="YENTU_USER" value="postgres" />          
+        <env name="YENTU_PASSWORD" value="" />  
+        <env name="YENTU_BASE_DSN" value="pgsql:host=localhost" />
+        <env name="YENTU_HOST" value="localhost" />
+        <env name="YENTU_DEFAULT_SCHEMA" value="public" />
+    </php>
+    <testsuites>
+        <testsuite name="Main Test Suite">
+            <directory>../cases</directory>    
+        </testsuite>
+    </testsuites>
+</phpunit>

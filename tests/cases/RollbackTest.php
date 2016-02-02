@@ -28,7 +28,7 @@ namespace yentu\tests\cases;
 
 class RollbackTest extends \yentu\tests\YentuTest
 {
-    public function setup()
+    public function setUp()
     {
         $this->testDatabase = 'yentu_rollback_test';
         parent::setup();
@@ -47,6 +47,7 @@ class RollbackTest extends \yentu\tests\YentuTest
                 'file' => $GLOBALS['DB_FILE']
             )
         );
+        \yentu\Config::init(\yentu\Yentu::getPath('config'));
     }
     
     public function testRollback()

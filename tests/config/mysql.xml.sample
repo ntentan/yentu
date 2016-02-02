@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../bootstrap.php">
+    <php>
+        <env name="YENTU_DRIVER" value="mysql" />
+        <env name="YENTU_USER" value="root" />          
+        <env name="YENTU_PASSWORD" value="" />  
+        <env name="YENTU_BASE_DSN" value="mysql:host=localhost" />
+        <env name="YENTU_HOST" value="localhost" />
+        <env name="YENTU_SKIP_SCHEMAS" value="yes" />
+    </php>
+    <testsuites>
+        <testsuite name="Main Test Suite">
+            <directory>../cases</directory>    
+        </testsuite>
+    </testsuites>
+</phpunit>
