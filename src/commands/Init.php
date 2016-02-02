@@ -101,7 +101,9 @@ class Init implements Command
         mkdir(Yentu::getPath('migrations'));
         
         $configFile = new \yentu\CodeWriter();
-        $configFile->add('$config = array(');
+        $configFile->add('return [');
+        $configFile->addIndent();
+        $configFile->add("'db' => [");
         $configFile->addIndent();
         $configFile->add("'driver' => '{$params['driver']}',");
         $configFile->add("'host' => '{$params['host']}',");
@@ -111,9 +113,11 @@ class Init implements Command
         $configFile->add("'password' => '{$params['password']}',");
         $configFile->add("'file' => '{$params['file']}',");
         $configFile->decreaseIndent();
-        $configFile->add(');');
+        $configFile->add(']');
+        $configFile->decreaseIndent();
+        $configFile->add('];');
         
-        file_put_contents(Yentu::getPath("config/default.php"), $configFile);        
+        file_put_contents(Yentu::getPath("config/default.conf.php"), $configFile);        
     }
     
     public function run($options=array())
@@ -140,6 +144,8 @@ class Init implements Command
             );
         }
         
+        $this->createConfigFile($params);
+        \yentu\Config::init(Yentu::getPath('config'));        
         $db = \yentu\DatabaseManipulator::create($params);
         
         if($db->getAssertor()->doesTableExist('yentu_history'))
@@ -149,7 +155,6 @@ class Init implements Command
         
         $db->createHistory();
         $db->disconnect();
-        $this->createConfigFile($params);
                 
         ClearIce::output("Yentu successfully initialized.\n");
     }

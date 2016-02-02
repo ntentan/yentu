@@ -61,16 +61,6 @@ class Yentu
     }
 
     /**
-     * Returns the current home of yentu.
-     * @see Yentu::setDefaultHome()
-     * @return string
-     */
-    public static function getDefaultHome()
-    {
-        return self::$home;
-    }
-
-    /**
      * Returns a path relative to the current yentu home.
      * @param string $path
      * @return string
@@ -89,17 +79,17 @@ class Yentu
      */
     public static function getMigrationPathsInfo()
     {
-        require Yentu::getPath("config/default.php");
+        $variables = Config::get('variables', []);
+        $otherMigrations = Config::get('other_migrations', []);
 
-        $variables = isset($config['variables']) ? $config['variables'] : [];
-        $otherMigrations = isset($other_migrations) ? $other_migrations : [];
-
-        return array_merge(array(
+        return array_merge(
             array(
-                'home' => Yentu::getPath('migrations'),
-                'variables' => $variables
-            )
-                ), $otherMigrations
+                array(
+                    'home' => Yentu::getPath('migrations'),
+                    'variables' => $variables
+                )
+            ), 
+            $otherMigrations
         );
     }
 

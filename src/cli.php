@@ -213,7 +213,6 @@ try {
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
-        Config::init(Yentu::getDefaultHome('config'));
         $command = new $class();
         $command->run($options);
     } else {
@@ -240,5 +239,5 @@ try {
     Yentu::reverseCommand($command);
 } catch (\PDOException $e) {
     ClearIce::resetOutputLevel();
-    ClearIce::error("Failed to connect to database: " . $e->getMessage() . "\n");
+    ClearIce::error("Failed to connect to database: {$e->getMessage()}\n");
 }

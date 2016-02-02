@@ -170,18 +170,9 @@ abstract class DatabaseManipulator
      * @param array<mixed> $config
      * @return \yentu\DatabaseManipulator;
      */
-    public static function create($config = '')
+    public static function create()
     {
-        $defaultConfigFile = Yentu::getPath("config/default.php");
-        if($config == '' && file_exists($defaultConfigFile))
-        {
-            require $defaultConfigFile;
-        }
-        else if(!file_exists($defaultConfigFile) && !is_array($config))
-        {
-            throw new exceptions\CommandException("Could not find configuration file at '$defaultConfigFile'");
-        }
-        
+        $config = Config::get('default.db');
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
         unset($config['variables']);
         return new $class($config);

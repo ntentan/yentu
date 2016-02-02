@@ -45,12 +45,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     {
         require_once "src/globals.php";
         
-        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);      
-        $drivers = array(
-            'postgresql' => 'pgsql',
-            'mysql' => 'mysql',
-            'sqlite' => 'sqlite'
-        );
+        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);  
         
         $GLOBALS['DRIVER'] = getenv('YENTU_DRIVER');
         $GLOBALS['DB_DSN'] = getenv('YENTU_BASE_DSN');
@@ -194,7 +189,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
                 'password' => $GLOBALS['DB_PASSWORD'],
                 'file' => $GLOBALS['DB_FILE']
             )
-        );            
+        );
     }
     
     protected function connect($dsn)

@@ -66,10 +66,10 @@ class InitTest extends \yentu\tests\YentuTest
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu/config")));
         $this->assertEquals(true, file_exists(vfsStream::url("home/yentu/migrations")));
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu/migrations")));
-        $this->assertEquals(true, is_file(vfsStream::url('home/yentu/config/default.php')));
+        $this->assertEquals(true, is_file(vfsStream::url('home/yentu/config/default.conf.php')));
         
         // provides $config below
-        require(vfsStream::url('home/yentu/config/default.php'));
+        $config = require(vfsStream::url('home/yentu/config/default.conf.php'));
         
         $this->assertEquals(array(
             'driver' => $GLOBALS['DRIVER'],
@@ -79,7 +79,7 @@ class InitTest extends \yentu\tests\YentuTest
             'user' => $GLOBALS['DB_USER'],
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
-        ), $config);      
+        ), $config['db']);      
         
         $this->assertTableExists('yentu_history');
         $this->assertColumnExists('session', 'yentu_history');        

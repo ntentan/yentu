@@ -13,7 +13,7 @@ namespace yentu;
  *
  * @author ekow
  */
-class Config extends \ntentan\Config
+class Config extends \ntentan\config\Config
 {
     protected static $data;
 }
