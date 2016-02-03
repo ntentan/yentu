@@ -141,16 +141,6 @@ abstract class DatabaseManipulator
     }
     
     abstract public function convertTypes($type, $direction, $length);
-        
-    /*protected function dropTableItem($details, $type)
-    {
-        $table = $this->description->getTable($details);
-        var_dump($table);
-        foreach($details['columns'] as $column)
-        {
-            //$table = $t["flat_$type"][$column];
-        }
-    }*/
     
     /**
      * 

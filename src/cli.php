@@ -213,6 +213,7 @@ try {
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
+        Config::init(Yentu::getPath('config'));
         $command = new $class();
         $command->run($options);
     } else {
