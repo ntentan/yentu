@@ -53,9 +53,8 @@ provided. This time however, the migrations directory will remain empty.
 
 More on setting up
 ------------------
-In cases where an interractive CLI is not required (such as with automated build scripts), 
-you can pass the require parameters to the init command and ignore the interractive (`-i`) 
-option.
+In cases where an interractive command line interface is not required (such as with automated build scripts), 
+you can pass the required parameters to the init command and ignore the interractive (`-i`) switch.
 
 
 

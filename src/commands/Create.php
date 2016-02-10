@@ -65,6 +65,10 @@ class Create implements \clearice\Command
         
         $timestamp = date('YmdHis', time());
         $code = new \yentu\CodeWriter();
+        $code->addLine('');
+        $code->addLine('begin()');
+        $code->addLine('');
+        $code->addLine('->end();');
         $path = Yentu::getPath("migrations/{$timestamp}_{$name}.php");
         file_put_contents($path, $code);
         \clearice\ClearIce::output("Added $path for new migration.\n");
