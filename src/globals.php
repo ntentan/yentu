@@ -59,3 +59,9 @@ function variable($name)
         throw new CommandException("Variable $name is undefined.");
     }
 }
+
+function variable_exists($name)
+{
+    global $migrateVariables;
+    return isset($migrateVariables[$name]);
+}
