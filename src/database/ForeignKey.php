@@ -106,7 +106,9 @@ class ForeignKey extends DatabaseItem
         } else if ($this->foreignTable === null && $this->nameSet) {
             // Do nothing
         } else if (!is_object($this->foreignTable)) {
-            throw new \yentu\exceptions\DatabaseManipulatorException("No references defined for foreign key");
+            throw new \yentu\exceptions\DatabaseManipulatorException(
+                "No references defined for foreign key '{$this->name}'"
+            );
         }
 
         $this->getDriver()->addForeignKey($this->buildDescription());
@@ -157,7 +159,9 @@ class ForeignKey extends DatabaseItem
     protected function buildDescription()
     {
         if($this->foreignTable === null) {
-            throw new \yentu\exceptions\DatabaseManipulatorException("No references defined for foreign key 1");
+            throw new \yentu\exceptions\DatabaseManipulatorException(
+                "No references defined for foreign key {$this->name}"
+            );
         }
         return array(
             'columns' => $this->columns,
@@ -171,5 +175,4 @@ class ForeignKey extends DatabaseItem
             'on_update' => $this->onUpdate
         );
     }
-
 }
