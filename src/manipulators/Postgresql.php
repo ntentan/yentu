@@ -43,17 +43,19 @@ class Postgresql extends \yentu\DatabaseManipulator
     protected function _addView($details)
     {
         $this->setSearchField($details);
-        $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
+        $this->query(sprintf('CREATE VIEW IF NOT EXISTS %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
     }
     
     protected function _dropView($details) {
-        $this->query(sprintf('DROP VIEW %s', $this->buildTableName($details['name'], $details['schema'])));
+        $this->query(sprintf('DROP VIEW IF EXISTS %s', $this->buildTableName($details['name'], $details['schema'])));
     }
     
     protected function _changeViewDefinition($details)
     {
         $this->setSearchField($details['to']);
-        $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $this->buildTableName($details['to']['name'], $details['to']['schema']), $details['to']['definition']));
+        $name = $this->buildTableName($details['to']['name'], $details['to']['schema']);
+        $this->_dropView($details['to']);
+        $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $name, $details['to']['definition']));
     }
 
     protected function _dropTable($details) 

@@ -43,6 +43,7 @@ class Migrate implements \clearice\Command, \yentu\Reversible
     private $dryDriver;
     private $defaultSchema = false;
     private $lastSession;
+    private $currentPath;
     const FILTER_UNRUN = 'unrun';
     const FILTER_LAST_SESSION = 'lastSession';
     
@@ -164,6 +165,7 @@ class Migrate implements \clearice\Command, \yentu\Reversible
             $migrateVariables = $path['variables'];
             $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
             $this->announceMigration($migrations, $path);
+            $this->currentPath = $path;
             
             foreach($migrations as $migration)
             {
@@ -209,6 +211,11 @@ class Migrate implements \clearice\Command, \yentu\Reversible
         DatabaseItem::setDriver($this->driver);        
         ClearIce::popOutputLevel();
         $this->driver->setExpectedOperations($this->dryDriver->resetOperations());
+    }
+    
+    public function getCurrentPath()
+    {
+        return $this->currentPath;
     }
     
     private function unrunFilter($input)

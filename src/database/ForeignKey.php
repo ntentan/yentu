@@ -92,7 +92,7 @@ class ForeignKey extends DatabaseItem
     private function validate()
     {
         if(!is_array($this->foreignColumns)) {
-            throw new \yentu\exceptions\SyntaxErrorException("No foreign columns specified for foreign key");
+            throw new \yentu\exceptions\SyntaxErrorException("No foreign columns specified for foreign key {$this->name}");
         }
     }
 
@@ -107,7 +107,7 @@ class ForeignKey extends DatabaseItem
             // Do nothing
         } else if (!is_object($this->foreignTable)) {
             throw new \yentu\exceptions\DatabaseManipulatorException(
-                "No references defined for foreign key '{$this->name}'"
+                "No references defined for foreign key {$this->name}"
             );
         }
 
