@@ -163,6 +163,10 @@ abstract class DatabaseManipulator
     public static function create()
     {
         $config = Config::get('default.db');
+        if($config['driver'] == '')
+        {
+            throw new exceptions\DatabaseManipulatorException("Please specify a database driver.");
+        }        
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
         unset($config['variables']);
         return new $class($config);
