@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9ebb1cd1c0fde687397382f918784201",
-    "content-hash": "e1a06490ffc2ba13949159516c773bd4",
+    "hash": "722de2f74314867486a9c15ab4a0265c",
+    "content-hash": "cd559999a669ca291db301838b314c26",
     "packages": [
         {
             "name": "ekowabaka/clearice",
-            "version": "v0.5.0",
+            "version": "v0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ekowabaka/clearice.git",
-                "reference": "718c39690fae7ba6a6b417ebef7f17caa097647c"
+                "reference": "3a6ef94e29db98b49cc912a90706f1fb1b1c5438"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/718c39690fae7ba6a6b417ebef7f17caa097647c",
-                "reference": "718c39690fae7ba6a6b417ebef7f17caa097647c",
+                "url": "https://api.github.com/repos/ekowabaka/clearice/zipball/3a6ef94e29db98b49cc912a90706f1fb1b1c5438",
+                "reference": "3a6ef94e29db98b49cc912a90706f1fb1b1c5438",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 }
             ],
             "description": "A tool to help in the building of CLI apps. Provides command line parsing and simple console I/O interfaces.",
-            "time": "2015-12-06 07:14:58"
+            "time": "2016-03-25 15:54:49"
         },
         {
             "name": "ntentan/atiaa",
@@ -92,16 +92,16 @@
         },
         {
             "name": "ntentan/config",
-            "version": "v0.2.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/config.git",
-                "reference": "c2f0e47d46884c774db46f2531512df6488f31e4"
+                "reference": "80cd65a714174863d2c30d8352c9f268a4224dba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/config/zipball/c2f0e47d46884c774db46f2531512df6488f31e4",
-                "reference": "c2f0e47d46884c774db46f2531512df6488f31e4",
+                "url": "https://api.github.com/repos/ntentan/config/zipball/80cd65a714174863d2c30d8352c9f268a4224dba",
+                "reference": "80cd65a714174863d2c30d8352c9f268a4224dba",
                 "shasum": ""
             },
             "require-dev": {
@@ -126,7 +126,7 @@
                 }
             ],
             "description": "Configurations manager for ntentan",
-            "time": "2016-02-02 22:44:48"
+            "time": "2016-04-23 11:58:18"
         },
         {
             "name": "sebastian/version",
@@ -266,16 +266,16 @@
         },
         {
             "name": "mikey179/vfsStream",
-            "version": "v1.6.2",
+            "version": "v1.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikey179/vfsStream.git",
-                "reference": "fefd182fa739d4e23d9dc7c80d3344f528d600ab"
+                "reference": "c19925cd0390d3c436a0203ae859afa460d0474b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/fefd182fa739d4e23d9dc7c80d3344f528d600ab",
-                "reference": "fefd182fa739d4e23d9dc7c80d3344f528d600ab",
+                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/c19925cd0390d3c436a0203ae859afa460d0474b",
+                "reference": "c19925cd0390d3c436a0203ae859afa460d0474b",
                 "shasum": ""
             },
             "require": {
@@ -308,7 +308,7 @@
             ],
             "description": "Virtual file system to mock the real file system in unit tests.",
             "homepage": "http://vfs.bovigo.org/",
-            "time": "2016-01-13 09:41:49"
+            "time": "2016-04-09 09:42:01"
         },
         {
             "name": "mockery/mockery",
@@ -377,16 +377,16 @@
         },
         {
             "name": "phing/phing",
-            "version": "2.13.0",
+            "version": "2.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phingofficial/phing.git",
-                "reference": "a5b10a50160c8a4744545aacb33ef158349e655c"
+                "reference": "7dd73c83c377623def54b58121f46b4dcb35dd61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/a5b10a50160c8a4744545aacb33ef158349e655c",
-                "reference": "a5b10a50160c8a4744545aacb33ef158349e655c",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/7dd73c83c377623def54b58121f46b4dcb35dd61",
+                "reference": "7dd73c83c377623def54b58121f46b4dcb35dd61",
                 "shasum": ""
             },
             "require": {
@@ -395,6 +395,7 @@
             "require-dev": {
                 "ext-pdo_sqlite": "*",
                 "lastcraft/simpletest": "@dev",
+                "mikey179/vfsstream": "^1.6",
                 "pdepend/pdepend": "2.x",
                 "pear/archive_tar": "1.4.x",
                 "pear/http_request2": "dev-trunk",
@@ -430,7 +431,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.13.x-dev"
+                    "dev-master": "2.14.x-dev"
                 }
             },
             "autoload": {
@@ -463,7 +464,7 @@
                 "task",
                 "tool"
             ],
-            "time": "2015-12-04 09:45:44"
+            "time": "2016-03-10 21:39:23"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -516,22 +517,24 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7"
+                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4745ded9307786b730d7a60df5cb5a6c43cf95f7",
-                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3c91bdf81797d725b14cb62906f9a4ce44235972",
+                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
+                "php": "^5.3|^7.0",
                 "phpdocumentor/reflection-docblock": "~2.0",
-                "sebastian/comparator": "~1.1"
+                "sebastian/comparator": "~1.1",
+                "sebastian/recursion-context": "~1.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "~2.0"
@@ -539,7 +542,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -572,7 +575,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-08-13 10:07:40"
+            "time": "2016-02-15 07:46:21"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -816,16 +819,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.22",
+            "version": "4.8.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "dfb11aa5236376b4fc63853cf746af39fe780e72"
+                "reference": "a1066c562c52900a142a0e2bbf0582994671385e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dfb11aa5236376b4fc63853cf746af39fe780e72",
-                "reference": "dfb11aa5236376b4fc63853cf746af39fe780e72",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a1066c562c52900a142a0e2bbf0582994671385e",
+                "reference": "a1066c562c52900a142a0e2bbf0582994671385e",
                 "shasum": ""
             },
             "require": {
@@ -884,7 +887,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-02-02 09:01:21"
+            "time": "2016-03-14 06:16:08"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1060,16 +1063,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.3",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df"
+                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6e7133793a8e5a5714a551a8324337374be209df",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
+                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
                 "shasum": ""
             },
             "require": {
@@ -1106,7 +1109,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-12-02 08:37:27"
+            "time": "2016-02-26 18:40:46"
         },
         {
             "name": "sebastian/exporter",
@@ -1280,16 +1283,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.2",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8"
+                "reference": "584e52cb8f788a887553ba82db6caacb1d6260bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/34c8a4b51e751e7ea869b8262f883d008a2b81b8",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/584e52cb8f788a887553ba82db6caacb1d6260bb",
+                "reference": "584e52cb8f788a887553ba82db6caacb1d6260bb",
                 "shasum": ""
             },
             "require": {
@@ -1325,12 +1328,13 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-03-04 07:54:35"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "ntentan/config": 20,
         "mikey179/vfsstream": 0,
         "mockery/mockery": 0,
         "phing/phing": 0
