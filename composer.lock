@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "722de2f74314867486a9c15ab4a0265c",
-    "content-hash": "cd559999a669ca291db301838b314c26",
+    "hash": "9ebb1cd1c0fde687397382f918784201",
+    "content-hash": "e1a06490ffc2ba13949159516c773bd4",
     "packages": [
         {
             "name": "ekowabaka/clearice",
@@ -50,25 +50,27 @@
         },
         {
             "name": "ntentan/atiaa",
-            "version": "v0.2.1",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/atiaa.git",
-                "reference": "979f96a4d58738b72e0fe4ce23eff3a0cc9e1c7d"
+                "reference": "aed20ccf41e58b1e404dae89be5d83d955c4ac40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/979f96a4d58738b72e0fe4ce23eff3a0cc9e1c7d",
-                "reference": "979f96a4d58738b72e0fe4ce23eff3a0cc9e1c7d",
+                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/aed20ccf41e58b1e404dae89be5d83d955c4ac40",
+                "reference": "aed20ccf41e58b1e404dae89be5d83d955c4ac40",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "ntentan/config": "0.*",
+                "ntentan/panie": "0.*",
+                "ntentan/utils": "0.*",
+                "php": ">=5.5.0"
             },
             "require-dev": {
                 "phpunit/dbunit": "1.*",
-                "phpunit/phpunit": "4.*",
-                "symfony/yaml": "^2.0"
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
             "autoload": {
@@ -88,20 +90,20 @@
                 }
             ],
             "description": "A slim wrapper around PDO to provide some extra utilities",
-            "time": "2016-01-19 08:39:39"
+            "time": "2016-04-24 10:43:24"
         },
         {
             "name": "ntentan/config",
-            "version": "dev-master",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/config.git",
-                "reference": "80cd65a714174863d2c30d8352c9f268a4224dba"
+                "reference": "027d8f30d83bf6c6666c2c47a8d9eba09ddf985b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/config/zipball/80cd65a714174863d2c30d8352c9f268a4224dba",
-                "reference": "80cd65a714174863d2c30d8352c9f268a4224dba",
+                "url": "https://api.github.com/repos/ntentan/config/zipball/027d8f30d83bf6c6666c2c47a8d9eba09ddf985b",
+                "reference": "027d8f30d83bf6c6666c2c47a8d9eba09ddf985b",
                 "shasum": ""
             },
             "require-dev": {
@@ -126,7 +128,85 @@
                 }
             ],
             "description": "Configurations manager for ntentan",
-            "time": "2016-04-23 11:58:18"
+            "time": "2016-04-25 21:35:06"
+        },
+        {
+            "name": "ntentan/panie",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ntentan/panie.git",
+                "reference": "fbcbc0d3c802a6db18b7c6919630c1fd6e307ec0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ntentan/panie/zipball/fbcbc0d3c802a6db18b7c6919630c1fd6e307ec0",
+                "reference": "fbcbc0d3c802a6db18b7c6919630c1fd6e307ec0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ntentan\\panie\\": "src/",
+                    "ntentan\\panie\\tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Ekow Abaka Ainooson",
+                    "email": "jainooson@gmail.com"
+                }
+            ],
+            "description": "A thin DI container for NtentanFX",
+            "time": "2016-04-24 10:38:24"
+        },
+        {
+            "name": "ntentan/utils",
+            "version": "v0.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ntentan/utils.git",
+                "reference": "e58264479657f0faa86673c4bcc84e7843cf346a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ntentan/utils/zipball/e58264479657f0faa86673c4bcc84e7843cf346a",
+                "reference": "e58264479657f0faa86673c4bcc84e7843cf346a",
+                "shasum": ""
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.0",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ntentan\\utils\\": "src/",
+                    "ntentan\\utils\\tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ekow Abaka Ainooson",
+                    "email": "jainooson@gmail.com"
+                }
+            ],
+            "description": "Common utility functions shared accross the ntentan framework.",
+            "time": "2015-11-15 00:43:43"
         },
         {
             "name": "sebastian/version",
@@ -1334,7 +1414,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ntentan/config": 20,
         "mikey179/vfsstream": 0,
         "mockery/mockery": 0,
         "phing/phing": 0

@@ -25,6 +25,7 @@
  */
 
 namespace yentu\tests\cases;
+use ntentan\config\Config;
 
 class RollbackTest extends \yentu\tests\YentuTest
 {
@@ -47,7 +48,7 @@ class RollbackTest extends \yentu\tests\YentuTest
                 'file' => $GLOBALS['DB_FILE']
             )
         );
-        \yentu\Config::init(\yentu\Yentu::getPath('config'));
+        Config::readPath(\yentu\Yentu::getPath('config'), 'yentu');
     }
     
     public function testRollback()

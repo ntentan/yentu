@@ -27,6 +27,7 @@
 namespace yentu;
 
 use clearice\ClearIce;
+use ntentan\config\Config;
 
 /**
  * Utility class for yentu related functions.

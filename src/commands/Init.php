@@ -29,6 +29,7 @@ use clearice\Command;
 use yentu\Yentu;
 use clearice\ClearIce;
 use yentu\exceptions\CommandException;
+use ntentan\config\Config;
 
 /**
  * The init command class. This command intiates a project for yentu migration
@@ -144,8 +145,8 @@ class Init implements Command
             );
         }
         
-        $this->createConfigFile($params);
-        \yentu\Config::init(Yentu::getPath('config'));        
+        $this->createConfigFile($params); 
+        Config::readPath(Yentu::getPath('config'), 'yentu');        
         $db = \yentu\DatabaseManipulator::create($params);
         
         if($db->getAssertor()->doesTableExist('yentu_history'))

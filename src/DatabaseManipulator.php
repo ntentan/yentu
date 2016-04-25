@@ -2,6 +2,7 @@
 namespace yentu;
 
 use clearice\ClearIce;
+use ntentan\config\Config;
 
 abstract class DatabaseManipulator
 {
@@ -17,7 +18,7 @@ abstract class DatabaseManipulator
     
     public function __construct($config) 
     {
-        $this->connection = \ntentan\atiaa\Driver::getConnection($config);
+        $this->connection = \ntentan\atiaa\Db::getConnection($config);
     }
     
     public function __get($name)
@@ -162,7 +163,7 @@ abstract class DatabaseManipulator
      */
     public static function create()
     {
-        $config = Config::get('default.db');
+        $config = Config::get('yentu:default.db');
         if($config['driver'] == '')
         {
             throw new exceptions\DatabaseManipulatorException("Please specify a database driver.");

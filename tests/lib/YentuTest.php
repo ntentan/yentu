@@ -28,6 +28,7 @@ namespace yentu\tests;
 
 use org\bovigo\vfs\vfsStream;
 use clearice\ClearIce;
+use ntentan\config\Config;
 
 error_reporting(E_ALL);
 
@@ -78,7 +79,7 @@ class YentuTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->pdo = null;
-        \yentu\Config::reset();
+        Config::reset();
     }
     
     public function assertSchemaExists($schema, $message = '')
