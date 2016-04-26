@@ -70,7 +70,7 @@ abstract class DatabaseManipulator
                 return $this->connection->query($query, $bind);
             }
         }
-        catch(\ntentan\atiaa\DatabaseDriverException $e)
+        catch(\ntentan\atiaa\exceptions\DatabaseDriverException $e)
         {
             throw new exceptions\DatabaseManipulatorException($e->getMessage());
         }

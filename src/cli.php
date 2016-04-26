@@ -222,7 +222,7 @@ try {
 } catch (\yentu\exceptions\CommandException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error! " . $e->getMessage() . "\n");
-} catch (\ntentan\atiaa\DatabaseDriverException $e) {
+} catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
     Yentu::reverseCommand($command);
