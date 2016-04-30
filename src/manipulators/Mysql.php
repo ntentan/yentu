@@ -96,16 +96,6 @@ class Mysql extends \yentu\DatabaseManipulator
         return ($schema === false || $schema == '' ? '' : "`{$schema}`.") . "`$name`";
     }
     
-    public function connect($params)
-    {
-        // Enforce the database name to be set as the default schema
-        if($params['dbname'] != '')
-        {
-            $this->defaultSchema = $params['dbname'];
-        }
-        parent::connect($params);
-    }
-    
     protected function _addAutoPrimaryKey($details)
     {
         $table = $this->getDescription()->getTable($details);

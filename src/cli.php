@@ -29,7 +29,7 @@ require __DIR__ . "/../src/globals.php";
 
 use clearice\ClearIce;
 use yentu\Yentu;
-use yentu\Config;
+use ntentan\config\Config;
 
 ClearIce::addCommands(
     array(
