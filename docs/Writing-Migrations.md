@@ -48,8 +48,9 @@ Finally, to execute this migration, you can execute the following command:
 
     $ php vendor/bin/yentu migrate
     
-Working with Columns
---------------------
+Adding with Columns
+-------------------
+
 
     
 
