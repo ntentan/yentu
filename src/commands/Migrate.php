@@ -37,7 +37,7 @@ use clearice\ClearIce;
  * The migrate command for the yentu database migration system. This class is
  * responsible for creating and updating items 
  */
-class Migrate implements \clearice\Command, \yentu\Reversible
+class Migrate implements \clearice\CommandInterface, \yentu\Reversible
 {
     private $driver;
     private $dryDriver;

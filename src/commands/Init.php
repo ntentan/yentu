@@ -25,7 +25,7 @@
 
 namespace yentu\commands;
 
-use clearice\Command;
+use clearice\CommandInterface;
 use yentu\Yentu;
 use clearice\ClearIce;
 use yentu\exceptions\CommandException;
@@ -36,7 +36,7 @@ use ntentan\config\Config;
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init implements Command
+class Init implements CommandInterface
 {
     private function getParams($options)
     {

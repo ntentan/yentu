@@ -4,7 +4,7 @@ namespace yentu\commands;
 use yentu\Yentu;
 use yentu\exceptions\CommandException;
 
-class Create implements \clearice\Command
+class Create implements \clearice\CommandInterface
 {
     public function run($options=array())
     {

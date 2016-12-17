@@ -7,7 +7,7 @@ use clearice\ClearIce;
 /**
  * 
  */
-class Status implements \clearice\Command
+class Status implements \clearice\CommandInterface
 {
     public function run($options=array())
     {

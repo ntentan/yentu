@@ -5,7 +5,7 @@ use yentu\DatabaseManipulator;
 use yentu\CodeWriter;
 use yentu\Yentu;
 
-class Import implements \clearice\Command, \yentu\Reversible
+class Import implements \clearice\CommandInterface, \yentu\Reversible
 {
     /**
      *
