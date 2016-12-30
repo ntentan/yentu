@@ -52,7 +52,7 @@ HEAD;
     
     protected function getTimestamp()
     {
-        return date('jS F, Y H:i:s');
+        return date('jS F, Y H:i:s T');
     }
 }
 

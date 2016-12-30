@@ -63,7 +63,7 @@ class Create implements \clearice\CommandInterface
         $this->checkName($name);
         $this->checkPermission();
         
-        $timestamp = date('YmdHis', time());
+        $timestamp = gmdate('YmdHis', time());
         $code = new \yentu\CodeWriter();
         $code->add('');
         $code->add('begin()');
