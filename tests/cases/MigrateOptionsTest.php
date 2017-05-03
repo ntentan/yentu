@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014 ekow.
@@ -27,46 +27,41 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
+use yentu\commands\Migrate;
 
-class MigrateOptionsTest extends \yentu\tests\YentuTest
-{
-    public function setUp()
-    {
+class MigrateOptionsTest extends \yentu\tests\YentuTest {
+
+    public function setUp() {
         $this->testDatabase = 'yentu_migration_test';
         parent::setup();
         $this->setupForMigration();
     }
-    
-    public function testMigration()
-    {
+
+    public function testMigration() {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        
-        $migrate = new \yentu\commands\Migrate();
+
+        $migrate = $this->container->resolve(Migrate::class);
         $migrate->run(array('no-foreign-keys' => true));
         $this->assertEquals(
-            file_get_contents("tests/streams/migrate_options_output_1.txt"), 
-            file_get_contents(vfsStream::url('home/output.txt'))
+                file_get_contents("tests/streams/migrate_options_output_1.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
-        
-        foreach($this->fkeys as $fkey)
-        {
+
+        foreach ($this->fkeys as $fkey) {
             $this->assertForeignKeyDoesntExist($fkey);
         }
- 
+
         file_put_contents(vfsStream::url("home/output.txt"), '');
-        
+
         $migrate->run(array('only-foreign-keys' => true));
         $this->assertEquals(
-            file_get_contents("tests/streams/migrate_options_output_2.txt"), 
-            file_get_contents(vfsStream::url('home/output.txt'))
-        );  
-        
-        foreach($this->fkeys as $fkey)
-        {
+                file_get_contents("tests/streams/migrate_options_output_2.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+        );
+
+        foreach ($this->fkeys as $fkey) {
             $this->assertForeignKeyExists($fkey);
-        }        
+        }
     }
-        
+
     private $fkeys = array(
         array("table" => "users", "name" => "users_branch_id_branches_branch_id_fk"),
         array("table" => "users", "name" => "users_department_id_departments_department_id_fk"),
@@ -91,7 +86,5 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest
         array("table" => "bank_branches", "name" => "branch_bank_id_fk"),
         array("table" => "api_keys", "name" => "api_keys_user_id_fkey")
     );
+
 }
-
-
-

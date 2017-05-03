@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2015 ekow.
@@ -26,27 +26,28 @@
 
 namespace yentu\tests\cases;
 
-
 use org\bovigo\vfs\vfsStream;
+use yentu\commands\Migrate;
 
-class ChangeTableNameTest extends \yentu\tests\YentuTest
-{
-    public function setup(){
+class ChangeTableNameTest extends \yentu\tests\YentuTest {
+
+    public function setup() {
         $this->testDatabase = 'yentu_change_name';
         parent::setup();
         $this->setupForMigration();
     }
-    
-    public function testNameChange(){
+
+    public function testNameChange() {
         copy('tests/migrations/12345678901234_some_table.php', vfsStream::url('home/yentu/migrations/12345678901234_some_table.php'));
-        $migrate = new \yentu\commands\Migrate();
-        $migrate->run(array());        
+        $migrate = $this->yentu->getContainer()->resolve(Migrate::class);
+        $migrate->run(array());
         $this->assertTableExists('some_table');
-        
+
         copy('tests/migrations/12345678901235_other_table.php', vfsStream::url('home/yentu/migrations/12345678901235_other_table.php'));
-        $migrate = new \yentu\commands\Migrate();
-        $migrate->run(array());        
+        $migrate = $this->yentu->getContainer()->resolve(Migrate::class);
+        $migrate->run(array());
         $this->assertTableExists('some_other_table');
         $this->assertTableDoesntExist('some_table');
     }
+
 }

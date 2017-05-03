@@ -39,14 +39,19 @@ use clearice\ClearIce;
  */
 class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
 
+    const FILTER_UNRUN = 'unrun';
+    const FILTER_LAST_SESSION = 'lastSession';
+    
     private $driver;
     private $dryDriver;
     private $defaultSchema = false;
     private $lastSession;
     private $currentPath;
-
-    const FILTER_UNRUN = 'unrun';
-    const FILTER_LAST_SESSION = 'lastSession';
+    private $yentu;
+    
+    public function __construct(Yentu $yentu) {
+        $this->yentu = $yentu;
+    }
 
     public function setupOptions($options, &$filter) {
         if (isset($options['no-foreign-keys'])) {
@@ -127,10 +132,10 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         $migrateCommand = $this;
 
         if ($options['dump-queries'] !== true) {
-            Yentu::greet();
+            $this->yentu->greet();
         }
 
-        $this->driver = ChangeLogger::wrap(DatabaseManipulator::create());
+        $this->driver = ChangeLogger::wrap($this->yentu->getManipulator(), $this->yentu);
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
         $this->driver->setDryRun($options['dry']);
 
@@ -141,11 +146,11 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
-        $migrationPaths = Yentu::getMigrationPathsInfo();
+        $migrationPaths = $this->yentu->getMigrationPathsInfo();
         foreach ($migrationPaths as $path) {
             $this->setDefaultSchema($path);
             $migrateVariables = $path['variables'];
-            $migrations = $this->filter(Yentu::getMigrations($path['home']), $filter);
+            $migrations = $this->filter($this->yentu->getMigrations($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
 
@@ -198,7 +203,7 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         $output = array();
         foreach ($input as $migration) {
             $run = $this->driver->query(
-                    "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", array($migration['migration'], $migration['timestamp'], $this->defaultSchema)
+                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", array($migration['migration'], $migration['timestamp'], $this->defaultSchema)
             );
 
             if ($run[0]['number_run'] == 0) {

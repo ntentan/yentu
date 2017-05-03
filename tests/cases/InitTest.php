@@ -27,6 +27,7 @@ namespace yentu\tests\cases;
 
 use \org\bovigo\vfs\vfsStream;
 use clearice\ClearIce;
+use yentu\commands\Init;
 
 class InitTest extends \yentu\tests\YentuTest
 {
@@ -41,7 +42,7 @@ class InitTest extends \yentu\tests\YentuTest
     
     public function testParameters()
     {
-        $initCommand = new \yentu\commands\Init();
+        $initCommand = $this->container->resolve(Init::class);
         
         ob_start();
         $initCommand->run(
@@ -116,8 +117,8 @@ class InitTest extends \yentu\tests\YentuTest
             );
         }
         
-        $initCommand = new \yentu\commands\Init;
-        \yentu\Yentu::setDefaultHome(vfsStream::url('home/yentu'));
+        $initCommand = $this->container->resolve(Init::class);
+        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
         $initCommand->run(array(
             'interractive' => true

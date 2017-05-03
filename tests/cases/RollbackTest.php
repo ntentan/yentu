@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014 ekow.
@@ -25,19 +25,21 @@
  */
 
 namespace yentu\tests\cases;
-use ntentan\config\Config;
 
-class RollbackTest extends \yentu\tests\YentuTest
-{
-    public function setUp()
-    {
+use ntentan\config\Config;
+use yentu\commands\Init;
+use yentu\commands\Rollback;
+
+class RollbackTest extends \yentu\tests\YentuTest {
+
+    public function setUp() {
         $this->testDatabase = 'yentu_rollback_test';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
-        $init = new \yentu\commands\Init();
+        $init = $this->container->resolve(Init::class);
         $init->createConfigFile(
             array(
                 'driver' => $GLOBALS['DRIVER'],
@@ -48,26 +50,24 @@ class RollbackTest extends \yentu\tests\YentuTest
                 'file' => $GLOBALS['DB_FILE']
             )
         );
-        Config::readPath(\yentu\Yentu::getPath('config'), 'yentu');
+        Config::readPath($this->yentu->getPath('config'), 'yentu');
     }
-    
-    public function testRollback()
-    {
-        foreach($this->tables as $table)
-        {
-            $this->assertTableExists($table);     
+
+    public function testRollback() {
+        foreach ($this->tables as $table) {
+            $this->assertTableExists($table);
         }
-        
-        $rollback = new \yentu\commands\Rollback();
+
+        $rollback = $this->container->resolve(Rollback::class);
         $rollback->run(array());
-        
-        foreach($this->tables as $table)
-        {
-            if($table == 'yentu_history') continue;
-            $this->assertTableDoesntExist($table);            
+
+        foreach ($this->tables as $table) {
+            if ($table == 'yentu_history')
+                continue;
+            $this->assertTableDoesntExist($table);
         }
     }
-    
+
     private $tables = array(
         'api_keys',
         'audit_trail',
@@ -99,5 +99,5 @@ class RollbackTest extends \yentu\tests\YentuTest
         'users',
         'yentu_history'
     );
-}
 
+}

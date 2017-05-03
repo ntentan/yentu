@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  * The MIT License
  *
  * Copyright 2014 James Ekow Abaka Ainooson
@@ -36,12 +37,18 @@ use ntentan\config\Config;
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init implements CommandInterface
-{
-    private function getParams($options)
-    {
-        if(isset($options['interractive']))
-        {   
+class Init implements CommandInterface {
+    
+    private $yentu;
+    private $container;
+
+    public function __construct(Yentu $yentu) {
+        $this->yentu = $yentu;
+        $this->container = $yentu->getContainer();
+    }
+
+    private function getParams($options) {
+        if (isset($options['interractive'])) {
             $params['driver'] = ClearIce::getResponse('Database type', array(
                     'required' => true,
                     'answers' => array(
@@ -51,15 +58,12 @@ class Init implements CommandInterface
                     )
                 )
             );
-            
-            if($params['driver'] === 'sqlite')
-            {
-                $params['file'] = ClearIce::getResponse('Database file',[
+
+            if ($params['driver'] === 'sqlite') {
+                $params['file'] = ClearIce::getResponse('Database file', [
                     'required' => true
                 ]);
-            }
-            else
-            {
+            } else {
                 $params['host'] = ClearIce::getResponse('Database host', array(
                         'required' => true,
                         'default' => 'localhost'
@@ -76,31 +80,27 @@ class Init implements CommandInterface
                 $params['user'] = ClearIce::getResponse('Database user name', array(
                         'required' => true
                     )
-                );            
+                );
 
                 $params['password'] = ClearIce::getResponse('Database password', array(
                         'required' => FALSE
                     )
                 );
             }
-        }
-        else
-        {
+        } else {
             $params = $options;
         }
         return $params;
     }
-    
-    public function createConfigFile($params)
-    {
+
+    public function createConfigFile($params) {
         $params = \yentu\Parameters::wrap(
-            $params,
-            ['port', 'file', 'host', 'dbname', 'user', 'password']
+            $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
         );
-        mkdir(Yentu::getPath(''));
-        mkdir(Yentu::getPath('config'));
-        mkdir(Yentu::getPath('migrations'));
-        
+        mkdir($this->yentu->getPath(''));
+        mkdir($this->yentu->getPath('config'));
+        mkdir($this->yentu->getPath('migrations'));
+
         $configFile = new \yentu\CodeWriter();
         $configFile->add('return [');
         $configFile->addIndent();
@@ -117,53 +117,45 @@ class Init implements CommandInterface
         $configFile->add(']');
         $configFile->decreaseIndent();
         $configFile->add('];');
-        
-        file_put_contents(Yentu::getPath("config/default.conf.php"), $configFile);        
+
+        file_put_contents($this->yentu->getPath("config/default.conf.php"), $configFile);
     }
-    
-    public function run($options=array())
-    {
-        Yentu::greet();
-        if(file_exists(Yentu::getPath('')))
-        {
+
+    public function run($options = array()) {
+        $this->yentu->greet();
+        if (file_exists($this->yentu->getPath(''))) {
             throw new CommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
-        }
-        else if(!is_writable(dirname(Yentu::getPath(''))))
-        {
+        } else if (!is_writable(dirname($this->yentu->getPath('')))) {
             throw new CommandException("Your current directory is not writable.");
         }
-        
+
         $params = $this->getParams($options);
-        
-        if(count($params) == 0 && defined('STDOUT'))
-        {
+
+        if (count($params) == 0 && defined('STDOUT')) {
             global $argv;
             throw new CommandException(
-                "You didn't provide any parameters for initialization. Please execute "
-                . "`{$argv[0]} init -i` to initialize yentu interractively. "
-                . "You can also try `{$argv[0]} init --help` for more information."
+            "You didn't provide any parameters for initialization. Please execute "
+            . "`{$argv[0]} init -i` to initialize yentu interractively. "
+            . "You can also try `{$argv[0]} init --help` for more information."
             );
         }
-        
-        $this->createConfigFile($params); 
-        Config::readPath(Yentu::getPath('config'), 'yentu');        
-        $db = \yentu\DatabaseManipulator::create($params);
-        
-        if($db->getAssertor()->doesTableExist('yentu_history'))
-        {
+
+        $this->createConfigFile($params);
+        Config::readPath($this->yentu->getPath('config'), 'yentu');
+        $db = $this->yentu->getManipulator();
+
+        if ($db->getAssertor()->doesTableExist('yentu_history')) {
             throw new CommandException("Could not initialize yentu. Your database has already been initialized with yentu.");
         }
-        
+
         $db->createHistory();
         $db->disconnect();
-                
+
         ClearIce::output("Yentu successfully initialized.\n");
     }
 
-    public function reverse()
-    {
+    public function reverse() {
         
     }
 
 }
-

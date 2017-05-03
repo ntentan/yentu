@@ -11,11 +11,16 @@ class Rollback implements \clearice\CommandInterface
 {
     private $schemaCondition;
     private $schemaConditionData = [];
+    private $yentu;
+    
+    public function __construct(Yentu $yentu) {
+        $this->yentu = $yentu;
+    }
     
     public function run($options=array()) 
     {
-        Yentu::greet();
-        $db = DatabaseManipulator::create();
+        $this->yentu->greet();
+        $db = $this->yentu->getManipulator();
         DatabaseItem::setDriver($db);
         ChangeReverser::setDriver($db);
         $previousMigration = '';

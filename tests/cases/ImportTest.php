@@ -27,6 +27,7 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
+use yentu\commands\Import;
 
 class ImportTest extends \yentu\tests\YentuTest
 {
@@ -44,7 +45,7 @@ class ImportTest extends \yentu\tests\YentuTest
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         
-        $import = new \yentu\commands\Import();
+        $import = $this->container->resolve(Import::class);
         $import->setCodeWriter($codeWriter);
         $description = $import->run(array());
         $newVersion = $import->getNewVersion();
@@ -77,7 +78,7 @@ class ImportTest extends \yentu\tests\YentuTest
         
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        $import = new \yentu\commands\Import();
+        $import = $this->container->resolve(Import::class);
         $import->setCodeWriter($codeWriter);
         $import->run(array());
         $newVersion = $import->getNewVersion();
@@ -95,7 +96,7 @@ class ImportTest extends \yentu\tests\YentuTest
         
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        $import = new \yentu\commands\Import();
+        $import = $this->container->resolve(Import::class);
         $import->setCodeWriter($codeWriter);
         $import->run(array());
         $newVersion = $import->getNewVersion();
@@ -129,7 +130,7 @@ class ImportTest extends \yentu\tests\YentuTest
         {
             
         }
-        $import = new \yentu\commands\Import();
+        $import = $this->container->resolve(Import::class);
         $import->run(array());  
         $this->assertTableExists('yentu_history');
     } 

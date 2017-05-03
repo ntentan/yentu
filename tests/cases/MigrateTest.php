@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014 ekow.
@@ -27,58 +27,52 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
+use yentu\commands\Migrate;
 
-class MigrateTest extends \yentu\tests\YentuTest
-{
+class MigrateTest extends \yentu\tests\YentuTest {
 
-    public function setup()
-    {
+    public function setup() {
         $this->testDatabase = 'yentu_migration_test';
-        parent::setup();        
+        parent::setup();
         $this->setupForMigration();
     }
-    
-    public function testMigration()
-    {
+
+    public function testMigration() {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = new \yentu\commands\Migrate();
+        $migrate = $this->container->resolve(Migrate::class);
         $migrate->run(array());
-        
+
         $this->assertEquals(
-            file_get_contents("tests/streams/migrate_output.txt"), 
-            file_get_contents(vfsStream::url('home/output.txt'))
+                file_get_contents("tests/streams/migrate_output.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
-        
-        foreach($this->tables as $table)
-        {
-            $this->assertTableExists($table);        
+
+        foreach ($this->tables as $table) {
+            $this->assertTableExists($table);
         }
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
-        $migrate = new \yentu\commands\Migrate();
+        $migrate = $this->container->resolve(Migrate::class);
         $this->assertColumnNullable('role_name', 'roles');
         $this->assertColumnExists('user_name', 'users');
         $migrate->run(array());
-        $this->assertColumnNotNullable('role_name', 'roles');        
+        $this->assertColumnNotNullable('role_name', 'roles');
         $this->assertColumnExists('username', 'users');
     }
-    
-    
-    public function testSchemaMigration()
-    {
+
+    public function testSchemaMigration() {
         $this->skipSchemaTests();
-        copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));        
-        $migrate = new \yentu\commands\Migrate();
+        copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));
+        $migrate = $this->container->resolve(Migrate::class);
         $migrate->run(array());
         $this->assertSchemaExists('schema');
 
-        foreach($this->tables as $table)
-        {
-            if($table == 'yentu_history') return;        
+        foreach ($this->tables as $table) {
+            if ($table == 'yentu_history')
+                return;
             $schema = array_search($table, array('cities', 'locations', 'countries', 'regions', 'countries_view')) === false ? 'schema' : 'geo';
-            $this->assertTableExists(array('table'=>$table, 'schema' => $schema));
+            $this->assertTableExists(array('table' => $table, 'schema' => $schema));
         }
     }
-    
+
     private $tables = array(
         'api_keys',
         'audit_trail',
@@ -112,5 +106,5 @@ class MigrateTest extends \yentu\tests\YentuTest
         'users_view',
         'countries_view'
     );
-}
 
+}
