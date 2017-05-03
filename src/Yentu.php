@@ -101,7 +101,7 @@ class Yentu {
         return array_merge(
                 array(
             array(
-                'home' => Yentu::getPath('migrations'),
+                'home' => $this->getPath('migrations'),
                 'variables' => $variables
             )
                 ), $otherMigrations
@@ -256,7 +256,7 @@ class Yentu {
      * Display the greeting for the CLI user interface.
      */
     public function greet() {
-        $version = Yentu::getVersion();
+        $version = $this->getVersion();
         $welcome = <<<WELCOME
 Yentu Database Migration Tool
 Version $version
