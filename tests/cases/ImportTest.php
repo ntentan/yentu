@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2014 ekow.
@@ -29,53 +29,49 @@ namespace yentu\tests\cases;
 use org\bovigo\vfs\vfsStream;
 use yentu\commands\Import;
 
-class ImportTest extends \yentu\tests\YentuTest
-{
-    public function setUp()
-    {
+class ImportTest extends \yentu\tests\YentuTest {
+
+    public function setUp() {
         $this->testDatabase = 'yentu_import_test';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
         $this->initYentu($GLOBALS['DB_NAME']);
     }
-    
-    public function testImport()
-    {
+
+    public function testImport() {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/system.sql"));
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        
+
         $import = $this->container->resolve(Import::class);
         $import->setCodeWriter($codeWriter);
         $description = $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
-            vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
+                vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
         );
-        
+
         require "tests/expected/{$GLOBALS['DRIVER']}/import.php";
         $descriptionArray = $description->getArray();
-        
+
         unset($descriptionArray['tables']['yentu_history']);
         $this->assertEquals(
-            $expectedDescription, 
-            [
-                'schemata' => $descriptionArray['schemata'],
-                'tables' => $descriptionArray['tables'],
-                'views' => $descriptionArray['views']
-            ]);
+                $expectedDescription, [
+            'schemata' => $descriptionArray['schemata'],
+            'tables' => $descriptionArray['tables'],
+            'views' => $descriptionArray['views']
+        ]);
     }
-    
-    public function testSchemaImport()
-    {
+
+    public function testSchemaImport() {
         $this->skipSchemaTests();
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->pdo->query('DROP SCHEMA IF EXISTS hr');
         $this->pdo->query('DROP SCHEMA IF EXISTS common');
-        
+
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_schema.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
-        
+
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = $this->container->resolve(Import::class);
@@ -83,17 +79,16 @@ class ImportTest extends \yentu\tests\YentuTest
         $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
-            vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
-        );   
+                vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
+        );
         $this->assertSchemaExists('common');
         $this->assertSchemaExists('hr');
     }
-    
-    public function testViewImport()
-    {
+
+    public function testViewImport() {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_views.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
-        
+
         $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = $this->container->resolve(Import::class);
@@ -101,45 +96,42 @@ class ImportTest extends \yentu\tests\YentuTest
         $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
-            vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
-        );   
-            
+                vfsStream::url("home/yentu/migrations/{$newVersion}_import.php")
+        );
+
         $this->assertTableExists('employees_view');
         $this->assertTableExists('disabled_employees_view');
-    }    
-        
+    }
+
     /**
      * @expectedException \yentu\exceptions\CommandException
      */
-    public function testImportNonEmptyMigrations()
-    {
+    public function testImportNonEmptyMigrations() {
         file_put_contents(vfsStream::url('home/yentu/migrations/1234568901234_existing.php'), 'nothing');
-        $import = new \yentu\commands\Import();
-        $import->run(array());        
+        $import = $this->container->resolve(Import::class);
+        $import->run(array());
     }
-    
-    public function testDatabaseNotExisting()
-    {
+
+    public function testDatabaseNotExisting() {
         $this->skipSchemaTests();
-        $this->connect($GLOBALS['DB_FULL_DSN']);   
-        try{
+        $this->connect($GLOBALS['DB_FULL_DSN']);
+        try {
             $this->pdo->query('DROP TABLE IF EXISTS yentu_history');
             $this->pdo->query('DROP SEQUENCE IF EXISTS yentu_history_id_seq');
-        }
-        catch(\PDOException $e)
-        {
+        } catch (\PDOException $e) {
             
         }
         $import = $this->container->resolve(Import::class);
-        $import->run(array());  
+        $import->run(array());
         $this->assertTableExists('yentu_history');
-    } 
+    }
+
 }
 
-class NegativeMockAssertor
-{
-    public function __call($name, $arguments)
-    {
+class NegativeMockAssertor {
+
+    public function __call($name, $arguments) {
         return false;
     }
+
 }
