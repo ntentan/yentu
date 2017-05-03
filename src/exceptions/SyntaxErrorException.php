@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2015 James Ekow Abaka Ainooson.
@@ -32,20 +32,18 @@ use yentu\Yentu;
  * An exception that is thrown when a sytax error is found in a migration script.
  * 
  */
-class SyntaxErrorException extends YentuException
-{
-    public function __construct($message)
-    {
+class SyntaxErrorException extends YentuException {
+
+    public function __construct($message) {
         global $migrateCommand;
-        
+
         parent::__construct($message);
-        foreach($this->getTrace() as $item)
-        {
-            if(realpath($migrateCommand->getCurrentPath()['home']) === dirname($item['file']))
-            {
+        foreach ($this->getTrace() as $item) {
+            if (realpath($migrateCommand->getCurrentPath()['home']) === dirname($item['file'])) {
                 $this->message .= " on line {$item['line']} of {$item['file']}";
                 break;
             }
         }
     }
+
 }

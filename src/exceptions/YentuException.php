@@ -33,16 +33,16 @@ use yentu\Yentu;
  */
 class YentuException extends \Exception {
 
-    public function __construct($yentu, $message) {
+    public function __construct($message) {
         parent::__construct($message);
         foreach ($this->getTrace() as $item) {
             if (!isset($item['file'])) {
                 continue;
             }
-            if (realpath($yentu->getPath('migrations')) === dirname($item['file'])) {
+            /*if (realpath($yentu->getPath('migrations')) === dirname($item['file'])) {
                 $this->message .= ". Exception was thrown by action on line {$item['line']} of {$item['file']}";
                 break;
-            }
+            }*/
         }
     }
 
