@@ -206,15 +206,19 @@ if (isset($options['verbose'])) {
 }
 
 try {
-    if (isset($options['__command__'])) {
+    $container = new ntentan\panie\Container();
+    $container->bind(Yentu::class)->to(Yentu::class)->asSingleton();
+    $yentu = $container->resolve(Yentu::class);
+    
+    if (isset($options['__command__'])) {        
         if (isset($options['home'])) {
-            Yentu::setDefaultHome($options['home']);
+            $yentu->setDefaultHome($options['home']);
         }
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
-        Config::readPath(Yentu::getPath('config'), 'yentu');
-        $command = new $class();
+        Config::readPath($yentu->getPath('config'), 'yentu');
+        $command = $container->resolve($class);
         $command->run($options);
     } else {
         ClearIce::output(ClearIce::getHelpMessage());
@@ -225,19 +229,19 @@ try {
 } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
-    Yentu::reverseCommand($command);
+    $yentu->reverseCommand($command);
 } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
-    Yentu::reverseCommand($command);
+    $yentu->reverseCommand($command);
 } catch (\ntentan\atiaa\DescriptionException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
-    Yentu::reverseCommand($command);
+    $yentu->reverseCommand($command);
 } catch (\yentu\exceptions\SyntaxErrorException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Error found in syntax: {$e->getMessage()}\n");
-    Yentu::reverseCommand($command);
+    $yentu->reverseCommand($command);
 } catch (\PDOException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to connect to database: {$e->getMessage()}\n");
