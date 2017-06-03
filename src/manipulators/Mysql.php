@@ -91,10 +91,10 @@ class Mysql extends \yentu\DatabaseManipulator {
 
         if (count($table['primary_key']) > 0) {
             $this->query(
-                    sprintf('ALTER TABLE %s MODIFY `%s` %s %s AUTO_INCREMENT', $this->buildTableName($details['table'], $details['schema']), $details['column'], $this->convertTypes(
-                                    $column['type'], self::CONVERT_TO_DRIVER, isset($column['length']) ? $column['length'] : 255
-                            ), $column['nulls'] === false ? 'NOT NULL' : ''
-                    )
+                sprintf('ALTER TABLE %s MODIFY `%s` %s %s AUTO_INCREMENT', $this->buildTableName($details['table'], $details['schema']), $details['column'], $this->convertTypes(
+                        $column['type'], self::CONVERT_TO_DRIVER, isset($column['length']) ? $column['length'] : 255
+                    ), $column['nulls'] === false ? 'NOT NULL' : ''
+                )
             );
         } else {
             $this->autoIncrementPending = $details;
@@ -105,10 +105,10 @@ class Mysql extends \yentu\DatabaseManipulator {
         $tableName = $this->buildTableName($details['table'], $details['schema']);
 
         $this->query(
-                sprintf('ALTER TABLE %s ADD COLUMN `%s` %s %s', $tableName, $details['name'], $this->convertTypes(
-                                $details['type'], self::CONVERT_TO_DRIVER, $details['length'] == '' ? 255 : $details['length']
-                        ), $details['nulls'] === false ? 'NOT NULL' : ''
-                )
+            sprintf('ALTER TABLE %s ADD COLUMN `%s` %s %s', $tableName, $details['name'], $this->convertTypes(
+                    $details['type'], self::CONVERT_TO_DRIVER, $details['length'] == '' ? 255 : $details['length']
+                ), $details['nulls'] === false ? 'NOT NULL' : ''
+            )
         );
 
         if (isset($this->placeholders[$tableName])) {
@@ -119,24 +119,24 @@ class Mysql extends \yentu\DatabaseManipulator {
 
     protected function _addForeignKey($details) {
         $this->query(
-                sprintf(
-                        'ALTER TABLE %s ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s (`%s`) ON DELETE %s ON UPDATE %s', $this->buildTableName($details['table'], $details['schema']), $details['name'], implode('`,`', $details['columns']), $this->buildTableName($details['foreign_table'], $details['foreign_schema']), implode('","', $details['foreign_columns']), $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'], $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
-                )
+            sprintf(
+                'ALTER TABLE %s ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s (`%s`) ON DELETE %s ON UPDATE %s', $this->buildTableName($details['table'], $details['schema']), $details['name'], implode('`,`', $details['columns']), $this->buildTableName($details['foreign_table'], $details['foreign_schema']), implode('","', $details['foreign_columns']), $details['on_delete'] == '' ? 'NO ACTION' : $details['on_delete'], $details['on_update'] == '' ? 'NO ACTION' : $details['on_update']
+            )
         );
     }
 
     protected function _addIndex($details) {
         $this->query(
-                sprintf(
-                        'CREATE %s INDEX `%s` ON %s (`%s`)', $details['unique'] ? 'UNIQUE' : '', $details['name'], $this->buildTableName($details['table'], $details['schema']), implode('`, `', $details['columns'])
-                )
+            sprintf(
+                'CREATE %s INDEX `%s` ON %s (`%s`)', $details['unique'] ? 'UNIQUE' : '', $details['name'], $this->buildTableName($details['table'], $details['schema']), implode('`, `', $details['columns'])
+            )
         );
     }
 
     protected function _addPrimaryKey($details) {
         $this->query(
                 sprintf('ALTER TABLE %s ADD PRIMARY KEY (`%s`)', $this->buildTableName($details['table'], $details['schema']), implode('`,`', $details['columns'])
-                )
+            )
         );
         if (is_array($this->autoIncrementPending)) {
             $this->_addAutoPrimaryKey($this->autoIncrementPending);
@@ -173,12 +173,12 @@ class Mysql extends \yentu\DatabaseManipulator {
 
     private function changeColumn($details) {
         $this->query(
-                sprintf('ALTER TABLE %s CHANGE `%s` `%s` %s %s %s', $this->buildTableName($details['to']['table'], $details['to']['schema']), $details['from']['name'], $details['to']['name'], $this->convertTypes(
-                                $details['to']['type'], self::CONVERT_TO_DRIVER, $details['to']['length'] == '' ? 255 : $details['to']['length']
-                        ), $details['to']['nulls'] === false ? 'NOT NULL' : 'NULL', $details['to']['default'] === null ?
-                                ($details['to']['nulls'] === false ? '' : 'DEFAULT NULL') :
-                                "DEFAULT {$details['to']['default']}"
-                )
+            sprintf('ALTER TABLE %s CHANGE `%s` `%s` %s %s %s', $this->buildTableName($details['to']['table'], $details['to']['schema']), $details['from']['name'], $details['to']['name'], $this->convertTypes(
+                    $details['to']['type'], self::CONVERT_TO_DRIVER, $details['to']['length'] == '' ? 255 : $details['to']['length']
+                ), $details['to']['nulls'] === false ? 'NOT NULL' : 'NULL', $details['to']['default'] === null ?
+                ($details['to']['nulls'] === false ? '' : 'DEFAULT NULL') :
+                "DEFAULT {$details['to']['default']}"
+            )
         );
     }
 
@@ -200,9 +200,9 @@ class Mysql extends \yentu\DatabaseManipulator {
 
     protected function _changeTableName($details) {
         $this->query(
-                sprintf(
-                        "RENAME TABLE %s TO %s", $this->buildTableName($details['from']['name'], $details['from']['schema']), $this->buildTableName($details['to']['name'], $details['to']['schema']
-                        )
+            sprintf(
+                "RENAME TABLE %s TO %s", $this->buildTableName($details['from']['name'], $details['from']['schema']), $this->buildTableName($details['to']['name'], $details['to']['schema']
+            )
         ));
     }
 
@@ -211,10 +211,10 @@ class Mysql extends \yentu\DatabaseManipulator {
         $column = ($description['tables'][$details['table']]['columns'][$details['column']]);
 
         $this->query(
-                sprintf('ALTER TABLE %s MODIFY `%s` %s %s', $this->buildTableName($details['table'], $details['schema']), $details['column'], $this->convertTypes(
-                                $column['type'], self::CONVERT_TO_DRIVER, $column['length'] == '' ? 255 : $column['length']
-                        ), $column['nulls'] === false ? 'NOT NULL' : ''
-                )
+            sprintf('ALTER TABLE %s MODIFY `%s` %s %s', $this->buildTableName($details['table'], $details['schema']), $details['column'], $this->convertTypes(
+                    $column['type'], self::CONVERT_TO_DRIVER, $column['length'] == '' ? 255 : $column['length']
+                ), $column['nulls'] === false ? 'NOT NULL' : ''
+            )
         );
     }
 
@@ -222,18 +222,18 @@ class Mysql extends \yentu\DatabaseManipulator {
         $description = $this->getDescription();
         if (count($description['tables'][$details['table']]['columns']) === 0) {
             $this->_addColumn(
-                    Parameters::wrap(array(
-                        'table' => $details['table'],
-                        'name' => '__yentu_placeholder_col',
-                        'type' => 'integer'
-                            ), ['schema', 'length', 'nulls']
-                    )
+                Parameters::wrap(array(
+                    'table' => $details['table'],
+                    'name' => '__yentu_placeholder_col',
+                    'type' => 'integer'
+                    ), ['schema', 'length', 'nulls']
+                )
             );
         }
         $this->query(
-                sprintf(
-                        'ALTER TABLE %s DROP COLUMN `%s`', $this->buildTableName($details['table'], $details['schema']), $details['name']
-                )
+            sprintf(
+                'ALTER TABLE %s DROP COLUMN `%s`', $this->buildTableName($details['table'], $details['schema']), $details['name']
+            )
         );
     }
 

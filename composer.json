@@ -18,7 +18,7 @@
         "ekowabaka/clearice": "1.*",
         "php" : ">=5.5.0",
         "ntentan/atiaa": "dev-master",
-        "ntentan/config": "0.*",
+        "ntentan/config": "dev-master",
         "sebastian/version": "1.*"
     },
     "require-dev" : {
