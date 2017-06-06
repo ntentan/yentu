@@ -217,7 +217,6 @@ try {
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
-        Config::readPath($yentu->getPath('config'), 'yentu');
         $command = $container->resolve($class);
         $command->run($options);
     } else {

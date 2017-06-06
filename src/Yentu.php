@@ -45,6 +45,8 @@ class Yentu {
     private $home = './yentu';
     
     private $container;
+    
+    private $config;
 
     /**
      * Current version of yentu.
@@ -52,8 +54,10 @@ class Yentu {
      */
     const VERSION = '0.1.0';
     
-    public function __construct(Container $container) {
+    public function __construct(Container $container, Config $config) {
         $this->container = $container;
+        $this->config = $config;
+        $this->config->readPath('config');
     }
 
     /**
@@ -78,7 +82,7 @@ class Yentu {
     }
     
     public function getManipulator() {
-        $config = Config::get('yentu:default.db');
+        $config = $this->config->get('db');
         if ($config['driver'] == '') {
             throw new exceptions\DatabaseManipulatorException("Please specify a database driver.");
         }
@@ -95,16 +99,16 @@ class Yentu {
      * @return array
      */
     public function getMigrationPathsInfo() {
-        $variables = Config::get('default.variables', []);
-        $otherMigrations = Config::get('default.other_migrations', []);
+        $variables = $this->config->get('default.variables', []);
+        $otherMigrations = $this->config->get('default.other_migrations', []);
 
         return array_merge(
-                array(
             array(
-                'home' => $this->getPath('migrations'),
-                'variables' => $variables
-            )
-                ), $otherMigrations
+                array(
+                    'home' => $this->getPath('migrations'),
+                    'variables' => $variables
+                )
+            ), $otherMigrations
         );
     }
 
