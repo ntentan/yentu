@@ -236,7 +236,7 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         ClearIce::output("Attempting to reverse all changes ... ");
         if ($this->getChanges() > 0) {
             ClearIce::pushOutputLevel(0);
-            $rollback = new \yentu\commands\Rollback();
+            $rollback = $this->yentu->getContainer()->resolve(\yentu\commands\Rollback::class);
             $rollback->run(array());
             ClearIce::popOutputLevel();
         }
