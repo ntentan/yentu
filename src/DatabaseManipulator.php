@@ -136,7 +136,7 @@ abstract class DatabaseManipulator {
     }
 
     protected function _executeQuery($details) {
-        $this->query($details['query'], $details['bind']);
+        $this->query($details['query'], $details['bind'] ?? []);
     }
 
     protected function _reverseQuery($details) {
