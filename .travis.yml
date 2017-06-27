@@ -1,8 +1,8 @@
-sudo: false
 language: php
+sudo: false
+dist: trusty
 php:
- - "5.5"
- - "5.6"
+ - "7"
  - "hhvm"
 env:
  - YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_SKIP_SCHEMAS=yes YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost'
@@ -16,11 +16,11 @@ matrix:
   - php: "hhvm"
   
  include:
-  - php: "7"
+  - php: "7.1"
     env: YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_SKIP_SCHEMAS=yes YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
-  - php: "7"
+  - php: "7.1"
     env: YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost' COVERAGE=yes
-  - php: "7"
+  - php: "7.1"
     env: YENTU_DRIVER=sqlite YENTU_FILE=sqlite.db YENTU_SKIP_SCHEMAS=yes YENTU_BASE_DSN='sqlite:sqlite.db' COVERAGE=yes
  exclude:
   - php: "hhvm"
