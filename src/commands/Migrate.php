@@ -153,7 +153,7 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
             $migrations = $this->filter($this->yentu->getMigrations($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
-
+            
             foreach ($migrations as $migration) {
                 $this->countOperations("{$path['home']}/{$migration['file']}");
                 $this->driver->setVersion($migration['timestamp']);
@@ -203,7 +203,8 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         $output = array();
         foreach ($input as $migration) {
             $run = $this->driver->query(
-                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", array($migration['migration'], $migration['timestamp'], $this->defaultSchema)
+                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", 
+                array($migration['migration'], $migration['timestamp'], (string)$this->defaultSchema)
             );
 
             if ($run[0]['number_run'] == 0) {

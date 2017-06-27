@@ -50,7 +50,7 @@ class RollbackTest extends \yentu\tests\YentuTest {
                 'file' => $GLOBALS['DB_FILE']
             )
         );
-        Config::readPath($this->yentu->getPath('config'), 'yentu');
+        $this->yentu->getConfig()->readPath($this->yentu->getPath('config/default.conf.php'));
     }
 
     public function testRollback() {

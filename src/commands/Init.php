@@ -123,10 +123,11 @@ class Init implements CommandInterface {
 
     public function run($options = array()) {
         $this->yentu->greet();
-        if (file_exists($this->yentu->getPath(''))) {
+        $home = $this->yentu->getPath('');
+        if (file_exists($home)) {
             throw new CommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
-        } else if (!is_writable(dirname($this->yentu->getPath('')))) {
-            throw new CommandException("Your current directory is not writable.");
+        } else if (!is_writable(dirname($home))) {
+            throw new CommandException("Your home directory ($home) could not be created.");
         }
 
         $params = $this->getParams($options);
@@ -141,7 +142,7 @@ class Init implements CommandInterface {
         }
 
         $this->createConfigFile($params);
-        Config::readPath($this->yentu->getPath('config'), 'yentu');
+        $this->yentu->getConfig()->readPath($this->yentu->getPath('config/default.conf.php'));
         $db = $this->yentu->getManipulator();
 
         if ($db->getAssertor()->doesTableExist('yentu_history')) {

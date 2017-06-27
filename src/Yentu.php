@@ -29,8 +29,6 @@ namespace yentu;
 use clearice\ClearIce;
 use ntentan\config\Config;
 use ntentan\panie\Container;
-use ntentan\atiaa\Driver;
-use ntentan\atiaa\DbContext;
 
 /**
  * Utility class for yentu related functions.
@@ -57,7 +55,6 @@ class Yentu {
     public function __construct(Container $container, Config $config) {
         $this->container = $container;
         $this->config = $config;
-        $this->config->readPath('config');
     }
 
     /**
@@ -254,6 +251,10 @@ class Yentu {
         if ($command instanceof \yentu\Reversible) {
             $command->reverse();
         }
+    }
+    
+    public function getConfig() {
+        return $this->config;
     }
 
     /**

@@ -47,10 +47,16 @@ class YentuTest extends \PHPUnit_Framework_TestCase {
 
     public function setup() {
         require_once "src/globals.php";
-
+        
+        $this->setupStreams();
         ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);
         $container = new \ntentan\panie\Container();
-        $container->bind(Yentu::class)->to(Yentu::class)->asSingleton();
+        $container->bind(Config::class)->to(Config::class)->asSingleton();
+        $container->bind(Yentu::class)->to(function($container){
+            $yentu = new Yentu($container, $container->resolve(Config::class));
+            $yentu->setDefaultHome(vfsStream::url('home/yentu'));
+            return $yentu;
+        })->asSingleton();
         $this->yentu = $container->resolve(Yentu::class);
         $this->container = $container;
 
@@ -81,7 +87,6 @@ class YentuTest extends \PHPUnit_Framework_TestCase {
 
     public function tearDown() {
         $this->pdo = null;
-        Config::reset();
     }
 
     public function assertSchemaExists($schema, $message = '') {
@@ -161,13 +166,11 @@ class YentuTest extends \PHPUnit_Framework_TestCase {
 
     protected function setupStreams() {
         vfsStream::setup('home');
-        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
         \clearice\ClearIce::setStreamUrl('output', vfsStream::url('home/output.txt'));
     }
 
     protected function initYentu($name) {
         $init = new \yentu\commands\Init($this->yentu);
-        $this->setupStreams();
         $init->run(
             array(
                 'driver' => $GLOBALS['DRIVER'],
