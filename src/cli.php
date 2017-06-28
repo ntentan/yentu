@@ -208,16 +208,13 @@ if (isset($options['verbose'])) {
 try {
     $container = new ntentan\panie\Container();
     $container->bind(Yentu::class)->to(Yentu::class)->asSingleton();
-    $container->bind(Config::class)->to(function(){
-        $config = new Config();
-        $config->readPath("$home/config");
-    });
     $yentu = $container->resolve(Yentu::class);
     
     if (isset($options['__command__'])) {      
         if (isset($options['home'])) {
             $yentu->setDefaultHome($options['home']);
         }
+        $yentu->getConfig()->readPath($yentu->getPath("config/default.conf.php"));
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
