@@ -29,7 +29,6 @@ require __DIR__ . "/../src/globals.php";
 
 use clearice\ClearIce;
 use yentu\Yentu;
-use ntentan\config\Config;
 
 ClearIce::addCommands(
     array(
@@ -175,7 +174,7 @@ ClearIce::addOptions(
     array(
         'short' => 'y',
         'long' => 'home',
-        'help' => 'specifies where the yentu configurations are found',
+        'help' => 'specifies where the yentu configurations and migrations are found',
         'has_value' => true
     ), 
     array(
