@@ -244,4 +244,7 @@ try {
 } catch (\PDOException $e) {
     ClearIce::resetOutputLevel();
     ClearIce::error("Failed to connect to database: {$e->getMessage()}\n");
+} catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
+    ClearIce::resetOutputLevel();
+    ClearIce::error($e->getMessage() . "\n");
 }
