@@ -96,8 +96,8 @@ class Yentu {
      * @return array
      */
     public function getMigrationPathsInfo() {
-        $variables = $this->config->get('default.variables', []);
-        $otherMigrations = $this->config->get('default.other_migrations', []);
+        $variables = $this->config->get('variables', []);
+        $otherMigrations = $this->config->get('other_migrations', []);
 
         return array_merge(
             array(

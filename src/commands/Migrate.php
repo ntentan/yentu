@@ -147,9 +147,10 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
 
         \yentu\Timer::start();
         $migrationPaths = $this->yentu->getMigrationPathsInfo();
+        $migrationsToBeRun = [];
         foreach ($migrationPaths as $path) {
             $this->setDefaultSchema($path);
-            $migrateVariables = $path['variables'];
+            $migrateVariables = $path['variables'] ?? [];
             $migrations = $this->filter($this->yentu->getMigrations($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
