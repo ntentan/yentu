@@ -40,7 +40,7 @@ class ImportTest extends \yentu\tests\YentuTest {
 
     public function testImport() {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/system.sql"));
-        $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
 
         $import = $this->container->resolve(Import::class);
@@ -72,7 +72,7 @@ class ImportTest extends \yentu\tests\YentuTest {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_schema.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
 
-        $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = $this->container->resolve(Import::class);
         $import->setCodeWriter($codeWriter);
@@ -89,7 +89,7 @@ class ImportTest extends \yentu\tests\YentuTest {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_views.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
 
-        $codeWriter = $this->getMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = $this->container->resolve(Import::class);
         $import->setCodeWriter($codeWriter);

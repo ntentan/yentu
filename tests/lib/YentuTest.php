@@ -30,10 +30,11 @@ use org\bovigo\vfs\vfsStream;
 use clearice\ClearIce;
 use ntentan\config\Config;
 use yentu\Yentu;
+use PHPUnit\Framework\TestCase;
 
 error_reporting(E_ALL);
 
-class YentuTest extends \PHPUnit_Framework_TestCase {
+class YentuTest extends TestCase {
 
     /**
      *

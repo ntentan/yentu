@@ -193,7 +193,7 @@ ClearIce::addOptions(
     )
 );
 
-ClearIce::setDescription("Yentu Database Migrations\nVersion " . Yentu::getVersion());
+ClearIce::setDescription("Yentu Database Migrations");
 ClearIce::setFootnote("Report bugs to jainooson@gmail.com");
 ClearIce::setUsage("[command] [options]");
 ClearIce::addHelp();

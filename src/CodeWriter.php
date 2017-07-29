@@ -50,7 +50,7 @@ HEAD;
         return $header . $this->lines;
     }
     
-    protected function getTimestamp()
+    public function getTimestamp()
     {
         return date('jS F, Y H:i:s T');
     }

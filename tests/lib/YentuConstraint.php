@@ -26,7 +26,9 @@
 
 namespace yentu\tests;
 
-abstract class YentuConstraint extends \PHPUnit_Framework_Constraint
+use PHPUnit\Framework\Constraint\Constraint;
+
+abstract class YentuConstraint extends Constraint
 {
     /**
      *
