@@ -2,10 +2,11 @@
 
 namespace yentu;
 
-use clearice\ClearIce;
-use ntentan\atiaa\DbContext;
+use ntentan\atiaa\DriverFactory;
+use clearice\ConsoleIO;
 
-abstract class DatabaseManipulator {
+abstract class DatabaseManipulator
+{
 
     const CONVERT_TO_DRIVER = 'driver';
     const CONVERT_TO_YENTU = 'yentu';
@@ -16,27 +17,34 @@ abstract class DatabaseManipulator {
     private $dumpQuery;
     private $disableQuery;
     protected $defaultSchema;
+    private $io;
 
-    public function __construct(Yentu $yentu, $config) {
-        $container = $yentu->getContainer();
-        $this->connection = $container->resolve(DbContext::class, ['config' => $config])->getDriver();
+    public function __construct(Yentu $yentu, DriverFactory $driverFactory, ConsoleIO $io)
+    {
+        $this->connection = $driverFactory->createDriver();
+        $this->connection->connect();
+        $this->io = $io;
     }
 
-    public function __get($name) {
+    public function __get($name)
+    {
         if ($name === 'description') {
             return $this->getDescription();
         }
     }
 
-    public function setDumpQuery($dumpQuery) {
+    public function setDumpQuery($dumpQuery)
+    {
         $this->dumpQuery = $dumpQuery;
     }
 
-    public function setDisableQuery($disableQuery) {
+    public function setDisableQuery($disableQuery)
+    {
         $this->disableQuery = $disableQuery;
     }
 
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         if (preg_match("/^(add|drop|change|executeQuery|reverseQuery)/", $name)) {
             $details = Parameters::wrap($arguments[0]);
             $this->description->$name($details);
@@ -48,13 +56,14 @@ abstract class DatabaseManipulator {
         }
     }
 
-    public function query($query, $bind = false) {
+    public function query($query, $bind = false)
+    {
         try {
             if ($this->dumpQuery) {
                 echo "$query\n";
             }
 
-            ClearIce::output("\n    > Running Query [$query]", ClearIce::OUTPUT_LEVEL_3);
+            $this->io->output("\n    > Running Query [$query]", ConsoleIO::OUTPUT_LEVEL_3);
 
             if ($this->disableQuery !== true) {
                 return $this->connection->query($query, $bind);
@@ -64,15 +73,18 @@ abstract class DatabaseManipulator {
         }
     }
 
-    public function disconnect() {
+    public function disconnect()
+    {
         $this->connection->disconnect();
     }
 
-    public function getDefaultSchema() {
+    public function getDefaultSchema()
+    {
         return $this->connection->getDefaultSchema();
     }
 
-    public function getAssertor() {
+    public function getAssertor()
+    {
         if (!is_object($this->assertor)) {
             $this->assertor = new DatabaseAssertor($this->description);
         }
@@ -125,21 +137,25 @@ abstract class DatabaseManipulator {
 
     abstract protected function _changeViewDefinition($details);
 
-    protected function _changeForeignKeyOnDelete($details) {
+    protected function _changeForeignKeyOnDelete($details)
+    {
         $this->_dropForeignKey($details['from']);
         $this->_addForeignKey($details['to']);
     }
 
-    protected function _changeForeignKeyOnUpdate($details) {
+    protected function _changeForeignKeyOnUpdate($details)
+    {
         $this->_dropForeignKey($details['from']);
         $this->_addForeignKey($details['to']);
     }
 
-    protected function _executeQuery($details) {
+    protected function _executeQuery($details)
+    {
         $this->query($details['query'], $details['bind'] ?? []);
     }
 
-    protected function _reverseQuery($details) {
+    protected function _reverseQuery($details)
+    {
         
     }
 
@@ -149,31 +165,36 @@ abstract class DatabaseManipulator {
      * 
      * @return SchemaDescription
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         if (!is_object($this->schemaDescription)) {
             $this->schemaDescription = SchemaDescription::wrap($this->connection->describe(), $this);
         }
         return $this->schemaDescription;
     }
 
-    public function setVersion($version) {
+    public function setVersion($version)
+    {
         $this->query('INSERT INTO yentu_history(version) values (?)', array($version));
     }
 
-    public function getVersion() {
+    public function getVersion()
+    {
         $version = $this->query("SELECT MAX(version) as version FROM yentu_history");
         return isset($version[0]) ? $version[0]['version'] : null;
     }
 
-    public function getLastSession() {
+    public function getLastSession()
+    {
         $session = $this->query("SELECT session FROM yentu_history ORDER BY id DESC LIMIT 1");
         return isset($session[0]['session']) ? $session[0]['session'] : null;
     }
 
-    public function getSessionVersions($session) {
+    public function getSessionVersions($session)
+    {
         $sessionVersions = array();
         $versions = $this->query(
-                "SELECT DISTINCT version FROM yentu_history WHERE session = ?", array($session)
+            "SELECT DISTINCT version FROM yentu_history WHERE session = ?", array($session)
         );
 
         foreach ($versions as $version) {
@@ -183,11 +204,12 @@ abstract class DatabaseManipulator {
         return $sessionVersions;
     }
 
-    public function createHistory() {
+    public function createHistory()
+    {
         try {
             $this->connection->describeTable('yentu_history');
         } catch (\ntentan\atiaa\exceptions\TableNotFoundException $e) {
-            ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+            $this->io->pushOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
             $this->addTable(array('schema' => '', 'name' => 'yentu_history'));
 
             $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
@@ -199,11 +221,12 @@ abstract class DatabaseManipulator {
             $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
             $this->addPrimaryKey(array('schema' => '', 'table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
             $this->addAutoPrimaryKey(array('schema' => '', 'table' => 'yentu_history', 'column' => 'id'));
-            ClearIce::popOutputLevel();
+            $this->io->popOutputLevel();
         }
     }
 
-    public function __clone() {
+    public function __clone()
+    {
         if (is_object($this->schemaDescription)) {
             $this->schemaDescription = clone $this->schemaDescription;
         }

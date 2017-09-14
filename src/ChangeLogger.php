@@ -2,9 +2,10 @@
 
 namespace yentu;
 
-use clearice\ClearIce;
+use clearice\ConsoleIO;
 
-class ChangeLogger {
+class ChangeLogger
+{
 
     private $driver;
     private $version;
@@ -20,70 +21,80 @@ class ChangeLogger {
     private $dryRun;
     private $skipOnErrors = false;
     private $yentu;
-    
-    public function skip($itemType) {
+
+    public function skip($itemType)
+    {
         $this->skippedItemTypes[] = $itemType;
     }
 
-    public function setDumpQueriesOnly($dumpQueriesOnly) {
+    public function setDumpQueriesOnly($dumpQueriesOnly)
+    {
         if ($dumpQueriesOnly === true) {
-            ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+            $this->io->setOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
         }
         $this->dumpQueriesOnly = $dumpQueriesOnly;
     }
 
-    public function setDryRun($dryRun) {
+    public function setDryRun($dryRun)
+    {
         $this->dryRun = $dryRun;
     }
 
-    public function allowOnly($itemType) {
+    public function allowOnly($itemType)
+    {
         $this->allowedItemTypes[] = $itemType;
     }
 
-    private function __construct(DatabaseManipulator $driver, Yentu $yentu) {
+    private function __construct(DatabaseManipulator $driver, Yentu $yentu, ConsoleIO $io)
+    {
         $this->session = sha1(rand() . time());
         $this->driver = $driver;
         $this->driver->createHistory();
         $this->yentu = $yentu;
+        $this->io = $io;
     }
 
-    public static function wrap($item, $yentu) {
-        return new ChangeLogger($item, $yentu);
+    public static function wrap(DatabaseManipulator $item, Yentu $yentu, ConsoleIO $io) : ChangeLogger
+    {
+        return new ChangeLogger($item, $yentu, $io);
     }
 
-    public function setVersion($version) {
+    public function setVersion($version) : void
+    {
         $this->version = $version;
     }
 
-    public function setMigration($migration) {
+    public function setMigration($migration)
+    {
         $this->migration = $migration;
     }
 
-    private function performOperation($method, $matches, $arguments) {
+    private function performOperation($method, $matches, $arguments)
+    {
         try {
             $return = $this->driver->$method($arguments[0]);
             $this->yentu->announce($matches['command'], $matches['item_type'], $arguments[0]);
 
             $this->driver->setDumpQuery(false);
 
-            ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+            $this->io->pushOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
             $this->driver->query(
-                    'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)', array(
+                'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)', array(
                 $this->session,
                 $this->version,
                 $method,
                 json_encode($arguments),
                 $this->migration,
                 self::$defaultSchema
-                    )
+                )
             );
-            ClearIce::popOutputLevel();
+            $this->io->popOutputLevel();
             $this->changes++;
             $this->driver->setDisableQuery(false);
         } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
             if ($this->skipOnErrors) {
-                ClearIce::output("E");
-                ClearIce::output("rror " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", ClearIce::OUTPUT_LEVEL_2);
+                $this->io->output("E");
+                $this->io->output("rror " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", ConsoleIO::OUTPUT_LEVEL_2);
             } else {
                 throw $e;
             }
@@ -91,18 +102,19 @@ class ChangeLogger {
         return $return;
     }
 
-    public function __call($method, $arguments) {
+    public function __call($method, $arguments)
+    {
         $return = null;
         if (preg_match("/^(?<command>add|drop|change|execute|reverse)(?<item_type>[a-zA-Z]+)/", $method, $matches)) {
             $this->driver->setDumpQuery($this->dumpQueriesOnly);
             $this->driver->setDisableQuery($this->dryRun);
 
             if (
-                    array_search($matches['item_type'], $this->skippedItemTypes) !== false ||
-                    (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
+                array_search($matches['item_type'], $this->skippedItemTypes) !== false ||
+                (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
             ) {
-                ClearIce::output("S");
-                ClearIce::output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", ClearIce::OUTPUT_LEVEL_2);
+                $this->io->output("S");
+                $this->io->output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", ConsoleIO::OUTPUT_LEVEL_2);
             } else {
                 $return = $this->performOperation($method, $matches, $arguments);
             }
@@ -120,39 +132,46 @@ class ChangeLogger {
         return $return;
     }
 
-    public function outputProgress() {
+    public function outputProgress()
+    {
         if ($this->expectedOperations > 0) {
             if ($this->operations % 74 === 0) {
-                ClearIce::output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100));
+                $this->io->output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100));
             } else {
-                ClearIce::output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100), ClearIce::OUTPUT_LEVEL_2);
+                $this->io->output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100), ConsoleIO::OUTPUT_LEVEL_2);
             }
         }
     }
 
-    public function setDefaultSchema($defaultSchema) {
+    public function setDefaultSchema($defaultSchema)
+    {
         self::$defaultSchema = $defaultSchema;
     }
 
-    public function getChanges() {
+    public function getChanges()
+    {
         return $this->changes;
     }
 
-    public function resetOperations() {
+    public function resetOperations()
+    {
         $operations = $this->operations;
         $this->operations = 0;
         return $operations;
     }
 
-    public function __clone() {
+    public function __clone()
+    {
         $this->driver = clone $this->driver;
     }
 
-    public function setExpectedOperations($expectedOperations) {
+    public function setExpectedOperations($expectedOperations)
+    {
         $this->expectedOperations = $expectedOperations;
     }
 
-    public function setSkipOnErrors($skipOnErrors) {
+    public function setSkipOnErrors($skipOnErrors)
+    {
         $this->skipOnErrors = $skipOnErrors;
     }
 

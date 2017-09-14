@@ -26,35 +26,31 @@
 
 namespace yentu;
 
-use clearice\ClearIce;
-use ntentan\config\Config;
-use ntentan\panie\Container;
+use clearice\ConsoleIO;
 
 /**
  * Utility class for yentu related functions.
  */
-class Yentu {
+class Yentu
+{
 
     /**
      * The current home for yentu.
      * @see Yentu::setDefaultHome()
      * @var string
      */
-    private $home = './yentu';
-    
-    private $container;
-    
-    private $config;
+    private $home;
+    private $io;
 
     /**
      * Current version of yentu.
      * @var string
      */
     const VERSION = '0.1.0';
-    
-    public function __construct(Container $container, Config $config) {
-        $this->container = $container;
-        $this->config = $config;
+
+    public function __construct(ConsoleIO $io)
+    {
+        $this->io = $io;
     }
 
     /**
@@ -65,7 +61,8 @@ class Yentu {
      * directory. 
      * @param string $home
      */
-    public function setDefaultHome($home) {
+    public function setDefaultHome($home)
+    {
         $this->home = $home;
     }
 
@@ -74,39 +71,9 @@ class Yentu {
      * @param string $path
      * @return string
      */
-    public function getPath($path) {
+    public function getPath($path)
+    {
         return $this->home . "/$path";
-    }
-    
-    public function getManipulator() {
-        $config = $this->config->get('db');
-        if ($config['driver'] == '') {
-            throw new exceptions\DatabaseManipulatorException("Please specify a database driver.");
-        }
-        $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
-        unset($config['variables']);
-        return $this->container->resolve($class, ['config' => $config]);
-    }    
-
-    /**
-     * Returns information about all migration paths.
-     * Yentu can be configured to use multiple migration homes, for multiple
-     * database configurations. This makes it possible to use a single command
-     * to run multiple migrations accross multiple databases.
-     * @return array
-     */
-    public function getMigrationPathsInfo() {
-        $variables = $this->config->get('variables', []);
-        $otherMigrations = $this->config->get('other_migrations', []);
-
-        return array_merge(
-            array(
-                array(
-                    'home' => $this->getPath('migrations'),
-                    'variables' => $variables
-                )
-            ), $otherMigrations
-        );
     }
 
     /**
@@ -115,7 +82,8 @@ class Yentu {
      * and the default schema on which it was run.
      * @return array
      */
-    public function getRunMirations() {
+    public function getRunMirations()
+    {
         $db = DatabaseManipulator::create();
         $runMigrations = $db->query("SELECT DISTINCT version, migration, default_schema FROM yentu_history ORDER BY version");
         $migrations = array();
@@ -135,7 +103,8 @@ class Yentu {
      * directories.
      * @return array
      */
-    public function getAllMigrations() {
+    public function getAllMigrations()
+    {
         $migrations = array();
         foreach ($this->getMigrationPathsInfo() as $migration) {
             $migrations = $migrations + $this->getMigrations($migration['home']);
@@ -149,7 +118,8 @@ class Yentu {
      * @param string $path
      * @return array
      */
-    public function getMigrations($path) {
+    public function getMigrations($path)
+    {
         if (!file_exists($path))
             return [];
         $migrationFiles = scandir($path, 0);
@@ -175,7 +145,8 @@ class Yentu {
      * @param string $migration
      * @return array
      */
-    private function getMigrationDetails($migration) {
+    private function getMigrationDetails($migration)
+    {
         if (preg_match("/^(?<timestamp>[0-9]{14})\_(?<migration>[a-z][a-z0-9\_]*)\.php$/", $migration, $details)) {
             $details['file'] = $migration;
         } else {
@@ -192,13 +163,14 @@ class Yentu {
      * @param string $itemType The type of item
      * @param array $arguments The arguments of the 
      */
-    public function announce($command, $itemType, $arguments) {
-        ClearIce::output(
+    public function announce($command, $itemType, $arguments)
+    {
+        $this->io->output(
             "\n  - " . ucfirst("{$command}ing ") .
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
-            $this->getDetails($command, Parameters::wrap($arguments)), ClearIce::OUTPUT_LEVEL_2
+            $this->getDetails($command, Parameters::wrap($arguments)), ConsoleIO::OUTPUT_LEVEL_2
         );
-        ClearIce::output(".");
+        $this->io->output(".");
     }
 
     /**
@@ -208,12 +180,11 @@ class Yentu {
      * @param array $arguments
      * @return string
      */
-    private function getDetails($command, $arguments) {
+    private function getDetails($command, $arguments)
+    {
         $dir = '';
         $destination = '';
-        $arguments = Parameters::wrap(
-                        $arguments, ['name' => null]
-        );
+        $arguments = Parameters::wrap($arguments, ['name' => null]);
 
         if ($command == 'add') {
             $dir = 'to';
@@ -223,8 +194,8 @@ class Yentu {
 
         if (isset($arguments['table']) && isset($arguments['schema'])) {
             $destination = "table " .
-                    ($arguments['schema'] != '' ? "{$arguments['schema']}." : '' ) .
-                    "{$arguments['table']}'";
+                ($arguments['schema'] != '' ? "{$arguments['schema']}." : '' ) .
+                "{$arguments['table']}'";
         } elseif (isset($arguments['schema']) && !isset($arguments['table'])) {
             $destination = "schema '{$arguments['schema']}'";
         }
@@ -247,41 +218,41 @@ class Yentu {
      * 
      * @param \yentu\Reversible $command
      */
-    public function reverseCommand($command) {
+    public function reverseCommand($command)
+    {
         if ($command instanceof \yentu\Reversible) {
             $command->reverse();
         }
     }
-    
-    public function getConfig() {
-        return $this->config;
-    }
+
+    /* public function getConfig()
+      {
+      return $this->config;
+      } */
 
     /**
      * Display the greeting for the CLI user interface.
      */
-    public function greet() {
+    public function greet()
+    {
         $version = $this->getVersion();
         $welcome = <<<WELCOME
 Yentu Database Migration Tool
-Version $version
+$version
 
 
 WELCOME;
-        ClearIce::output($welcome);
+        $this->io->output($welcome);
     }
 
-    public function getVersion() {
+    public function getVersion()
+    {
         if (defined('PHING_BUILD_VERSION')) {
             return PHING_BUILD_VERSION;
         } else {
             $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
             return $version->getVersion();
         }
-    }
-    
-    public function getContainer() {
-        return $this->container;
     }
 
 }

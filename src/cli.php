@@ -27,10 +27,14 @@
 require "vendor/autoload.php";
 require __DIR__ . "/../src/globals.php";
 
-use clearice\ClearIce;
+use clearice\ArgumentParser;
+use yentu\DatabaseManipulator;
+use ntentan\atiaa\DriverFactory;
 use yentu\Yentu;
+use ntentan\config\Config;
 
-ClearIce::addCommands(
+$argumentParser = new ArgumentParser();
+$argumentParser->addCommands([
     array(
         'command' => 'import',
         'help' => 'import the schema of an existing database'
@@ -56,9 +60,9 @@ ClearIce::addCommands(
         'command' => 'status',
         'help' => 'display the current status of the migrations'
     )
-);
+]);
 
-ClearIce::addOptions(
+$argumentParser->addOptions([
     array(
         'command' => 'import',
         'short' => 'd',
@@ -113,9 +117,9 @@ ClearIce::addOptions(
         'help' => 'the passwrd of the user on the target database',
         'has_value' => true
     )
-);
+]);
 
-ClearIce::addOptions(
+$argumentParser->addOptions([
     array(
         'command' => 'migrate',
         'long' => 'no-foreign-keys',
@@ -159,18 +163,18 @@ ClearIce::addOptions(
         'help' => 'the default cascade action for foreign key updates',
         'has_value' => true
     )
-);
+]);
 
-ClearIce::addCommands(
+$argumentParser->addCommands([
     array(
         'command' => 'rollback',
         'long' => 'default-schema',
         'has_value' => true,
         'help' => 'reverse only migrations in this default-schema'
     )
-);
+]);
 
-ClearIce::addOptions(
+$argumentParser->addOptions([
     array(
         'short' => 'y',
         'long' => 'home',
@@ -182,69 +186,94 @@ ClearIce::addOptions(
         'long' => 'verbose',
         'help' => 'set level of verbosity. high, mid, low and none',
         'has_value' => true
-    )
-);
-
-ClearIce::addOptions(
+    ),
     array(
         'long' => 'details',
         'help' => 'show details of all migrations.',
         'command' => 'status'
-    )
-);
+    )    
+]);
 
-ClearIce::setDescription("Yentu Database Migrations");
-ClearIce::setFootnote("Report bugs to jainooson@gmail.com");
-ClearIce::setUsage("[command] [options]");
-ClearIce::addHelp();
-ClearIce::setStrict(true);
-$options = ClearIce::parse();
+$argumentParser->setDescription("Yentu Database Migrations");
+$argumentParser->setFootnote("Report bugs to jainooson@gmail.com");
+$argumentParser->setUsage("[command] [options]");
+$argumentParser->addHelp();
+$argumentParser->setStrict(true);
+$options = $argumentParser->parse();
 
 if (isset($options['verbose'])) {
-    ClearIce::setOutputLevel($options['verbose']);
+    $argumentParser->setOutputLevel($options['verbose']);
 }
 
 try {
     $container = new ntentan\panie\Container();
-    $container->bind(Yentu::class)->to(Yentu::class)->asSingleton();
+    $container->setup([
+        Yentu::class => [
+            Yentu::class, 'calls' => ['setDefaultHome' => ['home' => $options['home'] ?? './yentu']], 
+            'singleton' => true
+        ],
+        clearice\ConsoleIO::class => [clearice\ConsoleIO::class, 'singleton' => true],
+        Config::class => [
+            function($container) {
+                $yentu = $container->resolve(Yentu::class);
+                $config = new Config();
+                $config->readPath($yentu->getPath("config/default.conf.php"));
+                return $config;
+            },
+            'singleton' => true
+        ],
+        DriverFactory::class => [
+            function($container) {
+                $config = $container->resolve(Config::class)->get('db');                
+                return new DriverFactory($config);
+            }
+        ],
+        DatabaseManipulator::class => [
+            function($container) {
+                $config = $container->resolve(Config::class)->get('db');                
+                $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
+                return $container->resolve($class, ['config' => $config]);                
+            }, 
+            'singleton' => true
+        ]
+    ]);
     $yentu = $container->resolve(Yentu::class);
     
     if (isset($options['__command__'])) {      
         if (isset($options['home'])) {
             $yentu->setDefaultHome($options['home']);
         }
-        $yentu->getConfig()->readPath($yentu->getPath("config/default.conf.php"));
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
         $command = $container->resolve($class);
         $command->run($options);
     } else {
-        ClearIce::output(ClearIce::getHelpMessage());
+        $argumentParser->output($argumentParser->getHelpMessage());
     }
 } catch (\yentu\exceptions\CommandException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error("Error! " . $e->getMessage() . "\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error("Error! " . $e->getMessage() . "\n");
 } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error("Database driver failed: " . $e->getMessage() . "\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error("Database driver failed: " . $e->getMessage() . "\n");
     $yentu->reverseCommand($command);
 } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error("Failed to perform database action: " . $e->getMessage() . "\n");
     $yentu->reverseCommand($command);
 } catch (\ntentan\atiaa\DescriptionException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error("Failed to perform database action: " . $e->getMessage() . "\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error("Failed to perform database action: " . $e->getMessage() . "\n");
     $yentu->reverseCommand($command);
 } catch (\yentu\exceptions\SyntaxErrorException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error("Error found in syntax: {$e->getMessage()}\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error("Error found in syntax: {$e->getMessage()}\n");
     $yentu->reverseCommand($command);
 } catch (\PDOException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error("Failed to connect to database: {$e->getMessage()}\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error("Failed to connect to database: {$e->getMessage()}\n");
 } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
-    ClearIce::resetOutputLevel();
-    ClearIce::error($e->getMessage() . "\n");
+    $argumentParser->resetOutputLevel();
+    $argumentParser->error($e->getMessage() . "\n");
 }

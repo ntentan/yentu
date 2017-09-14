@@ -32,42 +32,54 @@ use yentu\ChangeLogger;
 use yentu\Yentu;
 use yentu\database\ForeignKey;
 use clearice\ClearIce;
+use yentu\Reversible;
+use ntentan\config\Config;
+use clearice\ConsoleIO;
 
 /**
  * The migrate command for the yentu database migration system. This class is
  * responsible for creating and updating items 
  */
-class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
+class Migrate implements Reversible
+{
 
     const FILTER_UNRUN = 'unrun';
     const FILTER_LAST_SESSION = 'lastSession';
-    
+
     private $driver;
     private $dryDriver;
     private $defaultSchema = false;
     private $lastSession;
     private $currentPath;
     private $yentu;
-    
-    public function __construct(Yentu $yentu) {
+    private $manipulator;
+    private $config;
+    private $io;
+
+    public function __construct(Yentu $yentu, DatabaseManipulator $manipulator, Config $config, ConsoleIO $io)
+    {
+        $this->manipulator = $manipulator;
         $this->yentu = $yentu;
+        $this->config = $config;
+        $this->io = $io;
     }
 
-    public function setupOptions($options, &$filter) {
+    public function setupOptions($options, &$filter)
+    {
         if (isset($options['no-foreign-keys'])) {
-            ClearIce::output("Ignoring all foreign key constraints ...\n");
+            $this->io->output("Ignoring all foreign key constraints ...\n");
             $this->driver->skip('ForeignKey');
         }
 
         if (isset($options['only-foreign-keys'])) {
-            ClearIce::output("Applying only foreign keys ...\n");
+            $this->io->output("Applying only foreign keys ...\n");
             $this->lastSession = $this->driver->getLastSession();
             $this->driver->allowOnly('ForeignKey');
             $filter = self::FILTER_LAST_SESSION;
         }
 
         if (isset($options['force-foreign-keys'])) {
-            ClearIce::output("Applying only foreign keys and skipping on errors ...\n");
+            $this->io->output("Applying only foreign keys and skipping on errors ...\n");
             $this->lastSession = $this->driver->getLastSession();
             $this->driver->setSkipOnErrors($options['force-foreign-keys']);
             $this->driver->allowOnly('ForeignKey');
@@ -85,7 +97,8 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         $this->setDefaultSchema($options);
     }
 
-    private function setDefaultSchema($options) {
+    private function setDefaultSchema($options)
+    {
         global $defaultSchema;
         if (isset($options['default-schema'])) {
             $this->driver->setDefaultSchema($options['default-schema']);
@@ -94,27 +107,30 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    private function announceMigration($migrations, $path) {
+    private function announceMigration($migrations, $path)
+    {
         $size = count($migrations);
         $defaultSchema = null;
         if ($size > 0) {
             if (isset($path['default-schema'])) {
                 $defaultSchema = $path['default-schema'];
             }
-            ClearIce::output("Running $size migration(s) from '{$path['home']}'");
+            $this->io->output("Running $size migration(s) from '{$path['home']}'");
             if ($defaultSchema != '') {
-                ClearIce::output(" with '$defaultSchema' as the default schema.\n");
+                $this->io->output(" with '$defaultSchema' as the default schema.\n");
             }
         } else {
-            ClearIce::output("No migrations to run from '{$path['home']}'\n");
+            $this->io->output("No migrations to run from '{$path['home']}'\n");
         }
     }
 
-    public function getBegin() {
+    public function getBegin()
+    {
         return new \yentu\database\Begin($this->defaultSchema);
     }
 
-    private static function fillOptions(&$options) {
+    private static function fillOptions(&$options)
+    {
         if (!isset($options['dump-queries'])) {
             $options['dump-queries'] = false;
         }
@@ -123,7 +139,8 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    public function run($options = array()) {
+    public function run($options = array())
+    {
         global $migrateCommand;
         global $migrateVariables;
 
@@ -135,7 +152,7 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
             $this->yentu->greet();
         }
 
-        $this->driver = ChangeLogger::wrap($this->yentu->getManipulator(), $this->yentu);
+        $this->driver = ChangeLogger::wrap($this->manipulator, $this->yentu, $this->io);
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
         $this->driver->setDryRun($options['dry']);
 
@@ -146,7 +163,7 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
-        $migrationPaths = $this->yentu->getMigrationPathsInfo();
+        $migrationPaths = $this->getMigrationPathsInfo();
         $migrationsToBeRun = [];
         foreach ($migrationPaths as $path) {
             $this->setDefaultSchema($path);
@@ -154,58 +171,62 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
             $migrations = $this->filter($this->yentu->getMigrations($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
-            
+
             foreach ($migrations as $migration) {
                 $this->countOperations("{$path['home']}/{$migration['file']}");
                 $this->driver->setVersion($migration['timestamp']);
                 $this->driver->setMigration($migration['migration']);
-                ClearIce::output("\nApplying '{$migration['migration']}' migration\n");
+                $this->io->output("\nApplying '{$migration['migration']}' migration\n");
                 require "{$path['home']}/{$migration['file']}";
                 DatabaseItem::purge();
-                ClearIce::output("\n");
+                $this->io->output("\n");
                 $totalOperations += $this->driver->resetOperations();
             }
         }
 
         if ($this->driver->getChanges()) {
             $elapsed = \yentu\Timer::stop();
-            ClearIce::output("\nMigration took " . \yentu\Timer::pretty($elapsed) . "\n");
-            ClearIce::output($this->driver->getChanges() . " operations performed\n");
-            ClearIce::output($totalOperations - $this->driver->getChanges() . " operations skipped\n");
+            $this->io->output("\nMigration took " . \yentu\Timer::pretty($elapsed) . "\n");
+            $this->io->output($this->driver->getChanges() . " operations performed\n");
+            $this->io->output($totalOperations - $this->driver->getChanges() . " operations skipped\n");
         }
 
         $this->driver->disconnect();
     }
 
-    private function filter($migrations, $type = self::FILTER_UNRUN) {
+    private function filter($migrations, $type = self::FILTER_UNRUN)
+    {
         $filterMethod = "{$type}Filter";
         return $this->$filterMethod($migrations);
     }
 
-    private function countOperations($migrationFile) {
+    private function countOperations($migrationFile)
+    {
         if ($this->dryDriver === null) {
             $this->dryDriver = clone $this->driver;
             $this->dryDriver->setDryRun(true);
         }
-        ClearIce::pushOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+        $this->io->pushOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
         DatabaseItem::setDriver($this->dryDriver);
         require "$migrationFile";
         DatabaseItem::purge();
         DatabaseItem::setDriver($this->driver);
-        ClearIce::popOutputLevel();
+        $this->io->popOutputLevel();
         $this->driver->setExpectedOperations($this->dryDriver->resetOperations());
     }
 
-    public function getCurrentPath() {
+    public function getCurrentPath()
+    {
         return $this->currentPath;
     }
 
-    private function unrunFilter($input) {
+    private function unrunFilter($input)
+    {
         $output = array();
         foreach ($input as $migration) {
             $run = $this->driver->query(
                 "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", 
-                array($migration['migration'], $migration['timestamp'], (string)$this->defaultSchema)
+                array($migration['migration'], $migration['timestamp'], (string) $this->defaultSchema)
             );
 
             if ($run[0]['number_run'] == 0) {
@@ -215,7 +236,8 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         return $output;
     }
 
-    private function lastSessionFilter($input) {
+    private function lastSessionFilter($input)
+    {
         $versions = $this->driver->getSessionVersions($this->lastSession);
         $output = array();
         foreach ($input as $migration) {
@@ -225,24 +247,41 @@ class Migrate implements \clearice\CommandInterface, \yentu\Reversible {
         }
         return $output;
     }
+    
+    private function getMigrationPathsInfo()
+    {
+        $variables = $this->config->get('variables', []);
+        $otherMigrations = $this->config->get('other_migrations', []);
 
-    public function getChanges() {
+        return array_merge(
+            array(
+            array(
+                'home' => $this->yentu->getPath('migrations'),
+                'variables' => $variables
+            )
+            ), $otherMigrations
+        );
+    }    
+
+    public function getChanges()
+    {
         return $this->driver->getChanges();
     }
 
-    public function reverse() {
+    public function reverse()
+    {
         if ($this->driver === null) {
             return;
         }
 
-        ClearIce::output("Attempting to reverse all changes ... ");
+        $this->io->output("Attempting to reverse all changes ... ");
         if ($this->getChanges() > 0) {
-            ClearIce::pushOutputLevel(0);
+            $this->io->pushOutputLevel(0);
             $rollback = $this->yentu->getContainer()->resolve(\yentu\commands\Rollback::class);
             $rollback->run(array());
-            ClearIce::popOutputLevel();
+            $this->io->popOutputLevel();
         }
-        ClearIce::output("OK\n");
+        $this->io->output("OK\n");
     }
 
 }
