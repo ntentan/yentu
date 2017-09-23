@@ -7,6 +7,7 @@ use clearice\ConsoleIO;
 use yentu\Yentu;
 use yentu\DatabaseAssertor;
 use yentu\SchemaDescription;
+use yentu\exceptions\DatabaseManipulatorException;
 use yentu\Parameters;
 
 abstract class AbstractDatabaseManipulator
@@ -73,7 +74,7 @@ abstract class AbstractDatabaseManipulator
                 return $this->connection->query($query, $bind);
             }
         } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
-            throw new exceptions\DatabaseManipulatorException($e->getMessage());
+            throw new DatabaseManipulatorException($e->getMessage());
         }
     }
 
