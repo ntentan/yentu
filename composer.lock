@@ -46,16 +46,16 @@
         },
         {
             "name": "ntentan/atiaa",
-            "version": "v0.6.0",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/atiaa.git",
-                "reference": "8a572d979620f4dd41662fba07b0d77aa9b2a5fc"
+                "reference": "d7738d14c7643abda50273a74a6e5b07ff42f3c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/8a572d979620f4dd41662fba07b0d77aa9b2a5fc",
-                "reference": "8a572d979620f4dd41662fba07b0d77aa9b2a5fc",
+                "url": "https://api.github.com/repos/ntentan/atiaa/zipball/d7738d14c7643abda50273a74a6e5b07ff42f3c2",
+                "reference": "d7738d14c7643abda50273a74a6e5b07ff42f3c2",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 }
             ],
             "description": "A slim wrapper around PDO to provide some extra utilities",
-            "time": "2017-09-18T02:39:57+00:00"
+            "time": "2017-09-23T16:45:31+00:00"
         },
         {
             "name": "ntentan/config",
