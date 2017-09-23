@@ -4,7 +4,7 @@ namespace yentu\manipulators;
 
 use yentu\Parameters;
 
-class Postgresql extends \yentu\DatabaseManipulator
+class Postgresql extends AbstractDatabaseManipulator
 {
 
     private function buildTableName($name, $schema) {

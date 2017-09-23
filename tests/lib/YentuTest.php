@@ -27,14 +27,16 @@
 namespace yentu\tests;
 
 use org\bovigo\vfs\vfsStream;
-use clearice\ClearIce;
-use ntentan\config\Config;
+use clearice\ConsoleIO;
 use yentu\Yentu;
 use PHPUnit\Framework\TestCase;
+use yentu\commands\Init;
+use yentu\DatabaseManipulatorFactory;
+use ntentan\atiaa\DriverFactory;
+use ntentan\config\Config;
 
-error_reporting(E_ALL);
-
-class YentuTest extends TestCase {
+class YentuTest extends TestCase
+{
 
     /**
      *
@@ -44,22 +46,18 @@ class YentuTest extends TestCase {
     protected $testDatabase;
     protected $testDefaultSchema;
     protected $yentu;
-    protected $container;
+    protected $config;
+    protected $io;
 
-    public function setup() {
+    public function setup()
+    {
         require_once "src/globals.php";
-        
+        $this->io = new ConsoleIO();
         $this->setupStreams();
-        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_1);
-        $container = new \ntentan\panie\Container();
-        $container->bind(Config::class)->to(Config::class)->asSingleton();
-        $container->bind(Yentu::class)->to(function($container){
-            $yentu = new Yentu($container, $container->resolve(Config::class));
-            $yentu->setDefaultHome(vfsStream::url('home/yentu'));
-            return $yentu;
-        })->asSingleton();
-        $this->yentu = $container->resolve(Yentu::class);
-        $this->container = $container;
+        $this->io->setOutputLevel(ConsoleIO::OUTPUT_LEVEL_1);
+        $this->config = new Config;
+        $this->yentu = new Yentu($this->io);
+        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
 
         $GLOBALS['DRIVER'] = getenv('YENTU_DRIVER');
         $GLOBALS['DB_DSN'] = getenv('YENTU_BASE_DSN');
@@ -68,7 +66,7 @@ class YentuTest extends TestCase {
             $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}";
             $GLOBALS['DB_NAME'] = $this->testDatabase;
             $GLOBALS['DEFAULT_SCHEMA'] = (string) getenv('YENTU_DEFAULT_SCHEMA') == '' ?
-                    $this->testDatabase : (string) getenv('YENTU_DEFAULT_SCHEMA');
+                $this->testDatabase : (string) getenv('YENTU_DEFAULT_SCHEMA');
             $GLOBALS['DB_FILE'] = '';
         } else {
             $GLOBALS['DB_FULL_DSN'] = $GLOBALS['DB_DSN'];
@@ -85,45 +83,58 @@ class YentuTest extends TestCase {
         $timer->method('stopInstance')->willReturn(10.0000);
         \yentu\Timer::setInstance($timer);
     }
+    
+    protected function setupStreams()
+    {
+        vfsStream::setup('home');
+        $this->io->setStreamUrl('output', vfsStream::url('home/output.txt'));        
+    }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         $this->pdo = null;
     }
 
-    public function assertSchemaExists($schema, $message = '') {
+    public function assertSchemaExists($schema, $message = '')
+    {
         $constraint = new constraints\SchemaExists();
         $constraint->setPDO($this->pdo);
         $this->assertThat($schema, $constraint, $message);
     }
 
-    public function assertTableExists($table, $message = '') {
+    public function assertTableExists($table, $message = '')
+    {
         $constraint = new constraints\TableExists();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }
 
-    public function assertTableDoesntExist($table, $message = '') {
+    public function assertTableDoesntExist($table, $message = '')
+    {
         $constraint = new constraints\TableExists();
         $constraint->negate();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }
 
-    public function assertColumnExists($column, $table, $message = '') {
+    public function assertColumnExists($column, $table, $message = '')
+    {
         $constraint = new constraints\ColumnExists();
         $constraint->setPDO($this->pdo);
         $constraint->setTable($table);
         $this->assertThat($column, $constraint, $message);
     }
 
-    public function assertColumnNullable($column, $table, $message = '') {
+    public function assertColumnNullable($column, $table, $message = '')
+    {
         $constraint = new constraints\ColumnNullability();
         $constraint->setPDO($this->pdo);
         $constraint->setTable($table);
         $this->assertThat($column, $constraint, $message);
     }
 
-    public function assertColumnNotNullable($column, $table, $message = '') {
+    public function assertColumnNotNullable($column, $table, $message = '')
+    {
         $constraint = new constraints\ColumnNullability();
         $constraint->setPDO($this->pdo);
         $constraint->setTable($table);
@@ -131,20 +142,23 @@ class YentuTest extends TestCase {
         $this->assertThat($column, $constraint, $message);
     }
 
-    public function assertForeignKeyExists($table, $message = '') {
+    public function assertForeignKeyExists($table, $message = '')
+    {
         $constraint = new constraints\ForeignKeyExists();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }
 
-    public function assertForeignKeyDoesntExist($table, $message = '') {
+    public function assertForeignKeyDoesntExist($table, $message = '')
+    {
         $constraint = new constraints\ForeignKeyExists();
         $constraint->negate();
         $constraint->setPDO($this->pdo);
         $this->assertThat($table, $constraint, $message);
     }
 
-    protected function createDb($name) {
+    protected function createDb($name)
+    {
         if (getenv('YENTU_FILE') !== false) {
             if (file_exists(getenv('YENTU_FILE'))) {
                 unlink(getenv('YENTU_FILE'));
@@ -158,20 +172,24 @@ class YentuTest extends TestCase {
         }
     }
 
-    protected function initDb($dsn, $queries) {
+    protected function initDb($dsn, $queries)
+    {
         $pdo = new \PDO($dsn, $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $pdo->exec($queries);
         $pdo = null;
     }
-
-    protected function setupStreams() {
-        vfsStream::setup('home');
-        \clearice\ClearIce::setStreamUrl('output', vfsStream::url('home/output.txt'));
+    
+    protected function getManipulatorFactory()
+    {
+        return new DatabaseManipulatorFactory($this->yentu, $this->config, new DriverFactory(), $this->io);;
     }
 
-    protected function initYentu($name) {
-        $init = new \yentu\commands\Init($this->yentu);
+    protected function initYentu($name)
+    {
+        $config = new Config();
+        $factory = new DatabaseManipulatorFactory($this->yentu, $config, new DriverFactory(), $this->io);
+        $init = new Init($this->yentu, $config, $factory, $this->io);
         $init->run(
             array(
                 'driver' => $GLOBALS['DRIVER'],
@@ -182,20 +200,24 @@ class YentuTest extends TestCase {
                 'file' => $GLOBALS['DB_FILE']
             )
         );
+        $this->config->readPath($this->yentu->getPath("config/default.conf.php"));
     }
 
-    protected function connect($dsn) {
+    protected function connect($dsn)
+    {
         $this->pdo = new \PDO($dsn, $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
-    protected function setupForMigration() {
+    protected function setupForMigration()
+    {
         $this->createDb($GLOBALS['DB_NAME']);
         $this->connect($GLOBALS["DB_FULL_DSN"]);
         $this->initYentu($GLOBALS['DB_NAME']);
     }
 
-    protected function skipSchemaTests() {
+    protected function skipSchemaTests()
+    {
         if (getenv('YENTU_SKIP_SCHEMAS') === 'yes') {
             $this->markTestSkipped();
         }

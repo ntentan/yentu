@@ -58,7 +58,7 @@ abstract class DatabaseItem
     
     /**
      * 
-     * @return \yentu\DatabaseManipulator
+     * @return \yentu\AbstractDatabaseManipulator
      */
     protected function getDriver()
     {

@@ -27,12 +27,14 @@
 namespace yentu\tests\cases;
 
 use \org\bovigo\vfs\vfsStream;
-use clearice\ClearIce;
+use clearice\ConsoleIO;
 use yentu\commands\Init;
 
-class InitTest extends \yentu\tests\YentuTest {
+class InitTest extends \yentu\tests\YentuTest
+{
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->testDatabase = 'yentu_tests';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
@@ -40,24 +42,26 @@ class InitTest extends \yentu\tests\YentuTest {
         $this->setupStreams();
     }
 
-    public function testParameters() {
-        $initCommand = $this->container->resolve(Init::class);
+    public function testParameters()
+    {
+        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
 
         ob_start();
         $initCommand->run(
-                array(
-                    'driver' => $GLOBALS['DRIVER'],
-                    'host' => $GLOBALS['DB_HOST'],
-                    'dbname' => $GLOBALS['DB_NAME'],
-                    'user' => $GLOBALS['DB_USER'],
-                    'password' => $GLOBALS['DB_PASSWORD'],
-                    'file' => $GLOBALS['DB_FILE']
-                )
+            array(
+                'driver' => $GLOBALS['DRIVER'],
+                'host' => $GLOBALS['DB_HOST'],
+                'dbname' => $GLOBALS['DB_NAME'],
+                'user' => $GLOBALS['DB_USER'],
+                'password' => $GLOBALS['DB_PASSWORD'],
+                'file' => $GLOBALS['DB_FILE']
+            )
         );
         $this->runAssertions();
     }
 
-    private function runAssertions() {
+    private function runAssertions()
+    {
         $output = ob_get_clean();
         $this->assertEquals(true, file_exists(vfsStream::url("home/yentu")));
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu")));
@@ -78,7 +82,7 @@ class InitTest extends \yentu\tests\YentuTest {
             'user' => $GLOBALS['DB_USER'],
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
-                ), $config['db']);
+            ), $config['db']);
 
         $this->assertTableExists('yentu_history');
         $this->assertColumnExists('session', 'yentu_history');
@@ -89,27 +93,28 @@ class InitTest extends \yentu\tests\YentuTest {
         $this->assertColumnExists('id', 'yentu_history');
     }
 
-    public function testInterractive() {
-        ClearIce::setStreamUrl('error', vfsStream::url("home/error.out"));
-        ClearIce::setStreamUrl('output', vfsStream::url("home/standard.out"));
-        ClearIce::setStreamUrl('input', vfsStream::url("home/responses.in"));
+    public function testInterractive()
+    {
+        $this->io->setStreamUrl('error', vfsStream::url("home/error.out"));
+        $this->io->setStreamUrl('output', vfsStream::url("home/standard.out"));
+        $this->io->setStreamUrl('input', vfsStream::url("home/responses.in"));
 
         // Write the input for the interractive test
         if (getenv('YENTU_HOST') === false) {
             file_put_contents(vfsStream::url("home/responses.in"), "{$GLOBALS['DRIVER']}\n"
-                    . "{$GLOBALS['DB_FILE']}\n"
+                . "{$GLOBALS['DB_FILE']}\n"
             );
         } else {
             file_put_contents(vfsStream::url("home/responses.in"), "{$GLOBALS['DRIVER']}\n"
-                    . "{$GLOBALS['DB_HOST']}\n"
-                    . "\n"
-                    . "{$GLOBALS['DB_NAME']}\n"
-                    . "{$GLOBALS['DB_USER']}\n"
-                    . "{$GLOBALS['DB_PASSWORD']}\n"
+                . "{$GLOBALS['DB_HOST']}\n"
+                . "\n"
+                . "{$GLOBALS['DB_NAME']}\n"
+                . "{$GLOBALS['DB_USER']}\n"
+                . "{$GLOBALS['DB_PASSWORD']}\n"
             );
         }
 
-        $initCommand = $this->container->resolve(Init::class);
+        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
         $initCommand->run(array(
@@ -121,45 +126,48 @@ class InitTest extends \yentu\tests\YentuTest {
     /**
      * @expectedException \yentu\exceptions\CommandException
      */
-    public function testUnwritable() {
+    public function testUnwritable()
+    {
         vfsStream::setup('home', 0444);
-        $initCommand = $this->container->resolve(Init::class);
+        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
-        ClearIce::setOutputLevel(ClearIce::OUTPUT_LEVEL_0);
+        $this->io->setOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
         $initCommand->run(
-                array(
-                    'driver' => 'postgresql',
-                    'host' => $GLOBALS['DB_HOST'],
-                    'dbname' => $GLOBALS['DB_NAME'],
-                    'user' => $GLOBALS['DB_USER'],
-                    'password' => $GLOBALS['DB_PASSWORD']
-                )
+            array(
+                'driver' => 'postgresql',
+                'host' => $GLOBALS['DB_HOST'],
+                'dbname' => $GLOBALS['DB_NAME'],
+                'user' => $GLOBALS['DB_USER'],
+                'password' => $GLOBALS['DB_PASSWORD']
+            )
         );
     }
 
     /**
      * @expectedException \yentu\exceptions\CommandException
      */
-    public function testExistingDir() {
+    public function testExistingDir()
+    {
         mkdir(vfsStream::url('home/yentu'));
-        $initCommand = $this->container->resolve(Init::class);
+        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
-                array(
-                    'driver' => 'postgresql',
-                    'host' => $GLOBALS['DB_HOST'],
-                    'dbname' => $GLOBALS['DB_NAME'],
-                    'user' => $GLOBALS['DB_USER'],
-                    'password' => $GLOBALS['DB_PASSWORD']
-                )
+            array(
+                'driver' => 'postgresql',
+                'host' => $GLOBALS['DB_HOST'],
+                'dbname' => $GLOBALS['DB_NAME'],
+                'user' => $GLOBALS['DB_USER'],
+                'password' => $GLOBALS['DB_PASSWORD']
+            )
         );
     }
 
     /**
      * @expectedException \yentu\exceptions\CommandException
      */
-    public function testNoParams() {
-        $initCommand = $this->container->resolve(Init::class);
+    public function testNoParams()
+    {
+        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(array());
     }
@@ -167,19 +175,20 @@ class InitTest extends \yentu\tests\YentuTest {
     /**
      * @expectedException \yentu\exceptions\CommandException
      */
-    public function testExistingDb() {
+    public function testExistingDb()
+    {
         $this->pdo->query('CREATE TABLE yentu_history(dummy INTEGER)');
-        $initCommand = $this->container->resolve(Init::class);
+        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
-                array(
-                    'driver' => $GLOBALS['DRIVER'],
-                    'host' => $GLOBALS['DB_HOST'],
-                    'dbname' => $GLOBALS['DB_NAME'],
-                    'user' => $GLOBALS['DB_USER'],
-                    'password' => $GLOBALS['DB_PASSWORD'],
-                    'file' => $GLOBALS['DB_FILE']
-                )
+            array(
+                'driver' => $GLOBALS['DRIVER'],
+                'host' => $GLOBALS['DB_HOST'],
+                'dbname' => $GLOBALS['DB_NAME'],
+                'user' => $GLOBALS['DB_USER'],
+                'password' => $GLOBALS['DB_PASSWORD'],
+                'file' => $GLOBALS['DB_FILE']
+            )
         );
     }
 

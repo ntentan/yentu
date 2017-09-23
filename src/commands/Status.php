@@ -18,7 +18,7 @@ class Status implements \clearice\CommandInterface {
 
     public function run($options = array()) {
         $this->yentu->greet();
-        $driver = \yentu\DatabaseManipulator::create();
+        $driver = \yentu\AbstractDatabaseManipulator::create();
         $version = $driver->getVersion();
 
         if ($version == null) {

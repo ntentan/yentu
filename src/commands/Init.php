@@ -26,65 +26,71 @@
 
 namespace yentu\commands;
 
-use clearice\CommandInterface;
 use yentu\Yentu;
-use clearice\ClearIce;
 use yentu\exceptions\CommandException;
+use yentu\DatabaseManipulatorFactory;
 use ntentan\config\Config;
+use clearice\ConsoleIO;
 
 /**
  * The init command class. This command intiates a project for yentu migration
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init implements CommandInterface {
-    
+class Init
+{
+    private $config;
     private $yentu;
-    private $container;
+    private $manipulatorFactory;
+    private $io;
 
-    public function __construct(Yentu $yentu) {
+    public function __construct(Yentu $yentu, Config $config, DatabaseManipulatorFactory $manipulatorFactory, ConsoleIO $io)
+    {
         $this->yentu = $yentu;
-        $this->container = $yentu->getContainer();
+        $this->config = $config;
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->io = $io;
     }
 
-    private function getParams($options) {
+    private function getParams($options)
+    {
         if (isset($options['interractive'])) {
-            $params['driver'] = ClearIce::getResponse('Database type', array(
+            $params['driver'] = $this->io->getResponse('Database type', array(
                     'required' => true,
                     'answers' => array(
                         'postgresql',
                         'mysql',
                         'sqlite'
                     )
-                )
+                    )
             );
 
             if ($params['driver'] === 'sqlite') {
-                $params['file'] = ClearIce::getResponse('Database file', [
-                    'required' => true
+                $params['file'] = $this->io->getResponse('Database file', [
+                        'required' => true
                 ]);
             } else {
-                $params['host'] = ClearIce::getResponse('Database host', array(
+                $params['host'] = $this->io->getResponse('Database host', array(
                         'required' => true,
                         'default' => 'localhost'
-                    )
+                        )
                 );
 
-                $params['port'] = ClearIce::getResponse('Database port');
+                $params['port'] = $this->io->getResponse('Database port');
 
-                $params['dbname'] = ClearIce::getResponse('Database name', array(
+                $params['dbname'] = $this->io->getResponse('Database name', array(
                         'required' => true
-                    )
+                        )
                 );
 
-                $params['user'] = ClearIce::getResponse('Database user name', array(
+                $params['user'] = $this->io->getResponse('Database user name', array(
                         'required' => true
-                    )
+                        )
                 );
 
-                $params['password'] = ClearIce::getResponse('Database password', array(
+                $params['password'] = $this->io->getResponse('Database password', array(
                         'required' => FALSE
-                    )
+                        )
                 );
             }
         } else {
@@ -93,9 +99,10 @@ class Init implements CommandInterface {
         return $params;
     }
 
-    public function createConfigFile($params) {
+    public function createConfigFile($params)
+    {
         $params = \yentu\Parameters::wrap(
-            $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
+                $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
         );
         mkdir($this->yentu->getPath(''));
         mkdir($this->yentu->getPath('config'));
@@ -121,7 +128,8 @@ class Init implements CommandInterface {
         file_put_contents($this->yentu->getPath("config/default.conf.php"), $configFile);
     }
 
-    public function run($options = array()) {
+    public function run($options = array())
+    {
         $this->yentu->greet();
         $home = $this->yentu->getPath('');
         if (file_exists($home)) {
@@ -135,15 +143,15 @@ class Init implements CommandInterface {
         if (count($params) == 0 && defined('STDOUT')) {
             global $argv;
             throw new CommandException(
-            "You didn't provide any parameters for initialization. Please execute "
-            . "`{$argv[0]} init -i` to initialize yentu interractively. "
-            . "You can also try `{$argv[0]} init --help` for more information."
+                "You didn't provide any parameters for initialization. Please execute "
+                . "`{$argv[0]} init -i` to initialize yentu interractively. "
+                . "You can also try `{$argv[0]} init --help` for more information."
             );
         }
 
         $this->createConfigFile($params);
-        $this->yentu->getConfig()->readPath($this->yentu->getPath('config/default.conf.php'));
-        $db = $this->yentu->getManipulator();
+        $this->config->readPath($this->yentu->getPath('config/default.conf.php'));
+        $db = $this->manipulatorFactory->createManipulator();
 
         if ($db->getAssertor()->doesTableExist('yentu_history')) {
             throw new CommandException("Could not initialize yentu. Your database has already been initialized with yentu.");
@@ -152,10 +160,11 @@ class Init implements CommandInterface {
         $db->createHistory();
         $db->disconnect();
 
-        ClearIce::output("Yentu successfully initialized.\n");
+        $this->io->output("Yentu successfully initialized.\n");
     }
 
-    public function reverse() {
+    public function reverse()
+    {
         
     }
 

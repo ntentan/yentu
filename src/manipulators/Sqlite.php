@@ -32,7 +32,7 @@ use yentu\Parameters;
  *
  * @author Ekow Abaka Ainooson
  */
-class Sqlite extends \yentu\DatabaseManipulator
+class Sqlite extends AbstractDatabaseManipulator
 {
     private $placeholders = [];
     

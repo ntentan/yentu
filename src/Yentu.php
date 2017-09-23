@@ -84,7 +84,7 @@ class Yentu
      */
     public function getRunMirations()
     {
-        $db = DatabaseManipulator::create();
+        $db = AbstractDatabaseManipulator::create();
         $runMigrations = $db->query("SELECT DISTINCT version, migration, default_schema FROM yentu_history ORDER BY version");
         $migrations = array();
         foreach ($runMigrations as $migration) {
@@ -224,12 +224,7 @@ class Yentu
             $command->reverse();
         }
     }
-
-    /* public function getConfig()
-      {
-      return $this->config;
-      } */
-
+    
     /**
      * Display the greeting for the CLI user interface.
      */
@@ -238,7 +233,7 @@ class Yentu
         $version = $this->getVersion();
         $welcome = <<<WELCOME
 Yentu Database Migration Tool
-$version
+Version $version
 
 
 WELCOME;

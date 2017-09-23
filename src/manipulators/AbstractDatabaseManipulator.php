@@ -1,11 +1,15 @@
 <?php
 
-namespace yentu;
+namespace yentu\manipulators;
 
 use ntentan\atiaa\DriverFactory;
 use clearice\ConsoleIO;
+use yentu\Yentu;
+use yentu\DatabaseAssertor;
+use yentu\SchemaDescription;
+use yentu\Parameters;
 
-abstract class DatabaseManipulator
+abstract class AbstractDatabaseManipulator
 {
 
     const CONVERT_TO_DRIVER = 'driver';

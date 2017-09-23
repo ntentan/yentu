@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 ekow.
+ * Copyright 2017 ekow.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,38 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\cases;
+namespace yentu;
 
-use org\bovigo\vfs\vfsStream;
-use yentu\commands\Migrate;
+use yentu\manipulators\AbstractDatabaseManipulator;
+use ntentan\atiaa\DriverFactory;
+use clearice\ConsoleIO;
+use ntentan\config\Config;
 
-class ChangeTableNameTest extends \yentu\tests\YentuTest {
-
-    public function setup() {
-        $this->testDatabase = 'yentu_change_name';
-        parent::setup();
-        $this->setupForMigration();
+/**
+ * Description of DatabaseManipulatorFactory
+ *
+ * @author ekow
+ */
+class DatabaseManipulatorFactory
+{
+    private $yentu;
+    private $driverFactory;
+    private $io;
+    private $config;
+    
+    public function __construct(Yentu $yentu, Config $config, DriverFactory $driverFactory, ConsoleIO $io)
+    {
+        $this->yentu = $yentu;
+        $this->driverFactory = $driverFactory;
+        $this->io = $io;
+        $this->config = $config;
     }
-
-    public function testNameChange() {
-        copy('tests/migrations/12345678901234_some_table.php', vfsStream::url('home/yentu/migrations/12345678901234_some_table.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
-        $migrate->run(array());
-        $this->assertTableExists('some_table');
-
-        copy('tests/migrations/12345678901235_other_table.php', vfsStream::url('home/yentu/migrations/12345678901235_other_table.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
-        $migrate->run(array());
-        $this->assertTableExists('some_other_table');
-        $this->assertTableDoesntExist('some_table');
+    
+    public function createManipulator() : AbstractDatabaseManipulator
+    {
+        $config = $this->config->get('db');
+        $this->driverFactory->setConfig($config);
+        $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
+        return new $class($this->yentu, $this->driverFactory, $this->io);
     }
-
 }

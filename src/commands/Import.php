@@ -2,11 +2,13 @@
 
 namespace yentu\commands;
 
-use yentu\DatabaseManipulator;
+use yentu\DatabaseManipulatorFactory;
 use yentu\CodeWriter;
+use clearice\ConsoleIO;
 use yentu\Yentu;
 
-class Import implements \clearice\CommandInterface, \yentu\Reversible {
+class Import implements \yentu\Reversible
+{
 
     /**
      *
@@ -18,24 +20,32 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
     private $foreignKeys = array();
     private $newVersion;
     private $yentu;
+    private $manipulatorFactory;
+    private $io;
 
-    public function __construct(Yentu $yentu) {
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, ConsoleIO $io)
+    {
         $this->yentu = $yentu;
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->io = $io;
     }
 
-    private function initializeCodeWriter() {
+    private function initializeCodeWriter()
+    {
         if (!is_object($this->code)) {
             $this->code = new CodeWriter();
         }
     }
 
-    public function setCodeWriter($code) {
+    public function setCodeWriter($code)
+    {
         $this->code = $code;
     }
 
-    public function run($options = array()) {
+    public function run($options = array())
+    {
         $this->yentu->greet();
-        $this->db = $this->yentu->getManipulator();
+        $this->db = $this->manipulatorFactory->createManipulator();
         $this->initializeCodeWriter();
         $files = scandir($this->yentu->getPath("migrations"));
         if (count($files) > 2) {
@@ -60,7 +70,7 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         $this->newVersion = date('YmdHis', time());
         $path = $this->yentu->getPath("migrations/{$this->newVersion}_import.php");
         file_put_contents($path, $this->code);
-        \clearice\ClearIce::output("Created `$path`\n");
+        $this->io->output("Created `$path`\n");
         if (!$this->db->getAssertor()->doesTableExist('yentu_history')) {
             $this->db->createHistory();
         }
@@ -70,11 +80,13 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         return $description;
     }
 
-    public function getNewVersion() {
+    public function getNewVersion()
+    {
         return $this->newVersion;
     }
 
-    private function generateSchemaCode($description, $ref = false, $prefix = '') {
+    private function generateSchemaCode($description, $ref = false, $prefix = '')
+    {
         $refprefix = $ref === true ? 'ref' : '->';
         if ($description["{$prefix}schema"] == false) {
             return "{$refprefix}table('{$description["{$prefix}table"]}')";
@@ -83,7 +95,8 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    protected function importForeignKeys() {
+    protected function importForeignKeys()
+    {
         foreach ($this->foreignKeys as $name => $foreignKey) {
             //$this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
             $this->code->add($this->generateSchemaCode($foreignKey));
@@ -107,7 +120,8 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    protected function importColumns($columns) {
+    protected function importColumns($columns)
+    {
         foreach ($columns as $column) {
             $this->code->addNoLn("->column('{$column['name']}')");
             $this->code->addNoIndent("->type('{$column['type']}')");
@@ -124,7 +138,8 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    protected function importSchemata($schemata) {
+    protected function importSchemata($schemata)
+    {
         $this->code->add('// Schemata');
 
         if (count($schemata) > 0) {
@@ -142,7 +157,8 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         $this->hasSchema = false;
     }
 
-    protected function importViews($views) {
+    protected function importViews($views)
+    {
         foreach ($views as $view) {
             $definition = sprintf('->definition("%s")', str_replace('"', '\"', $view['definition']));
             $this->code->add("->view('{$view['name']}')$definition");
@@ -150,7 +166,8 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    protected function importTables($tables) {
+    protected function importTables($tables)
+    {
         foreach ($tables as $table) {
             if ($table['name'] == 'yentu_history')
                 continue;
@@ -176,14 +193,16 @@ class Import implements \clearice\CommandInterface, \yentu\Reversible {
         }
     }
 
-    protected function importConstraints($type, $constraints) {
+    protected function importConstraints($type, $constraints)
+    {
         foreach ($constraints as $name => $constraint) {
             $constraint = implode("','", $constraint['columns']);
             $this->code->add("->$type('$constraint')->name('$name')");
         }
     }
 
-    public function reverse() {
+    public function reverse()
+    {
         
     }
 

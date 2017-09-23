@@ -27,11 +27,10 @@
 namespace yentu\commands;
 
 use yentu\database\DatabaseItem;
-use yentu\DatabaseManipulator;
+use yentu\DatabaseManipulatorFactory;
 use yentu\ChangeLogger;
 use yentu\Yentu;
 use yentu\database\ForeignKey;
-use clearice\ClearIce;
 use yentu\Reversible;
 use ntentan\config\Config;
 use clearice\ConsoleIO;
@@ -56,9 +55,9 @@ class Migrate implements Reversible
     private $config;
     private $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulator $manipulator, Config $config, ConsoleIO $io)
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Config $config, ConsoleIO $io)
     {
-        $this->manipulator = $manipulator;
+        $this->manipulator = $manipulatorFactory->createManipulator();
         $this->yentu = $yentu;
         $this->config = $config;
         $this->io = $io;

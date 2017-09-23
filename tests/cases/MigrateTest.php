@@ -29,28 +29,32 @@ namespace yentu\tests\cases;
 use org\bovigo\vfs\vfsStream;
 use yentu\commands\Migrate;
 
-class MigrateTest extends \yentu\tests\YentuTest {
+class MigrateTest extends \yentu\tests\YentuTest
+{
 
-    public function setup() {
+    public function setup()
+    {
         $this->testDatabase = 'yentu_migration_test';
         parent::setup();
         $this->setupForMigration();
     }
 
-    public function testMigration() {
+    public function testMigration()
+    {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = $this->container->resolve(Migrate::class);
+        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
         $migrate->run(array());
 
         $this->assertEquals(
-                file_get_contents("tests/streams/migrate_output.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+            file_get_contents("tests/streams/migrate_output.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
 
         foreach ($this->tables as $table) {
             $this->assertTableExists($table);
         }
+
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
-        $migrate = $this->container->resolve(Migrate::class);
+        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
         $this->assertColumnNullable('role_name', 'roles');
         $this->assertColumnExists('user_name', 'users');
         $migrate->run(array());
@@ -58,10 +62,11 @@ class MigrateTest extends \yentu\tests\YentuTest {
         $this->assertColumnExists('username', 'users');
     }
 
-    public function testSchemaMigration() {
+    public function testSchemaMigration()
+    {
         $this->skipSchemaTests();
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));
-        $migrate = $this->container->resolve(Migrate::class);
+        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
         $migrate->run(array());
         $this->assertSchemaExists('schema');
 

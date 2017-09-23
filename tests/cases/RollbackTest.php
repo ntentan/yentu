@@ -39,7 +39,7 @@ class RollbackTest extends \yentu\tests\YentuTest {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
-        $init = $this->container->resolve(Init::class);
+        $init = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $init->createConfigFile(
             array(
                 'driver' => $GLOBALS['DRIVER'],
@@ -50,7 +50,7 @@ class RollbackTest extends \yentu\tests\YentuTest {
                 'file' => $GLOBALS['DB_FILE']
             )
         );
-        $this->yentu->getConfig()->readPath($this->yentu->getPath('config/default.conf.php'));
+        $this->config->readPath($this->yentu->getPath('config/default.conf.php'));
     }
 
     public function testRollback() {
@@ -58,7 +58,7 @@ class RollbackTest extends \yentu\tests\YentuTest {
             $this->assertTableExists($table);
         }
 
-        $rollback = $this->container->resolve(Rollback::class);
+        $rollback = new Rollback($this->yentu, $this->getManipulatorFactory(), $this->io);
         $rollback->run(array());
 
         foreach ($this->tables as $table) {

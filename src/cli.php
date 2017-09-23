@@ -28,7 +28,7 @@ require "vendor/autoload.php";
 require __DIR__ . "/../src/globals.php";
 
 use clearice\ArgumentParser;
-use yentu\DatabaseManipulator;
+use yentu\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 use yentu\Yentu;
 use ntentan\config\Config;
@@ -228,7 +228,7 @@ try {
                 return new DriverFactory($config);
             }
         ],
-        DatabaseManipulator::class => [
+        AbstractDatabaseManipulator::class => [
             function($container) {
                 $config = $container->resolve(Config::class)->get('db');                
                 $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);

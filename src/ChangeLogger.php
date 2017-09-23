@@ -3,6 +3,7 @@
 namespace yentu;
 
 use clearice\ConsoleIO;
+use yentu\manipulators\AbstractDatabaseManipulator;
 
 class ChangeLogger
 {
@@ -45,7 +46,7 @@ class ChangeLogger
         $this->allowedItemTypes[] = $itemType;
     }
 
-    private function __construct(DatabaseManipulator $driver, Yentu $yentu, ConsoleIO $io)
+    private function __construct(AbstractDatabaseManipulator $driver, Yentu $yentu, ConsoleIO $io)
     {
         $this->session = sha1(rand() . time());
         $this->driver = $driver;
@@ -54,7 +55,7 @@ class ChangeLogger
         $this->io = $io;
     }
 
-    public static function wrap(DatabaseManipulator $item, Yentu $yentu, ConsoleIO $io) : ChangeLogger
+    public static function wrap(AbstractDatabaseManipulator $item, Yentu $yentu, ConsoleIO $io) : ChangeLogger
     {
         return new ChangeLogger($item, $yentu, $io);
     }

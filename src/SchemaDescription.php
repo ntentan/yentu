@@ -26,6 +26,8 @@
 
 namespace yentu;
 
+use yentu\manipulators\AbstractDatabaseManipulator;
+
 /**
  * Class which holds the description of the schema.
  * This class holds a parallel copy of the schema description used as a basis
@@ -48,7 +50,7 @@ class SchemaDescription implements \ArrayAccess
      * Create a new instance of the schema description.
      * 
      * @param array $description
-     * @param DatabaseManipulator $manipulator
+     * @param AbstractDatabaseManipulator $manipulator
      */
     private function __construct($description, $manipulator)
     {
@@ -71,7 +73,7 @@ class SchemaDescription implements \ArrayAccess
      * types on the tables 
      * 
      * @param array $tables
-     * @param DatabaseManipulator $manipulator
+     * @param AbstractDatabaseManipulator $manipulator
      * @return array
      */
     private function convertColumnTypes($tables, $manipulator)
@@ -79,7 +81,7 @@ class SchemaDescription implements \ArrayAccess
         foreach ($tables as $i => $table) {
             foreach ($table['columns'] as $j => $column) {
                 $tables[$i]['columns'][$j]['type'] = $manipulator->convertTypes(
-                        $column['type'], DatabaseManipulator::CONVERT_TO_YENTU, $column['length']
+                        $column['type'], AbstractDatabaseManipulator::CONVERT_TO_YENTU, $column['length']
                 );
             }
         }
