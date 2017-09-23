@@ -5,7 +5,8 @@ namespace yentu\commands;
 use yentu\Yentu;
 use yentu\exceptions\CommandException;
 
-class Create implements \clearice\CommandInterface {
+class Create
+{
     
     private $yentu;
     

@@ -8,7 +8,8 @@ use clearice\ClearIce;
 /**
  * 
  */
-class Status implements \clearice\CommandInterface {
+class Status
+{
     
     private $yentu;
     
