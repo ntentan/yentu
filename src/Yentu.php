@@ -46,7 +46,7 @@ class Yentu
      * Current version of yentu.
      * @var string
      */
-    const VERSION = '0.1.0';
+    const VERSION = 'v0.2.0';
 
     public function __construct(ConsoleIO $io)
     {
