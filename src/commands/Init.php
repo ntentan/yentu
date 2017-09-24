@@ -55,46 +55,24 @@ class Init
     private function getParams($options)
     {
         if (isset($options['interractive'])) {
-            $params['driver'] = $this->io->getResponse('Database type', array(
-                    'required' => true,
-                    'answers' => array(
-                        'postgresql',
-                        'mysql',
-                        'sqlite'
-                    )
-                    )
-            );
+            $params['driver'] = $this->io->getResponse('Database type', ['required' => true, 'answers' => ['postgresql', 'mysql', 'sqlite']]);
 
             if ($params['driver'] === 'sqlite') {
-                $params['file'] = $this->io->getResponse('Database file', [
-                        'required' => true
-                ]);
+                $params['file'] = $this->io->getResponse('Database file', ['required' => true]);
             } else {
-                $params['host'] = $this->io->getResponse('Database host', array(
-                        'required' => true,
-                        'default' => 'localhost'
-                        )
-                );
-
+                $params['host'] = $this->io->getResponse('Database host', ['default' => 'localhost']);
                 $params['port'] = $this->io->getResponse('Database port');
-
-                $params['dbname'] = $this->io->getResponse('Database name', array(
-                        'required' => true
-                        )
-                );
-
-                $params['user'] = $this->io->getResponse('Database user name', array(
-                        'required' => true
-                        )
-                );
-
-                $params['password'] = $this->io->getResponse('Database password', array(
-                        'required' => FALSE
-                        )
-                );
+                $params['dbname'] = $this->io->getResponse('Database name',['required' => true]);
+                $params['user'] = $this->io->getResponse('Database user name', ['required' => true]);
+                $params['password'] = $this->io->getResponse('Database password', ['required' => FALSE]);
             }
         } else {
-            $params = $options;
+            $params = [];
+            foreach(['driver', 'file', 'host', 'port', 'dbname', 'user', 'password'] as $key) {
+                if(isset($options[$key])) {
+                    $params[$key] = $options[$key];
+                }
+            }
         }
         return $params;
     }
@@ -139,13 +117,12 @@ class Init
         }
 
         $params = $this->getParams($options);
-
+        
         if (count($params) == 0 && defined('STDOUT')) {
-            global $argv;
             throw new CommandException(
-                "You didn't provide any parameters for initialization. Please execute "
-                . "`{$argv[0]} init -i` to initialize yentu interractively. "
-                . "You can also try `{$argv[0]} init --help` for more information."
+                "You didn't provide any parameters for initialization. Please execute yentu "
+                . "with `init -i` to initialize yentu interractively. "
+                . "You can also try `init --help` for more information."
             );
         }
 

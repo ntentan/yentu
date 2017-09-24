@@ -28,12 +28,46 @@ require "vendor/autoload.php";
 require __DIR__ . "/../src/globals.php";
 
 use clearice\ArgumentParser;
+use clearice\ConsoleIO;
 use yentu\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 use yentu\Yentu;
 use ntentan\config\Config;
 
-$argumentParser = new ArgumentParser();
+$container = new ntentan\panie\Container();
+$container->setup([
+    Yentu::class => [Yentu::class, 'singleton' => true],
+    ConsoleIO::class => [ConsoleIO::class, 'singleton' => true],
+    Config::class => [
+        function($container) {
+            $yentu = $container->resolve(Yentu::class);
+            $config = new Config();
+            $configFile = $yentu->getPath("config/default.conf.php");
+            if(file_exists($configFile)) {
+                $config->readPath($yentu->getPath("config/default.conf.php"));
+            }
+            return $config;
+        },
+        'singleton' => true
+    ],
+    DriverFactory::class => [
+        function($container) {
+            $config = $container->resolve(Config::class)->get('db');                
+            return new DriverFactory($config);
+        }
+    ],
+    AbstractDatabaseManipulator::class => [
+        function($container) {
+            $config = $container->resolve(Config::class)->get('db');                
+            $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
+            return $container->resolve($class, ['config' => $config]);                
+        }, 
+        'singleton' => true
+    ]
+]);
+
+$io = $container->resolve(ConsoleIO::class);
+$argumentParser = $container->resolve(ArgumentParser::class);
 $argumentParser->addCommands([
     array(
         'command' => 'import',
@@ -199,81 +233,48 @@ $argumentParser->setFootnote("Report bugs to jainooson@gmail.com");
 $argumentParser->setUsage("[command] [options]");
 $argumentParser->addHelp();
 $argumentParser->setStrict(true);
-$options = $argumentParser->parse();
+$options = $argumentParser->parse($argv);
 
 if (isset($options['verbose'])) {
     $argumentParser->setOutputLevel($options['verbose']);
 }
 
 try {
-    $container = new ntentan\panie\Container();
-    $container->setup([
-        Yentu::class => [
-            Yentu::class, 'calls' => ['setDefaultHome' => ['home' => $options['home'] ?? './yentu']], 
-            'singleton' => true
-        ],
-        clearice\ConsoleIO::class => [clearice\ConsoleIO::class, 'singleton' => true],
-        Config::class => [
-            function($container) {
-                $yentu = $container->resolve(Yentu::class);
-                $config = new Config();
-                $config->readPath($yentu->getPath("config/default.conf.php"));
-                return $config;
-            },
-            'singleton' => true
-        ],
-        DriverFactory::class => [
-            function($container) {
-                $config = $container->resolve(Config::class)->get('db');                
-                return new DriverFactory($config);
-            }
-        ],
-        AbstractDatabaseManipulator::class => [
-            function($container) {
-                $config = $container->resolve(Config::class)->get('db');                
-                $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
-                return $container->resolve($class, ['config' => $config]);                
-            }, 
-            'singleton' => true
-        ]
-    ]);
     $yentu = $container->resolve(Yentu::class);
     
     if (isset($options['__command__'])) {      
-        if (isset($options['home'])) {
-            $yentu->setDefaultHome($options['home']);
-        }
+        $yentu->setDefaultHome($options['home'] ?? './yentu');
 
         $class = "\\yentu\\commands\\" . ucfirst($options['__command__']);
         unset($options['__command__']);
         $command = $container->resolve($class);
         $command->run($options);
     } else {
-        $argumentParser->output($argumentParser->getHelpMessage());
+        $io->output($argumentParser->getHelpMessage($argv[0]));
     }
 } catch (\yentu\exceptions\CommandException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error("Error! " . $e->getMessage() . "\n");
+    $io->resetOutputLevel();
+    $io->error("Error! " . $e->getMessage() . "\n");
 } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error("Database driver failed: " . $e->getMessage() . "\n");
+    $io->resetOutputLevel();
+    $io->error("Database driver failed: " . $e->getMessage() . "\n");
     $yentu->reverseCommand($command);
 } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error("Failed to perform database action: " . $e->getMessage() . "\n");
+    $io->resetOutputLevel();
+    $io->error("Failed to perform database action: " . $e->getMessage() . "\n");
     $yentu->reverseCommand($command);
 } catch (\ntentan\atiaa\DescriptionException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error("Failed to perform database action: " . $e->getMessage() . "\n");
+    $io->resetOutputLevel();
+    $io->error("Failed to perform database action: " . $e->getMessage() . "\n");
     $yentu->reverseCommand($command);
 } catch (\yentu\exceptions\SyntaxErrorException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error("Error found in syntax: {$e->getMessage()}\n");
+    $io->resetOutputLevel();
+    $io->error("Error found in syntax: {$e->getMessage()}\n");
     $yentu->reverseCommand($command);
 } catch (\PDOException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error("Failed to connect to database: {$e->getMessage()}\n");
+    $io->resetOutputLevel();
+    $io->error("Failed to connect to database: {$e->getMessage()}\n");
 } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
-    $argumentParser->resetOutputLevel();
-    $argumentParser->error($e->getMessage() . "\n");
+    $io->resetOutputLevel();
+    $io->error($e->getMessage() . "\n");
 }

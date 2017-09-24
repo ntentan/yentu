@@ -4,6 +4,7 @@ namespace yentu\commands;
 
 use yentu\Yentu;
 use clearice\ConsoleIO;
+use yentu\DatabaseManipulatorFactory;
 
 /**
  * 
@@ -13,17 +14,19 @@ class Status
 
     private $yentu;
     private $io;
+    private $manipulatorFactory;
 
-    public function __construct(Yentu $yentu, ConsoleIO $io)
+    public function __construct(Yentu $yentu, ConsoleIO $io, DatabaseManipulatorFactory $manipulatorFactory)
     {
         $this->yentu = $yentu;
         $this->io = $io;
+        $this->manipulatorFactory = $manipulatorFactory;
     }
 
     public function run($options = array())
     {
         $this->yentu->greet();
-        $driver = \yentu\AbstractDatabaseManipulator::create();
+        $driver = $this->manipulatorFactory->createManipulator();
         $version = $driver->getVersion();
 
         if ($version == null) {

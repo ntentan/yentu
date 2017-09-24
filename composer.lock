@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea69eaf66161c4915ca3d867156cd473",
+    "content-hash": "bb646a176dc64c13abcf1b24beb3dcce",
     "packages": [
         {
             "name": "ekowabaka/clearice",
@@ -125,23 +125,24 @@
         },
         {
             "name": "ntentan/panie",
-            "version": "v0.1.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ntentan/panie.git",
-                "reference": "fbcbc0d3c802a6db18b7c6919630c1fd6e307ec0"
+                "reference": "40c321a6ede7dcfa85f9b771493f5e3130ef10bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ntentan/panie/zipball/fbcbc0d3c802a6db18b7c6919630c1fd6e307ec0",
-                "reference": "fbcbc0d3c802a6db18b7c6919630c1fd6e307ec0",
+                "url": "https://api.github.com/repos/ntentan/panie/zipball/40c321a6ede7dcfa85f9b771493f5e3130ef10bd",
+                "reference": "40c321a6ede7dcfa85f9b771493f5e3130ef10bd",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=7.1",
+                "psr/container": "^1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.0"
+                "phpunit/phpunit": "@stable"
             },
             "type": "library",
             "autoload": {
@@ -161,7 +162,7 @@
                 }
             ],
             "description": "A thin DI container for NtentanFX",
-            "time": "2016-04-24T10:38:24+00:00"
+            "time": "2017-09-17T02:57:15+00:00"
         },
         {
             "name": "ntentan/utils",
@@ -200,6 +201,55 @@
             ],
             "description": "Common utility functions shared accross the ntentan framework.",
             "time": "2017-09-18T02:34:45+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2017-02-14T16:28:37+00:00"
         }
     ],
     "packages-dev": [
