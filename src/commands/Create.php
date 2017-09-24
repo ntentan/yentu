@@ -4,17 +4,22 @@ namespace yentu\commands;
 
 use yentu\Yentu;
 use yentu\exceptions\CommandException;
+use clearice\ConsoleIO;
 
 class Create
 {
-    
+
     private $yentu;
-    
-    public function __construct(Yentu $yentu) {
+    private $io;
+
+    public function __construct(Yentu $yentu, ConsoleIO $io)
+    {
         $this->yentu = $yentu;
+        $this->io = $io;
     }
 
-    public function run($options = array()) {
+    public function run($options = array())
+    {
         $this->yentu->greet();
         if (isset($options['stand_alones'])) {
             $this->createFile($options['stand_alones'][0]);
@@ -23,13 +28,15 @@ class Create
         }
     }
 
-    private function checkExisting($name) {
+    private function checkExisting($name)
+    {
         if (count(glob($this->yentu->getPath("migrations/*_{$name}.php"))) > 0) {
             throw new CommandException("A migration already exists with the name {$name}");
         }
     }
 
-    private function checkPermission() {
+    private function checkPermission()
+    {
         if (!file_exists($this->yentu->getPath("migrations/"))) {
             throw new CommandException("The migrations directory `" . $this->yentu->getPath("migrations/") . "` does not exist.");
         }
@@ -41,7 +48,8 @@ class Create
         }
     }
 
-    private function checkName($name) {
+    private function checkName($name)
+    {
         if ($name == '') {
             throw new CommandException(
             "Please provide a name for your new migration"
@@ -54,7 +62,8 @@ class Create
         }
     }
 
-    public function createFile($name) {
+    public function createFile($name)
+    {
         $this->checkExisting($name);
         $this->checkName($name);
         $this->checkPermission();
@@ -67,7 +76,7 @@ class Create
         $code->add('->end();');
         $path = $this->yentu->getPath("migrations/{$timestamp}_{$name}.php");
         file_put_contents($path, $code);
-        \clearice\ClearIce::output("Added $path for new migration.\n");
+        $this->io->output("Added $path for new migration.\n");
     }
 
 }

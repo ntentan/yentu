@@ -3,46 +3,51 @@
 namespace yentu\commands;
 
 use yentu\Yentu;
-use clearice\ClearIce;
+use clearice\ConsoleIO;
 
 /**
  * 
  */
 class Status
 {
-    
+
     private $yentu;
-    
-    public function __construct(Yentu $yentu) {
+    private $io;
+
+    public function __construct(Yentu $yentu, ConsoleIO $io)
+    {
         $this->yentu = $yentu;
+        $this->io = $io;
     }
 
-    public function run($options = array()) {
+    public function run($options = array())
+    {
         $this->yentu->greet();
         $driver = \yentu\AbstractDatabaseManipulator::create();
         $version = $driver->getVersion();
 
         if ($version == null) {
-            ClearIce::output("\nYou have not applied any migrations\n");
+            $this->io->output("\nYou have not applied any migrations\n");
             return;
         }
 
         $migrationInfo = $this->getMigrationInfo();
 
-        ClearIce::output("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
+        $this->io->output("\n" . ($migrationInfo['counter']['previous'] == 0 ? 'No' : $migrationInfo['counter']['previous']) . " migration(s) have been applied so far.\n");
         $this->displayMigrations($migrationInfo['run']['previous']);
 
-        ClearIce::output("\nLast migration applied:\n    {$migrationInfo['current']}\n");
+        $this->io->output("\nLast migration applied:\n    {$migrationInfo['current']}\n");
 
         if ($migrationInfo['counter']['yet'] > 0) {
-            ClearIce::output("\n{$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
+            $this->io->output("\n{$migrationInfo['counter']['yet']} migration(s) that could be applied.\n");
             $this->displayMigrations($migrationInfo['run']['yet']);
         } else {
-            ClearIce::output("\nThere are no pending migrations.\n");
+            $this->io->output("\nThere are no pending migrations.\n");
         }
     }
 
-    private function getMigrationInfo() {
+    private function getMigrationInfo()
+    {
         $runMigrations = $this->yentu->getRunMirations();
         $migrations = $this->yentu->getAllMigrations();
 
@@ -57,7 +62,7 @@ class Status
         foreach ($runMigrations as $timestamp => $migration) {
             unset($migrations[$timestamp]);
             $run['previous'][] = "{$timestamp} {$migration['migration']} " .
-                    ($migration['default_schema'] == '' ? '' : "on `{$migration['default_schema']}` schema");
+                ($migration['default_schema'] == '' ? '' : "on `{$migration['default_schema']}` schema");
         }
 
         foreach ($migrations as $timestamp => $migration) {
@@ -72,12 +77,13 @@ class Status
         );
     }
 
-    private function displayMigrations($descriptions) {
+    private function displayMigrations($descriptions)
+    {
         foreach ($descriptions as $description) {
             if (trim($description) == '') {
                 continue;
             }
-            ClearIce::output("    $description\n");
+            $this->io->output("    $description\n");
         }
     }
 
