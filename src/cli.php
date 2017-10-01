@@ -236,7 +236,7 @@ $argumentParser->setStrict(true);
 $options = $argumentParser->parse($argv);
 
 if (isset($options['verbose'])) {
-    $argumentParser->setOutputLevel($options['verbose']);
+    $io->setOutputLevel($options['verbose']);
 }
 
 try {
