@@ -258,19 +258,27 @@ try {
 } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
     $io->resetOutputLevel();
     $io->error("Database driver failed: " . $e->getMessage() . "\n");
-    $yentu->reverseCommand($command);
+    if(isset($command)) {
+        $yentu->reverseCommand($command);
+    }
 } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
     $io->resetOutputLevel();
     $io->error("Failed to perform database action: " . $e->getMessage() . "\n");
-    $yentu->reverseCommand($command);
+    if(isset($command)) {
+        $yentu->reverseCommand($command);
+    }
 } catch (\ntentan\atiaa\DescriptionException $e) {
     $io->resetOutputLevel();
     $io->error("Failed to perform database action: " . $e->getMessage() . "\n");
-    $yentu->reverseCommand($command);
+    if(isset($command)) {
+        $yentu->reverseCommand($command);
+    }
 } catch (\yentu\exceptions\SyntaxErrorException $e) {
     $io->resetOutputLevel();
     $io->error("Error found in syntax: {$e->getMessage()}\n");
-    $yentu->reverseCommand($command);
+    if(isset($command)) {
+        $yentu->reverseCommand($command);
+    }
 } catch (\PDOException $e) {
     $io->resetOutputLevel();
     $io->error("Failed to connect to database: {$e->getMessage()}\n");
