@@ -66,166 +66,98 @@ $container->setup([
     ]
 ]);
 
-$io = $container->resolve(ConsoleIO::class);
+$io = $container->resolve(Io::class);
 $argumentParser = $container->resolve(ArgumentParser::class);
-$argumentParser->addCommands([
-    array(
-        'command' => 'import',
-        'help' => 'import the schema of an existing database'
-    ), 
-    array(
-        'command' => 'migrate',
-        'help' => 'run new migrations on the target database'
-    ), 
-    array(
-        'command' => 'init',
-        'help' => 'initialize the yentu directory'
-    ), 
-    array(
-        'command' => 'create',
-        'usage' => 'create [name] [options]..',
-        'help' => 'create a new migration'
-    ), 
-    array(
-        'command' => 'rollback',
-        'help' => 'rollback the previus migration which was run'
-    ), 
-    array(
-        'command' => 'status',
-        'help' => 'display the current status of the migrations'
-    )
+
+// Setup commands
+$argumentParser->addCommand(['name' => 'import', 'help' => 'import the schema of an existing database']);
+$argumentParser->addCommand(['name' => 'migrate', 'help' => 'run new migrations on the target database']);
+$argumentParser->addCommand(['name' => 'init', 'help' => 'initialize the yentu directory']);
+$argumentParser->addCommand(['name' => 'create', 'help' => 'create a new migration']);
+$argumentParser->addCommand(['name' => 'rollback', 'help' => 'rollback the previus migration which was run']);
+$argumentParser->addCommand(['name' => 'status', 'help' => 'display the current status of the migrations']);
+
+// Setup options
+$argumentParser->addOption([
+    'command' => 'import', 'short_name' => 'd', 'name' => 'skip-defaults',
+    'help' => 'do not import the default values of the columns'
+]);
+$argumentParser->addOption([
+    'command' => 'init', 'short_name' => 'i', 'name' => 'interractive',
+    'help' => 'initialize yentu interractively'
+]);
+$argumentParser->addOption([
+    'command' => 'init', 'short_name' => 'd', 'name' => 'driver',
+    'help' => 'database platform. Supports postgresql', 'type' => 'string'
+]);
+$argumentParser->addOption([
+    'command' => 'init', 'short_name' => 'h', 'name' => 'host',
+    'help' => 'the hostname of the target database', 'type' => 'string'
+]);
+$argumentParser->addOption([
+    'command' => 'init',  'short_name' => 'p', 'name' => 'port',
+    'help' => 'the port of the target database', 'type' => 'string'
+]);
+$argumentParser->addOption([
+    'command' => 'init', 'short_name' => 'n', 'name' => 'dbname',
+    'help' => 'the name of the target database', 'type' => 'string'
+]);
+$argumentParser->addOption([
+    'command' => 'init', 'short_name' => 'u', 'name' => 'user',
+    'help' => 'the user name on the target database', 'type' => 'string'
+]);
+$argumentParser->addOption([
+    'command' => 'init', 'short' => 'p', 'long' => 'password',
+    'help' => 'the password of the user on the target database', 'type' => 'string'
 ]);
 
-$argumentParser->addOptions([
-    array(
-        'command' => 'import',
-        'short' => 'd',
-        'long' => 'skip-defaults',
-        'help' => 'do not import the default values of the columns'
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'i',
-        'long' => 'interractive',
-        'help' => 'initialize yentu interractively'
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'd',
-        'long' => 'driver',
-        'help' => 'database platform. Supports postgresql',
-        'has_value' => true
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'h',
-        'long' => 'host',
-        'help' => 'the hostname of the target database',
-        'has_value' => true
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'p',
-        'long' => 'port',
-        'help' => 'the port of the target database',
-        'has_value' => true
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'n',
-        'long' => 'dbname',
-        'help' => 'the name of the target database',
-        'has_value' => true
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'u',
-        'long' => 'user',
-        'help' => 'the user name on the target database',
-        'has_value' => true
-    ), 
-    array(
-        'command' => 'init',
-        'short' => 'p',
-        'long' => 'password',
-        'help' => 'the passwrd of the user on the target database',
-        'has_value' => true
-    )
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'no-foreign-keys',
+    'help' => 'do not apply any database foriegn-key constraints'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'only-foreign-keys',
+    'help' => 'apply only database foreign-key constraints (fails on errors)'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'force-foreign-keys',
+    'help' => 'apply only database foreign-key constraints'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'dump-queries',
+    'help' => 'just dump the query and perform no action'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'dry',
+    'help' => 'perform a dry run. Do not alter the database in anyway'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'default-schema',
+    'type' => 'string', 'help' => 'use this as the default schema for all migrations'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'default-ondelete',
+    'help' => 'the default cascade action for foreign key deletes', 'type' => 'string'
+]);
+$argumentParser->addOption([
+    'command' => 'migrate', 'long' => 'default-onupdate',
+    'help' => 'the default cascade action for foreign key updates', 'type' => 'string'
+
 ]);
 
-$argumentParser->addOptions([
-    array(
-        'command' => 'migrate',
-        'long' => 'no-foreign-keys',
-        'help' => 'do not apply any database foriegn-key constraints'
-    ),
-    array(
-        'command' => 'migrate',
-        'long' => 'only-foreign-keys',
-        'help' => 'apply only database foreign-key constraints (fails on errors)'
-    ), 
-    array(
-        'command' => 'migrate',
-        'long' => 'force-foreign-keys',
-        'help' => 'apply only database foreign-key constraints'
-    ), 
-    array(
-        'command' => 'migrate',
-        'long' => 'dump-queries',
-        'help' => 'just dump the query and perform no action'
-    ), 
-    array(
-        'command' => 'migrate',
-        'long' => 'dry',
-        'help' => 'perform a dry run. Do not alter the database in anyway'
-    ), 
-    array(
-        'command' => 'migrate',
-        'long' => 'default-schema',
-        'has_value' => true,
-        'help' => 'use this as the default schema for all migrations'
-    ), 
-    array(
-        'command' => 'migrate',
-        'long' => 'default-ondelete',
-        'help' => 'the default cascade action for foreign key deletes',
-        'has_value' => true
-    ), 
-    array(
-        'command' => 'migrate',
-        'long' => 'default-onupdate',
-        'help' => 'the default cascade action for foreign key updates',
-        'has_value' => true
-    )
+$argumentParser->addCommands(['name' => 'rollback', 'help' => 'reverse only migrations in this default-schema']);
+$argumentParser->addOption([
+    'short' => 'y', 'long' => 'home',
+    'help' => 'specifies where the yentu configurations and migrations are found',
+    'type' => 'string'
 ]);
-
-$argumentParser->addCommands([
-    array(
-        'command' => 'rollback',
-        'long' => 'default-schema',
-        'has_value' => true,
-        'help' => 'reverse only migrations in this default-schema'
-    )
+$argumentParser->addOption([
+    'short' => 'v', 'long' => 'verbose',
+    'help' => 'set level of verbosity. high, mid, low and none',
+    'type' => 'string'
 ]);
-
-$argumentParser->addOptions([
-    array(
-        'short' => 'y',
-        'long' => 'home',
-        'help' => 'specifies where the yentu configurations and migrations are found',
-        'has_value' => true
-    ), 
-    array(
-        'short' => 'v',
-        'long' => 'verbose',
-        'help' => 'set level of verbosity. high, mid, low and none',
-        'has_value' => true
-    ),
-    array(
-        'long' => 'details',
-        'help' => 'show details of all migrations.',
-        'command' => 'status'
-    )    
+$argumentParser->addOption([
+    'long' => 'details', 'help' => 'show details of all migrations.', 'command' => 'status'
 ]);
 
 $argumentParser->setDescription("Yentu Database Migrations");

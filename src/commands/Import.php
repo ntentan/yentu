@@ -5,9 +5,10 @@ namespace yentu\commands;
 use clearice\io\Io;
 use yentu\DatabaseManipulatorFactory;
 use yentu\CodeWriter;
+use yentu\Reversible;
 use yentu\Yentu;
 
-class Import implements \yentu\Reversible
+class Import implements Reversible
 {
 
     /**
