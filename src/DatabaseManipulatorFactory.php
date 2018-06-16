@@ -26,9 +26,9 @@
 
 namespace yentu;
 
+use clearice\io\Io;
 use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
-use clearice\ConsoleIO;
 use ntentan\config\Config;
 
 /**
@@ -43,7 +43,7 @@ class DatabaseManipulatorFactory
     private $io;
     private $config;
     
-    public function __construct(Yentu $yentu, Config $config, DriverFactory $driverFactory, ConsoleIO $io)
+    public function __construct(Yentu $yentu, Config $config, DriverFactory $driverFactory, Io $io)
     {
         $this->yentu = $yentu;
         $this->driverFactory = $driverFactory;

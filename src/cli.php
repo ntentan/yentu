@@ -28,7 +28,7 @@ require "vendor/autoload.php";
 require __DIR__ . "/../src/globals.php";
 
 use clearice\ArgumentParser;
-use clearice\ConsoleIO;
+use clearice\io\Io;
 use yentu\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 use yentu\Yentu;
@@ -37,7 +37,7 @@ use ntentan\config\Config;
 $container = new ntentan\panie\Container();
 $container->setup([
     Yentu::class => [Yentu::class, 'singleton' => true],
-    ConsoleIO::class => [ConsoleIO::class, 'singleton' => true],
+    Io::class => [Io::class, 'singleton' => true],
     Config::class => [
         function($container) {
             $yentu = $container->resolve(Yentu::class);

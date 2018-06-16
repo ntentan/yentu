@@ -2,7 +2,7 @@
 
 namespace yentu;
 
-use clearice\ConsoleIO;
+use clearice\io\Io;
 use yentu\manipulators\AbstractDatabaseManipulator;
 
 class ChangeLogger
@@ -31,7 +31,7 @@ class ChangeLogger
     public function setDumpQueriesOnly($dumpQueriesOnly)
     {
         if ($dumpQueriesOnly === true) {
-            $this->io->setOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
+            $this->io->setOutputLevel(Io::OUTPUT_LEVEL_0);
         }
         $this->dumpQueriesOnly = $dumpQueriesOnly;
     }
@@ -46,7 +46,7 @@ class ChangeLogger
         $this->allowedItemTypes[] = $itemType;
     }
 
-    private function __construct(AbstractDatabaseManipulator $driver, Yentu $yentu, ConsoleIO $io)
+    private function __construct(AbstractDatabaseManipulator $driver, Yentu $yentu, Io $io)
     {
         $this->session = sha1(rand() . time());
         $this->driver = $driver;
@@ -55,7 +55,7 @@ class ChangeLogger
         $this->io = $io;
     }
 
-    public static function wrap(AbstractDatabaseManipulator $item, Yentu $yentu, ConsoleIO $io) : ChangeLogger
+    public static function wrap(AbstractDatabaseManipulator $item, Yentu $yentu, Io $io) : ChangeLogger
     {
         return new ChangeLogger($item, $yentu, $io);
     }
@@ -78,7 +78,7 @@ class ChangeLogger
 
             $this->driver->setDumpQuery(false);
 
-            $this->io->pushOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
+            $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
             $this->driver->query(
                 'INSERT INTO yentu_history(session, version, method, arguments, migration, default_schema) VALUES (?,?,?,?,?,?)', array(
                 $this->session,
@@ -95,7 +95,7 @@ class ChangeLogger
         } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
             if ($this->skipOnErrors) {
                 $this->io->output("E");
-                $this->io->output("rror " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", ConsoleIO::OUTPUT_LEVEL_2);
+                $this->io->output("rror " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . $arguments[0]['name'] . "'\n", Io::OUTPUT_LEVEL_2);
             } else {
                 throw $e;
             }
@@ -115,7 +115,7 @@ class ChangeLogger
                 (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
             ) {
                 $this->io->output("S");
-                $this->io->output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", ConsoleIO::OUTPUT_LEVEL_2);
+                $this->io->output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", Io::OUTPUT_LEVEL_2);
             } else {
                 $return = $this->performOperation($method, $matches, $arguments);
             }
@@ -139,7 +139,7 @@ class ChangeLogger
             if ($this->operations % 74 === 0) {
                 $this->io->output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100));
             } else {
-                $this->io->output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100), ConsoleIO::OUTPUT_LEVEL_2);
+                $this->io->output(sprintf("%4d%%\n", $this->operations / $this->expectedOperations * 100), Io::OUTPUT_LEVEL_2);
             }
         }
     }

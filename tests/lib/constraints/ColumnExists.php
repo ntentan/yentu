@@ -25,14 +25,16 @@
 
 namespace yentu\tests\constraints;
 
-class ColumnExists extends \yentu\tests\YentuConstraint
+use yentu\tests\YentuConstraint;
+
+class ColumnExists extends YentuConstraint
 {   
-    public function matches($column)
+    public function matches($column) : bool
     {        
         return $this->processResult($this->schemaInfo->columnExists($column));
     }
     
-    public function toString()
+    public function toString() : string
     {
         return "is a column on {$this->table['table']}";
     }

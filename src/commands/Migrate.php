@@ -26,6 +26,7 @@
 
 namespace yentu\commands;
 
+use clearice\io\Io;
 use yentu\database\DatabaseItem;
 use yentu\DatabaseManipulatorFactory;
 use yentu\ChangeLogger;
@@ -33,7 +34,6 @@ use yentu\Yentu;
 use yentu\database\ForeignKey;
 use yentu\Reversible;
 use ntentan\config\Config;
-use clearice\ConsoleIO;
 
 /**
  * The migrate command for the yentu database migration system. This class is
@@ -55,7 +55,7 @@ class Migrate implements Reversible
     private $config;
     private $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Config $config, ConsoleIO $io)
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Config $config, Io $io)
     {
         $this->manipulator = $manipulatorFactory->createManipulator();
         $this->yentu = $yentu;
@@ -205,7 +205,7 @@ class Migrate implements Reversible
             $this->dryDriver = clone $this->driver;
             $this->dryDriver->setDryRun(true);
         }
-        $this->io->pushOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
+        $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
         DatabaseItem::setDriver($this->dryDriver);
         require "$migrationFile";
         DatabaseItem::purge();

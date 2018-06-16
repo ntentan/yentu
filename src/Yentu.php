@@ -25,8 +25,8 @@
  */
 
 namespace yentu;
+use clearice\io\Io;
 
-use clearice\ConsoleIO;
 
 /**
  * Utility class for yentu related functions.
@@ -48,7 +48,7 @@ class Yentu
      */
     const VERSION = 'v0.2.0';
 
-    public function __construct(ConsoleIO $io)
+    public function __construct(Io $io)
     {
         $this->io = $io;
     }
@@ -168,7 +168,7 @@ class Yentu
         $this->io->output(
             "\n  - " . ucfirst("{$command}ing ") .
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
-            $this->getDetails($command, Parameters::wrap($arguments)), ConsoleIO::OUTPUT_LEVEL_2
+            $this->getDetails($command, Parameters::wrap($arguments)), Io::OUTPUT_LEVEL_2
         );
         $this->io->output(".");
     }

@@ -26,7 +26,9 @@
 
 namespace yentu\tests\constraints;
 
-class ColumnNullability extends \yentu\tests\YentuConstraint
+use yentu\tests\YentuConstraint;
+
+class ColumnNullability extends YentuConstraint
 {
     private $nullability = true;
     
@@ -35,12 +37,12 @@ class ColumnNullability extends \yentu\tests\YentuConstraint
         $this->nullability = $nullability;
     }
     
-    public function matches($other)
+    public function matches($other) : bool
     {
         return $this->processResult($this->schemaInfo->columnNulable($other, $this->nullability));
     }
     
-    public function toString()
+    public function toString() : string
     {
         return "is a nullable column on {$this->table['table']}";
     }    

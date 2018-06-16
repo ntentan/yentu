@@ -2,9 +2,9 @@
 
 namespace yentu\commands;
 
+use clearice\io\Io;
 use yentu\DatabaseManipulatorFactory;
 use yentu\CodeWriter;
-use clearice\ConsoleIO;
 use yentu\Yentu;
 
 class Import implements \yentu\Reversible
@@ -23,7 +23,7 @@ class Import implements \yentu\Reversible
     private $manipulatorFactory;
     private $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, ConsoleIO $io)
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
     {
         $this->yentu = $yentu;
         $this->manipulatorFactory = $manipulatorFactory;

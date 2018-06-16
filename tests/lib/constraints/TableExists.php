@@ -25,14 +25,16 @@
 
 namespace yentu\tests\constraints;
 
-class TableExists extends \yentu\tests\YentuConstraint
+use yentu\tests\YentuConstraint;
+
+class TableExists extends YentuConstraint
 {   
-    public function matches($table)
+    public function matches($table) : bool
     {
         return $this->processResult($this->schemaInfo->tableExists($table));
     }
     
-    public function toString()
+    public function toString() : string
     {
         return 'is an existing database table';
     }

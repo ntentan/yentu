@@ -2,10 +2,10 @@
 
 namespace yentu\commands;
 
+use clearice\io\Io;
 use yentu\ChangeReverser;
 use yentu\DatabaseManipulatorFactory;
 use yentu\database\DatabaseItem;
-use clearice\ConsoleIO;
 use yentu\Yentu;
 
 class Rollback
@@ -17,7 +17,7 @@ class Rollback
     private $manipulatorFactory;
     private $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, ConsoleIO $io)
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
     {
         $this->yentu = $yentu;
         $this->manipulatorFactory = $manipulatorFactory;

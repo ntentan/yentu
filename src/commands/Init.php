@@ -26,11 +26,11 @@
 
 namespace yentu\commands;
 
+use clearice\io\Io;
 use yentu\Yentu;
 use yentu\exceptions\CommandException;
 use yentu\DatabaseManipulatorFactory;
 use ntentan\config\Config;
-use clearice\ConsoleIO;
 
 /**
  * The init command class. This command intiates a project for yentu migration
@@ -44,7 +44,7 @@ class Init
     private $manipulatorFactory;
     private $io;
 
-    public function __construct(Yentu $yentu, Config $config, DatabaseManipulatorFactory $manipulatorFactory, ConsoleIO $io)
+    public function __construct(Yentu $yentu, Config $config, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
     {
         $this->yentu = $yentu;
         $this->config = $config;

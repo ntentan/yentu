@@ -2,8 +2,8 @@
 
 namespace yentu\manipulators;
 
+use clearice\io\Io;
 use ntentan\atiaa\DriverFactory;
-use clearice\ConsoleIO;
 use yentu\Yentu;
 use yentu\DatabaseAssertor;
 use yentu\SchemaDescription;
@@ -24,7 +24,7 @@ abstract class AbstractDatabaseManipulator
     protected $defaultSchema;
     private $io;
 
-    public function __construct(Yentu $yentu, DriverFactory $driverFactory, ConsoleIO $io)
+    public function __construct(Yentu $yentu, DriverFactory $driverFactory, Io $io)
     {
         $this->connection = $driverFactory->createDriver();
         $this->connection->connect();
@@ -68,7 +68,7 @@ abstract class AbstractDatabaseManipulator
                 echo "$query\n";
             }
 
-            $this->io->output("\n    > Running Query [$query]", ConsoleIO::OUTPUT_LEVEL_3);
+            $this->io->output("\n    > Running Query [$query]", Io::OUTPUT_LEVEL_3);
 
             if ($this->disableQuery !== true) {
                 return $this->connection->query($query, $bind);
@@ -214,7 +214,7 @@ abstract class AbstractDatabaseManipulator
         try {
             $this->connection->describeTable('yentu_history');
         } catch (\ntentan\atiaa\exceptions\TableNotFoundException $e) {
-            $this->io->pushOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
+            $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
             $this->addTable(array('schema' => '', 'name' => 'yentu_history'));
 
             $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));

@@ -26,8 +26,8 @@
 
 namespace yentu\tests;
 
+use clearice\io\Io;
 use org\bovigo\vfs\vfsStream;
-use clearice\ConsoleIO;
 use yentu\Yentu;
 use PHPUnit\Framework\TestCase;
 use yentu\commands\Init;
@@ -52,9 +52,9 @@ class YentuTest extends TestCase
     public function setup()
     {
         require_once "src/globals.php";
-        $this->io = new ConsoleIO();
+        $this->io = new Io();
         $this->setupStreams();
-        $this->io->setOutputLevel(ConsoleIO::OUTPUT_LEVEL_1);
+        $this->io->setOutputLevel(Io::OUTPUT_LEVEL_1);
         $this->config = new Config;
         $this->yentu = new Yentu($this->io);
         $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));

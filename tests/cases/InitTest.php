@@ -26,11 +26,12 @@
 
 namespace yentu\tests\cases;
 
+use clearice\io\Io;
 use \org\bovigo\vfs\vfsStream;
-use clearice\ConsoleIO;
 use yentu\commands\Init;
+use yentu\tests\YentuTest;
 
-class InitTest extends \yentu\tests\YentuTest
+class InitTest extends YentuTest
 {
 
     public function setUp()
@@ -131,7 +132,7 @@ class InitTest extends \yentu\tests\YentuTest
         vfsStream::setup('home', 0444);
         $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
-        $this->io->setOutputLevel(ConsoleIO::OUTPUT_LEVEL_0);
+        $this->io->setOutputLevel(Io::OUTPUT_LEVEL_0);
         $initCommand->run(
             array(
                 'driver' => 'postgresql',
