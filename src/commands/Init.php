@@ -26,33 +26,17 @@
 
 namespace yentu\commands;
 
-use clearice\io\Io;
+use yentu\Parameters;
 use yentu\Reversible;
-use yentu\Yentu;
 use yentu\exceptions\CommandException;
-use yentu\DatabaseManipulatorFactory;
-use ntentan\config\Config;
 
 /**
  * The init command class. This command intiates a project for yentu migration
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init implements Reversible
+class Init extends Command implements Reversible
 {
-    private $config;
-    private $yentu;
-    private $manipulatorFactory;
-    private $io;
-
-    public function __construct(Yentu $yentu, Config $config, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
-    {
-        $this->yentu = $yentu;
-        $this->config = $config;
-        $this->manipulatorFactory = $manipulatorFactory;
-        $this->io = $io;
-    }
-
     private function getParams($options)
     {
         if (isset($options['interractive'])) {
@@ -80,7 +64,7 @@ class Init implements Reversible
 
     public function createConfigFile($params)
     {
-        $params = \yentu\Parameters::wrap(
+        $params = Parameters::wrap(
                 $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
         );
         mkdir($this->yentu->getPath(''));
@@ -107,6 +91,11 @@ class Init implements Reversible
         file_put_contents($this->yentu->getPath("config/default.conf.php"), $configFile);
     }
 
+    /**
+     * @param array $options
+     * @throws CommandException
+     * @throws \ntentan\utils\exceptions\FileNotFoundException
+     */
     public function run($options = array())
     {
         $this->yentu->greet();

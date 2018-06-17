@@ -189,7 +189,7 @@ class YentuTest extends TestCase
     {
         $config = new Config();
         $factory = new DatabaseManipulatorFactory($this->yentu, $config, new DriverFactory(), $this->io);
-        $init = new Init($this->yentu, $config, $factory, $this->io);
+        $init = new Init($this->yentu, $factory, $this->io, $config);
         $init->run(
             array(
                 'driver' => $GLOBALS['DRIVER'],

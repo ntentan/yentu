@@ -7,23 +7,11 @@ use clearice\ConsoleIO;
 use yentu\DatabaseManipulatorFactory;
 
 /**
- * 
+ *
  */
-class Status
+class Status extends Command
 {
-
-    private $yentu;
-    private $io;
-    private $manipulatorFactory;
-
-    public function __construct(Yentu $yentu, ConsoleIO $io, DatabaseManipulatorFactory $manipulatorFactory)
-    {
-        $this->yentu = $yentu;
-        $this->io = $io;
-        $this->manipulatorFactory = $manipulatorFactory;
-    }
-
-    public function run($options = array())
+    public function run()
     {
         $this->yentu->greet();
         $driver = $this->manipulatorFactory->createManipulator();

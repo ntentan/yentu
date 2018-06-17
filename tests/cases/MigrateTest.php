@@ -42,7 +42,7 @@ class MigrateTest extends \yentu\tests\YentuTest
     public function testMigration()
     {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
+        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $migrate->run(array());
 
         $this->assertEquals(
@@ -54,7 +54,7 @@ class MigrateTest extends \yentu\tests\YentuTest
         }
 
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
+        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $this->assertColumnNullable('role_name', 'roles');
         $this->assertColumnExists('user_name', 'users');
         $migrate->run(array());
@@ -66,7 +66,7 @@ class MigrateTest extends \yentu\tests\YentuTest
     {
         $this->skipSchemaTests();
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->config, $this->io);
+        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $migrate->run(array());
         $this->assertSchemaExists('schema');
 

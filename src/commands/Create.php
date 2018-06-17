@@ -6,12 +6,8 @@ use yentu\Yentu;
 use yentu\exceptions\CommandException;
 use clearice\io\Io;
 
-class Create
+class Create extends Command
 {
-
-    private $yentu;
-    private $io;
-
     public function __construct(Yentu $yentu, Io $io)
     {
         $this->yentu = $yentu;
@@ -28,6 +24,10 @@ class Create
         }
     }
 
+    /**
+     * @param $name
+     * @throws CommandException
+     */
     private function checkExisting($name)
     {
         if (count(glob($this->yentu->getPath("migrations/*_{$name}.php"))) > 0) {
@@ -35,6 +35,9 @@ class Create
         }
     }
 
+    /**
+     * @throws CommandException
+     */
     private function checkPermission()
     {
         if (!file_exists($this->yentu->getPath("migrations/"))) {
@@ -48,16 +51,20 @@ class Create
         }
     }
 
+    /**
+     * @param $name
+     * @throws CommandException
+     */
     private function checkName($name)
     {
         if ($name == '') {
             throw new CommandException(
-            "Please provide a name for your new migration"
+                "Please provide a name for your new migration"
             );
         } else if (!preg_match("/[a-z][a-z0-9\_]*/", $name)) {
             throw new CommandException(
-            "Migration names must always start with a lowercase alphabet and "
-            . "can only consist of lower case alphabets, numbers and underscores."
+                "Migration names must always start with a lowercase alphabet and "
+                . "can only consist of lower case alphabets, numbers and underscores."
             );
         }
     }

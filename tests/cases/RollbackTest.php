@@ -39,7 +39,7 @@ class RollbackTest extends \yentu\tests\YentuTest {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
-        $init = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $init = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $init->createConfigFile(
             array(
                 'driver' => $GLOBALS['DRIVER'],
