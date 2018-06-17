@@ -1,4 +1,11 @@
 # language: php
+tools:
+    php_sim: true
+    php_pdepend: true
+    php_analyzer: true
+    external_code_coverage:
+        timeout: 1200    # Timeout in seconds.    
+        runs: 3
 filter:
     paths: 
         - src/
