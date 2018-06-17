@@ -99,7 +99,6 @@ class Import implements Reversible
     protected function importForeignKeys()
     {
         foreach ($this->foreignKeys as $name => $foreignKey) {
-            //$this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
             $this->code->add($this->generateSchemaCode($foreignKey));
             $this->code->addIndent();
             $this->code->add("->foreignKey('" . implode("','", $foreignKey['columns']) . "')");

@@ -27,6 +27,7 @@
 namespace yentu\commands;
 
 use clearice\io\Io;
+use yentu\Reversible;
 use yentu\Yentu;
 use yentu\exceptions\CommandException;
 use yentu\DatabaseManipulatorFactory;
@@ -37,7 +38,7 @@ use ntentan\config\Config;
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init
+class Init implements Reversible
 {
     private $config;
     private $yentu;
@@ -142,7 +143,10 @@ class Init
 
     public function reverse()
     {
-        
+        unlink($this->yentu->getPath("config/default.conf.php"));
+        rmdir($this->yentu->getPath("config"));
+        rmdir($this->yentu->getPath("migrations"));
+        rmdir($this->yentu->getPath(""));
     }
 
 }

@@ -4,7 +4,7 @@ namespace yentu\commands;
 
 use yentu\Yentu;
 use yentu\exceptions\CommandException;
-use clearice\ConsoleIO;
+use clearice\io\Io;
 
 class Create
 {
@@ -12,7 +12,7 @@ class Create
     private $yentu;
     private $io;
 
-    public function __construct(Yentu $yentu, ConsoleIO $io)
+    public function __construct(Yentu $yentu, Io $io)
     {
         $this->yentu = $yentu;
         $this->io = $io;
@@ -21,8 +21,8 @@ class Create
     public function run($options = array())
     {
         $this->yentu->greet();
-        if (isset($options['stand_alones'])) {
-            $this->createFile($options['stand_alones'][0]);
+        if (isset($options['__args'])) {
+            $this->createFile($options['__args'][0]);
         } else {
             $this->checkName(null);
         }
