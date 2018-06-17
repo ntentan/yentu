@@ -41,3 +41,10 @@ checks:
         no_debug_code: true
         no_unnecessary_function_call_in_for_loop: true
         prefer_unix_line_ending: true
+
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
