@@ -16,10 +16,10 @@
     },
     "require": {
         "ekowabaka/clearice": "dev-dev",
-	    "ntentan/panie": "0.*",
+	    "ntentan/panie": "dev-dev",
         "php" : ">=7.1.0",
-        "ntentan/atiaa": "0.*",
-        "ntentan/config": "0.*",
+        "ntentan/atiaa": "dev-dev",
+        "ntentan/config": "dev-dev",
         "sebastian/version": "^2.0"
     },
     "require-dev" : {
@@ -28,5 +28,6 @@
         "mockery/mockery": "@stable",
         "phing/phing" : "@stable"
     },
-    "bin" : ["bin/yentu"]
+    "bin" : ["bin/yentu"],
+    "minimum-stability": "dev"
 }
