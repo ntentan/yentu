@@ -2,9 +2,6 @@
 
 namespace yentu\commands;
 
-use yentu\Yentu;
-use clearice\ConsoleIO;
-use yentu\DatabaseManipulatorFactory;
 
 /**
  *
