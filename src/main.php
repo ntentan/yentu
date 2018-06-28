@@ -25,11 +25,11 @@
  */
 
 require "vendor/autoload.php";
-require __DIR__ . "/../src/globals.php";
+require_once __DIR__ . "/../src/globals.php";
 
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
-use yentu\AbstractDatabaseManipulator;
+use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 use yentu\Yentu;
 use ntentan\config\Config;
@@ -159,7 +159,7 @@ $argumentParser->addOption([
 $argumentParser->addOption(['name' => 'details', 'help' => 'show details of all migrations.', 'command' => 'status']);
 $argumentParser->enableHelp("Yentu database migration tool", "Report bugs on https://github.com/ntentan/yentu");
 
-$options = $argumentParser->parse($argv);
+$options = $argumentParser->parse();
 
 if (isset($options['verbose'])) {
     $io->setOutputLevel($options['verbose']);
