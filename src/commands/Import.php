@@ -2,12 +2,10 @@
 
 namespace yentu\commands;
 
-use clearice\io\Io;
-use yentu\DatabaseManipulatorFactory;
 use yentu\CodeWriter;
-use yentu\Yentu;
+use yentu\Reversible;
 
-class Import implements \yentu\Reversible
+class Import extends Command implements Reversible
 {
 
     /**
@@ -19,16 +17,6 @@ class Import implements \yentu\Reversible
     private $hasSchema = false;
     private $foreignKeys = array();
     private $newVersion;
-    private $yentu;
-    private $manipulatorFactory;
-    private $io;
-
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
-    {
-        $this->yentu = $yentu;
-        $this->manipulatorFactory = $manipulatorFactory;
-        $this->io = $io;
-    }
 
     private function initializeCodeWriter()
     {
@@ -42,7 +30,7 @@ class Import implements \yentu\Reversible
         $this->code = $code;
     }
 
-    public function run($options = array())
+    public function run()
     {
         $this->yentu->greet();
         $this->db = $this->manipulatorFactory->createManipulator();
@@ -98,7 +86,6 @@ class Import implements \yentu\Reversible
     protected function importForeignKeys()
     {
         foreach ($this->foreignKeys as $name => $foreignKey) {
-            //$this->code->add("\$this->schema('{$foreignKey['schema']}')->table('{$foreignKey['table']}')");
             $this->code->add($this->generateSchemaCode($foreignKey));
             $this->code->addIndent();
             $this->code->add("->foreignKey('" . implode("','", $foreignKey['columns']) . "')");

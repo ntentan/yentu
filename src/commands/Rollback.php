@@ -2,28 +2,19 @@
 
 namespace yentu\commands;
 
-use clearice\io\Io;
 use yentu\ChangeReverser;
-use yentu\DatabaseManipulatorFactory;
 use yentu\database\DatabaseItem;
-use yentu\Yentu;
 
-class Rollback
+class Rollback extends Command
 {
 
     private $schemaCondition;
     private $schemaConditionData = [];
-    private $yentu;
-    private $manipulatorFactory;
-    private $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
-    {
-        $this->yentu = $yentu;
-        $this->manipulatorFactory = $manipulatorFactory;
-        $this->io = $io;
-    }
-
+    /**
+     * @param array $options
+     * @throws \yentu\exceptions\DatabaseManipulatorException
+     */
     public function run($options = array())
     {
         $this->yentu->greet();

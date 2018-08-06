@@ -182,14 +182,30 @@ class YentuTest extends TestCase
     
     protected function getManipulatorFactory()
     {
-        return new DatabaseManipulatorFactory($this->yentu, $this->config, new DriverFactory(), $this->io);;
+        $dbConfig = array(
+            'driver' => $GLOBALS['DRIVER'],
+            'host' => $GLOBALS['DB_HOST'],
+            'dbname' => $GLOBALS['DB_NAME'],
+            'user' => $GLOBALS['DB_USER'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'file' => $GLOBALS['DB_FILE']
+        );
+        return new DatabaseManipulatorFactory($this->yentu, new DriverFactory($dbConfig), $this->io);
     }
 
     protected function initYentu($name)
     {
         $config = new Config();
-        $factory = new DatabaseManipulatorFactory($this->yentu, $config, new DriverFactory(), $this->io);
-        $init = new Init($this->yentu, $config, $factory, $this->io);
+        $dbConfig = array(
+            'driver' => $GLOBALS['DRIVER'],
+            'host' => $GLOBALS['DB_HOST'],
+            'dbname' => $name,
+            'user' => $GLOBALS['DB_USER'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'file' => $GLOBALS['DB_FILE']
+        );
+        $factory = new DatabaseManipulatorFactory($this->yentu, new DriverFactory($dbConfig), $this->io);
+        $init = new Init($this->yentu, $factory, $this->io, $config);
         $init->run(
             array(
                 'driver' => $GLOBALS['DRIVER'],
@@ -200,7 +216,7 @@ class YentuTest extends TestCase
                 'file' => $GLOBALS['DB_FILE']
             )
         );
-        $this->config->readPath($this->yentu->getPath("config/default.conf.php"));
+        //$this->config->readPath($this->yentu->getPath("config/default.conf.php"));
     }
 
     protected function connect($dsn)

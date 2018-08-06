@@ -41,20 +41,17 @@ class DatabaseManipulatorFactory
     private $yentu;
     private $driverFactory;
     private $io;
-    private $config;
     
-    public function __construct(Yentu $yentu, Config $config, DriverFactory $driverFactory, Io $io)
+    public function __construct(Yentu $yentu, DriverFactory $driverFactory, Io $io)
     {
         $this->yentu = $yentu;
         $this->driverFactory = $driverFactory;
         $this->io = $io;
-        $this->config = $config;
     }
     
     public function createManipulator() : AbstractDatabaseManipulator
     {
-        $config = $this->config->get('db');
-        $this->driverFactory->setConfig($config);
+        $config = $this->driverFactory->getConfig();
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
         return new $class($this->yentu, $this->driverFactory, $this->io);
     }

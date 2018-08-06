@@ -25,10 +25,12 @@
 
 namespace yentu\tests\constraints;
 
-class SchemaExists extends \yentu\tests\YentuConstraint
-{   
-    public function matches($schema) : bool
-    {   
+use yentu\tests\YentuConstraint;
+
+class SchemaExists extends YentuConstraint
+{
+    public function matches($schema): bool
+    {
         $response = $this->pdo->query(
             sprintf(
                 "SELECT * FROM information_schema.schemata  where schema_name = '%s'",
@@ -37,8 +39,8 @@ class SchemaExists extends \yentu\tests\YentuConstraint
         );
         return $this->processResult($response->rowCount() === 1);
     }
-    
-    public function toString() : string
+
+    public function toString(): string
     {
         return 'is an existing schema';
     }

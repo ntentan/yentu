@@ -27,19 +27,17 @@
 namespace yentu\commands;
 
 use clearice\io\Io;
+use yentu\database\Begin;
 use yentu\database\DatabaseItem;
-use yentu\DatabaseManipulatorFactory;
 use yentu\ChangeLogger;
-use yentu\Yentu;
 use yentu\database\ForeignKey;
 use yentu\Reversible;
-use ntentan\config\Config;
 
 /**
  * The migrate command for the yentu database migration system. This class is
  * responsible for creating and updating items 
  */
-class Migrate implements Reversible
+class Migrate extends Command implements Reversible
 {
 
     const FILTER_UNRUN = 'unrun';
@@ -50,18 +48,7 @@ class Migrate implements Reversible
     private $defaultSchema = false;
     private $lastSession;
     private $currentPath;
-    private $yentu;
-    private $manipulator;
-    private $config;
-    private $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory, Config $config, Io $io)
-    {
-        $this->manipulator = $manipulatorFactory->createManipulator();
-        $this->yentu = $yentu;
-        $this->config = $config;
-        $this->io = $io;
-    }
 
     public function setupOptions($options, &$filter)
     {
@@ -125,7 +112,7 @@ class Migrate implements Reversible
 
     public function getBegin()
     {
-        return new \yentu\database\Begin($this->defaultSchema);
+        return new Begin($this->defaultSchema);
     }
 
     private static function fillOptions(&$options)
@@ -151,7 +138,7 @@ class Migrate implements Reversible
             $this->yentu->greet();
         }
 
-        $this->driver = ChangeLogger::wrap($this->manipulator, $this->yentu, $this->io);
+        $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->yentu, $this->io);
         $this->driver->setDumpQueriesOnly($options['dump-queries']);
         $this->driver->setDryRun($options['dry']);
 

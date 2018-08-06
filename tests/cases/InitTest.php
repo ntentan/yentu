@@ -45,7 +45,7 @@ class InitTest extends YentuTest
 
     public function testParameters()
     {
-        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
 
         ob_start();
         $initCommand->run(
@@ -115,7 +115,7 @@ class InitTest extends YentuTest
             );
         }
 
-        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
         $initCommand->run(array(
@@ -130,7 +130,7 @@ class InitTest extends YentuTest
     public function testUnwritable()
     {
         vfsStream::setup('home', 0444);
-        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $this->io->setOutputLevel(Io::OUTPUT_LEVEL_0);
         $initCommand->run(
@@ -150,7 +150,7 @@ class InitTest extends YentuTest
     public function testExistingDir()
     {
         mkdir(vfsStream::url('home/yentu'));
-        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
             array(
@@ -168,7 +168,7 @@ class InitTest extends YentuTest
      */
     public function testNoParams()
     {
-        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(array());
     }
@@ -179,7 +179,7 @@ class InitTest extends YentuTest
     public function testExistingDb()
     {
         $this->pdo->query('CREATE TABLE yentu_history(dummy INTEGER)');
-        $initCommand = new Init($this->yentu, $this->config, $this->getManipulatorFactory(), $this->io);
+        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run(
             array(
