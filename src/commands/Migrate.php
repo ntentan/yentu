@@ -149,8 +149,8 @@ class Migrate extends Command implements Reversible
         DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
-        $migrationPaths = $this->getMigrationPathsInfo();
-        $migrationsToBeRun = [];
+        $migrationPaths = $this->yentu->getMigrationPaths();
+        //$migrationsToBeRun = [];
         foreach ($migrationPaths as $path) {
             $this->setDefaultSchema($path);
             $migrateVariables = $path['variables'] ?? [];
@@ -233,21 +233,6 @@ class Migrate extends Command implements Reversible
         }
         return $output;
     }
-    
-    private function getMigrationPathsInfo()
-    {
-        $variables = $this->config->get('variables', []);
-        $otherMigrations = $this->config->get('other_migrations', []);
-
-        return array_merge(
-            array(
-            array(
-                'home' => $this->yentu->getPath('migrations'),
-                'variables' => $variables
-            )
-            ), $otherMigrations
-        );
-    }    
 
     public function getChanges()
     {

@@ -10,16 +10,14 @@ use yentu\Yentu;
 
 class Command
 {
-    protected $config;
     protected $yentu;
     protected $manipulatorFactory;
     protected $io;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory = null, Io $io = null, Config $config = null)
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory = null, Io $io = null)
     {
         $this->manipulatorFactory = $manipulatorFactory;
         $this->yentu = $yentu;
-        $this->config = $config;
         $this->io = $io;
     }
 }

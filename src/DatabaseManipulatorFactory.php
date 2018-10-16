@@ -47,6 +47,7 @@ class DatabaseManipulatorFactory
         $this->yentu = $yentu;
         $this->driverFactory = $driverFactory;
         $this->io = $io;
+        $yentu->setDatabaseManipuatorFactory($this);
     }
     
     public function createManipulator() : AbstractDatabaseManipulator

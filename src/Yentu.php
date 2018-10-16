@@ -26,6 +26,7 @@
 
 namespace yentu;
 use clearice\io\Io;
+use ntentan\config\Config;
 
 
 /**
@@ -41,12 +42,14 @@ class Yentu
      */
     private $home;
     private $io;
+    private $databaseManipulatorFactory;
+    private $config;
 
     /**
      * Current version of yentu.
      * @var string
      */
-    const VERSION = 'v0.2.0';
+    const VERSION = 'v0.3.0';
 
     public function __construct(Io $io)
     {
@@ -64,6 +67,16 @@ class Yentu
     public function setDefaultHome($home)
     {
         $this->home = $home;
+    }
+
+    public function setDatabaseManipuatorFactory(DatabaseManipulatorFactory $databaseManipulatorFactory)
+    {
+        $this->databaseManipulatorFactory = $databaseManipulatorFactory;
+    }
+
+    public function setConfig(Config $config)
+    {
+        $this->config = $config;
     }
 
     /**
@@ -84,7 +97,7 @@ class Yentu
      */
     public function getRunMirations()
     {
-        $db = AbstractDatabaseManipulator::create();
+        $db = $this->databaseManipulatorFactory->createManipulator();
         $runMigrations = $db->query("SELECT DISTINCT version, migration, default_schema FROM yentu_history ORDER BY version");
         $migrations = array();
         foreach ($runMigrations as $migration) {
@@ -106,10 +119,25 @@ class Yentu
     public function getAllMigrations()
     {
         $migrations = array();
-        foreach ($this->getMigrationPathsInfo() as $migration) {
+        foreach ($this->getMigrationPaths() as $migration) {
             $migrations = $migrations + $this->getMigrations($migration['home']);
         }
         return $migrations;
+    }
+
+    public function getMigrationPaths()
+    {
+        $variables = $this->config->get('variables', []);
+        $otherMigrations = $this->config->get('other_migrations', []);
+
+        return array_merge(
+            array(
+                array(
+                    'home' => $this->getPath('migrations'),
+                    'variables' => $variables
+                )
+            ), $otherMigrations
+        );
     }
 
     /**
@@ -143,7 +171,7 @@ class Yentu
      * migration name from the migration script.
      * 
      * @param string $migration
-     * @return array
+     * @return array|bool
      */
     private function getMigrationDetails($migration)
     {

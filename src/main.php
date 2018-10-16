@@ -46,6 +46,7 @@ $container->setup([
             if (file_exists($configFile)) {
                 $config->readPath($yentu->getPath("config/default.conf.php"));
             }
+            $yentu->setConfig($config);
             return $config;
         },
         'singleton' => true
