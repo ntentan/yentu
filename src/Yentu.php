@@ -69,11 +69,19 @@ class Yentu
         $this->home = $home;
     }
 
+    /**
+     * Inject a database manipulator factory
+     * @param DatabaseManipulatorFactory $databaseManipulatorFactory
+     */
     public function setDatabaseManipuatorFactory(DatabaseManipulatorFactory $databaseManipulatorFactory)
     {
         $this->databaseManipulatorFactory = $databaseManipulatorFactory;
     }
 
+    /**
+     * Inject a configuration object
+     * @param Config $config
+     */
     public function setConfig(Config $config)
     {
         $this->config = $config;

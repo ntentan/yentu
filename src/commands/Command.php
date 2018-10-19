@@ -2,7 +2,6 @@
 
 namespace yentu\commands;
 
-
 use clearice\io\Io;
 use ntentan\config\Config;
 use yentu\DatabaseManipulatorFactory;
