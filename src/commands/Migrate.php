@@ -48,6 +48,7 @@ class Migrate extends Command implements Reversible
     private $defaultSchema = false;
     private $lastSession;
     private $currentPath;
+    private $rollbackCommand;
 
 
     public function setupOptions($options, &$filter)
@@ -239,6 +240,11 @@ class Migrate extends Command implements Reversible
         return $this->driver->getChanges();
     }
 
+    public function setRollbackCommand(Rollback $rollbackCommand)
+    {
+        $this->rollbackCommand = $rollbackCommand;
+    }
+
     public function reverse()
     {
         if ($this->driver === null) {
@@ -248,8 +254,7 @@ class Migrate extends Command implements Reversible
         $this->io->output("Attempting to reverse all changes ... ");
         if ($this->getChanges() > 0) {
             $this->io->pushOutputLevel(0);
-            $rollback = $this->yentu->getContainer()->resolve(\yentu\commands\Rollback::class);
-            $rollback->run(array());
+            $this->rollbackCommand->run(array());
             $this->io->popOutputLevel();
         }
         $this->io->output("OK\n");

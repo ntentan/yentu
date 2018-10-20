@@ -33,6 +33,7 @@ use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 use yentu\Yentu;
 use ntentan\config\Config;
+use yentu\commands\Migrate;
 
 $container = new ntentan\panie\Container();
 $container->setup([
@@ -64,6 +65,10 @@ $container->setup([
             return $container->resolve($class, ['config' => $config]);
         },
         'singleton' => true
+    ],
+    Migrate::class => [
+        Migrate::class,
+        'calls' => ['setRollbackCommand']
     ]
 ]);
 
@@ -173,7 +178,7 @@ try {
     if (isset($options['__command'])) {
         $yentu->setDefaultHome($options['home'] ?? './yentu');
 
-        $class = "\\yentu\\commands\\" . ucfirst($options['__command']);
+        $class = "yentu\\commands\\" . ucfirst($options['__command']);
         unset($options['__command']);
         $command = $container->resolve($class);
         $command->run($options);
