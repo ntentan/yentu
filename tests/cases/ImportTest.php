@@ -28,8 +28,9 @@ namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
 use yentu\commands\Import;
+use yentu\tests\TestBase;
 
-class ImportTest extends \yentu\tests\YentuTest
+class ImportTest extends TestBase
 {
 
     public function setUp()
@@ -46,7 +47,7 @@ class ImportTest extends \yentu\tests\YentuTest
         $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
 
-        $import = new Import($this->yentu, $this->getManipulatorFactory(), $this->io);
+        $import = $this->commandFactory->createCommand('import');
         $import->setCodeWriter($codeWriter);
         $description = $import->run(array());
         $newVersion = $import->getNewVersion();

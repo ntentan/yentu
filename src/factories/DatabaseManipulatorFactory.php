@@ -24,12 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
+namespace yentu\factories;
 
 use clearice\io\Io;
 use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
-use ntentan\config\Config;
 
 /**
  * Description of DatabaseManipulatorFactory
@@ -38,22 +37,25 @@ use ntentan\config\Config;
  */
 class DatabaseManipulatorFactory
 {
-    private $yentu;
     private $driverFactory;
     private $io;
     
-    public function __construct(Yentu $yentu, DriverFactory $driverFactory, Io $io)
+    public function __construct(DriverFactory $driverFactory, Io $io)
     {
-        $this->yentu = $yentu;
         $this->driverFactory = $driverFactory;
         $this->io = $io;
-        $yentu->setDatabaseManipuatorFactory($this);
     }
     
     public function createManipulator() : AbstractDatabaseManipulator
     {
-        $config = $this->driverFactory->getConfig();
-        $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
-        return new $class($this->yentu, $this->driverFactory, $this->io);
+        $class = "\\yentu\\manipulators\\" . ucfirst($this->driverFactory->getConfig()['driver']);
+        return new $class($this->driverFactory, $this->io);
     }
+
+    public function createManipulatorWithConfig($config) : AbstractDatabaseManipulator
+    {
+        $this->driverFactory->setConfig($config);
+        return $this->createManipulator();
+    }
+
 }

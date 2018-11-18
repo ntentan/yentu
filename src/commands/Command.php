@@ -3,20 +3,23 @@
 namespace yentu\commands;
 
 use clearice\io\Io;
-use ntentan\config\Config;
-use yentu\DatabaseManipulatorFactory;
+use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Yentu;
 
-class Command
+abstract class Command
 {
     protected $yentu;
     protected $manipulatorFactory;
     protected $io;
+    protected $options;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory = null, Io $io = null)
+    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory = null, Io $io = null, array $options = null)
     {
         $this->manipulatorFactory = $manipulatorFactory;
         $this->yentu = $yentu;
         $this->io = $io;
+        $this->options = $options;
     }
+
+    abstract public function run();
 }

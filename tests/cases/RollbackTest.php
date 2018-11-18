@@ -29,17 +29,19 @@ namespace yentu\tests\cases;
 use ntentan\config\Config;
 use yentu\commands\Init;
 use yentu\commands\Rollback;
+use yentu\tests\TestBase;
 
-class RollbackTest extends \yentu\tests\YentuTest {
-
+class RollbackTest extends TestBase
+{
     public function setUp() {
         $this->testDatabase = 'yentu_rollback_test';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
+        $this->initYentu($GLOBALS['DB_NAME']);
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
-        $init = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $init = $this->commandFactory->createCommand('init');
         $init->createConfigFile(
             array(
                 'driver' => $GLOBALS['DRIVER'],
@@ -50,7 +52,7 @@ class RollbackTest extends \yentu\tests\YentuTest {
                 'file' => $GLOBALS['DB_FILE']
             )
         );
-        $this->config->readPath($this->yentu->getPath('config/default.conf.php'));
+        //$this->config->readPath($this->yentu->getPath('config/default.conf.php'));
     }
 
     public function testRollback() {
@@ -58,8 +60,8 @@ class RollbackTest extends \yentu\tests\YentuTest {
             $this->assertTableExists($table);
         }
 
-        $rollback = new Rollback($this->yentu, $this->getManipulatorFactory(), $this->io);
-        $rollback->run(array());
+        $rollback = $this->commandFactory->createCommand('rollback');
+        $rollback->run();
 
         foreach ($this->tables as $table) {
             if ($table == 'yentu_history')

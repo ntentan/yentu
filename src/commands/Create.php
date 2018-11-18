@@ -8,17 +8,14 @@ use clearice\io\Io;
 
 class Create extends Command
 {
-    public function __construct(Yentu $yentu, Io $io)
-    {
-        $this->yentu = $yentu;
-        $this->io = $io;
-    }
-
-    public function run($options = array())
+    /**
+     * @throws CommandException
+     */
+    public function run()
     {
         $this->yentu->greet();
-        if (isset($options['__args'])) {
-            $this->createFile($options['__args'][0]);
+        if (isset($this->options['__args'])) {
+            $this->createFile($this->options['__args'][0]);
         } else {
             $this->checkName(null);
         }
@@ -69,6 +66,10 @@ class Create extends Command
         }
     }
 
+    /**
+     * @param $name
+     * @throws CommandException
+     */
     public function createFile($name)
     {
         $this->checkExisting($name);

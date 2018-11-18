@@ -36,7 +36,7 @@ class Status extends Command
 
     private function getMigrationInfo()
     {
-        $runMigrations = $this->yentu->getRunMirations();
+        $runMigrations = $this->yentu->getExecutedMigrations();
         $migrations = $this->yentu->getAllMigrations();
 
         $counter['previous'] = count($runMigrations);

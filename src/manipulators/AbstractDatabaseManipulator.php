@@ -24,7 +24,13 @@ abstract class AbstractDatabaseManipulator
     protected $defaultSchema;
     private $io;
 
-    public function __construct(Yentu $yentu, DriverFactory $driverFactory, Io $io)
+    /**
+     * AbstractDatabaseManipulator constructor.
+     * @param DriverFactory $driverFactory
+     * @param Io $io
+     * @throws \ntentan\atiaa\exceptions\ConnectionException
+     */
+    public function __construct(DriverFactory $driverFactory, Io $io)
     {
         $this->connection = $driverFactory->createDriver();
         $this->connection->connect();

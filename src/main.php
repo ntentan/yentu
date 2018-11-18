@@ -73,7 +73,6 @@ $container->setup([
 ]);
 
 $io = $container->resolve(Io::class);
-/** @var ArgumentParser $argumentParser */
 $argumentParser = $container->resolve(ArgumentParser::class);
 
 // Setup commands
@@ -178,10 +177,6 @@ try {
     if (isset($options['__command'])) {
         $yentu->setDefaultHome($options['home'] ?? './yentu');
 
-        $class = "yentu\\commands\\" . ucfirst($options['__command']);
-        unset($options['__command']);
-        $command = $container->resolve($class);
-        $command->run($options);
     } else {
         $io->output($argumentParser->getHelpMessage());
     }

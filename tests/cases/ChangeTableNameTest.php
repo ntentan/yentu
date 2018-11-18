@@ -27,9 +27,9 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
-use yentu\commands\Migrate;
+use yentu\tests\TestBase;
 
-class ChangeTableNameTest extends \yentu\tests\YentuTest {
+class ChangeTableNameTest extends TestBase {
 
     public function setup() {
         $this->testDatabase = 'yentu_change_name';
@@ -39,13 +39,13 @@ class ChangeTableNameTest extends \yentu\tests\YentuTest {
 
     public function testNameChange() {
         copy('tests/migrations/12345678901234_some_table.php', vfsStream::url('home/yentu/migrations/12345678901234_some_table.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run(array());
+        $migrate = $this->commandFactory->createCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $migrate->run();
         $this->assertTableExists('some_table');
 
         copy('tests/migrations/12345678901235_other_table.php', vfsStream::url('home/yentu/migrations/12345678901235_other_table.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run(array());
+        $migrate = $this->commandFactory->createCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $migrate->run();
         $this->assertTableExists('some_other_table');
         $this->assertTableDoesntExist('some_table');
     }

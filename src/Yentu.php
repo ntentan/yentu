@@ -27,6 +27,7 @@
 namespace yentu;
 use clearice\io\Io;
 use ntentan\config\Config;
+use yentu\factories\DatabaseManipulatorFactory;
 
 
 /**
@@ -36,11 +37,17 @@ class Yentu
 {
 
     /**
-     * The current home for yentu.
-     * @see Yentu::setDefaultHome()
+     * The current home path for yentu.
+     * The home path represents the location of migrations and the configurations used for the yentu session.
+     *
      * @var string
      */
     private $home;
+
+    /**
+     * An instance of the clearice Io class
+     * @var Io
+     */
     private $io;
     private $databaseManipulatorFactory;
     private $config;
@@ -51,8 +58,9 @@ class Yentu
      */
     const VERSION = 'v0.3.0';
 
-    public function __construct(Io $io)
+    public function __construct(Io $io, DatabaseManipulatorFactory $databaseManipulatorFactory)
     {
+        $this->databaseManipulatorFactory = $databaseManipulatorFactory;
         $this->io = $io;
     }
 
@@ -70,21 +78,17 @@ class Yentu
     }
 
     /**
-     * Inject a database manipulator factory
-     * @param DatabaseManipulatorFactory $databaseManipulatorFactory
-     */
-    public function setDatabaseManipuatorFactory(DatabaseManipulatorFactory $databaseManipulatorFactory)
-    {
-        $this->databaseManipulatorFactory = $databaseManipulatorFactory;
-    }
-
-    /**
      * Inject a configuration object
      * @param Config $config
      */
     public function setConfig(Config $config)
     {
         $this->config = $config;
+    }
+
+    public function getConfig() : Config
+    {
+        return $this->config;
     }
 
     /**
@@ -101,9 +105,11 @@ class Yentu
      * Returns an array of all migrations that have been run on the database.
      * The information returned includes the timestamp, the name of the migration
      * and the default schema on which it was run.
+     *
      * @return array
+     * @throws exceptions\DatabaseManipulatorException
      */
-    public function getRunMirations()
+    public function getExecutedMigrations()
     {
         $db = $this->databaseManipulatorFactory->createManipulator();
         $runMigrations = $db->query("SELECT DISTINCT version, migration, default_schema FROM yentu_history ORDER BY version");
@@ -120,15 +126,15 @@ class Yentu
     }
 
     /**
-     * Returns an array of all migrations, in all configured migrations 
-     * directories.
+     * Returns an array of all migrations, in all configured migrations directories.
+     *
      * @return array
      */
     public function getAllMigrations()
     {
         $migrations = array();
         foreach ($this->getMigrationPaths() as $migration) {
-            $migrations = $migrations + $this->getMigrations($migration['home']);
+            $migrations = $migrations + $this->getMigrationsFromPath($migration['home']);
         }
         return $migrations;
     }
@@ -149,12 +155,12 @@ class Yentu
     }
 
     /**
-     * Return an array of all migrations available.
+     * Return an array of all migrations from a given migration path
      * 
      * @param string $path
      * @return array
      */
-    public function getMigrations($path)
+    public function getMigrationsFromPath($path)
     {
         if (!file_exists($path))
             return [];
@@ -174,9 +180,8 @@ class Yentu
     }
 
     /**
-     * Return the details of a migration extracted from the file name.
-     * This method uses a regular expression to extract the timestamp and
-     * migration name from the migration script.
+     * Return the details of a migration extracted from the file name. This method uses a regular expression to extract
+     * the timestamp and migration name from the migration script.
      * 
      * @param string $migration
      * @return array|bool
@@ -192,8 +197,7 @@ class Yentu
     }
 
     /**
-     * Announce a migration based on the command and the arguments called for
-     * the migration.
+     * Announce a migration based on the command and the arguments called for the migration.
      * 
      * @param string $command The action being performed
      * @param string $itemType The type of item
@@ -204,7 +208,7 @@ class Yentu
         $this->io->output(
             "\n  - " . ucfirst("{$command}ing ") .
             preg_replace("/([a-z])([A-Z])/", "$1 $2", $itemType) . " " .
-            $this->getDetails($command, Parameters::wrap($arguments)), Io::OUTPUT_LEVEL_2
+            $this->getEventDescription($command, Parameters::wrap($arguments)), Io::OUTPUT_LEVEL_2
         );
         $this->io->output(".");
     }
@@ -216,7 +220,7 @@ class Yentu
      * @param array $arguments
      * @return string
      */
-    private function getDetails($command, $arguments)
+    private function getEventDescription($command, $arguments)
     {
         $dir = '';
         $destination = '';

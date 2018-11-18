@@ -126,27 +126,27 @@ class Migrate extends Command implements Reversible
         }
     }
 
-    public function run($options = array())
+    public function run()
     {
         global $migrateCommand;
         global $migrateVariables;
 
-        self::fillOptions($options);
+        self::fillOptions($this->options);
 
         $migrateCommand = $this;
 
-        if ($options['dump-queries'] !== true) {
+        if ($this->options['dump-queries'] !== true) {
             $this->yentu->greet();
         }
 
         $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->yentu, $this->io);
-        $this->driver->setDumpQueriesOnly($options['dump-queries']);
-        $this->driver->setDryRun($options['dry']);
+        $this->driver->setDumpQueriesOnly($this->options['dump-queries']);
+        $this->driver->setDryRun($this->options['dry']);
 
         $totalOperations = 0;
 
         $filter = self::FILTER_UNRUN;
-        $this->setupOptions($options, $filter);
+        $this->setupOptions($this->options, $filter);
         DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
@@ -155,7 +155,7 @@ class Migrate extends Command implements Reversible
         foreach ($migrationPaths as $path) {
             $this->setDefaultSchema($path);
             $migrateVariables = $path['variables'] ?? [];
-            $migrations = $this->filter($this->yentu->getMigrations($path['home']), $filter);
+            $migrations = $this->filter($this->yentu->getMigrationsFromPath($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
 

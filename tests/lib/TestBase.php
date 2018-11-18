@@ -28,14 +28,15 @@ namespace yentu\tests;
 
 use clearice\io\Io;
 use org\bovigo\vfs\vfsStream;
+use yentu\factories\CommandFactory;
+use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Yentu;
 use PHPUnit\Framework\TestCase;
 use yentu\commands\Init;
-use yentu\DatabaseManipulatorFactory;
 use ntentan\atiaa\DriverFactory;
 use ntentan\config\Config;
 
-class YentuTest extends TestCase
+class TestBase extends TestCase
 {
 
     /**
@@ -46,6 +47,7 @@ class YentuTest extends TestCase
     protected $testDatabase;
     protected $testDefaultSchema;
     protected $yentu;
+    protected $commandFactory;
     protected $config;
     protected $io;
 
@@ -56,12 +58,11 @@ class YentuTest extends TestCase
         $this->setupStreams();
         $this->io->setOutputLevel(Io::OUTPUT_LEVEL_1);
         $this->config = new Config;
-        $this->yentu = new Yentu($this->io);
-        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
 
         $GLOBALS['DRIVER'] = getenv('YENTU_DRIVER');
         $GLOBALS['DB_DSN'] = getenv('YENTU_BASE_DSN');
 
+        // Read the environmental variables for test configurations
         if (getenv('YENTU_FILE') === false) {
             $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}";
             $GLOBALS['DB_NAME'] = $this->testDatabase;
@@ -190,12 +191,11 @@ class YentuTest extends TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         );
-        return new DatabaseManipulatorFactory($this->yentu, new DriverFactory($dbConfig), $this->io);
+        return new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
     }
 
-    protected function initYentu($name)
+    protected function initYentu($name, $initDb = true)
     {
-        $config = new Config();
         $dbConfig = array(
             'driver' => $GLOBALS['DRIVER'],
             'host' => $GLOBALS['DB_HOST'],
@@ -204,18 +204,26 @@ class YentuTest extends TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         );
-        $factory = new DatabaseManipulatorFactory($this->yentu, new DriverFactory($dbConfig), $this->io);
-        $init = new Init($this->yentu, $factory, $this->io, $config);
-        $init->run(
-            array(
+
+        $config = new Config();
+        $manipulatorFactory = new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
+        $this->yentu = new Yentu($this->io, $manipulatorFactory);
+        $this->commandFactory = new CommandFactory($this->io, $manipulatorFactory, $this->yentu);
+        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
+        $this->yentu->setConfig($config);
+
+        if($initDb) {
+            $initArgs = [
                 'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $name,
                 'user' => $GLOBALS['DB_USER'],
                 'password' => $GLOBALS['DB_PASSWORD'],
                 'file' => $GLOBALS['DB_FILE']
-            )
-        );
+            ];
+            $init = new Init($this->yentu, $manipulatorFactory, $this->io, $initArgs);
+            $init->run();
+        }
         //$this->config->readPath($this->yentu->getPath("config/default.conf.php"));
     }
 
