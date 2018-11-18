@@ -37,7 +37,7 @@ class RollbackTest extends TestBase
         $this->testDatabase = 'yentu_rollback_test';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
-        $this->initYentu($GLOBALS['DB_NAME']);
+        $this->initYentu($GLOBALS['DB_NAME'], false);
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
