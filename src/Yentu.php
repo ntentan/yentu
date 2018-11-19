@@ -26,7 +26,6 @@
 
 namespace yentu;
 use clearice\io\Io;
-use ntentan\config\Config;
 use yentu\factories\DatabaseManipulatorFactory;
 
 
@@ -50,7 +49,8 @@ class Yentu
      */
     private $io;
     private $databaseManipulatorFactory;
-    private $config;
+    private $migrationVariables;
+    private $otherMigrations;
 
     /**
      * Current version of yentu.
@@ -58,10 +58,12 @@ class Yentu
      */
     const VERSION = 'v0.3.0';
 
-    public function __construct(Io $io, DatabaseManipulatorFactory $databaseManipulatorFactory)
+    public function __construct(Io $io, DatabaseManipulatorFactory $databaseManipulatorFactory, $migrationVariables = [], $otherMigrations = [])
     {
         $this->databaseManipulatorFactory = $databaseManipulatorFactory;
         $this->io = $io;
+        $this->migrationVariables = $migrationVariables;
+        $this->otherMigrations = $otherMigrations;
     }
 
     /**
@@ -75,20 +77,6 @@ class Yentu
     public function setDefaultHome($home)
     {
         $this->home = $home;
-    }
-
-    /**
-     * Inject a configuration object
-     * @param Config $config
-     */
-    public function setConfig(Config $config)
-    {
-        $this->config = $config;
-    }
-
-    public function getConfig() : Config
-    {
-        return $this->config;
     }
 
     /**
@@ -141,16 +129,13 @@ class Yentu
 
     public function getMigrationPaths()
     {
-        $variables = $this->config->get('variables', []);
-        $otherMigrations = $this->config->get('other_migrations', []);
-
         return array_merge(
             array(
                 array(
                     'home' => $this->getPath('migrations'),
-                    'variables' => $variables
+                    'variables' => $this->migrationVariables
                 )
-            ), $otherMigrations
+            ), $this->otherMigrations
         );
     }
 

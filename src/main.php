@@ -51,21 +51,6 @@ function get_container_settings() {
         Yentu::class => [Yentu::class, 'singleton' => true],
         Io::class => [Io::class, 'singleton' => true],
         Config::class => [
-            // function ($container) {
-            //     // Read configuration from yentu's home
-            //     $yentu = $container->resolve(Yentu::class);
-            //     $config = new Config();
-            //     $configFile = $yentu->getPath("config/default.conf.php");
-            //     var_dump($configFile);
-            //     die();
-            //     $config->readPath($yentu->getPath("config/default.conf.php"));
-            //     $yentu->setConfig($config);
-
-            //     // Setup the default driver factory
-            //     $driverFactory = $container->resolve(DriverFactory::class);
-            //     $driverFactory->setConfig($config->get('db'));
-            //     return $config;
-            // },
             'singleton' => true
         ],
         DriverFactory::class => [ 
@@ -193,7 +178,12 @@ function get_container_settings() {
                      $defaultHome = $arguments['home'] ?? './yentu';
                      $config = $container->resolve(Config::class);
                      $config->readPath($defaultHome . "/config/default.conf.php");
-                     $yentu = $container->resolve(Yentu::class);    
+                     $yentu = $container->resolve(
+                        Yentu::class, [
+                            'migrationVariables' => $config->get('variables', []),
+                            'otherMigrations' => $config->get('other_migrations', [])
+                        ]
+                    );    
                      $yentu->setDefaultHome($defaultHome);
                      return $container->resolve($commandClass);      
                  } else {

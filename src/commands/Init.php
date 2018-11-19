@@ -26,7 +26,6 @@
 
 namespace yentu\commands;
 
-use ntentan\config\Config;
 use yentu\Parameters;
 use yentu\Reversible;
 use yentu\exceptions\CommandException;
@@ -117,7 +116,6 @@ class Init extends Command implements Reversible
         }
 
         $config = $this->createConfigFile($params);
-        //$this->yentu->getConfig()->readPath($this->yentu->getPath('config/default.conf.php'));
         $db = $this->manipulatorFactory->createManipulatorWithConfig($config);
 
         if ($db->getAssertor()->doesTableExist('yentu_history')) {
