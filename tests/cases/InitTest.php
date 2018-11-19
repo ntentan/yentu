@@ -28,7 +28,6 @@ namespace yentu\tests\cases;
 
 use clearice\io\Io;
 use \org\bovigo\vfs\vfsStream;
-use yentu\commands\Init;
 use yentu\tests\TestBase;
 
 class InitTest extends TestBase
@@ -46,7 +45,7 @@ class InitTest extends TestBase
 
     public function testParameters()
     {
-        $initCommand = $this->commandFactory->createCommand('init', array(
+        $initCommand = $this->getCommand('init', array(
                 'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS['DB_NAME'],
@@ -115,7 +114,7 @@ class InitTest extends TestBase
             );
         }
 
-        $initCommand = $this->commandFactory->createCommand('init', ['interractive' => true]);
+        $initCommand = $this->getCommand('init', ['interractive' => true]);
         $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
         $initCommand->run();
@@ -128,7 +127,7 @@ class InitTest extends TestBase
     public function testUnwritable()
     {
         vfsStream::setup('home', 0444);
-        $initCommand = $this->commandFactory->createCommand('init', [
+        $initCommand = $this->getCommand('init', [
             'driver' => 'postgresql',
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],
@@ -146,7 +145,7 @@ class InitTest extends TestBase
     public function testExistingDir()
     {
         mkdir(vfsStream::url('home/yentu'));
-        $initCommand = $this->commandFactory->createCommand('init', [
+        $initCommand = $this->getCommand('init', [
             'driver' => 'postgresql',
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],
@@ -162,7 +161,7 @@ class InitTest extends TestBase
      */
     public function testNoParams()
     {
-        $initCommand = $this->commandFactory->createCommand('init');
+        $initCommand = $this->getCommand('init');
         $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
         $initCommand->run();
     }
@@ -173,7 +172,7 @@ class InitTest extends TestBase
     public function testExistingDb()
     {
         $this->pdo->query('CREATE TABLE yentu_history(dummy INTEGER)');
-        $initCommand = $this->commandFactory->createCommand('init', [
+        $initCommand = $this->getCommand('init', [
             'driver' => $GLOBALS['DRIVER'],
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],

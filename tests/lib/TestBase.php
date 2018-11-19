@@ -47,7 +47,7 @@ class TestBase extends TestCase
     protected $testDatabase;
     protected $testDefaultSchema;
     protected $yentu;
-    protected $commandFactory;
+    protected $manipulatorFactory;
     protected $config;
     protected $io;
 
@@ -194,6 +194,12 @@ class TestBase extends TestCase
         return new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
     }
 
+    protected function getCommand($command, $options = [])
+    {
+        $class = "yentu\\commands\\" . ucfirst($command);
+        return new $class($this->yentu, $this->manipulatorFactory, $this->io, $options);
+    }
+
     protected function initYentu($name, $initDb = true)
     {
         $dbConfig = array(
@@ -205,12 +211,9 @@ class TestBase extends TestCase
             'file' => $GLOBALS['DB_FILE']
         );
 
-        $config = new Config();
-        $manipulatorFactory = new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
-        $this->yentu = new Yentu($this->io, $manipulatorFactory);
-        $this->commandFactory = new CommandFactory($this->io, $manipulatorFactory, $this->yentu);
+        $this->manipulatorFactory = new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
+        $this->yentu = new Yentu($this->io, $this->manipulatorFactory);
         $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
-        $this->yentu->setConfig($config);
 
         if($initDb) {
             $initArgs = [
@@ -221,10 +224,9 @@ class TestBase extends TestCase
                 'password' => $GLOBALS['DB_PASSWORD'],
                 'file' => $GLOBALS['DB_FILE']
             ];
-            $init = new Init($this->yentu, $manipulatorFactory, $this->io, $initArgs);
+            $init = new Init($this->yentu, $this->manipulatorFactory, $this->io, $initArgs);
             $init->run();
         }
-        //$this->config->readPath($this->yentu->getPath("config/default.conf.php"));
     }
 
     protected function connect($dsn)

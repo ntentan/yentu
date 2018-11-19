@@ -27,7 +27,6 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
-use yentu\commands\Migrate;
 use yentu\tests\TestBase;
 
 class MigrateTest extends TestBase
@@ -43,7 +42,7 @@ class MigrateTest extends TestBase
     public function testMigration()
     {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = $this->commandFactory->createCommand('migrate');
+        $migrate = $this->getCommand('migrate');
         $migrate->run();
 
         $this->assertEquals(
@@ -55,7 +54,7 @@ class MigrateTest extends TestBase
         }
 
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
-        $migrate = $this->commandFactory->createCommand('migrate');
+        $migrate = $this->getCommand('migrate');
         $this->assertColumnNullable('role_name', 'roles');
         $this->assertColumnExists('user_name', 'users');
         $migrate->run();
@@ -67,7 +66,7 @@ class MigrateTest extends TestBase
     {
         $this->skipSchemaTests();
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));
-        $migrate = $this->commandFactory->createCommand('migrate');
+        $migrate = $this->getCommand('migrate');
         $migrate->run();
         $this->assertSchemaExists('schema');
 

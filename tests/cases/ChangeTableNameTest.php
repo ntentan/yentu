@@ -39,12 +39,12 @@ class ChangeTableNameTest extends TestBase {
 
     public function testNameChange() {
         copy('tests/migrations/12345678901234_some_table.php', vfsStream::url('home/yentu/migrations/12345678901234_some_table.php'));
-        $migrate = $this->commandFactory->createCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $migrate = $this->getCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $migrate->run();
         $this->assertTableExists('some_table');
 
         copy('tests/migrations/12345678901235_other_table.php', vfsStream::url('home/yentu/migrations/12345678901235_other_table.php'));
-        $migrate = $this->commandFactory->createCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $migrate = $this->getCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
         $migrate->run();
         $this->assertTableExists('some_other_table');
         $this->assertTableDoesntExist('some_table');

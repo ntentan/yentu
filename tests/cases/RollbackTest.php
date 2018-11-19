@@ -26,9 +26,6 @@
 
 namespace yentu\tests\cases;
 
-use ntentan\config\Config;
-use yentu\commands\Init;
-use yentu\commands\Rollback;
 use yentu\tests\TestBase;
 
 class RollbackTest extends TestBase
@@ -41,18 +38,17 @@ class RollbackTest extends TestBase
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/pre_rollback.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
-        $init = $this->commandFactory->createCommand('init');
+        $init = $this->getCommand('init');
         $init->createConfigFile(
-            array(
+            [
                 'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $GLOBALS["DB_NAME"],
                 'user' => $GLOBALS['DB_USER'],
                 'password' => $GLOBALS['DB_PASSWORD'],
                 'file' => $GLOBALS['DB_FILE']
-            )
+            ]
         );
-        //$this->config->readPath($this->yentu->getPath('config/default.conf.php'));
     }
 
     public function testRollback() {
@@ -60,7 +56,7 @@ class RollbackTest extends TestBase
             $this->assertTableExists($table);
         }
 
-        $rollback = $this->commandFactory->createCommand('rollback');
+        $rollback = $this->getCommand('rollback');
         $rollback->run();
 
         foreach ($this->tables as $table) {

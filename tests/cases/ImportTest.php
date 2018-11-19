@@ -47,7 +47,7 @@ class ImportTest extends TestBase
         $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
 
-        $import = $this->commandFactory->createCommand('import');
+        $import = $this->getCommand('import');
         $import->setCodeWriter($codeWriter);
         $description = $import->run(array());
         $newVersion = $import->getNewVersion();
