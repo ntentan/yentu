@@ -1,4 +1,4 @@
-# language: php
+language: php
 tools:
     php_sim: true
     php_pdepend: true
