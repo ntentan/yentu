@@ -41,4 +41,4 @@ checks:
         newline_at_end_of_file: true
         no_debug_code: true
         no_unnecessary_function_call_in_for_loop: true
-prefer_unix_line_ending: true
+        prefer_unix_line_ending: true
