@@ -4,7 +4,7 @@ namespace yentu;
 
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
-use yentu\commands\Command;
+use yentu\commands\CommandInterface;
 
 class Cli
 {
@@ -12,15 +12,41 @@ class Cli
     private $io;
     private $argumentParser;
 
-    public function __construct(Io $io, Command $command = null, ArgumentParser $argumentParser)
+    public function __construct(Io $io, ArgumentParser $argumentParser, CommandInterface $command = null)
     {
         $this->command = $command;
         $this->io = $io;
         $this->argumentParser = $argumentParser;
     }
 
+    /**
+     * Display the greeting for the CLI user interface.
+     */
+    private function greet()
+    {
+        $version = $this->getVersion();
+        $welcome = <<<WELCOME
+Yentu Database Migration Tool
+Version $version
+
+
+WELCOME;
+        $this->io->output($welcome);
+    }
+
+    private function getVersion()
+    {
+        if (defined('PHING_BUILD_VERSION')) {
+            return PHING_BUILD_VERSION;
+        } else {
+            $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
+            return $version->getVersion();
+        }
+    }
+
     public function run()
     {
+        $this->greet();
         if($this->command) {
             try {
                 $this->command->run();

@@ -37,7 +37,7 @@ use yentu\Reversible;
  * The migrate command for the yentu database migration system. This class is
  * responsible for creating and updating items 
  */
-class Migrate extends Command implements Reversible
+class Migrate implements Reversible, CommandInterface
 {
 
     const FILTER_UNRUN = 'unrun';

@@ -35,7 +35,7 @@ use yentu\exceptions\CommandException;
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init extends Command implements Reversible
+class Init implements Reversible, CommandInterface
 {
     private function getParams()
     {

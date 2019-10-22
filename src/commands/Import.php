@@ -5,7 +5,7 @@ namespace yentu\commands;
 use yentu\CodeWriter;
 use yentu\Reversible;
 
-class Import extends Command implements Reversible
+class Import implements CommandInterface, Reversible
 {
 
     /**

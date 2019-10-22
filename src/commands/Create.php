@@ -6,7 +6,7 @@ use yentu\Yentu;
 use yentu\exceptions\CommandException;
 use clearice\io\Io;
 
-class Create extends Command
+class Create implements CommandInterface
 {
     /**
      * @throws CommandException

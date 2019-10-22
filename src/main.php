@@ -37,6 +37,7 @@ use yentu\commands\Command;
 use yentu\commands\Migrate;
 use ntentan\panie\Container;
 use yentu\Cli;
+use yentu\commands\CommandInterface;
 
 $container = new Container();
 $container->setup(get_container_settings());
@@ -169,7 +170,7 @@ function get_container_settings() {
             },
             'singleton' => true
         ], 
-        Command::class => [
+        CommandInterface::class => [
              function($container) {
                  $argumentParser = $container->resolve(ArgumentParser::class);
                  $arguments = $argumentParser->parse();

@@ -27,7 +27,7 @@
 namespace yentu;
 
 use clearice\io\Io;
-use yentu\manipulators\AbstractDatabaseManipulator;
+use yentu\factories\DatabaseManipulatorFactory;
 
 
 /**
@@ -159,30 +159,4 @@ class Yentu
             $command->reverse();
         }
     }
-    
-    /**
-     * Display the greeting for the CLI user interface.
-     */
-    public function greet()
-    {
-        $version = $this->getVersion();
-        $welcome = <<<WELCOME
-Yentu Database Migration Tool
-Version $version
-
-
-WELCOME;
-        $this->io->output($welcome);
-    }
-
-    public function getVersion()
-    {
-        if (defined('PHING_BUILD_VERSION')) {
-            return PHING_BUILD_VERSION;
-        } else {
-            $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
-            return $version->getVersion();
-        }
-    }
-
 }

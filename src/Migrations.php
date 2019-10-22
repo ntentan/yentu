@@ -3,6 +3,7 @@
 namespace yentu;
 
 use ntentan\config\Config;
+use yentu\factories\DatabaseManipulatorFactory;
 
 
 class Migrations

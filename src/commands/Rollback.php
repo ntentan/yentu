@@ -4,10 +4,10 @@ namespace yentu\commands;
 
 use yentu\ChangeReverser;
 use yentu\database\DatabaseItem;
-use yentu\DatabaseManipulatorFactory;
+use yentu\factories\DatabaseManipulatorFactory;
 use clearice\io\Io;
 
-class Rollback
+class Rollback implements CommandInterface
 {
 
     private $schemaCondition;
