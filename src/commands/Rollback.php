@@ -4,12 +4,22 @@ namespace yentu\commands;
 
 use yentu\ChangeReverser;
 use yentu\database\DatabaseItem;
+use yentu\DatabaseManipulatorFactory;
+use clearice\io\Io;
 
-class Rollback extends Command
+class Rollback
 {
 
     private $schemaCondition;
     private $schemaConditionData = [];
+    private $manipulatorFactory;
+    private $io;
+
+    public function __construct(DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    {
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->io = $io;
+    }
 
     /**
      * @param array $options
@@ -17,7 +27,6 @@ class Rollback extends Command
      */
     public function run($options = array())
     {
-        $this->yentu->greet();
         $db = $this->manipulatorFactory->createManipulator();
         DatabaseItem::setDriver($db);
         ChangeReverser::setDriver($db);
@@ -28,16 +37,16 @@ class Rollback extends Command
             $this->schemaConditionData[] = $options['default-schema'];
         }
 
-        if (empty($options)) {
+        if (isset($options['__args'])) {
+            $operations = [];
+            foreach ($options['__args'] ?? [] as $set) {
+                $operations += $this->getOperations($db, $set);
+            }
+        } else {
             $session = $db->getLastSession();
             $operations = $db->query(
                 "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE $this->schemaCondition session = ? ORDER BY id DESC", $this->schemaConditionData + [$session]
             );
-        } else {
-            $operations = [];
-            foreach ($options['stand_alones'] as $set) {
-                $operations += $this->getOperations($db, $set);
-            }
         }
 
         foreach ($operations as $operation) {

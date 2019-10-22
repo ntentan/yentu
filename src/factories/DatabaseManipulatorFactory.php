@@ -48,7 +48,8 @@ class DatabaseManipulatorFactory
     
     public function createManipulator() : AbstractDatabaseManipulator
     {
-        $class = "\\yentu\\manipulators\\" . ucfirst($this->driverFactory->getConfig()['driver']);
+        $config = $this->driverFactory->getConfig();
+        $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
         return new $class($this->driverFactory, $this->io);
     }
 
