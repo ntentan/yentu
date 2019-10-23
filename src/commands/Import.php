@@ -7,9 +7,8 @@ use yentu\CodeWriter;
 use yentu\exceptions\CommandException;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Migrations;
-use yentu\Reversible;
 
-class Import implements CommandInterface, Reversible
+class Import extends Command implements Reversible
 {
     private $db;
     private $code;
@@ -28,7 +27,7 @@ class Import implements CommandInterface, Reversible
         $this->code = $codeWriter;
     }
 
-    public function run($args)
+    public function run()
     {
         $this->db = $this->manipulatorFactory->createManipulator();
         $files = scandir($this->migrations->getPath("migrations"));
@@ -184,7 +183,7 @@ class Import implements CommandInterface, Reversible
         }
     }
 
-    public function reverse()
+    public function reverseActions()
     {
         
     }

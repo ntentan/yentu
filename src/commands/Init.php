@@ -30,7 +30,7 @@ use clearice\io\Io;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Migrations;
 use yentu\Parameters;
-use yentu\Reversible;
+use yentu\commands\Reversible;
 use yentu\exceptions\CommandException;
 
 /**
@@ -38,12 +38,11 @@ use yentu\exceptions\CommandException;
  * by creating the required directories and configuration files. It also goes
  * ahead to create the history table which exists in the database.
  */
-class Init implements Reversible, CommandInterface
+class Init extends Command implements Reversible
 {
     private $io;
     private $migrations;
     private $manipulatorFactory;
-    private $options;
 
     public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
     {
@@ -110,9 +109,8 @@ class Init implements Reversible, CommandInterface
     /**
      * @throws CommandException
      */
-    public function run($args)
+    public function run()
     {
-        $this->options = $args;
         $home = $this->migrations->getPath('');
         if (file_exists($home)) {
             throw new CommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
@@ -143,7 +141,7 @@ class Init implements Reversible, CommandInterface
         $this->io->output("Yentu successfully initialized.\n");
     }
 
-    public function reverse()
+    public function reverseActions()
     {
         unlink($this->migrations->getPath("config/default.conf.php"));
         rmdir($this->migrations->getPath("config"));

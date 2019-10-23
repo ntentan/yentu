@@ -7,7 +7,7 @@ use yentu\database\DatabaseItem;
 use yentu\factories\DatabaseManipulatorFactory;
 use clearice\io\Io;
 
-class Rollback implements CommandInterface
+class Rollback extends Command
 {
 
     private $schemaCondition;
@@ -22,24 +22,24 @@ class Rollback implements CommandInterface
     }
 
     /**
-     * @param array $options
+     * @param array $this->options
      * @throws \yentu\exceptions\DatabaseManipulatorException
      */
-    public function run($options)
+    public function run()
     {
         $db = $this->manipulatorFactory->createManipulator();
         DatabaseItem::setDriver($db);
         ChangeReverser::setDriver($db);
         $previousMigration = '';
 
-        if (isset($options['default-schema'])) {
+        if (isset($this->options['default-schema'])) {
             $this->schemaCondition = "default_schema = ?";
-            $this->schemaConditionData[] = $options['default-schema'];
+            $this->schemaConditionData[] = $this->options['default-schema'];
         }
 
-        if (isset($options['__args'])) {
+        if (isset($this->options['__args'])) {
             $operations = [];
-            foreach ($options['__args'] ?? [] as $set) {
+            foreach ($this->options['__args'] ?? [] as $set) {
                 $operations += $this->getOperations($db, $set);
             }
         } else {

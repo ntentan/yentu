@@ -12,10 +12,11 @@ use clearice\io\Io;
 /**
  *
  */
-class Status implements CommandInterface
+class Status extends Command
 {
     private $manipulatorFactory;
     private $migrations;
+    private $io;
 
     public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
     {
@@ -24,9 +25,8 @@ class Status implements CommandInterface
         $this->migrations = $migrations;
     }
 
-    public function run($args)
+    public function run()
     {
-        //$this->yentu->greet();
         $driver = $this->manipulatorFactory->createManipulator();
         $version = $driver->getVersion();
 

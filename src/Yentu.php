@@ -41,17 +41,4 @@ class Yentu
      * @var string
      */
     const VERSION = 'v0.3.0';
-
-
-    /**
-     * Reverses a command which is reversible.
-     * 
-     * @param \yentu\Reversible $command
-     */
-    public function reverseCommand($command)
-    {
-        if ($command instanceof \yentu\Reversible) {
-            $command->reverse();
-        }
-    }
 }

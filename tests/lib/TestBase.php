@@ -229,7 +229,8 @@ class TestBase extends TestCase
                 'file' => $GLOBALS['DB_FILE']
             ];
             $init = new Init($this->migrations, $this->manipulatorFactory, $this->io);
-            $init->run($initArgs);
+            $init->setOptions($initArgs);
+            $init->run();
         }
     }
 

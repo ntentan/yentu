@@ -33,13 +33,12 @@ use yentu\ChangeLogger;
 use yentu\database\ForeignKey;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Migrations;
-use yentu\Reversible;
 
 /**
  * The migrate command for the yentu database migration system. This class is
  * responsible for creating and updating items 
  */
-class Migrate implements Reversible, CommandInterface
+class Migrate extends Command implements Reversible
 {
 
     const FILTER_UNRUN = 'unrun';
@@ -137,23 +136,23 @@ class Migrate implements Reversible, CommandInterface
         }
     }
 
-    public function run($args)
+    public function run()
     {
         global $migrateCommand;
         global $migrateVariables;
 
-        self::fillOptions($args);
+        self::fillOptions($this->options);
 
         $migrateCommand = $this;
 
         $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->migrations, $this->io);
-        $this->driver->setDumpQueriesOnly($args['dump-queries']);
-        $this->driver->setDryRun($args['dry']);
+        $this->driver->setDumpQueriesOnly($this->options['dump-queries']);
+        $this->driver->setDryRun($this->options['dry']);
 
         $totalOperations = 0;
 
         $filter = self::FILTER_UNRUN;
-        $this->setupOptions($args, $filter);
+        $this->setupOptions($this->options, $filter);
         DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
@@ -252,7 +251,7 @@ class Migrate implements Reversible, CommandInterface
         $this->rollbackCommand = $rollbackCommand;
     }
 
-    public function reverse()
+    public function reverseActions()
     {
         if ($this->driver === null) {
             return;

@@ -49,7 +49,7 @@ class InitTest extends TestBase
         $initCommand = $this->getCommand('init');
 
         ob_start();
-        $initCommand->run(array(
+        $initCommand->setOptions(array(
             'driver' => $GLOBALS['DRIVER'],
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],
@@ -57,6 +57,7 @@ class InitTest extends TestBase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         ));
+        $initCommand->run();
         $this->runAssertions();
     }
 
@@ -117,7 +118,8 @@ class InitTest extends TestBase
         $initCommand = $this->getCommand('init');
         //$this->migrations->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
-        $initCommand->run(['interractive' => true]);
+        $initCommand->setOptions(['interractive' => true]);
+        $initCommand->run();
         $this->runAssertions();
     }
 
