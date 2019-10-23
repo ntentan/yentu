@@ -260,7 +260,7 @@ class Migrate extends Command implements Reversible
         $this->io->output("Attempting to reverse all changes ... ");
         if ($this->getChanges() > 0) {
             $this->io->pushOutputLevel(0);
-            $this->rollbackCommand->run(array());
+            $this->rollbackCommand->run();
             $this->io->popOutputLevel();
         }
         $this->io->output("OK\n");

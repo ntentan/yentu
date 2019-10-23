@@ -22,7 +22,6 @@ class Rollback extends Command
     }
 
     /**
-     * @param array $this->options
      * @throws \yentu\exceptions\DatabaseManipulatorException
      */
     public function run()

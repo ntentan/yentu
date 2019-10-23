@@ -2,8 +2,6 @@
 
 namespace yentu\commands;
 
-use yentu\Reversible;
-
 abstract class Command
 {
     protected $options;
