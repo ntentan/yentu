@@ -26,11 +26,13 @@
 
 namespace yentu\tests\cases;
 
+use yentu\commands\Rollback;
 use yentu\tests\TestBase;
 
 class RollbackTest extends TestBase
 {
-    public function setUp() {
+    public function setUp() : void
+    {
         $this->testDatabase = 'yentu_rollback_test';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
@@ -51,13 +53,14 @@ class RollbackTest extends TestBase
         );
     }
 
-    public function testRollback() {
+    public function testRollback()
+    {
         foreach ($this->tables as $table) {
             $this->assertTableExists($table);
         }
 
-        $rollback = $this->getCommand('rollback');
-        $rollback->run();
+        $rollback = new Rollback($this->manipulatorFactory, $this->io);
+        $rollback->run([]);
 
         foreach ($this->tables as $table) {
             if ($table == 'yentu_history')

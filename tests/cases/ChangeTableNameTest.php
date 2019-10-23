@@ -31,21 +31,23 @@ use yentu\tests\TestBase;
 
 class ChangeTableNameTest extends TestBase {
 
-    public function setup() {
+    public function setUp() : void
+    {
         $this->testDatabase = 'yentu_change_name';
         parent::setup();
         $this->setupForMigration();
     }
 
-    public function testNameChange() {
+    public function testNameChange()
+    {
         copy('tests/migrations/12345678901234_some_table.php', vfsStream::url('home/yentu/migrations/12345678901234_some_table.php'));
         $migrate = $this->getCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run();
+        $migrate->run([]);
         $this->assertTableExists('some_table');
 
         copy('tests/migrations/12345678901235_other_table.php', vfsStream::url('home/yentu/migrations/12345678901235_other_table.php'));
         $migrate = $this->getCommand('migrate');//new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run();
+        $migrate->run([]);
         $this->assertTableExists('some_other_table');
         $this->assertTableDoesntExist('some_table');
     }

@@ -25,7 +25,7 @@ class Rollback implements CommandInterface
      * @param array $options
      * @throws \yentu\exceptions\DatabaseManipulatorException
      */
-    public function run($options = array())
+    public function run($options)
     {
         $db = $this->manipulatorFactory->createManipulator();
         DatabaseItem::setDriver($db);

@@ -32,7 +32,7 @@ use yentu\tests\TestBase;
 class MigrateTest extends TestBase
 {
 
-    public function setup()
+    public function setup() : void
     {
         $this->testDatabase = 'yentu_migration_test';
         parent::setup();
@@ -43,7 +43,7 @@ class MigrateTest extends TestBase
     {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
         $migrate = $this->getCommand('migrate');
-        $migrate->run();
+        $migrate->run([]);
 
         $this->assertEquals(
             file_get_contents("tests/streams/migrate_output.txt"), file_get_contents(vfsStream::url('home/output.txt'))
@@ -57,7 +57,7 @@ class MigrateTest extends TestBase
         $migrate = $this->getCommand('migrate');
         $this->assertColumnNullable('role_name', 'roles');
         $this->assertColumnExists('user_name', 'users');
-        $migrate->run();
+        $migrate->run([]);
         $this->assertColumnNotNullable('role_name', 'roles');
         $this->assertColumnExists('username', 'users');
     }
@@ -67,7 +67,7 @@ class MigrateTest extends TestBase
         $this->skipSchemaTests();
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));
         $migrate = $this->getCommand('migrate');
-        $migrate->run();
+        $migrate->run([]);
         $this->assertSchemaExists('schema');
 
         foreach ($this->tables as $table) {

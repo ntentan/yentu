@@ -31,9 +31,9 @@ use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
 use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
+use yentu\Migrations;
 use yentu\Yentu;
 use ntentan\config\Config;
-use yentu\commands\Command;
 use yentu\commands\Migrate;
 use ntentan\panie\Container;
 use yentu\Cli;
@@ -49,7 +49,7 @@ $ui->run();
  */
 function get_container_settings() {
     return [
-        Yentu::class => [Yentu::class, 'singleton' => true],
+        Migrations::class => [Yentu::class, 'singleton' => true],
         Io::class => [Io::class, 'singleton' => true],
         Config::class => [
             'singleton' => true
@@ -171,25 +171,34 @@ function get_container_settings() {
             'singleton' => true
         ], 
         CommandInterface::class => [
-             function($container) {
-                 $argumentParser = $container->resolve(ArgumentParser::class);
-                 $arguments = $argumentParser->parse();
-                 if(isset($arguments['__command'])) {
-                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
-                     $defaultHome = $arguments['home'] ?? './yentu';
-                     $config = $container->resolve(Config::class);
-                     $config->readPath($defaultHome . "/config/default.conf.php");
-                     $yentu = $container->resolve(
-                        Yentu::class, [
-                            'migrationVariables' => $config->get('variables', []),
-                            'otherMigrations' => $config->get('other_migrations', [])
-                        ]
-                    );    
-                     $yentu->setDefaultHome($defaultHome);
-                     return $container->resolve($commandClass);      
-                 } else {
-                     return null;
-                 }
+            function($container)
+            {
+                /**
+                 * @var Container $container
+                 * @var Migrations $migrations
+                 */
+
+                $argumentParser = $container->resolve(ArgumentParser::class);
+                $arguments = $argumentParser->parse();
+                if(isset($arguments['__command'])) {
+                    $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
+                    $defaultHome = $arguments['home'] ?? './yentu';
+                    $config = $container->resolve(Config::class);
+                    $config->readPath($defaultHome . "/config/default.conf.php");
+
+                    $migrations = $container->resolve(
+                       Migrations::class, [
+                           'config' => [
+                               'variables' => $config->get('variables', []),
+                               'other_migrations' => $config->get('other_migrations', []),
+                               'home' => $defaultHome
+                           ]
+                       ]
+                    );
+                    return $container->resolve($commandClass);
+                } else {
+                    return null;
+                }
             }
         ]
     ];

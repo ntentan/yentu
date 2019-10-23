@@ -11,11 +11,10 @@ class Create implements CommandInterface
     /**
      * @throws CommandException
      */
-    public function run()
+    public function run($args)
     {
-        $this->yentu->greet();
         if (isset($this->options['__args'])) {
-            $this->createFile($this->options['__args'][0]);
+            $this->createFile($args['__args'][0]);
         } else {
             $this->checkName(null);
         }

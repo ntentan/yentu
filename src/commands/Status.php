@@ -24,7 +24,7 @@ class Status implements CommandInterface
         $this->migrations = $migrations;
     }
 
-    public function run()
+    public function run($args)
     {
         //$this->yentu->greet();
         $driver = $this->manipulatorFactory->createManipulator();

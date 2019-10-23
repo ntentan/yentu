@@ -29,21 +29,24 @@ namespace yentu\tests\cases;
 use org\bovigo\vfs\vfsStream;
 use yentu\tests\TestBase;
 
-class MigrateOptionsTest extends TestBase {
+class MigrateOptionsTest extends TestBase
+{
 
-    public function setUp() {
+    public function setUp() : void
+    {
         $this->testDatabase = 'yentu_migration_test';
         parent::setup();
         $this->setupForMigration();
     }
 
-    public function testMigration() {
+    public function testMigration()
+    {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
 
-        $migrate = $this->getCommand('migrate', ['no-foreign-keys' => true]);
-        $migrate->run();
+        $migrate = $this->getCommand('migrate');
+        $migrate->run(['no-foreign-keys' => true]);
         $this->assertEquals(
-                file_get_contents("tests/streams/migrate_options_output_1.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+            file_get_contents("tests/streams/migrate_options_output_1.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
 
         foreach ($this->fkeys as $fkey) {
@@ -52,10 +55,10 @@ class MigrateOptionsTest extends TestBase {
 
         file_put_contents(vfsStream::url("home/output.txt"), '');
 
-        $migrate = $this->getCommand('migrate', ['only-foreign-keys' => true]);
-        $migrate->run();
+        $migrate = $this->getCommand('migrate');
+        $migrate->run(['only-foreign-keys' => true]);
         $this->assertEquals(
-                file_get_contents("tests/streams/migrate_options_output_2.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+            file_get_contents("tests/streams/migrate_options_output_2.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
 
         foreach ($this->fkeys as $fkey) {

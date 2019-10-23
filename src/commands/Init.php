@@ -26,6 +26,9 @@
 
 namespace yentu\commands;
 
+use clearice\io\Io;
+use yentu\factories\DatabaseManipulatorFactory;
+use yentu\Migrations;
 use yentu\Parameters;
 use yentu\Reversible;
 use yentu\exceptions\CommandException;
@@ -37,6 +40,18 @@ use yentu\exceptions\CommandException;
  */
 class Init implements Reversible, CommandInterface
 {
+    private $io;
+    private $migrations;
+    private $manipulatorFactory;
+    private $options;
+
+    public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    {
+        $this->migrations = $migrations;
+        $this->io = $io;
+        $this->manipulatorFactory = $manipulatorFactory;
+    }
+
     private function getParams()
     {
         if (isset($this->options['interractive'])) {
@@ -67,9 +82,9 @@ class Init implements Reversible, CommandInterface
         $params = Parameters::wrap(
                 $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
         );
-        mkdir($this->yentu->getPath(''));
-        mkdir($this->yentu->getPath('config'));
-        mkdir($this->yentu->getPath('migrations'));
+        mkdir($this->migrations->getPath(''));
+        mkdir($this->migrations->getPath('config'));
+        mkdir($this->migrations->getPath('migrations'));
 
         $configFile = new \yentu\CodeWriter();
         $configFile->add('return [');
@@ -88,17 +103,17 @@ class Init implements Reversible, CommandInterface
         $configFile->decreaseIndent();
         $configFile->add('];');
 
-        file_put_contents($this->yentu->getPath("config/default.conf.php"), $configFile);
+        file_put_contents($this->migrations->getPath("config/default.conf.php"), $configFile);
         return $params;
     }
 
     /**
      * @throws CommandException
      */
-    public function run()
+    public function run($args)
     {
-        $this->yentu->greet();
-        $home = $this->yentu->getPath('');
+        $this->options = $args;
+        $home = $this->migrations->getPath('');
         if (file_exists($home)) {
             throw new CommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
         } else if (!is_writable(dirname($home))) {
@@ -130,10 +145,10 @@ class Init implements Reversible, CommandInterface
 
     public function reverse()
     {
-        unlink($this->yentu->getPath("config/default.conf.php"));
-        rmdir($this->yentu->getPath("config"));
-        rmdir($this->yentu->getPath("migrations"));
-        rmdir($this->yentu->getPath(""));
+        unlink($this->migrations->getPath("config/default.conf.php"));
+        rmdir($this->migrations->getPath("config"));
+        rmdir($this->migrations->getPath("migrations"));
+        rmdir($this->migrations->getPath(""));
     }
 
 }

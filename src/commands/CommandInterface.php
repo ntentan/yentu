@@ -4,5 +4,5 @@ namespace yentu\commands;
 
 interface CommandInterface
 {
-    public function run();
+    public function run($args);
 }

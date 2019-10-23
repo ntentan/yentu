@@ -2,42 +2,38 @@
 
 namespace yentu\commands;
 
+use clearice\io\Io;
 use yentu\CodeWriter;
+use yentu\exceptions\CommandException;
+use yentu\factories\DatabaseManipulatorFactory;
+use yentu\Migrations;
 use yentu\Reversible;
 
 class Import implements CommandInterface, Reversible
 {
-
-    /**
-     *
-     * @var \yentu\DatabaseDriver
-     */
     private $db;
     private $code;
     private $hasSchema = false;
     private $foreignKeys = array();
     private $newVersion;
+    private $manipulatorFactory;
+    private $migrations;
+    private $io;
 
-    private function initializeCodeWriter()
+    public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io, CodeWriter $codeWriter)
     {
-        if (!is_object($this->code)) {
-            $this->code = new CodeWriter();
-        }
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->migrations = $migrations;
+        $this->io = $io;
+        $this->code = $codeWriter;
     }
 
-    public function setCodeWriter($code)
+    public function run($args)
     {
-        $this->code = $code;
-    }
-
-    public function run()
-    {
-        $this->yentu->greet();
         $this->db = $this->manipulatorFactory->createManipulator();
-        $this->initializeCodeWriter();
-        $files = scandir($this->yentu->getPath("migrations"));
+        $files = scandir($this->migrations->getPath("migrations"));
         if (count($files) > 2) {
-            throw new \yentu\exceptions\CommandException("Cannot run imports. Your migrations directory is not empty");
+            throw new CommandException("Cannot run imports. Your migrations directory is not empty");
         }
         $description = $this->db->getDescription();
 
@@ -56,7 +52,7 @@ class Import implements CommandInterface, Reversible
         $this->code->add('->end();');
 
         $this->newVersion = date('YmdHis', time());
-        $path = $this->yentu->getPath("migrations/{$this->newVersion}_import.php");
+        $path = $this->migrations->getPath("migrations/{$this->newVersion}_import.php");
         file_put_contents($path, $this->code);
         $this->io->output("Created `$path`\n");
         if (!$this->db->getAssertor()->doesTableExist('yentu_history')) {

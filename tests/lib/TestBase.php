@@ -30,6 +30,7 @@ use clearice\io\Io;
 use org\bovigo\vfs\vfsStream;
 use yentu\factories\CommandFactory;
 use yentu\factories\DatabaseManipulatorFactory;
+use yentu\Migrations;
 use yentu\Yentu;
 use PHPUnit\Framework\TestCase;
 use yentu\commands\Init;
@@ -46,12 +47,12 @@ class TestBase extends TestCase
     protected $pdo;
     protected $testDatabase;
     protected $testDefaultSchema;
-    protected $yentu;
+    protected $migrations;
     protected $manipulatorFactory;
     protected $config;
     protected $io;
 
-    public function setup()
+    public function setUp() : void
     {
         require_once "src/globals.php";
         $this->io = new Io();
@@ -91,7 +92,7 @@ class TestBase extends TestCase
         $this->io->setStreamUrl('output', vfsStream::url('home/output.txt'));        
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         $this->pdo = null;
     }
@@ -194,10 +195,13 @@ class TestBase extends TestCase
         return new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
     }
 
-    protected function getCommand($command, $options = [])
+    protected function getCommand($command, $extraArgs = [])
     {
-        $class = "yentu\\commands\\" . ucfirst($command);
-        return new $class($this->yentu, $this->manipulatorFactory, $this->io, $options);
+        $className = "yentu\\commands\\" . ucfirst($command);
+        $class = new \ReflectionClass($className);
+        $args = array_merge([$this->migrations, $this->manipulatorFactory, $this->io], $extraArgs);
+        return $class->newInstanceArgs($args);
+        //return new $class($this->migrations, $this->manipulatorFactory, $this->io);
     }
 
     protected function initYentu($name, $initDb = true)
@@ -212,8 +216,8 @@ class TestBase extends TestCase
         );
 
         $this->manipulatorFactory = new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
-        $this->yentu = new Yentu($this->io, $this->manipulatorFactory);
-        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
+        $migrationsConfig = ['home' => vfsStream::url('home/yentu'), 'variables' => [], 'other_migrations' => []];
+        $this->migrations = new Migrations($this->io, $this->manipulatorFactory, $migrationsConfig);
 
         if($initDb) {
             $initArgs = [
@@ -224,8 +228,8 @@ class TestBase extends TestCase
                 'password' => $GLOBALS['DB_PASSWORD'],
                 'file' => $GLOBALS['DB_FILE']
             ];
-            $init = new Init($this->yentu, $this->manipulatorFactory, $this->io, $initArgs);
-            $init->run();
+            $init = new Init($this->migrations, $this->manipulatorFactory, $this->io);
+            $init->run($initArgs);
         }
     }
 

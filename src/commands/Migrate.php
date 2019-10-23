@@ -31,6 +31,8 @@ use yentu\database\Begin;
 use yentu\database\DatabaseItem;
 use yentu\ChangeLogger;
 use yentu\database\ForeignKey;
+use yentu\factories\DatabaseManipulatorFactory;
+use yentu\Migrations;
 use yentu\Reversible;
 
 /**
@@ -49,7 +51,16 @@ class Migrate implements Reversible, CommandInterface
     private $lastSession;
     private $currentPath;
     private $rollbackCommand;
+    private $manipulatorFactory;
+    private $migrations;
+    private $io;
 
+    public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    {
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->migrations = $migrations;
+        $this->io = $io;
+    }
 
     public function setupOptions($options, &$filter)
     {
@@ -126,36 +137,32 @@ class Migrate implements Reversible, CommandInterface
         }
     }
 
-    public function run()
+    public function run($args)
     {
         global $migrateCommand;
         global $migrateVariables;
 
-        self::fillOptions($this->options);
+        self::fillOptions($args);
 
         $migrateCommand = $this;
 
-        if ($this->options['dump-queries'] !== true) {
-            $this->yentu->greet();
-        }
-
-        $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->yentu, $this->io);
-        $this->driver->setDumpQueriesOnly($this->options['dump-queries']);
-        $this->driver->setDryRun($this->options['dry']);
+        $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->migrations, $this->io);
+        $this->driver->setDumpQueriesOnly($args['dump-queries']);
+        $this->driver->setDryRun($args['dry']);
 
         $totalOperations = 0;
 
         $filter = self::FILTER_UNRUN;
-        $this->setupOptions($this->options, $filter);
+        $this->setupOptions($args, $filter);
         DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
-        $migrationPaths = $this->yentu->getMigrationPaths();
+        $migrationPaths = $this->migrations->getAllPaths();
         //$migrationsToBeRun = [];
         foreach ($migrationPaths as $path) {
             $this->setDefaultSchema($path);
             $migrateVariables = $path['variables'] ?? [];
-            $migrations = $this->filter($this->yentu->getMigrationsFromPath($path['home']), $filter);
+            $migrations = $this->filter($this->migrations->getMigrationFiles($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
 

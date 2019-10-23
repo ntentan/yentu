@@ -1,32 +1,35 @@
 {
-    "name": "ntentan/yentu",
-    "description": "A database migration tool with intimate integration with git",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Ekow Abaka Ainooson",
-            "email": "jainooson@gmail.com"
-        }
-    ],
-    "autoload" : {
-        "psr-4" : { 
-            "yentu\\tests\\" : "tests/lib/",
-            "yentu\\" : "src/"
-        }
-    },
-    "require": {
-        "ekowabaka/clearice": "^3.0",
-	    "ntentan/panie": "0.*",
-        "php" : ">=7.1.0",
-        "ntentan/atiaa": "0.*",
-        "ntentan/config": "0.*",
-        "sebastian/version": "^2.0"
-    },
-    "require-dev" : {
-        "mikey179/vfsStream" : "@stable",
-        "phpunit/phpunit" : "@stable",
-        "mockery/mockery": "@stable",
-        "phing/phing" : "@stable"
-    },
-    "bin" : ["bin/yentu"]
+  "name": "ntentan/yentu",
+  "description": "A database migration tool with intimate integration with git",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ekow Abaka Ainooson",
+      "email": "jainooson@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "yentu\\tests\\": "tests/lib/",
+      "yentu\\": "src/"
+    }
+  },
+  "require": {
+    "ekowabaka/clearice": "^3.0",
+    "ntentan/panie": "0.*",
+    "php": ">=7.1.0",
+    "ntentan/atiaa": "0.*",
+    "ntentan/config": "0.*",
+    "sebastian/version": "^2.0",
+    "ext-pdo": "*"
+  },
+  "require-dev": {
+    "mikey179/vfsStream": "@stable",
+    "phpunit/phpunit": "@stable",
+    "mockery/mockery": "@stable",
+    "phing/phing": "@stable"
+  },
+  "bin": [
+    "bin/yentu"
+  ]
 }
