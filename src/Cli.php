@@ -57,25 +57,25 @@ WELCOME;
                 $this->io->resetOutputLevel();
                 $this->io->error("Database driver failed: " . $e->getMessage() . "\n");
                 if (isset($command)) {
-                    $yentu->reverseCommand($command);
+                    $command->reverse();
                 }
             } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("Failed to perform database action: " . $e->getMessage() . "\n");
                 if (isset($command)) {
-                    $yentu->reverseCommand($command);
+                    $command->reverse();
                 }
             } catch (\ntentan\atiaa\DescriptionException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("Failed to perform database action: " . $e->getMessage() . "\n");
                 if (isset($command)) {
-                    $yentu->reverseCommand($command);
+                    $command->reverse();
                 }
             } catch (\yentu\exceptions\SyntaxErrorException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("Error found in syntax: {$e->getMessage()}\n");
                 if (isset($command)) {
-                    $yentu->reverseCommand($command);
+                    $command->reverse();
                 }
             } catch (\PDOException $e) {
                 $this->io->resetOutputLevel();
