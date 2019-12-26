@@ -37,7 +37,7 @@ use ntentan\config\Config;
 use yentu\commands\Migrate;
 use ntentan\panie\Container;
 use yentu\Cli;
-use yentu\commands\CommandInterface;
+use yentu\commands\Command;
 
 $container = new Container();
 $container->setup(get_container_settings());
@@ -49,7 +49,7 @@ $ui->run();
  */
 function get_container_settings() {
     return [
-        Migrations::class => [Yentu::class, 'singleton' => true],
+        Migrations::class => [Migrations::class, 'singleton' => true],
         Io::class => [Io::class, 'singleton' => true],
         Config::class => [
             'singleton' => true
@@ -170,7 +170,7 @@ function get_container_settings() {
             },
             'singleton' => true
         ], 
-        CommandInterface::class => [
+        Command::class => [
             function($container)
             {
                 /**
@@ -195,7 +195,9 @@ function get_container_settings() {
                            ]
                        ]
                     );
-                    return $container->resolve($commandClass);
+                    $command = $container->resolve($commandClass);
+                    $command->setOptions($arguments);
+                    return $command;
                 } else {
                     return null;
                 }
