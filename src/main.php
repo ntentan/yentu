@@ -195,7 +195,9 @@ function get_container_settings() {
                            ]
                        ]
                     );
-                    return $container->resolve($commandClass);
+                    $command = $container->resolve($commandClass);
+                    $command->setOptions($arguments);
+                    return $command;
                 } else {
                     return null;
                 }
