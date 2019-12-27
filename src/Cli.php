@@ -4,7 +4,7 @@ namespace yentu;
 
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
-use yentu\commands\CommandInterface;
+use yentu\commands\Command;
 
 class Cli
 {
@@ -12,7 +12,7 @@ class Cli
     private $io;
     private $argumentParser;
 
-    public function __construct(Io $io, ArgumentParser $argumentParser, CommandInterface $command = null)
+    public function __construct(Io $io, ArgumentParser $argumentParser, Command $command = null)
     {
         $this->command = $command;
         $this->io = $io;
