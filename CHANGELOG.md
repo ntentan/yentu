@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## Unreleased
+## v0.4.0 - 2020-02-25
 
 ### Added
 - A new `Cli` class was added to handle the execution and error reporting
