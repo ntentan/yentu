@@ -4,40 +4,48 @@ namespace yentu\commands;
 
 use yentu\ChangeReverser;
 use yentu\database\DatabaseItem;
+use yentu\factories\DatabaseManipulatorFactory;
+use clearice\io\Io;
 
 class Rollback extends Command
 {
 
     private $schemaCondition;
     private $schemaConditionData = [];
+    private $manipulatorFactory;
+    private $io;
+
+    public function __construct(DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    {
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->io = $io;
+    }
 
     /**
-     * @param array $options
      * @throws \yentu\exceptions\DatabaseManipulatorException
      */
-    public function run($options = array())
+    public function run()
     {
-        $this->yentu->greet();
         $db = $this->manipulatorFactory->createManipulator();
         DatabaseItem::setDriver($db);
         ChangeReverser::setDriver($db);
         $previousMigration = '';
 
-        if (isset($options['default-schema'])) {
+        if (isset($this->options['default-schema'])) {
             $this->schemaCondition = "default_schema = ?";
-            $this->schemaConditionData[] = $options['default-schema'];
+            $this->schemaConditionData[] = $this->options['default-schema'];
         }
 
-        if (empty($options)) {
+        if (isset($this->options['__args'])) {
+            $operations = [];
+            foreach ($this->options['__args'] ?? [] as $set) {
+                $operations += $this->getOperations($db, $set);
+            }
+        } else {
             $session = $db->getLastSession();
             $operations = $db->query(
                 "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE $this->schemaCondition session = ? ORDER BY id DESC", $this->schemaConditionData + [$session]
             );
-        } else {
-            $operations = [];
-            foreach ($options['stand_alones'] as $set) {
-                $operations += $this->getOperations($db, $set);
-            }
         }
 
         foreach ($operations as $operation) {

@@ -3,14 +3,30 @@
 namespace yentu\commands;
 
 
+use yentu\factories\DatabaseManipulatorFactory;
+use yentu\manipulators\AbstractDatabaseManipulator;
+use yentu\Migrations;
+use yentu\Yentu;
+use clearice\io\Io;
+
 /**
  *
  */
 class Status extends Command
 {
+    private $manipulatorFactory;
+    private $migrations;
+    private $io;
+
+    public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    {
+        $this->io = $io;
+        $this->manipulatorFactory = $manipulatorFactory;
+        $this->migrations = $migrations;
+    }
+
     public function run()
     {
-        $this->yentu->greet();
         $driver = $this->manipulatorFactory->createManipulator();
         $version = $driver->getVersion();
 
@@ -36,8 +52,8 @@ class Status extends Command
 
     private function getMigrationInfo()
     {
-        $runMigrations = $this->yentu->getRunMirations();
-        $migrations = $this->yentu->getAllMigrations();
+        $runMigrations = $this->migrations->getRunMirations();
+        $migrations = $this->migrations->getAllMigrations();
 
         $counter['previous'] = count($runMigrations);
         end($runMigrations);

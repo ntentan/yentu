@@ -2,23 +2,28 @@
 
 namespace yentu\commands;
 
-use yentu\Yentu;
+use yentu\Migrations;
 use yentu\exceptions\CommandException;
 use clearice\io\Io;
 
 class Create extends Command
 {
-    public function __construct(Yentu $yentu, Io $io)
+    private $migrations;
+    private $io;
+
+    public function __construct(Migrations $migrations, Io $io)
     {
-        $this->yentu = $yentu;
+        $this->migrations = $migrations;
         $this->io = $io;
     }
 
-    public function run($options = array())
+    /**
+     * @throws CommandException
+     */
+    public function run()
     {
-        $this->yentu->greet();
-        if (isset($options['__args'])) {
-            $this->createFile($options['__args'][0]);
+        if (isset($this->options['__args'])) {
+            $this->createFile($this->options['__args'][0]);
         } else {
             $this->checkName(null);
         }
@@ -30,7 +35,7 @@ class Create extends Command
      */
     private function checkExisting($name)
     {
-        if (count(glob($this->yentu->getPath("migrations/*_{$name}.php"))) > 0) {
+        if (count(glob($this->migrations->getPath("migrations/*_{$name}.php"))) > 0) {
             throw new CommandException("A migration already exists with the name {$name}");
         }
     }
@@ -40,14 +45,14 @@ class Create extends Command
      */
     private function checkPermission()
     {
-        if (!file_exists($this->yentu->getPath("migrations/"))) {
-            throw new CommandException("The migrations directory `" . $this->yentu->getPath("migrations/") . "` does not exist.");
+        if (!file_exists($this->migrations->getPath("migrations/"))) {
+            throw new CommandException("The migrations directory `" . $this->migrations->getPath("migrations/") . "` does not exist.");
         }
-        if (!is_dir($this->yentu->getPath("migrations/"))) {
-            throw new CommandException($this->yentu->getPath("migrations/") . ' is not a directory');
+        if (!is_dir($this->migrations->getPath("migrations/"))) {
+            throw new CommandException($this->migrations->getPath("migrations/") . ' is not a directory');
         }
-        if (!is_writable($this->yentu->getPath("migrations/"))) {
-            throw new CommandException("You do not have the permission to write to " . $this->yentu->getPath("migrations/"));
+        if (!is_writable($this->migrations->getPath("migrations/"))) {
+            throw new CommandException("You do not have the permission to write to " . $this->migrations->getPath("migrations/"));
         }
     }
 
@@ -69,6 +74,10 @@ class Create extends Command
         }
     }
 
+    /**
+     * @param $name
+     * @throws CommandException
+     */
     public function createFile($name)
     {
         $this->checkExisting($name);
@@ -81,7 +90,7 @@ class Create extends Command
         $code->add('begin()');
         $code->add('');
         $code->add('->end();');
-        $path = $this->yentu->getPath("migrations/{$timestamp}_{$name}.php");
+        $path = $this->migrations->getPath("migrations/{$timestamp}_{$name}.php");
         file_put_contents($path, $code);
         $this->io->output("Added $path for new migration.\n");
     }

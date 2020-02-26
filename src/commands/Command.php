@@ -2,24 +2,21 @@
 
 namespace yentu\commands;
 
-
-use clearice\io\Io;
-use ntentan\config\Config;
-use yentu\DatabaseManipulatorFactory;
-use yentu\Yentu;
-
-class Command
+abstract class Command
 {
-    protected $config;
-    protected $yentu;
-    protected $manipulatorFactory;
-    protected $io;
+    protected $options;
 
-    public function __construct(Yentu $yentu, DatabaseManipulatorFactory $manipulatorFactory = null, Io $io = null, Config $config = null)
+    abstract public function run();
+
+    public function setOptions(array $options)
     {
-        $this->manipulatorFactory = $manipulatorFactory;
-        $this->yentu = $yentu;
-        $this->config = $config;
-        $this->io = $io;
+        $this->options = $options;
+    }
+
+    public function reverse()
+    {
+        if ($this instanceof Reversible) {
+            $this->reverseActions();
+        }
     }
 }

@@ -28,14 +28,16 @@ namespace yentu\tests;
 
 use clearice\io\Io;
 use org\bovigo\vfs\vfsStream;
+use yentu\factories\CommandFactory;
+use yentu\factories\DatabaseManipulatorFactory;
+use yentu\Migrations;
 use yentu\Yentu;
 use PHPUnit\Framework\TestCase;
 use yentu\commands\Init;
-use yentu\DatabaseManipulatorFactory;
 use ntentan\atiaa\DriverFactory;
 use ntentan\config\Config;
 
-class YentuTest extends TestCase
+class TestBase extends TestCase
 {
 
     /**
@@ -45,23 +47,23 @@ class YentuTest extends TestCase
     protected $pdo;
     protected $testDatabase;
     protected $testDefaultSchema;
-    protected $yentu;
+    protected $migrations;
+    protected $manipulatorFactory;
     protected $config;
     protected $io;
 
-    public function setup()
+    public function setUp() : void
     {
         require_once "src/globals.php";
         $this->io = new Io();
         $this->setupStreams();
         $this->io->setOutputLevel(Io::OUTPUT_LEVEL_1);
         $this->config = new Config;
-        $this->yentu = new Yentu($this->io);
-        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
 
         $GLOBALS['DRIVER'] = getenv('YENTU_DRIVER');
         $GLOBALS['DB_DSN'] = getenv('YENTU_BASE_DSN');
 
+        // Read the environmental variables for test configurations
         if (getenv('YENTU_FILE') === false) {
             $GLOBALS['DB_FULL_DSN'] = "{$GLOBALS['DB_DSN']};dbname={$this->testDatabase}";
             $GLOBALS['DB_NAME'] = $this->testDatabase;
@@ -90,7 +92,7 @@ class YentuTest extends TestCase
         $this->io->setStreamUrl('output', vfsStream::url('home/output.txt'));        
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         $this->pdo = null;
     }
@@ -190,12 +192,20 @@ class YentuTest extends TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         );
-        return new DatabaseManipulatorFactory($this->yentu, new DriverFactory($dbConfig), $this->io);
+        return new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
     }
 
-    protected function initYentu($name)
+    protected function getCommand($command, $extraArgs = [])
     {
-        $config = new Config();
+        $className = "yentu\\commands\\" . ucfirst($command);
+        $class = new \ReflectionClass($className);
+        $args = array_merge([$this->migrations, $this->manipulatorFactory, $this->io], $extraArgs);
+        return $class->newInstanceArgs($args);
+        //return new $class($this->migrations, $this->manipulatorFactory, $this->io);
+    }
+
+    protected function initYentu($name, $initDb = true)
+    {
         $dbConfig = array(
             'driver' => $GLOBALS['DRIVER'],
             'host' => $GLOBALS['DB_HOST'],
@@ -204,19 +214,24 @@ class YentuTest extends TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         );
-        $factory = new DatabaseManipulatorFactory($this->yentu, new DriverFactory($dbConfig), $this->io);
-        $init = new Init($this->yentu, $factory, $this->io, $config);
-        $init->run(
-            array(
+
+        $this->manipulatorFactory = new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
+        $migrationsConfig = ['home' => vfsStream::url('home/yentu'), 'variables' => [], 'other_migrations' => []];
+        $this->migrations = new Migrations($this->io, $this->manipulatorFactory, $migrationsConfig);
+
+        if($initDb) {
+            $initArgs = [
                 'driver' => $GLOBALS['DRIVER'],
                 'host' => $GLOBALS['DB_HOST'],
                 'dbname' => $name,
                 'user' => $GLOBALS['DB_USER'],
                 'password' => $GLOBALS['DB_PASSWORD'],
                 'file' => $GLOBALS['DB_FILE']
-            )
-        );
-        //$this->config->readPath($this->yentu->getPath("config/default.conf.php"));
+            ];
+            $init = new Init($this->migrations, $this->manipulatorFactory, $this->io);
+            $init->setOptions($initArgs);
+            $init->run();
+        }
     }
 
     protected function connect($dsn)

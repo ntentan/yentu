@@ -2,12 +2,11 @@ language: php
 sudo: false
 dist: trusty
 php:
- - "7.1"
- - "7.2"
+ - "7.3"
 env:
  - YENTU_DRIVER=mysql YENTU_HOST=localhost YENTU_SKIP_SCHEMAS=yes YENTU_USER=root YENTU_BASE_DSN='mysql:host=localhost' COVERAGE=yes
  - YENTU_DRIVER=postgresql YENTU_HOST=localhost YENTU_USER=postgres YENTU_DEFAULT_SCHEMA=public YENTU_BASE_DSN='pgsql:host=localhost' COVERAGE=yes
- - YENTU_DRIVER=sqlite YENTU_FILE=sqlite.db YENTU_SKIP_SCHEMAS=yes YENTU_BASE_DSN='sqlite:sqlite.db' COVERAGE=yes
+ #- YENTU_DRIVER=sqlite YENTU_FILE=sqlite.db YENTU_SKIP_SCHEMAS=yes YENTU_BASE_DSN='sqlite:sqlite.db' COVERAGE=yes
 before_script: 
  - composer install --prefer-dist
   

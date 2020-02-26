@@ -28,36 +28,36 @@ namespace yentu\tests\cases;
 
 use clearice\io\Io;
 use \org\bovigo\vfs\vfsStream;
-use yentu\commands\Init;
-use yentu\tests\YentuTest;
+use yentu\exceptions\CommandException;
+use yentu\tests\TestBase;
 
-class InitTest extends YentuTest
+class InitTest extends TestBase
 {
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->testDatabase = 'yentu_tests';
         parent::setup();
         $this->createDb($GLOBALS['DB_NAME']);
         $this->connect($GLOBALS['DB_FULL_DSN']);
         $this->setupStreams();
+        $this->initYentu('dummy', false);
     }
 
     public function testParameters()
     {
-        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $initCommand = $this->getCommand('init');
 
         ob_start();
-        $initCommand->run(
-            array(
-                'driver' => $GLOBALS['DRIVER'],
-                'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS['DB_NAME'],
-                'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD'],
-                'file' => $GLOBALS['DB_FILE']
-            )
-        );
+        $initCommand->setOptions(array(
+            'driver' => $GLOBALS['DRIVER'],
+            'host' => $GLOBALS['DB_HOST'],
+            'dbname' => $GLOBALS['DB_NAME'],
+            'user' => $GLOBALS['DB_USER'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'file' => $GLOBALS['DB_FILE']
+        ));
+        $initCommand->run();
         $this->runAssertions();
     }
 
@@ -115,82 +115,67 @@ class InitTest extends YentuTest
             );
         }
 
-        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $this->yentu->setDefaultHome(vfsStream::url('home/yentu'));
+        $initCommand = $this->getCommand('init');
+        //$this->migrations->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
-        $initCommand->run(array(
-            'interractive' => true
-        ));
+        $initCommand->setOptions(['interractive' => true]);
+        $initCommand->run();
         $this->runAssertions();
     }
 
-    /**
-     * @expectedException \yentu\exceptions\CommandException
-     */
     public function testUnwritable()
     {
+        $this->expectException(CommandException::class);
         vfsStream::setup('home', 0444);
-        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
+        $initCommand = $this->getCommand('init');
+        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
         $this->io->setOutputLevel(Io::OUTPUT_LEVEL_0);
-        $initCommand->run(
-            array(
-                'driver' => 'postgresql',
-                'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS['DB_NAME'],
-                'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
-            )
-        );
+        $initCommand->run( [
+            'driver' => 'postgresql',
+            'host' => $GLOBALS['DB_HOST'],
+            'dbname' => $GLOBALS['DB_NAME'],
+            'user' => $GLOBALS['DB_USER'],
+            'password' => $GLOBALS['DB_PASSWORD']
+        ]);
     }
 
-    /**
-     * @expectedException \yentu\exceptions\CommandException
-     */
     public function testExistingDir()
     {
+        $this->expectException(CommandException::class);
         mkdir(vfsStream::url('home/yentu'));
-        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
-        $initCommand->run(
-            array(
-                'driver' => 'postgresql',
-                'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS['DB_NAME'],
-                'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD']
-            )
-        );
+        $initCommand = $this->getCommand('init');
+        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
+        $initCommand->run([
+            'driver' => 'postgresql',
+            'host' => $GLOBALS['DB_HOST'],
+            'dbname' => $GLOBALS['DB_NAME'],
+            'user' => $GLOBALS['DB_USER'],
+            'password' => $GLOBALS['DB_PASSWORD']
+        ]);
     }
 
-    /**
-     * @expectedException \yentu\exceptions\CommandException
-     */
     public function testNoParams()
     {
-        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
-        $initCommand->run(array());
+        $this->expectException(CommandException::class);
+        $initCommand = $this->getCommand('init');
+        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
+        $initCommand->run([]);
     }
 
-    /**
-     * @expectedException \yentu\exceptions\CommandException
-     */
     public function testExistingDb()
     {
+        $this->expectException(CommandException::class);
         $this->pdo->query('CREATE TABLE yentu_history(dummy INTEGER)');
-        $initCommand = new Init($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $this->yentu->setDefaultHome(vfsStream::url("home/yentu"));
-        $initCommand->run(
-            array(
-                'driver' => $GLOBALS['DRIVER'],
-                'host' => $GLOBALS['DB_HOST'],
-                'dbname' => $GLOBALS['DB_NAME'],
-                'user' => $GLOBALS['DB_USER'],
-                'password' => $GLOBALS['DB_PASSWORD'],
-                'file' => $GLOBALS['DB_FILE']
-            )
-        );
+        $initCommand = $this->getCommand('init');
+        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
+        $initCommand->run([
+            'driver' => $GLOBALS['DRIVER'],
+            'host' => $GLOBALS['DB_HOST'],
+            'dbname' => $GLOBALS['DB_NAME'],
+            'user' => $GLOBALS['DB_USER'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'file' => $GLOBALS['DB_FILE']
+        ]);
     }
 
 }

@@ -27,12 +27,12 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
-use yentu\commands\Migrate;
+use yentu\tests\TestBase;
 
-class MigrateTest extends \yentu\tests\YentuTest
+class MigrateTest extends TestBase
 {
 
-    public function setup()
+    public function setup() : void
     {
         $this->testDatabase = 'yentu_migration_test';
         parent::setup();
@@ -42,8 +42,8 @@ class MigrateTest extends \yentu\tests\YentuTest
     public function testMigration()
     {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run(array());
+        $migrate = $this->getCommand('migrate');
+        $migrate->run([]);
 
         $this->assertEquals(
             file_get_contents("tests/streams/migrate_output.txt"), file_get_contents(vfsStream::url('home/output.txt'))
@@ -54,10 +54,10 @@ class MigrateTest extends \yentu\tests\YentuTest
         }
 
         copy('tests/migrations/12345678901234_change_null.php', vfsStream::url('home/yentu/migrations/12345678901235_change_null.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
+        $migrate = $this->getCommand('migrate');
         $this->assertColumnNullable('role_name', 'roles');
         $this->assertColumnExists('user_name', 'users');
-        $migrate->run(array());
+        $migrate->run([]);
         $this->assertColumnNotNullable('role_name', 'roles');
         $this->assertColumnExists('username', 'users');
     }
@@ -66,8 +66,8 @@ class MigrateTest extends \yentu\tests\YentuTest
     {
         $this->skipSchemaTests();
         copy('tests/migrations/12345678901234_schema.php', vfsStream::url('home/yentu/migrations/12345678901234_schema.php'));
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run(array());
+        $migrate = $this->getCommand('migrate');
+        $migrate->run([]);
         $this->assertSchemaExists('schema');
 
         foreach ($this->tables as $table) {

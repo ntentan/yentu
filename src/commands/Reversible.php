@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace yentu;
+namespace yentu\commands;
 
 interface Reversible
 {
-    public function reverse();
+    public function reverseActions();
 }

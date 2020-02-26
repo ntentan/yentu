@@ -21,7 +21,7 @@ class ChangeLogger
     private $dumpQueriesOnly;
     private $dryRun;
     private $skipOnErrors = false;
-    private $yentu;
+    private $migrations;
 
     public function skip($itemType)
     {
@@ -46,18 +46,18 @@ class ChangeLogger
         $this->allowedItemTypes[] = $itemType;
     }
 
-    private function __construct(AbstractDatabaseManipulator $driver, Yentu $yentu, Io $io)
+    private function __construct(AbstractDatabaseManipulator $driver, Migrations $migrations, Io $io)
     {
         $this->session = sha1(rand() . time());
         $this->driver = $driver;
         $this->driver->createHistory();
-        $this->yentu = $yentu;
+        $this->migrations = $migrations;
         $this->io = $io;
     }
 
-    public static function wrap(AbstractDatabaseManipulator $item, Yentu $yentu, Io $io) : ChangeLogger
+    public static function wrap(AbstractDatabaseManipulator $item, Migrations $migrations, Io $io) : ChangeLogger
     {
-        return new ChangeLogger($item, $yentu, $io);
+        return new ChangeLogger($item, $migrations, $io);
     }
 
     public function setVersion($version) : void
@@ -74,7 +74,7 @@ class ChangeLogger
     {
         try {
             $return = $this->driver->$method($arguments[0]);
-            $this->yentu->announce($matches['command'], $matches['item_type'], $arguments[0]);
+            $this->migrations->announce($matches['command'], $matches['item_type'], $arguments[0]);
 
             $this->driver->setDumpQuery(false);
 

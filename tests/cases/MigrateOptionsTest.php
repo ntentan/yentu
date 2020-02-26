@@ -27,23 +27,27 @@
 namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
-use yentu\commands\Migrate;
+use yentu\tests\TestBase;
 
-class MigrateOptionsTest extends \yentu\tests\YentuTest {
+class MigrateOptionsTest extends TestBase
+{
 
-    public function setUp() {
+    public function setUp() : void
+    {
         $this->testDatabase = 'yentu_migration_test';
         parent::setup();
         $this->setupForMigration();
     }
 
-    public function testMigration() {
+    public function testMigration()
+    {
         copy('tests/migrations/12345678901234_import.php', vfsStream::url('home/yentu/migrations/12345678901234_import.php'));
 
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run(array('no-foreign-keys' => true));
+        $migrate = $this->getCommand('migrate');
+        $migrate->setOptions(['no-foreign-keys' => true]);
+        $migrate->run();
         $this->assertEquals(
-                file_get_contents("tests/streams/migrate_options_output_1.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+            file_get_contents("tests/streams/migrate_options_output_1.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
 
         foreach ($this->fkeys as $fkey) {
@@ -52,10 +56,11 @@ class MigrateOptionsTest extends \yentu\tests\YentuTest {
 
         file_put_contents(vfsStream::url("home/output.txt"), '');
 
-        $migrate = new Migrate($this->yentu, $this->getManipulatorFactory(), $this->io, $this->config);
-        $migrate->run(array('only-foreign-keys' => true));
+        $migrate = $this->getCommand('migrate');
+        $migrate->setOptions(['only-foreign-keys' => true]);
+        $migrate->run();
         $this->assertEquals(
-                file_get_contents("tests/streams/migrate_options_output_2.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+            file_get_contents("tests/streams/migrate_options_output_2.txt"), file_get_contents(vfsStream::url('home/output.txt'))
         );
 
         foreach ($this->fkeys as $fkey) {

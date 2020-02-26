@@ -28,11 +28,13 @@ namespace yentu\tests\cases;
 
 use org\bovigo\vfs\vfsStream;
 use yentu\commands\Import;
+use yentu\exceptions\CommandException;
+use yentu\tests\TestBase;
 
-class ImportTest extends \yentu\tests\YentuTest
+class ImportTest extends TestBase
 {
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->testDatabase = 'yentu_import_test';
         parent::setup();
@@ -46,8 +48,7 @@ class ImportTest extends \yentu\tests\YentuTest
         $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
 
-        $import = new Import($this->yentu, $this->getManipulatorFactory(), $this->io);
-        $import->setCodeWriter($codeWriter);
+        $import = $this->getCommand('import', [$codeWriter]);
         $description = $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
@@ -78,8 +79,7 @@ class ImportTest extends \yentu\tests\YentuTest
 
         $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        $import = new Import($this->yentu, $this->getManipulatorFactory(), $this->io);
-        $import->setCodeWriter($codeWriter);
+        $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
@@ -96,8 +96,7 @@ class ImportTest extends \yentu\tests\YentuTest
 
         $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
-        $import = new Import($this->yentu, $this->getManipulatorFactory(), $this->io);
-        $import->setCodeWriter($codeWriter);
+        $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());
         $newVersion = $import->getNewVersion();
         $this->assertFileExists(
@@ -108,13 +107,13 @@ class ImportTest extends \yentu\tests\YentuTest
         $this->assertTableExists('disabled_employees_view');
     }
 
-    /**
-     * @expectedException \yentu\exceptions\CommandException
-     */
     public function testImportNonEmptyMigrations()
     {
+        $this->expectException(CommandException::class);
         file_put_contents(vfsStream::url('home/yentu/migrations/1234568901234_existing.php'), 'nothing');
-        $import = new Import($this->yentu, $this->getManipulatorFactory(), $this->io);
+        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
+        $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());
     }
 
@@ -128,7 +127,9 @@ class ImportTest extends \yentu\tests\YentuTest
         } catch (\PDOException $e) {
             
         }
-        $import = new Import($this->yentu, $this->getManipulatorFactory(), $this->io);
+        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
+        $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());
         $this->assertTableExists('yentu_history');
     }
