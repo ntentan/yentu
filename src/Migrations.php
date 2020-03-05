@@ -12,7 +12,7 @@ class Migrations
     private $config;
     private $io;
 
-    public function __construct(Io $io, DatabaseManipulatorFactory $manipulatorFactory, array $config)
+    public function __construct(Io $io, DatabaseManipulatorFactory $manipulatorFactory, array $config = [])
     {
         $this->manipulatorFactory = $manipulatorFactory;
         $this->config = $config;
@@ -118,7 +118,7 @@ class Migrations
      */
     public function getPath($path)
     {
-        return $this->config['home'] . DIRECTORY_SEPARATOR . $path;
+        return ($this->config['home'] ?? './yentu') . DIRECTORY_SEPARATOR . $path;
     }
 
 
