@@ -1,16 +1,8 @@
 Getting Started with Yentu
 ==========================
-Yentu manipulates databases through migration scripts. Migrations are simple PHP scripts
-which contain instructions on what to do when database objects are created or removed.
-For yentu to work in your project, you need a place to store database configuration
-files and the migration scripts.
+There are two major ways of getting your project started on yentu. If you have an existing project, you can import its current schema as a yentu migration and continue from there. If you are starting a new project, too, you can just go ahead and write your migration files.
 
-There are two major ways of getting your project to work with yentu. You can either 
-write a new set of migrations or import an existing schema from an existing database 
-for your initial migration. The approach you choose depends on how far you have
-gone with your project. Projects which already have an existing schema can import
-their schema into a new migration other projects can just start writing migrations
-straight away.
+
 
 Importing a Schema
 ------------------
@@ -38,8 +30,8 @@ connection and execute:
 
 This will reproduce your current database schema on the new connection. 
 
-Create a new set of Migrations
-------------------------------
+Starting from Scratch
+---------------------
 To create a new set of migrations you need to initialize the yentu directory and
 history table for your project. The following command, when ran in the root directory
 of your project, will initialize the project for yentu:

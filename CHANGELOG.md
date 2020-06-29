@@ -7,7 +7,7 @@ CHANGELOG
 - A new `Cli` class was added to handle the execution and error reporting
 
 ### Changed
-- Reorganized the classes such that everything resolves properly with a single resolution of the command class from the DI container.
+- Reorganized the classes so everything resolves properly with a single request of the `Command` class from the DI container.
 - Minimized dependency on the Config class.
 
 ### Fixed
