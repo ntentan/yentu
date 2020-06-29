@@ -1,17 +1,11 @@
 Introduction
 ============
 
-Yentu is a database migration tool, built to aid developers keep track of
-changes to their database schemas. The word Yentu is an Akan expression which means
-let's migrate. Yentu is intended to help developers keep their database schema 
-as a part of whichever source code management system they are using.
-It also makes it easy for multiple developers to work on a database schema
-without much integration difficulty. Built with PHP, Yentu is framework agnostic 
-and can be used in just about any PHP project. Yentu provides a CLI interface 
-which makes it easy to integrate with build tools and even use in projects in
-other languages.
+Like any other database migration tool, Yentu allows developers to track changes made to their database schema specifications. By writing scripts that define incremental database changes, the actual evolution of the database is captured along with the rest of the codebase. The word "Yentu" is an Akan word which means "let's migrate". 
 
-The syntax for Yentu migrations are designed to be as descriptive as possible, 
+Yentu is framework agnostic, and although it has primarily been built for use in the Ntentan framework, it can be used in just about any PHP project. The core of its operations are performed through a command line interface, so you do not have to integrate it in any way with your actual code. Your build systems will however love that.
+
+Unlike most other migration systems, migration for are designed to be as descriptive as possible, 
 without the extra overhead of classes and other boilerplate code. Developers
 would generally specify the operations that Yentu should perform when the 
 migration is run and Yentu would automatically determine what to do when the 
