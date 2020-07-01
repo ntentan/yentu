@@ -4,13 +4,17 @@ There are two major ways of getting your project started on yentu. If you have a
 
 Starting from Scratch
 ---------------------
-To start using yentu for your migrations you need to initialize the `yentu` directory, and the history database table for your project. The following command, preferably ran in the root directory of your project, will initialize the project for yentu:
+To start using yentu for your migrations you need to initialize the `yentu` directory, and the history database table for your project. Assuming you installed yentu into your project with composer, when the following command is run, it will initialize the yentu installation:
 
     $ php vendor/bin/yentu init -i
     
 While this command is running, you will be expected to provide the details of your database connection. Prompts will be provided for the following:
 
-- 
+- The type of database, with postgresql, mysql and sqlite as options.
+- The hostname of the database
+- The port on which the database server is running. This optional prompt can be skipped with an empty value, so the default port of your particular server can be used.
+- The name of the database on the server.
+- The username and password for connecting to the database server.
 
 More on setting up
 ------------------
