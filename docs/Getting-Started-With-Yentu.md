@@ -1,7 +1,25 @@
 Getting Started with Yentu
 ==========================
-There are two major ways of getting your project started on yentu. If you have an existing project, you can import its current schema as a yentu migration and continue from there. If you are starting a new project, too, you can just go ahead and write your migration files.
+There are two major ways of getting your project started on yentu. If you have an existing project with an established data schema, you can import its current schema as an initial Yentu migration. On the other hand, if you are starting a new project, you can just go ahead and initialize your code directory for yentu, and continue working as usual. In both cases, a directory named `yentu`, which contains all the configurations and migrations will be created in the root of your project's directory. The following sections will walk you through the steps required for both strategies.
 
+Starting from Scratch
+---------------------
+To start using yentu for your migrations you need to initialize the `yentu` directory, and the history database table for your project. The following command, preferably ran in the root directory of your project, will initialize the project for yentu:
+
+    $ php vendor/bin/yentu init -i
+    
+While this command is running, you will be expected to provide the details of your database connection. Prompts will be provided for the following:
+
+- 
+
+More on setting up
+------------------
+In cases where an interractive command line interface is not required (such as with automated build scripts), 
+you can pass the required parameters to the init command and ignore the interractive (`-i`) switch.
+
+
+
+ 
 
 
 Importing a Schema
@@ -30,24 +48,3 @@ connection and execute:
 
 This will reproduce your current database schema on the new connection. 
 
-Starting from Scratch
----------------------
-To create a new set of migrations you need to initialize the yentu directory and
-history table for your project. The following command, when ran in the root directory
-of your project, will initialize the project for yentu:
-
-    $ php vendor/bin/yentu init -i
-    
-Just as it is with the `import` command, this will create the `yentu` directory which
-will contain the `migrations` and `config` directories. The `config` directory will
-contain the `default.conf.php` configuration file which contains the parameters you
-provided. This time however, the migrations directory will remain empty. 
-
-More on setting up
-------------------
-In cases where an interractive command line interface is not required (such as with automated build scripts), 
-you can pass the required parameters to the init command and ignore the interractive (`-i`) switch.
-
-
-
- 
