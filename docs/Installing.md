@@ -1,20 +1,17 @@
 Installation
 ============
-Yentu can either be installed as a phar archive or through composer. The
-preference for either format is dependent on the developer. Developers who use
-composer for managing project dependencies are however better off installing 
-through composer.
+Yentu can either be installed as a phar archive executable, or through composer. The preference for either format dependends on how your environments is setup. If you use composer for managing your project dependencies,you are better off installing through composer. On the other hand, if you have a couple of separate projects that require yentu, you can install the phar archive executable.
 
-To install yentu with composer you can require using:
+To install yentu with composer you can execute the following:
 
-    php composer.phar require ekowabaka/yentu
+    php composer.phar require --dev ekowabaka/yentu
 
 After running composer install, you can access the yentu binary with 
-`vendor/bin/yentu`.
+`vendor/bin/yentu` from your projects base directory.
 
-For the phar version you can download the most recent version through:
+For the phar version you can always download the most recent version through:
 
     curl -LSs https://yentu.github.io/installer.php | php
 
-This would check for Yentu's requirements and install the most recent phar 
-version if all requirements are met.
+This will check for Yentu's requirements and download the most recent phar 
+version, provided your system's environment meets all requirements.
