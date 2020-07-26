@@ -4,7 +4,7 @@ Yentu can either be installed as a phar archive executable, or through composer.
 
 To install yentu with composer you can execute the following:
 
-    php composer.phar require --dev ekowabaka/yentu
+    php composer require --dev ntentan/yentu
 
 After running composer install, you can access the yentu binary with 
 `vendor/bin/yentu` from your projects base directory.

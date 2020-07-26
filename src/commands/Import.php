@@ -5,10 +5,12 @@ namespace yentu\commands;
 use clearice\io\Io;
 use yentu\CodeWriter;
 use yentu\exceptions\CommandException;
+use yentu\exceptions\NonReversibleCommandException;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Migrations;
+use ntentan\utils\Filesystem;
 
-class Import extends Command implements Reversible
+class Import extends Command
 {
     private $db;
     private $code;
@@ -32,7 +34,7 @@ class Import extends Command implements Reversible
         $this->db = $this->manipulatorFactory->createManipulator();
         $files = scandir($this->migrations->getPath("migrations"));
         if (count($files) > 2) {
-            throw new CommandException("Cannot run imports. Your migrations directory is not empty");
+            throw new NonReversibleCommandException("Cannot run imports. Your migrations directory is not empty");
         }
         $description = $this->db->getDescription();
 
@@ -52,7 +54,7 @@ class Import extends Command implements Reversible
 
         $this->newVersion = date('YmdHis', time());
         $path = $this->migrations->getPath("migrations/{$this->newVersion}_import.php");
-        file_put_contents($path, $this->code);
+        Filesystem::file($path)->putContents($this->code);
         $this->io->output("Created `$path`\n");
         if (!$this->db->getAssertor()->doesTableExist('yentu_history')) {
             $this->db->createHistory();
@@ -182,10 +184,5 @@ class Import extends Command implements Reversible
             $this->code->add("->$type('$constraint')->name('$name')");
         }
     }
-
-    public function reverseActions()
-    {
-        
-    }
-
 }
+

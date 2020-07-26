@@ -1,6 +1,6 @@
 Writing Migrations
 ==================
-Migrations in yentu manipulate the database through the DatabaseItem class. There are different sub classes of this DatabaseItem item class for different types of
+Migrations in yentu manipulate the database through the `DatabaseItem` class. There are different sub classes of this DatabaseItem item class for different types of
 database items (eg. tables, columns, primary keys etc.). To make it easy to write
 migrations without worrying much about these classes, simpler wrapper functions and
 classes are used.

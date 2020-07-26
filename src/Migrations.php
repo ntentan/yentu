@@ -6,8 +6,17 @@ use clearice\io\Io;
 use yentu\factories\DatabaseManipulatorFactory;
 
 
+/**
+ * Provides an interface for accessing migrations.
+ *
+ * @package yentu
+ */
 class Migrations
 {
+    /**
+     * An instance of the database manipulator.
+     * @var DatabaseManipulatorFactory
+     */
     private $manipulatorFactory;
     private $config;
     private $io;

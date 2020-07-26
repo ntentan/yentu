@@ -50,33 +50,17 @@ WELCOME;
         if($this->command) {
             try {
                 $this->command->run();
-            } catch (\yentu\exceptions\CommandException $e) {
+            } catch (\yentu\exceptions\NonReversibleCommandException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nError! " . $e->getMessage() . "\n");
+                $this->io->error("\nError: " . $e->getMessage() . "\n");
             } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nDatabase driver failed: " . $e->getMessage() . "\n");
-                if (isset($command)) {
-                    $command->reverse();
-                }
-            } catch (\yentu\exceptions\DatabaseManipulatorException $e) {
+                $this->io->error("\nDatabase error: " . $e->getMessage() . "\n");
+                $this->command->reverse();
+            } catch (\yentu\exceptions\YentuException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nFailed to perform database action: " . $e->getMessage() . "\n");
-                if (isset($command)) {
-                    $command->reverse();
-                }
-            } catch (\ntentan\atiaa\DescriptionException $e) {
-                $this->io->resetOutputLevel();
-                $this->io->error("\nFailed to perform database action: " . $e->getMessage() . "\n");
-                if (isset($command)) {
-                    $command->reverse();
-                }
-            } catch (\yentu\exceptions\SyntaxErrorException $e) {
-                $this->io->resetOutputLevel();
-                $this->io->error("\nError found in syntax: {$e->getMessage()}\n");
-                if (isset($command)) {
-                    $command->reverse();
-                }
+                $this->io->error("\nError: " . $e->getMessage() . "\n");
+                $this->command->reverse();
             } catch (\PDOException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nFailed to connect to database: {$e->getMessage()}\n");

@@ -1,6 +1,6 @@
 Getting Started with Yentu
 ==========================
-There are two major ways of getting your project started on yentu. First, if you have an existing project with an established data schema, you can import this schema as an initial migration into yentu. On the other hand, if you are starting a new project, you can just initialize your code directory for use with yentu, and start building your app. 
+Before working with yentu, you need to initialize your project directory. 
 
 In both forms, of initialisation a directory named `yentu`, which contains all the configurations and migrations is created in the root of your project's directory. Also, an additional table that stores the migration history is added to the database. The following sections will walk you through the steps required for both strategies.
 
@@ -24,7 +24,7 @@ While this command is running, you will be expected to provide the details of yo
 
 More on setting up
 ------------------
-In cases where an interractive command line interface is not required (such as with automated build scripts), you can directly pass the required parameters to the init command and ignore the interractive (`-i`) switch. See [[Command-Reference]] for more details.
+In cases where an interactive command line interface is not required (such as with automated build scripts), you can directly pass the required parameters to the init command and ignore the interactive (`-i`) switch. See [[Command-Reference]] for more details.
 
 
 

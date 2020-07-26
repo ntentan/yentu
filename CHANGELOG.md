@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+## Unreleased
+### Changed
+- The exception structure, so exceptions thrown for actions that are reversible are clearly marked.
+- The language in the prompts used during interactive database initialization.
+
+### Fixed
+- Automatic reversals of commands that fail.
+- The `DatabaseManipulatorFactory` so it generates a friendlier exception when the manipulator class cannot be found.
+
 ## v0.4.0 - 2020-02-25
 
 ### Added

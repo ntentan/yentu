@@ -90,5 +90,4 @@ class Status extends Command
             $this->io->output("    $description\n");
         }
     }
-
 }

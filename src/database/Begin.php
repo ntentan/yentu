@@ -26,6 +26,11 @@
 
 namespace yentu\database;
 
+/**
+ * Allows the
+ *
+ * @package yentu\database
+ */
 class Begin extends DatabaseItem
 {
     private $defaultSchema;

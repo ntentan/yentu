@@ -27,6 +27,7 @@
 namespace yentu\factories;
 
 use clearice\io\Io;
+use yentu\exceptions\DatabaseManipulatorException;
 use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 
@@ -50,7 +51,11 @@ class DatabaseManipulatorFactory
     {
         $config = $this->driverFactory->getConfig();
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
-        return new $class($this->driverFactory, $this->io);
+        if(class_exists($class)) {
+            return new $class($this->driverFactory, $this->io);
+        } else {
+            throw new DatabaseManipulatorException("Database manipulator class [$class] does not exist.");
+        }
     }
 
     public function createManipulatorWithConfig($config) : AbstractDatabaseManipulator

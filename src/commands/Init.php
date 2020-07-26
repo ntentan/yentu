@@ -27,23 +27,45 @@
 namespace yentu\commands;
 
 use clearice\io\Io;
+use yentu\exceptions\NonReversibleCommandException;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Migrations;
 use yentu\Parameters;
-use yentu\commands\Reversible;
 use yentu\exceptions\CommandException;
+use ntentan\utils\Filesystem;
 
 /**
- * The init command class. This command intiates a project for yentu migration
- * by creating the required directories and configuration files. It also goes
- * ahead to create the history table which exists in the database.
+ * The init command class.
+ * This command initiates a project for yentu by creating the required migration directories and configuration files.
+ * It also creates the database history table.
  */
 class Init extends Command implements Reversible
 {
+    /**
+     * Instance of io for CLI output
+     * @var Io
+     */
     private $io;
+
+    /**
+     * Provides access to migrations.
+     * @var Migrations
+     */
     private $migrations;
+
+    /**
+     * For performing database operations
+     * @var DatabaseManipulatorFactory
+     */
     private $manipulatorFactory;
 
+    /**
+     * Init constructor.
+     *
+     * @param Migrations $migrations
+     * @param DatabaseManipulatorFactory $manipulatorFactory
+     * @param Io $io
+     */
     public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
     {
         $this->migrations = $migrations;
@@ -51,19 +73,23 @@ class Init extends Command implements Reversible
         $this->manipulatorFactory = $manipulatorFactory;
     }
 
-    private function getParams()
+    /**
+     * Extract parameters from command line arguments, or through interactive sessions.
+     * @return array
+     */
+    private function getParams() : array
     {
         if (isset($this->options['interractive'])) {
-            $params['driver'] = $this->io->getResponse('Database type', ['required' => true, 'answers' => ['postgresql', 'mysql', 'sqlite']]);
+            $params['driver'] = $this->io->getResponse('What type of database are you working with?', ['required' => true, 'answers' => ['postgresql', 'mysql', 'sqlite']]);
 
             if ($params['driver'] === 'sqlite') {
-                $params['file'] = $this->io->getResponse('Database file', ['required' => true]);
+                $params['file'] = $this->io->getResponse('What is the path to your database file?', ['required' => true]);
             } else {
-                $params['host'] = $this->io->getResponse('Database host', ['default' => 'localhost']);
-                $params['port'] = $this->io->getResponse('Database port');
-                $params['dbname'] = $this->io->getResponse('Database name',['required' => true]);
-                $params['user'] = $this->io->getResponse('Database user name', ['required' => true]);
-                $params['password'] = $this->io->getResponse('Database password', ['required' => FALSE]);
+                $params['host'] = $this->io->getResponse('What is the host of your database connection?', ['default' => 'localhost']);
+                $params['port'] = $this->io->getResponse('What is the port of your database connection? (Leave blank for default)');
+                $params['user'] = $this->io->getResponse('What username do you connect with?', ['required' => true]);
+                $params['password'] = $this->io->getResponse("What is the password for {$params['user']}?", ['required' => FALSE]);
+                $params['dbname'] = $this->io->getResponse("What is the name database (schema) are you connecting to?",['required' => true]);
             }
         } else {
             $params = [];
@@ -76,14 +102,19 @@ class Init extends Command implements Reversible
         return $params;
     }
 
-    public function createConfigFile($params)
+    /**
+     * @param $params
+     * @return array
+     * @throws \ntentan\utils\exceptions\FileAlreadyExistsException
+     * @throws \ntentan\utils\exceptions\FileNotWriteableException
+     */
+    public function createConfigFile($params) : array
     {
         $params = Parameters::wrap(
                 $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
         );
-        mkdir($this->migrations->getPath(''));
-        mkdir($this->migrations->getPath('config'));
-        mkdir($this->migrations->getPath('migrations'));
+        Filesystem::directory($this->migrations->getPath('config'))->create(true);
+        Filesystem::directory($this->migrations->getPath('migrations'))->create(true);
 
         $configFile = new \yentu\CodeWriter();
         $configFile->add('return [');
@@ -102,26 +133,26 @@ class Init extends Command implements Reversible
         $configFile->decreaseIndent();
         $configFile->add('];');
 
-        file_put_contents($this->migrations->getPath("config/default.conf.php"), $configFile);
+        FileSystem::file($this->migrations->getPath("config/default.conf.php"))->putContents($configFile);
         return $params;
     }
 
     /**
      * @throws CommandException
      */
-    public function run()
+    public function run() : void
     {
         $home = $this->migrations->getPath('');
         if (file_exists($home)) {
-            throw new CommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
+            throw new NonReversibleCommandException("Could not initialize yentu. Your project has already been initialized with yentu.");
         } else if (!is_writable(dirname($home))) {
-            throw new CommandException("Your home directory ($home) could not be created.");
+            throw new NonReversibleCommandException("Your home directory ($home) could not be created.");
         }
 
         $params = $this->getParams();
         
         if (count($params) == 0 && defined('STDOUT')) {
-            throw new CommandException(
+            throw new NonReversibleCommandException(
                 "You didn't provide any parameters for initialization. Please execute yentu "
                 . "with `init -i` to initialize yentu interractively. "
                 . "You can also try `init --help` for more information."
@@ -132,7 +163,7 @@ class Init extends Command implements Reversible
         $db = $this->manipulatorFactory->createManipulatorWithConfig($config);
 
         if ($db->getAssertor()->doesTableExist('yentu_history')) {
-            throw new CommandException("Could not initialize yentu. Your database has already been initialized with yentu.");
+            throw new CommandException("Could not initialize yentu. Your database may have been initialized with yentu; the 'yentu_history' table already exists.");
         }
 
         $db->createHistory();
@@ -141,12 +172,9 @@ class Init extends Command implements Reversible
         $this->io->output("Yentu successfully initialized.\n");
     }
 
-    public function reverseActions()
+    public function reverseActions() : void
     {
-        unlink($this->migrations->getPath("config/default.conf.php"));
-        rmdir($this->migrations->getPath("config"));
-        rmdir($this->migrations->getPath("migrations"));
-        rmdir($this->migrations->getPath(""));
+        Filesystem::directory($this->migrations->getPath(""))->delete();
     }
 
 }
