@@ -33,9 +33,9 @@ To import the migration, execute the following command in the root  directory of
 After the import, the `yentu/migrations` directory will contain the initial migration file, `XXXXXXXXXXXX_import.php`, for your database. If all goes well, this migration should represent the current state of your database. You can now make subsequent changes by writing migrations just as you would with yentu.
 
 ### Verifying your import
-It's always a good idea to test the migration before proceeding. In some cases, database features that are not supported by yentu may not be included in your imported migration.
+It's always a good idea to test the imported migration before proceeding to work with it. In some cases, database features that are not supported by yentu may not be included in your imported migration.
 
-To test this migration, you can point the database configuration to a new database connection and execute:
+To perform this test, you can point the database configuration in `yentu/confog/db.conf.php` to a new database connection and execute:
 
     $ php vendor/bin/yentu migrate
 
