@@ -40,5 +40,5 @@ class Yentu
      * Current version of yentu.
      * @var string
      */
-    const VERSION = 'v0.3.0';
+    const VERSION = 'v0.4.0';
 }

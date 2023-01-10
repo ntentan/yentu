@@ -2,7 +2,13 @@
 
 namespace yentu\exceptions;
 
-class CommandException extends \Exception
+/**
+ * An exception thrown by commands whose actions can be reversed.
+ *
+ * @package yentu\exceptions
+ * @see NonReversibleCommandException
+ */
+class CommandException extends YentuException
 {
     
 }

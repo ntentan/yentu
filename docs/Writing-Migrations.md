@@ -1,19 +1,14 @@
 Writing Migrations
 ==================
-Migrations in yentu manipulate the database through the DatabaseItem class. There
-are different sub classes of this DatabaseItem item class for different types of
-database items (eg. tables, columns, primary keys etc.). To make it easy to write
-migrations without worrying much about these classes, simpler wrapper functions and
-classes are used.
+Migrations are little PHP scripts that define the changes that are to be made to your database whenever they are executed. The API for writing yentu migrations is designed to be as descriptive as possible. Through these scripts you can create tables and their associated objects (like columns), you can seed tables with data, and you can also execute raw SQL queries directly on the database.
 
-Creating your first migration
+Creating a migration
 -----------------------------
 To create a migration execute the following from your command line.
 
     $ php vendor/bin/yentu create users
     
-Yentu will create a skeleton migration file (`XXXXXXXXXXXXXX_migration.php`) in the 
-`yentu/migrations` directory. The contents of this file will look close to this:
+Yentu will create a skeleton migration file, with a name similar to `20200726115141_users.php`, in the `yentu/migrations` directory. The contents of this file will look close to this:
 
 ````php
 /**
@@ -25,7 +20,9 @@ begin()
 ->end();
 ````
 
-Creating Tables
+It is worth noting that the numbers that 
+
+Defining Tables
 ---------------
 To add a table to this migration you can modify this code to look as follows:
 
@@ -44,12 +41,25 @@ begin()
 ->end();
 ````
 
-Finally, to execute this migration, you can execute the following command:
+Whenever you execute the migration command ...
 
-    $ php vendor/bin/yentu migrate
+    % php vendor/bin/yentu migrate
+
+... a table called `users` with the specified columns will be created.
     
-Adding with Columns
+Adding Columns
+--------------
+
+
+Setting Primary Keys
+--------------------
+
+
+
+Adding Foreign Keys
 -------------------
+
+
 
 
     

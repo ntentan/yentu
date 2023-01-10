@@ -24,7 +24,13 @@
  * THE SOFTWARE.
  */
 
-require __DIR__ . "/../../../../vendor/autoload.php";
+$externalAutoload = __DIR__ . "/../../../../vendor/autoload.php";
+
+if (file_exists($externalAutoload)) {
+    require $externalAutoload;
+} else {
+    require __DIR__ . "/../vendor/autoload.php";    
+}
 require_once __DIR__ . "/../src/globals.php";
 
 use clearice\argparser\ArgumentParser;
@@ -32,7 +38,6 @@ use clearice\io\Io;
 use yentu\manipulators\AbstractDatabaseManipulator;
 use ntentan\atiaa\DriverFactory;
 use yentu\Migrations;
-use yentu\Yentu;
 use ntentan\config\Config;
 use yentu\commands\Migrate;
 use ntentan\panie\Container;
@@ -183,18 +188,23 @@ function get_container_settings() {
                 if(isset($arguments['__command'])) {
                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
                     $defaultHome = $arguments['home'] ?? './yentu';
-                    $config = $container->resolve(Config::class);
-                    $config->readPath($defaultHome . "/config/default.conf.php");
+                    $configFile = "{$defaultHome}/config/default.conf.php";
 
-                    $migrations = $container->resolve(
-                       Migrations::class, [
-                           'config' => [
-                               'variables' => $config->get('variables', []),
-                               'other_migrations' => $config->get('other_migrations', []),
-                               'home' => $defaultHome
-                           ]
-                       ]
-                    );
+                    if(file_exists($configFile)) {
+                        $config = $container->resolve(Config::class);
+                        $config->readPath($configFile);
+
+                        $migrations = $container->resolve(
+                            Migrations::class, [
+                                'config' => [
+                                    'variables' => $config->get('variables', []),
+                                    'other_migrations' => $config->get('other_migrations', []),
+                                    'home' => $defaultHome
+                                ]
+                            ]
+                        );
+                    }
+
                     $command = $container->resolve($commandClass);
                     $command->setOptions($arguments);
                     return $command;

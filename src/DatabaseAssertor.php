@@ -25,6 +25,8 @@
 
 namespace yentu;
 
+use yentu\exceptions\SyntaxErrorException;
+
 class DatabaseAssertor
 {
     private $description;
@@ -115,7 +117,18 @@ class DatabaseAssertor
     
     private function getTableDetails($schema, $table)
     {
-        return $schema === false ? $this->description['tables'][$table] : 
-            $this->description['schemata'][$schema]['tables'][$table];        
+//        return $schema === false ? $this->description['tables'][$table] :
+//            $this->description['schemata'][$schema]['tables'][$table];
+        if($schema) {
+//            if(!isset($this->description['schemata'][$schema]['tables'][$table])) {
+//                throw new SyntaxErrorException("Please specify a valid schema or table name.");
+//            }
+            return $this->description['schemata'][$schema]['tables'][$table];
+        } else {
+//            if(!isset($this->description['tables'][$table])) {
+//                throw new SyntaxErrorException("Please specify a valid table name.");
+//            }
+            return $this->description['tables'][$table];
+        }
     }    
 }

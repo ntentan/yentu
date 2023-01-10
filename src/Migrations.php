@@ -6,13 +6,22 @@ use clearice\io\Io;
 use yentu\factories\DatabaseManipulatorFactory;
 
 
+/**
+ * Provides an interface for accessing migrations.
+ *
+ * @package yentu
+ */
 class Migrations
 {
+    /**
+     * An instance of the database manipulator.
+     * @var DatabaseManipulatorFactory
+     */
     private $manipulatorFactory;
     private $config;
     private $io;
 
-    public function __construct(Io $io, DatabaseManipulatorFactory $manipulatorFactory, array $config)
+    public function __construct(Io $io, DatabaseManipulatorFactory $manipulatorFactory, array $config = [])
     {
         $this->manipulatorFactory = $manipulatorFactory;
         $this->config = $config;
@@ -118,7 +127,7 @@ class Migrations
      */
     public function getPath($path)
     {
-        return $this->config['home'] . DIRECTORY_SEPARATOR . $path;
+        return ($this->config['home'] ?? './yentu') . DIRECTORY_SEPARATOR . $path;
     }
 
 
