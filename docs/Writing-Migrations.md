@@ -8,7 +8,7 @@ To create a migration execute the following from your command line.
 
     $ php vendor/bin/yentu create users
     
-Yentu will create a skeleton migration file (with a name similar to `20200726115141_users.php`) in the `yentu/migrations` directory. The contents of this file will look close to this:
+Yentu will create a skeleton migration file, with a name similar to `20200726115141_users.php`, in the `yentu/migrations` directory. The contents of this file will look close to this:
 
 ````php
 /**
@@ -19,6 +19,8 @@ begin()
 
 ->end();
 ````
+
+It is worth noting that the numbers that 
 
 Defining Tables
 ---------------
