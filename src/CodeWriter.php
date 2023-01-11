@@ -3,8 +3,8 @@ namespace yentu;
 
 class CodeWriter
 {
-    private $lines;
-    private $indentation;
+    private $lines = "";
+    private $indentation = 0;
     
     public function add($line = '')
     {

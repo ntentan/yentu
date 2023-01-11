@@ -22,6 +22,7 @@ class ChangeLogger
     private $dryRun;
     private $skipOnErrors = false;
     private $migrations;
+    private $io;
 
     public function skip($itemType)
     {
