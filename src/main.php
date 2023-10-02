@@ -57,6 +57,10 @@ function get_container_settings() {
         Migrations::class => [Migrations::class, 'singleton' => true],
         Io::class => [Io::class, 'singleton' => true],
         Config::class => [
+            function ($c) {
+                $config = new Config();
+                return $config->readPath("config");
+            },
             'singleton' => true
         ],
         DriverFactory::class => [ 

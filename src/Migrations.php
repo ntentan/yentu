@@ -34,9 +34,9 @@ class Migrations
             array(
                 array(
                     'home' => $this->getPath('migrations'),
-                    'variables' => $this->config['variables']
+                    'variables' => $this->config['variables'] ?? []
                 )
-            ), $this->config['other_migrations']
+            ), $this->config['other_migrations'] ?? []
         );
     }
 

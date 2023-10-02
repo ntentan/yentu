@@ -26,11 +26,11 @@ class Cli
     {
         $version = $this->getVersion();
         $welcome = <<<WELCOME
-Yentu Database Migration Tool
-Version $version
+        Yentu Database Migration Tool
+        Version $version
 
 
-WELCOME;
+        WELCOME;
         $this->io->output($welcome);
     }
 
@@ -40,7 +40,7 @@ WELCOME;
             return PHING_BUILD_VERSION;
         } else {
             $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
-            return $version->getVersion();
+            return $version->asString();
         }
     }
 
@@ -53,11 +53,13 @@ WELCOME;
             } catch (\yentu\exceptions\NonReversibleCommandException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nError: " . $e->getMessage() . "\n");
-            } catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
+            } 
+            catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nDatabase error: " . $e->getMessage() . "\n");
                 $this->command->reverse();
-            } catch (\yentu\exceptions\YentuException $e) {
+            } 
+            catch (\yentu\exceptions\YentuException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nError: " . $e->getMessage() . "\n");
                 $this->command->reverse();
