@@ -1,28 +1,5 @@
 <?php
 
-/*
- * The MIT License
- *
- * Copyright 2015 ekow.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 
 $externalAutoload = __DIR__ . "/../../../../vendor/autoload.php";
 
@@ -46,7 +23,7 @@ use yentu\commands\Command;
 
 $container = new Container();
 $container->setup(get_container_settings());
-$ui = $container->resolve(Cli::class);
+$ui = $container->get(Cli::class);
 $ui->run();
 
 /**
@@ -65,15 +42,15 @@ function get_container_settings() {
         ],
         DriverFactory::class => [ 
             function($container) {
-                return new DriverFactory($container->resolve(Config::class)->get('db'));        
+                return new DriverFactory($container->get(Config::class)->get('db'));        
             }, 
             'singleton' => true
         ],
         AbstractDatabaseManipulator::class => [
             function ($container) {
-                $config = $container->resolve(Config::class)->get('db');
+                $config = $container->get(Config::class)->get('db');
                 $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
-                return $container->resolve($class, ['config' => $config]);
+                return $container->get($class, ['config' => $config]);
             },
             'singleton' => true
         ],
@@ -83,7 +60,7 @@ function get_container_settings() {
         ],
         ArgumentParser::class => [
             function($container) {
-                $io = $container->resolve(Io::class);
+                $io = $container->get(Io::class);
                 $argumentParser = new ArgumentParser();
                 
                 // Setup commands
@@ -187,7 +164,7 @@ function get_container_settings() {
                  * @var Migrations $migrations
                  */
 
-                $argumentParser = $container->resolve(ArgumentParser::class);
+                $argumentParser = $container->get(ArgumentParser::class);
                 $arguments = $argumentParser->parse();
                 if(isset($arguments['__command'])) {
                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
@@ -195,10 +172,10 @@ function get_container_settings() {
                     $configFile = "{$defaultHome}/config/default.conf.php";
 
                     if(file_exists($configFile)) {
-                        $config = $container->resolve(Config::class);
+                        $config = $container->get(Config::class);
                         $config->readPath($configFile);
 
-                        $migrations = $container->resolve(
+                        $migrations = $container->get(
                             Migrations::class, [
                                 'config' => [
                                     'variables' => $config->get('variables', []),
@@ -209,7 +186,7 @@ function get_container_settings() {
                         );
                     }
 
-                    $command = $container->resolve($commandClass);
+                    $command = $container->get($commandClass);
                     $command->setOptions($arguments);
                     return $command;
                 } else {
