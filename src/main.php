@@ -13,7 +13,6 @@ require_once __DIR__ . "/../src/globals.php";
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
 use yentu\manipulators\AbstractDatabaseManipulator;
-use ntentan\atiaa\DriverFactory;
 use yentu\Migrations;
 use ntentan\config\Config;
 use yentu\commands\Migrate;
@@ -31,21 +30,27 @@ $ui->run();
  */
 function get_container_settings() {
     return [
-        Migrations::class => [Migrations::class, 'singleton' => true],
-        Io::class => [Io::class, 'singleton' => true],
-        Config::class => [
-            function ($c) {
-                $config = new Config();
-                return $config->readPath("config");
-            },
-            'singleton' => true
-        ],
-        DriverFactory::class => [ 
-            function($container) {
-                return new DriverFactory($container->get(Config::class)->get('db'));        
+        '$dbConfig:array' => [
+            function(Container $container) {
+                $config = [];
+                $arguments = $container->get('$arguments:array');
+                $configFile = $arguments['config-path'] ?? "config/main.ini";
+                if (file_exists($configFile)) {
+                    $config = parse_ini_file($configFile, true);
+                }
+                return $config['db'] ?? [];
             }, 
             'singleton' => true
         ],
+        '$arguments:array' => [
+            function(Container $container) {
+                $argumentParser = $container->get(ArgumentParser::class);
+                return $argumentParser->parse();
+            },
+            'singleton' => true
+        ],
+        Migrations::class => [Migrations::class, 'singleton' => true],
+        Io::class => [Io::class, 'singleton' => true],
         AbstractDatabaseManipulator::class => [
             function ($container) {
                 $config = $container->get(Config::class)->get('db');
@@ -59,7 +64,7 @@ function get_container_settings() {
             'calls' => ['setRollbackCommand']
         ],
         ArgumentParser::class => [
-            function($container) {
+            function(Container $container) {
                 $io = $container->get(Io::class);
                 $argumentParser = new ArgumentParser();
                 
@@ -159,27 +164,20 @@ function get_container_settings() {
         Command::class => [
             function($container)
             {
-                /**
-                 * @var Container $container
-                 * @var Migrations $migrations
-                 */
-
-                $argumentParser = $container->get(ArgumentParser::class);
-                $arguments = $argumentParser->parse();
+                $arguments = $container->get('$arguments:array');
                 if(isset($arguments['__command'])) {
                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
                     $defaultHome = $arguments['home'] ?? './yentu';
-                    $configFile = "{$defaultHome}/config/default.conf.php";
+                    $configFile = "{$defaultHome}/config/yentu.ini";
 
                     if(file_exists($configFile)) {
-                        $config = $container->get(Config::class);
-                        $config->readPath($configFile);
+                        $config = parse_ini_file($configFile, true);
 
                         $migrations = $container->get(
                             Migrations::class, [
                                 'config' => [
-                                    'variables' => $config->get('variables', []),
-                                    'other_migrations' => $config->get('other_migrations', []),
+                                    'variables' => $config['variables'] ?? [],
+                                    'other_migrations' => $config['other_migrations'] ?? [],
                                     'home' => $defaultHome
                                 ]
                             ]

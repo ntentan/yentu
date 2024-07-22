@@ -1,17 +1,12 @@
 <?php
-
 namespace yentu\commands;
 
 
 use yentu\factories\DatabaseManipulatorFactory;
-use yentu\manipulators\AbstractDatabaseManipulator;
 use yentu\Migrations;
-use yentu\Yentu;
 use clearice\io\Io;
 
-/**
- *
- */
+
 class Status extends Command
 {
     private $manipulatorFactory;

@@ -56,7 +56,10 @@ class Init extends Command implements Reversible
     private function getParams() : array
     {
         if (isset($this->options['interractive'])) {
-            $params['driver'] = $this->io->getResponse('What type of database are you working with?', ['required' => true, 'answers' => ['postgresql', 'mysql', 'sqlite']]);
+            $params['driver'] = $this->io->getResponse(
+                'What type of database are you working with?', 
+                ['required' => true, 'answers' => ['postgresql', 'mysql', 'sqlite']]
+            );
 
             if ($params['driver'] === 'sqlite') {
                 $params['file'] = $this->io->getResponse('What is the path to your database file?', ['required' => true]);
@@ -87,29 +90,23 @@ class Init extends Command implements Reversible
     public function createConfigFile($params) : array
     {
         $params = Parameters::wrap(
-                $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
+            $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
         );
         Filesystem::directory($this->migrations->getPath('config'))->create(true);
         Filesystem::directory($this->migrations->getPath('migrations'))->create(true);
+        Filesystem::file($this->migrations->getPath('config/yentu.ini'))->putContents(
+            <<<CONFIG
+            [db]
+            driver: {$params['driver']}
+            host: {$params['host']}
+            port: {$params['port']}
+            dbname: {$params['dbname']}
+            user: {$params['user']}
+            password: {$params['password']}
+            file: {$params['file']}
+            CONFIG
+        );
 
-        $configFile = new \yentu\CodeWriter();
-        $configFile->add('return [');
-        $configFile->addIndent();
-        $configFile->add("'db' => [");
-        $configFile->addIndent();
-        $configFile->add("'driver' => '{$params['driver']}',");
-        $configFile->add("'host' => '{$params['host']}',");
-        $configFile->add("'port' => '{$params['port']}',");
-        $configFile->add("'dbname' => '{$params['dbname']}',");
-        $configFile->add("'user' => '{$params['user']}',");
-        $configFile->add("'password' => '{$params['password']}',");
-        $configFile->add("'file' => '{$params['file']}',");
-        $configFile->decreaseIndent();
-        $configFile->add(']');
-        $configFile->decreaseIndent();
-        $configFile->add('];');
-
-        FileSystem::file($this->migrations->getPath("config/default.conf.php"))->putContents($configFile);
         return $params;
     }
 
