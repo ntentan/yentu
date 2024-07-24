@@ -2,6 +2,8 @@
 namespace yentu;
 
 use yentu\commands\Migrate;
+use yentu\database\Table;
+use yentu\database\Schema;
 
 /**
  * Utility class for yentu related functions.

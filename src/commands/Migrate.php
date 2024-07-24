@@ -23,7 +23,6 @@ class Migrate extends Command implements Reversible
 
     private $driver;
     private $dryDriver;
-    // private $defaultSchema = false;
     private $lastSession;
     private $currentPath;
     private $rollbackCommand;
@@ -69,26 +68,11 @@ class Migrate extends Command implements Reversible
         }
     }
 
-    // private function setDefaultSchema($options)
-    // {
-    //     if (isset($options['default-schema'])) {
-    //         $this->driver->setDefaultSchema($options['default-schema']);
-    //         $this->defaultSchema = $options['default-schema'];
-    //     }
-    // }
-
     private function announceMigration($migrations, $path)
     {
         $size = count($migrations);
-        // $defaultSchema = null;
         if ($size > 0) {
-            // if (isset($path['default-schema'])) {
-            //     $defaultSchema = $path['default-schema'];
-            // }
             $this->io->output("Running $size migration(s) from '{$path['home']}'");
-            // if ($defaultSchema != '') {
-            //     $this->io->output(" with '$defaultSchema' as the default schema.\n");
-            // }
         } else {
             $this->io->output("No migrations to run from '{$path['home']}'\n");
         }
@@ -96,7 +80,7 @@ class Migrate extends Command implements Reversible
 
     public function getBegin()
     {
-        $begin = new Begin($this->driver->getDefaultSchema()); //$this->defaultSchema);
+        $begin = new Begin($this->driver->getDefaultSchema());
         $begin->setHome($this->currentPath['home']);
         return $begin;
     }
@@ -128,10 +112,8 @@ class Migrate extends Command implements Reversible
 
         \yentu\Timer::start();
         $migrationPaths = $this->migrations->getAllPaths();
-        //$migrationsToBeRun = [];
+        
         foreach ($migrationPaths as $path) {
-            //$this->setDefaultSchema($path);
-            $migrateVariables = $path['variables'] ?? [];
             $migrations = $this->filter($this->migrations->getMigrationFiles($path['home']), $filter);
             $this->announceMigration($migrations, $path);
             $this->currentPath = $path;
@@ -189,8 +171,8 @@ class Migrate extends Command implements Reversible
         $output = array();
         foreach ($input as $migration) {
             $run = $this->driver->query(
-                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ?", // and default_schema = ?", 
-                array($migration['migration'], $migration['timestamp']) //, (string) $this->defaultSchema)
+                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ?", 
+                array($migration['migration'], $migration['timestamp'])
             );
 
             if ($run[0]['number_run'] == 0) {
@@ -222,6 +204,7 @@ class Migrate extends Command implements Reversible
         $this->rollbackCommand = $rollbackCommand;
     }
 
+    #[\Override]
     public function reverseActions()
     {
         if ($this->driver === null) {

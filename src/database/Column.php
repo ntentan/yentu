@@ -10,9 +10,9 @@ class Column extends DatabaseItem
     private $length;
 
     // Description items
-    public $nulls;
-    public $name;
-    public $default;
+    private $nulls;
+    private $name;
+    private $default;
     
     protected function buildDescription()
     {
@@ -59,6 +59,11 @@ class Column extends DatabaseItem
     public function nulls($nulls)
     {
        return $this->addChange('nulls', 'nulls', $nulls);
+    }
+    
+    public function required(bool $required)
+    {
+        return $this->addChange('nulls', 'nulls', !$required);
     }
     
     public function defaultValue($default)

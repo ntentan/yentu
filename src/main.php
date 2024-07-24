@@ -1,14 +1,13 @@
 <?php
 
+// Choosing the right autoload between running within a PHAR or as a plain script.
 
 $externalAutoload = __DIR__ . "/../../../../vendor/autoload.php";
-
 if (file_exists($externalAutoload)) {
     require $externalAutoload;
 } else {
     require __DIR__ . "/../vendor/autoload.php";    
 }
-require_once __DIR__ . "/../src/globals.php";
 
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
