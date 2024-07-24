@@ -10,7 +10,7 @@ use yentu\SchemaDescription;
 use yentu\exceptions\DatabaseManipulatorException;
 use yentu\Parameters;
 
-abstract class AbstractDatabaseManipulator
+    abstract class AbstractDatabaseManipulator
 {
 
     const CONVERT_TO_DRIVER = 'driver';

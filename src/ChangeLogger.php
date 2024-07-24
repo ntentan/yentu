@@ -145,10 +145,10 @@ class ChangeLogger
         }
     }
 
-    public function setDefaultSchema($defaultSchema)
-    {
-        self::$defaultSchema = $defaultSchema;
-    }
+    // public function setDefaultSchema($defaultSchema)
+    // {
+    //     self::$defaultSchema = $defaultSchema;
+    // }
 
     public function getChanges()
     {
@@ -175,6 +175,11 @@ class ChangeLogger
     public function setSkipOnErrors($skipOnErrors)
     {
         $this->skipOnErrors = $skipOnErrors;
+    }
+
+    public function getDefaultSchema()
+    {
+        return $this->driver->getDefaultSchema();
     }
 
 }

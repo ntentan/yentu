@@ -9,10 +9,11 @@ use yentu\ChangeLogger;
 use yentu\database\ForeignKey;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\Migrations;
+use yentu\Yentu;
+
 
 /**
- * The migrate command for the yentu database migration system. This class is
- * responsible for creating and updating items 
+ * The migrate class runs the command that creates database items.
  */
 class Migrate extends Command implements Reversible
 {
@@ -22,7 +23,7 @@ class Migrate extends Command implements Reversible
 
     private $driver;
     private $dryDriver;
-    private $defaultSchema = false;
+    // private $defaultSchema = false;
     private $lastSession;
     private $currentPath;
     private $rollbackCommand;
@@ -66,32 +67,28 @@ class Migrate extends Command implements Reversible
         if (isset($options['default-onupdate-action'])) {
             ForeignKey::$defaultOnUpdate = $options['default-onupdate-action'];
         }
-
-        $this->setDefaultSchema($options);
     }
 
-    private function setDefaultSchema($options)
-    {
-        global $defaultSchema;
-        if (isset($options['default-schema'])) {
-            $this->driver->setDefaultSchema($options['default-schema']);
-            $this->defaultSchema = $options['default-schema'];
-            $defaultSchema = $this->defaultSchema;
-        }
-    }
+    // private function setDefaultSchema($options)
+    // {
+    //     if (isset($options['default-schema'])) {
+    //         $this->driver->setDefaultSchema($options['default-schema']);
+    //         $this->defaultSchema = $options['default-schema'];
+    //     }
+    // }
 
     private function announceMigration($migrations, $path)
     {
         $size = count($migrations);
-        $defaultSchema = null;
+        // $defaultSchema = null;
         if ($size > 0) {
-            if (isset($path['default-schema'])) {
-                $defaultSchema = $path['default-schema'];
-            }
+            // if (isset($path['default-schema'])) {
+            //     $defaultSchema = $path['default-schema'];
+            // }
             $this->io->output("Running $size migration(s) from '{$path['home']}'");
-            if ($defaultSchema != '') {
-                $this->io->output(" with '$defaultSchema' as the default schema.\n");
-            }
+            // if ($defaultSchema != '') {
+            //     $this->io->output(" with '$defaultSchema' as the default schema.\n");
+            // }
         } else {
             $this->io->output("No migrations to run from '{$path['home']}'\n");
         }
@@ -99,7 +96,7 @@ class Migrate extends Command implements Reversible
 
     public function getBegin()
     {
-        $begin = new Begin($this->defaultSchema);
+        $begin = new Begin($this->driver->getDefaultSchema()); //$this->defaultSchema);
         $begin->setHome($this->currentPath['home']);
         return $begin;
     }
@@ -116,12 +113,8 @@ class Migrate extends Command implements Reversible
 
     public function run()
     {
-        global $migrateCommand;
-        // global $migrateVariables;
-
+        Yentu::setMigrateCommand($this);
         self::fillOptions($this->options);
-
-        $migrateCommand = $this;
 
         $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->migrations, $this->io);
         $this->driver->setDumpQueriesOnly($this->options['dump-queries']);
@@ -137,7 +130,7 @@ class Migrate extends Command implements Reversible
         $migrationPaths = $this->migrations->getAllPaths();
         //$migrationsToBeRun = [];
         foreach ($migrationPaths as $path) {
-            $this->setDefaultSchema($path);
+            //$this->setDefaultSchema($path);
             $migrateVariables = $path['variables'] ?? [];
             $migrations = $this->filter($this->migrations->getMigrationFiles($path['home']), $filter);
             $this->announceMigration($migrations, $path);
@@ -196,8 +189,8 @@ class Migrate extends Command implements Reversible
         $output = array();
         foreach ($input as $migration) {
             $run = $this->driver->query(
-                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ? and default_schema = ?", 
-                array($migration['migration'], $migration['timestamp'], (string) $this->defaultSchema)
+                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ?", // and default_schema = ?", 
+                array($migration['migration'], $migration['timestamp']) //, (string) $this->defaultSchema)
             );
 
             if ($run[0]['number_run'] == 0) {

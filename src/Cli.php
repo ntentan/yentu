@@ -5,12 +5,14 @@ namespace yentu;
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
 use yentu\commands\Command;
+use SebastianBergmann\Version;
 
 class Cli
 {
     private $command;
     private $io;
     private $argumentParser;
+    private const string VERSION = "v0.4.0";
 
     public function __construct(Io $io, ArgumentParser $argumentParser, Command $command = null)
     {
@@ -39,7 +41,7 @@ class Cli
         if (defined('PHING_BUILD_VERSION')) {
             return PHING_BUILD_VERSION;
         } else {
-            $version = new \SebastianBergmann\Version(Yentu::VERSION, dirname(__DIR__));
+            $version = new Version(self::VERSION, dirname(__DIR__));
             return $version->asString();
         }
     }
@@ -69,8 +71,8 @@ class Cli
             } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error($e->getMessage() . "\n");        
-            }
-    
+            } 
+            
         } else {
             $this->io->error($this->argumentParser->getHelpMessage());
         }

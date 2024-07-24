@@ -64,11 +64,13 @@ class SchemaDescription implements \ArrayAccess
         return $tables;
     }
     
+    #[\Override]
     public function offsetExists($offset): bool
     {
         return isset($this->description[$offset]);
     }
 
+    #[\Override]
     public function offsetGet($offset): mixed
     {
         $return = $this->description[$offset];
@@ -79,11 +81,13 @@ class SchemaDescription implements \ArrayAccess
         return $return;
     }
 
+    #[\Override]
     public function offsetSet(mixed $offset, mixed $value): void
     {
         
     }
 
+    #[\Override]
     public function offsetUnset(mixed $offset): void
     {
         unset($this->description[$offset]);
@@ -97,7 +101,7 @@ class SchemaDescription implements \ArrayAccess
     {
         $this->description['schemata'][$name] = array(
             'name' => $name,
-            'tables' => array()
+            'tables' =>             array()
         );
     }
 
@@ -226,7 +230,7 @@ class SchemaDescription implements \ArrayAccess
      */
     public function getTable($details, $type = 'table')
     {
-        if ($details['schema'] == '') {
+        if ($details['schema'] == '') { 
             return $this->description["{$type}s"][$details[$type]];
         } else {
             return $this->description['schemata'][$details['schema']]["{$type}s"][$details[$type]];

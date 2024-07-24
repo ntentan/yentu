@@ -21,23 +21,27 @@ use yentu\Cli;
 use yentu\commands\Command;
 
 $container = new Container();
-$container->setup(get_container_settings());
+$container->setup(getContainerSettings());
 $ui = $container->get(Cli::class);
 $ui->run();
 
 /**
  * Return the container setup.
  */
-function get_container_settings() {
+function getContainerSettings() {
     return [
         '$dbConfig:array' => [
             function(Container $container) {
                 $config = [];
                 $arguments = $container->get('$arguments:array');
-                $configFile = $arguments['config-path'] ?? "config/main.ini";
-                if (file_exists($configFile)) {
-                    $config = parse_ini_file($configFile, true);
+                $configFile = $arguments['config-path'] ?? "yentu/yentu.ini";
+                
+                if (!file_exists($configFile)) {
+                    $container->get(Io::class)->error("Failed to load the configuration file: $configFile\n");  
+                    exit(100);
                 }
+                
+                $config = parse_ini_file($configFile, true);    
                 return $config['db'] ?? [];
             }, 
             'singleton' => true
@@ -130,10 +134,10 @@ function get_container_settings() {
                     'command' => 'migrate', 'name' => 'dry',
                     'help' => 'perform a dry run. Do not alter the database in anyway'
                 ]);
-                $argumentParser->addOption([
-                    'command' => 'migrate', 'name' => 'default-schema',
-                    'type' => 'string', 'help' => 'use this as the default schema for all migrations'
-                ]);
+//                $argumentParser->addOption([
+//                    'command' => 'migrate', 'name' => 'default-schema',
+//                    'type' => 'string', 'help' => 'use this as the default schema for all migrations'
+//                ]);
                 $argumentParser->addOption([
                     'command' => 'migrate', 'name' => 'default-ondelete',
                     'help' => 'the default cascade action for foreign key deletes', 'type' => 'string'

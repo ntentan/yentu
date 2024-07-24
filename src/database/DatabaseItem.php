@@ -27,7 +27,7 @@ abstract class DatabaseItem
         'query' => 'Query'
     );
 
-    protected function addChange($property, $attribute, $value, $callback = null)
+    protected function addChange($property, $attribute, $value) //, $callback = null)
     {
         if (!$this->isNew()) {
             $currentDescription = $this->buildDescription();
@@ -76,7 +76,7 @@ abstract class DatabaseItem
     public function __call($method, $arguments)
     {
         if (!is_object($this->encapsulated)) {
-            throw new SyntaxErrorException("Failed to call method '{$method}'", $this->home);
+            throw new SyntaxErrorException("Failed to call method '{$method}'", $this->home ?? '');
         } else if (method_exists($this->encapsulated, $method)) {
             $method = new \ReflectionMethod($this->encapsulated, $method);
             $this->commit();
@@ -132,6 +132,11 @@ abstract class DatabaseItem
     public function rename($newName)
     {
         return $this->addChange('name', 'name', $newName);
+    }
+    
+    public function setHome(string $home): void
+    {
+        $this->home = $home;
     }
 
     abstract public function commitNew();

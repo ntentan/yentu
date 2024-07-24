@@ -3,18 +3,13 @@ namespace yentu\database;
 
 class Table extends DatabaseItem
 {
-    /**
-     *
-     * @var Schema
-     */
-    private $schema;
-    private $primaryKeyColumns;
-    private $isReference;
+
+    private Begin|Schema $schema;
+    private array $primaryKeyColumns;
+    private bool $isReference;    
+    public string $name;
     
-    // Description
-    public $name;
-    
-    public function __construct($name,  $schema) 
+    public function __construct(string $name,  Begin|Schema $schema) 
     {
         $this->name = $name;
         $this->schema = $schema;

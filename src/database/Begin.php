@@ -9,7 +9,7 @@ namespace yentu\database;
  */
 class Begin extends DatabaseItem
 {
-    private $defaultSchema;
+    private Schema $defaultSchema;
 
     public function __construct($defaultSchema)
     {
