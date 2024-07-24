@@ -4,8 +4,9 @@ namespace yentu\database;
 
 use yentu\exceptions\SyntaxErrorException;
 
+
 abstract class DatabaseItem
-{
+{    
     private $encapsulated;
     private static $encapsulatedStack = array();
 
@@ -14,18 +15,18 @@ abstract class DatabaseItem
     private $changes = array();
     protected $home;
 
-    private static $itemTypes = array(
-        'table' => 'Table',
-        'schema' => 'Schema',
-        'column' => 'Column',
-        'foreign_key' => 'ForeignKey',
-        'primary_key' => 'PrimaryKey',
-        'unique_key' => 'UniqueKey',
-        'index' => 'Index',
-        'view' => 'View',
-        'view_definition' => 'ViewDefinition',
-        'query' => 'Query'
-    );
+//    private static $itemTypes = array(
+//        'table' => 'Table',
+//        'schema' => 'Schema',
+//        'column' => 'Column',
+//        'foreign_key' => 'ForeignKey',
+//        'primary_key' => 'PrimaryKey',
+//        'unique_key' => 'UniqueKey',
+//        'index' => 'Index',
+//        'view' => 'View',
+//        'view_definition' => 'ViewDefinition',
+//        'query' => 'Query'
+//    );
 
     protected function addChange($property, $attribute, $value) //, $callback = null)
     {
@@ -86,7 +87,6 @@ abstract class DatabaseItem
         } else {
             $this->commit();
             array_pop(self::$encapsulatedStack);
-
             return $this->encapsulated->__call($method, $arguments);
         }
     }
@@ -104,17 +104,17 @@ abstract class DatabaseItem
         }
     }
 
-    public function create()
-    {
-        $args = func_get_args();
-        $type = array_shift($args);
-        $class = new \ReflectionClass("\\yentu\\database\\" . self::$itemTypes[$type]);
-        $item = $class->newInstanceArgs($args);
-        $item->setEncapsulated($this);
-        $item->setHome($this->home);
-        self::push($item);
-        return $item;
-    }
+//    public function create()
+//    {
+//        $args = func_get_args();
+//        $type = array_shift($args);
+//        $class = new \ReflectionClass("\\yentu\\database\\" . self::$itemTypes[$type]);
+//        $item = $class->newInstanceArgs($args);
+//        $item->setEncapsulated($this);
+//        $item->setHome($this->home);
+//        self::push($item);
+//        return $item;
+//    }
 
     public function commit()
     {

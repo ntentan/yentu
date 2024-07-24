@@ -198,6 +198,11 @@ class Migrate extends Command implements Reversible
     {
         return $this->driver->getChanges();
     }
+    
+    public function getDefaultSchema()
+    {
+        return $this->driver->getDefaultSchema();
+    }
 
     public function setRollbackCommand(Rollback $rollbackCommand)
     {

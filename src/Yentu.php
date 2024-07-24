@@ -3,7 +3,7 @@ namespace yentu;
 
 use yentu\commands\Migrate;
 use yentu\database\Table;
-use yentu\database\Schema;
+use yentu\database\Schema;  
 
 /**
  * Utility class for yentu related functions.
@@ -28,7 +28,7 @@ class Yentu
     }
 
     public static function reftable($name) {
-        $table = new Table($name, new Schema($defaultSchema));
+        $table = new Table($name, new Schema(self::$migrateCommand->getDefaultSchema()));
         $table->setIsReference(true);
         return $table;
     }
