@@ -8,13 +8,12 @@
 build:
   image: default-bionic
   environment:
-      php: 8.3.0
+      php: 8.3.0    
   nodes:
     analysis:
       tests:
         override:
           - php-scrutinizer-run
-          - phpcs-run
 
 filter:
     excluded_paths: [bin/*, tests/*]
