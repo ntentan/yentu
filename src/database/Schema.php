@@ -2,6 +2,7 @@
 
 namespace yentu\database;
 
+
 class Schema extends DatabaseItem
 {
     private $name;
@@ -10,10 +11,14 @@ class Schema extends DatabaseItem
     public function __construct($name)
     {
         $this->name = $name;
-        if(!$this->getDriver()->doesSchemaExist($name) && $name != false)
-        {        
-            $this->getDriver()->addSchema($name);
-        }
+    }
+    
+    #[\Override]
+    public function init()
+    {
+        if(!$this->getDriver()->doesSchemaExist($this->name)) {        
+            $this->getDriver()->addSchema($this->name);
+        }   
     }
     
     public function isReference()
@@ -28,12 +33,9 @@ class Schema extends DatabaseItem
     
     public function table($name)
     {
-        if($this->isReference)
-        {
+        if($this->isReference) {
             $table = new Table($name, $this);
-        }
-        else
-        {
+        } else {
             $table = $this->create('table', $name, $this);
         }
         $table->setIsReference($this->isReference);
@@ -50,15 +52,11 @@ class Schema extends DatabaseItem
         return $this->name;
     }
 
-    public function commitNew() {
-        
-    }
-
+    #[\Override]
     protected function buildDescription() {
         return array(
             'name' => $this->name
         );
     }
-
 }
 

@@ -19,5 +19,18 @@ class EncapsulatedStack
     {
         return end($this->stack);
     }
+    
+    public function hasItems(): bool
+    {
+        return !empty($this->stack);
+    }
+    
+    public function purge(): void
+    {
+        for ($i = 0; $i < count($this->stack); $i++) {
+            $item = array_pop($this->stack);
+            $item->commit();
+        }
+    }    
 }
 

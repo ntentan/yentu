@@ -3,21 +3,21 @@ namespace yentu;
 
 class ChangeReverser
 {
-    private static $driver;
+    private $driver;
 
-    public static function setDriver($driver)
+    public function setDriver($driver)
     {
-        self::$driver = $driver;
+        $this->driver = $driver;
     }
 
-    public static function call($method, $arguments) 
+    public function call($method, $arguments) 
     {
-        $reversedMethod = self::reverseMethod($method);
-        $reversedArguments = self::reverseArguments($arguments[0]);
-        return self::$driver->$reversedMethod($reversedArguments);
+        $reversedMethod = $this->reverseMethod($method);
+        $reversedArguments = $this->reverseArguments($arguments[0]);
+        return $this->driver->$reversedMethod($reversedArguments);
     }    
     
-    private static function reverseMethod($method)
+    private function reverseMethod($method)
     {
         return preg_replace_callback(
             "/^(?<action>add|drop|reverse|execute)/", 
@@ -33,7 +33,7 @@ class ChangeReverser
         );
     }
     
-    private static function reverseArguments($arguments)
+    private function reverseArguments($arguments)
     {
         if(isset($arguments['from']) && isset($arguments['to']))
         {

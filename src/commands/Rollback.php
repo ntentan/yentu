@@ -14,11 +14,13 @@ class Rollback extends Command
     private $schemaConditionData = [];
     private $manipulatorFactory;
     private $io;
+    private $changeReverser;
 
-    public function __construct(DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    public function __construct(DatabaseManipulatorFactory $manipulatorFactory, Io $io, ChangeReverser $changeReverser)
     {
         $this->manipulatorFactory = $manipulatorFactory;
         $this->io = $io;
+        $this->changeReverser = $changeReverser;
     }
 
     /**
@@ -27,15 +29,9 @@ class Rollback extends Command
     public function run()
     {
         $db = $this->manipulatorFactory->createManipulator();
-        DatabaseItem::setDriver($db);
-        ChangeReverser::setDriver($db);
+        $this->changeReverser->setDriver($db);
         $previousMigration = '';
-
-        if (isset($this->options['default-schema'])) {
-            $this->schemaCondition = "default_schema = ?";
-            $this->schemaConditionData[] = $this->options['default-schema'];
-        }
-
+        
         if (isset($this->options['__args'])) {
             $operations = [];
             foreach ($this->options['__args'] ?? [] as $set) {
@@ -56,7 +52,7 @@ class Rollback extends Command
                 );
                 $previousMigration = $operation['migration'];
             }
-            ChangeReverser::call($operation['method'], json_decode($operation['arguments'], true));
+            $this->changeReverser->call($operation['method'], json_decode($operation['arguments'], true));
             $db->query('DELETE FROM yentu_history WHERE id = ?', array($operation['id']));
         }
     }

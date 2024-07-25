@@ -3,7 +3,7 @@ namespace yentu\database;
 
 use yentu\Parameters;
 
-class Column extends DatabaseItem
+class Column extends DatabaseItem implements Commitable
 {
     private $type;
     private $table;
@@ -14,6 +14,7 @@ class Column extends DatabaseItem
     private $name;
     private $default;
     
+    #[\Override]
     protected function buildDescription()
     {
         return array(
@@ -31,11 +32,16 @@ class Column extends DatabaseItem
     {
         $this->table = $table;
         $this->name = $name;
+    }
+    
+    #[\Override]
+    public function init()
+    {
         $column = Parameters::wrap($this->getDriver()->doesColumnExist(
                 array(
-                    'table' => $table->getName(),
-                    'schema' => $table->getSchema()->getName(),
-                    'name' => $name
+                    'table' => $this->table->getName(),
+                    'schema' => $this->table->getSchema()->getName(),
+                    'name' => $this->name
                 )
             ),
             ['default', 'length', 'nulls', 'type']
@@ -47,7 +53,7 @@ class Column extends DatabaseItem
             $this->length = $column['length'];
             $this->type = $column['type'];
             $this->nulls = $column['nulls'];
-        }
+        }        
     }
     
     public function type($type)
@@ -71,6 +77,7 @@ class Column extends DatabaseItem
         return $this->addChange('default', 'default', $default);
     }
 
+    #[\Override]
     public function commitNew() 
     {
         $this->getDriver()->addColumn($this->buildDescription());        

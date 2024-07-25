@@ -3,32 +3,26 @@
 namespace yentu\database;
 
 use yentu\exceptions\SyntaxErrorException;
+use yentu\factories\DatabaseItemFactory;
+use yentu\ChangeLogger;
 
 
 abstract class DatabaseItem
 {    
-    private $encapsulated;
-    private static $encapsulatedStack = array();
-
-    private static $driver;
+    private ?DatabaseItem $encapsulated = null;
+    private ChangeLogger $driver;
     protected $new = false;
     private $changes = array();
     protected $home;
+    protected DatabaseItemFactory $factory;
+    private EncapsulatedStack $stack;   
+    
+    public function setFactory(DatabaseItemFactory $factory)
+    {
+        $this->factory = $factory;
+    }
 
-//    private static $itemTypes = array(
-//        'table' => 'Table',
-//        'schema' => 'Schema',
-//        'column' => 'Column',
-//        'foreign_key' => 'ForeignKey',
-//        'primary_key' => 'PrimaryKey',
-//        'unique_key' => 'UniqueKey',
-//        'index' => 'Index',
-//        'view' => 'View',
-//        'view_definition' => 'ViewDefinition',
-//        'query' => 'Query'
-//    );
-
-    protected function addChange($property, $attribute, $value) //, $callback = null)
+    protected function addChange($property, $attribute, $value)
     {
         if (!$this->isNew()) {
             $currentDescription = $this->buildDescription();
@@ -55,23 +49,22 @@ abstract class DatabaseItem
         return $this->new;
     }
 
-    /**
-     * 
-     * @return \yentu\AbstractDatabaseManipulator
-     */
     protected function getDriver()
     {
-        return self::$driver;
+        return $this->driver;
     }
 
-    public static function setDriver($driver)
+    public function setDriver($driver)
     {
-        self::$driver = $driver;
+        $this->driver = $driver;
     }
-
-    public static function push($encapsulated)
+    
+    public function setStack(EncapsulatedStack $stack): void
     {
-        self::$encapsulatedStack[] = $encapsulated;
+        $this->stack = $stack;
+        if ($this->stack->hasItems()) {
+            $this->encapsulated = $this->stack->top();            
+        }
     }
 
     public function __call($method, $arguments)
@@ -81,49 +74,24 @@ abstract class DatabaseItem
         } else if (method_exists($this->encapsulated, $method)) {
             $method = new \ReflectionMethod($this->encapsulated, $method);
             $this->commit();
-            array_pop(self::$encapsulatedStack);
-
+            $this->stack->pop();
             return $method->invokeArgs($this->encapsulated, $arguments);
         } else {
             $this->commit();
-            array_pop(self::$encapsulatedStack);
+            $this->stack->pop();
             return $this->encapsulated->__call($method, $arguments);
         }
     }
 
-    public function setEncapsulated($item)
-    {
-        $this->encapsulated = $item;
-    }
-
-    public static function purge()
-    {
-        for ($i = 0; $i < count(self::$encapsulatedStack); $i++) {
-            $item = array_pop(self::$encapsulatedStack);
-            $item->commit();
-        }
-    }
-
-//    public function create()
-//    {
-//        $args = func_get_args();
-//        $type = array_shift($args);
-//        $class = new \ReflectionClass("\\yentu\\database\\" . self::$itemTypes[$type]);
-//        $item = $class->newInstanceArgs($args);
-//        $item->setEncapsulated($this);
-//        $item->setHome($this->home);
-//        self::push($item);
-//        return $item;
-//    }
-
     public function commit()
     {
-        if ($this->isNew()) {
+        if ($this instanceof Commitable && $this->isNew()) {
             $this->commitNew();
+            $this->new = false;
         }
 
         foreach ($this->changes as $change) {
-            self::$driver->{$change['method']}($change['args']);
+            $this->driver->{$change['method']}($change['args']);
         }
 
         return $this;
@@ -138,7 +106,8 @@ abstract class DatabaseItem
     {
         $this->home = $home;
     }
-
-    abstract public function commitNew();
+        
+    abstract public function init();
+//    abstract public function commitNew();
     abstract protected function buildDescription();
 }

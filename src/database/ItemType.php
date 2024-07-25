@@ -9,9 +9,12 @@ use yentu\database\UniqueKey;
 use yentu\database\Index;
 use yentu\database\View;
 use yentu\database\Query;
+use yentu\database\Begin;
+use yentu\database\PrimaryKey;
 
 enum ItemType: string
 {
+    case Begin = Begin::class;
     case Table = Table::class;
     case Schema = Schema::class;
     case Column = Column::class;
@@ -19,5 +22,6 @@ enum ItemType: string
     case UniqueKey = UniqueKey::class;
     case Index = Index::class;
     case View = View::class;
-    case Query = Query::class;    
+    case Query = Query::class;
+    case PrimaryKey = PrimaryKey::class;
 }

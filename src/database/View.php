@@ -15,11 +15,16 @@ class View extends \yentu\database\DatabaseItem
     {
         $this->name = $name;
         $this->schema = $schema;
+    }
+    
+    #[\Override]
+    public function init()
+    {
         $this->definition = $this->getDriver()->doesViewExist($this->buildDescription());
         if($this->definition === false)
         {
             $this->new = true;
-        }
+        }        
     }
     
     public function drop()
@@ -56,6 +61,7 @@ class View extends \yentu\database\DatabaseItem
         return $this->create('table', $name, $this->schema);
     }
     
+    #[\Override]
     protected function buildDescription() {
         return array(
             'name' => $this->name,

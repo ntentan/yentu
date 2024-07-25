@@ -4,17 +4,27 @@ namespace yentu\database;
 class Query extends DatabaseItem
 {
     private $results;
+    private $query;
+    private $bindData;
     
     public function __construct($query, $bindData = array()) 
     {
+        $this->query = $query;
+        $this->bindData = $bindData;
+    }
+    
+    #[\Override]
+    public function init()
+    {
         $this->results = $this->getDriver()->executeQuery(
             array(
-                'query' => $query, 
-                'bind' => $bindData
+                'query' => $this->query, 
+                'bind' => $this->bindData
             )
         );
     }
     
+    #[\Override]
     protected function buildDescription() 
     {
         return array();
@@ -27,10 +37,5 @@ class Query extends DatabaseItem
             'bind_data' => $bindData
         ));
         return $this;
-    }
-
-    public function commitNew() 
-    {
-        
     }
 }

@@ -3,11 +3,11 @@
 namespace yentu\commands;
 
 use clearice\io\Io;
-use yentu\database\Begin;
 use yentu\database\DatabaseItem;
 use yentu\ChangeLogger;
 use yentu\database\ForeignKey;
 use yentu\factories\DatabaseManipulatorFactory;
+use yentu\factories\DatabaseItemFactory;
 use yentu\Migrations;
 use yentu\Yentu;
 
@@ -29,12 +29,14 @@ class Migrate extends Command implements Reversible
     private $manipulatorFactory;
     private $migrations;
     private $io;
+    private $itemFactory;
 
-    public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io)
+    public function __construct(Migrations $migrations, DatabaseManipulatorFactory $manipulatorFactory, Io $io, DatabaseItemFactory $itemFactory)
     {
         $this->manipulatorFactory = $manipulatorFactory;
         $this->migrations = $migrations;
         $this->io = $io;
+        $this->itemFactory = $itemFactory;
     }
 
     public function setupOptions($options, &$filter)
@@ -78,13 +80,6 @@ class Migrate extends Command implements Reversible
         }
     }
 
-    public function getBegin()
-    {
-        $begin = new Begin($this->driver->getDefaultSchema());
-        $begin->setHome($this->currentPath['home']);
-        return $begin;
-    }
-
     private static function fillOptions(&$options)
     {
         if (!isset($options['dump-queries'])) {
@@ -97,18 +92,18 @@ class Migrate extends Command implements Reversible
 
     public function run()
     {
-        Yentu::setMigrateCommand($this);
         self::fillOptions($this->options);
 
         $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->migrations, $this->io);
         $this->driver->setDumpQueriesOnly($this->options['dump-queries']);
         $this->driver->setDryRun($this->options['dry']);
+        $this->itemFactory->setDriver($this->driver);
+        Yentu::setup($this->itemFactory, $this->driver->getDefaultSchema());
 
         $totalOperations = 0;
 
         $filter = self::FILTER_UNRUN;
         $this->setupOptions($this->options, $filter);
-        DatabaseItem::setDriver($this->driver);
 
         \yentu\Timer::start();
         $migrationPaths = $this->migrations->getAllPaths();
@@ -119,12 +114,12 @@ class Migrate extends Command implements Reversible
             $this->currentPath = $path;
 
             foreach ($migrations as $migration) {
-                $this->countOperations("{$path['home']}/{$migration['file']}");
+                //$this->countOperations("{$path['home']}/{$migration['file']}");
                 $this->driver->setVersion($migration['timestamp']);
                 $this->driver->setMigration($migration['migration']);
                 $this->io->output("\nApplying '{$migration['migration']}' migration\n");
                 require "{$path['home']}/{$migration['file']}";
-                DatabaseItem::purge();
+                $this->itemFactory->getEncapsulatedStack()->purge();
                 $this->io->output("\n");
                 $totalOperations += $this->driver->resetOperations();
             }
@@ -153,10 +148,10 @@ class Migrate extends Command implements Reversible
             $this->dryDriver->setDryRun(true);
         }
         $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
-        DatabaseItem::setDriver($this->dryDriver);
+        $this->itemFactory->setDriver($this->dryDriver);
         require "$migrationFile";
-        DatabaseItem::purge();
-        DatabaseItem::setDriver($this->driver);
+        $this->itemFactory->getEncapsulatedStack()->purge();
+        $this->itemFactory->setDriver($this->driver);
         $this->io->popOutputLevel();
         $this->driver->setExpectedOperations($this->dryDriver->resetOperations());
     }
@@ -204,6 +199,7 @@ class Migrate extends Command implements Reversible
         return $this->driver->getDefaultSchema();
     }
 
+    #[\ntentan\panie\Inject]
     public function setRollbackCommand(Rollback $rollbackCommand)
     {
         $this->rollbackCommand = $rollbackCommand;

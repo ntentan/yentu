@@ -1,7 +1,7 @@
 <?php
 namespace yentu\database;
 
-abstract class BasicKey extends DatabaseItem
+abstract class BasicKey extends DatabaseItem implements Commitable
 {
     protected $columns;
     protected $table;
@@ -11,20 +11,25 @@ abstract class BasicKey extends DatabaseItem
     {
         $this->columns = $columns;
         $this->table = $table;
+    }
+    
+    #[\Override]
+    public function init()
+    {
         $keyName = $this->doesKeyExist(array(
-            'table' => $table->getName(),
-            'schema' => $table->getSchema()->getName(),
+            'table' => $this->table->getName(),
+            'schema' => $this->table->getSchema()->getName(),
             'columns' => $this->columns)
         );
         if($keyName === false)
         {
             $this->new = true;
-            $this->name = $table->getName() . '_' . implode('_', $columns) . '_' . $this->getNamePostfix();
+            $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . '_' . $this->getNamePostfix();
         }
         else
         {
             $this->name = $keyName;
-        }
+        }        
     }
     
     abstract protected function doesKeyExist($constraint);
@@ -32,6 +37,7 @@ abstract class BasicKey extends DatabaseItem
     abstract protected function dropKey($constraint);
     abstract protected function getNamePostfix();
     
+    #[\Override]
     protected function buildDescription()
     {
         return array(
@@ -42,6 +48,7 @@ abstract class BasicKey extends DatabaseItem
         );
     }
 
+    #[\Override]
     public function commitNew() 
     {
         $this->addKey($this->buildDescription());

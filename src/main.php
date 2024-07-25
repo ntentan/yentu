@@ -170,22 +170,22 @@ function getContainerSettings() {
                 $arguments = $container->get('$arguments:array');
                 if(isset($arguments['__command'])) {
                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
-                    $defaultHome = $arguments['home'] ?? './yentu';
-                    $configFile = "{$defaultHome}/config/yentu.ini";
+//                    $defaultHome = $arguments['home'] ?? './yentu';
+//                    $configFile = "{$defaultHome}/config/yentu.ini";
 
-                    if(file_exists($configFile)) {
-                        $config = parse_ini_file($configFile, true);
-
-                        $migrations = $container->get(
-                            Migrations::class, [
-                                'config' => [
-                                    'variables' => $config['variables'] ?? [],
-                                    'other_migrations' => $config['other_migrations'] ?? [],
-                                    'home' => $defaultHome
-                                ]
-                            ]
-                        );
-                    }
+//                    if(file_exists($configFile)) {
+//                        $config = parse_ini_file($configFile, true);
+//
+//                        $migrations = $container->get(
+//                            Migrations::class, [
+//                                'config' => [
+//                                    'variables' => $config['variables'] ?? [],
+//                                    'other_migrations' => $config['other_migrations'] ?? [],
+//                                    'home' => $defaultHome
+//                                ]
+//                            ]
+//                        );
+//                    }
 
                     $command = $container->get($commandClass);
                     $command->setOptions($arguments);

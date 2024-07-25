@@ -1,9 +1,11 @@
 <?php
 namespace yentu\database;
 
+use yentu\database\ItemType;
+
+
 class Table extends DatabaseItem
 {
-
     private Begin|Schema $schema;
     private array $primaryKeyColumns;
     private bool $isReference;    
@@ -13,12 +15,15 @@ class Table extends DatabaseItem
     {
         $this->name = $name;
         $this->schema = $schema;
-        
-        if(!$this->getDriver()->doesTableExist($this->buildDescription()))
-        {
+    }
+    
+    #[\Override]
+    public function init()
+    {
+        if(!$this->getDriver()->doesTableExist($this->buildDescription())) {
             $this->getDriver()->addTable($this->buildDescription());
             $this->new = true;
-        }
+        }        
     }
     
     public function setIsReference($isReference)
@@ -33,12 +38,7 @@ class Table extends DatabaseItem
     
     public function column($name)
     {
-        return $this->create('column', $name, $this);
-    }
-    
-    public function insert()
-    {
-        
+        return $this->factory->create(ItemType::Column, $name, $this);
     }
     
     public function drop()
@@ -58,19 +58,15 @@ class Table extends DatabaseItem
         return $this->name;
     }
     
-    /**
-     * 
-     * @return Schema
-     */
     public function getSchema()
     {
         return $this->schema;
     }
     
-    public function primaryKey()
+    public function primaryKey(string ...$args)
     {
-        $this->primaryKeyColumns = func_get_args();
-        return $this->create('primary_key', func_get_args(), $this);
+        $this->primaryKeyColumns = $args;
+        return $this->factory->create(ItemType::PrimaryKey, $args, $this);
     }
     
     public function index()
@@ -83,14 +79,14 @@ class Table extends DatabaseItem
         return $this->create('unique_key', func_get_args(), $this);
     }
         
-    public function foreignKey()
+    public function foreignKey(string ... $args)
     {
-        return $this->create('foreign_key', func_get_args(), $this);
+        return $this->factory->create(ItemType::ForeignKey, $args, $this);
     }
     
     public function table($name)
     {
-        return $this->create('table', $name, $this->schema);
+        return $this->factory->create(ItemType::Table, $name, $this->schema);
     }  
     
     public function view($name)
@@ -98,10 +94,7 @@ class Table extends DatabaseItem
         return $this->create('view', $name, $this->schema);
     }
 
-    public function commitNew() {
-        
-    }
-
+    #[\Override]
     protected function buildDescription() {
         return array(
             'name' => $this->name,

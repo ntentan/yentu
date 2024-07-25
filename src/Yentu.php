@@ -1,35 +1,35 @@
 <?php
 namespace yentu;
 
-use yentu\commands\Migrate;
-use yentu\database\Table;
-use yentu\database\Schema;  
+use yentu\factories\DatabaseItemFactory;
+use yentu\database\ItemType;
+use yentu\database\Schema;
 
-/**
- * Utility class for yentu related functions.
- */
 class Yentu
 {
-    private static Migrate $migrateCommand;
+    private static DatabaseItemFactory $factory;
+    private static Schema $defaultSchema;
     
-    public static function setMigrateCommand(Migrate $migrateCommand)
+    public static function setup(DatabaseItemFactory $factory, string $defaultSchema)
     {
-        self::$migrateCommand = $migrateCommand;
+        self::$defaultSchema = $factory->create(ItemType::Schema, $defaultSchema);
+        self::$factory = $factory;
     }
     
     public static function begin() {
-        return self::$migrateCommand->getBegin();
+        return self::$factory->create(ItemType::Begin, self::$defaultSchema);
     }
 
     public static function refschema($name) {
-        $schema = new yentu\database\Schema($name);
+        $schema = self::$factory->create(ItemType::Schema, $name);
         $schema->setIsReference(true);
         return $schema;
     }
 
     public static function reftable($name) {
-        $table = new Table($name, new Schema(self::$migrateCommand->getDefaultSchema()));
+        $table = self::$factory->create(ItemType::Table, $name, self::$defaultSchema);
         $table->setIsReference(true);
         return $table;
     }
 }
+

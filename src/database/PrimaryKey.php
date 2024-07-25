@@ -3,21 +3,25 @@ namespace yentu\database;
 
 class PrimaryKey extends BasicKey
 { 
+    #[\Override]
     protected function addKey($constraint) 
     {
         $this->getDriver()->addPrimaryKey($constraint);        
     }
 
+    #[\Override]
     protected function doesKeyExist($constraint) 
     {
         return $this->getDriver()->doesPrimaryKeyExist($constraint);        
     }
 
+    #[\Override]
     protected function dropKey($constraint) 
     {
         $this->getDriver()->dropPrimaryKey($constraint);        
     }
 
+    #[\Override]
     protected function getNamePostfix() 
     {
         return 'pk';

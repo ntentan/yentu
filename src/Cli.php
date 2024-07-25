@@ -71,7 +71,7 @@ class Cli
             } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error($e->getMessage() . "\n");        
-            } 
+            }
             
         } else {
             $this->io->error($this->argumentParser->getHelpMessage());

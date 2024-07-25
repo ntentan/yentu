@@ -4,7 +4,8 @@ namespace yentu\database;
 
 use yentu\exceptions\SyntaxErrorException;
 
-class ForeignKey extends DatabaseItem {
+class ForeignKey extends DatabaseItem implements Commitable
+{
 
     /**
      *
@@ -29,11 +30,15 @@ class ForeignKey extends DatabaseItem {
 
         // Prevent the committing of the foreign key even if the context
         // switches
-
+    }
+    
+    #[\Override]
+    public function init()
+    {
         $name = $this->getDriver()->doesForeignKeyExist([
-            'schema' => $table->getSchema()->getName(),
-            'table' => $table->getName(),
-            'columns' => $columns
+            'schema' => $this->table->getSchema()->getName(),
+            'table' => $this->table->getName(),
+            'columns' => $this->columns
         ]);
         if ($name === false) {
             $this->new = true;
@@ -92,14 +97,13 @@ class ForeignKey extends DatabaseItem {
         }
     }
 
+    #[\Override]
     public function commitNew() {
         $this->validate();
         if ($this->name == '' && is_object($this->foreignTable)) {
             $this->name = $this->table->getName() . '_' . implode('_', $this->columns) .
                     '_' . $this->foreignTable->getName() .
                     '_' . implode('_', $this->foreignColumns) . '_fk';
-        } else if ($this->foreignTable === null && $this->nameSet) {
-            // Do nothing
         } else if (!is_object($this->foreignTable)) {
             throw new \yentu\exceptions\DatabaseManipulatorException(
             "No references defined for foreign key {$this->name}"

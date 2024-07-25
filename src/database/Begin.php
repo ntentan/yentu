@@ -2,23 +2,23 @@
 
 namespace yentu\database;
 
+use yentu\database\ItemType;
+
 /**
  * Allows the
- *
- * @package yentu\database
  */
 class Begin extends DatabaseItem
 {
     private Schema $defaultSchema;
 
-    public function __construct($defaultSchema)
+    public function __construct(Schema $defaultSchema)
     {
-        $this->defaultSchema = new Schema($defaultSchema);
+        $this->defaultSchema = $defaultSchema;
     }
 
     public function table($name)
     {
-        return $this->create('table', $name, $this);
+        return $this->factory->create(ItemType::Table, $name, $this);
     }
 
     public function schema($name)
@@ -36,21 +36,24 @@ class Begin extends DatabaseItem
         return $this->defaultSchema->getName();
     }
 
+    #[\Override]
     protected function buildDescription()
-    {
-    }
-
-    public function commitNew()
     {
     }
 
     public function end()
     {
-        DatabaseItem::purge();
+        //DatabaseItem::purge();
     }
 
     public function query($query, $bindData = array())
     {
         return $this->create('query', $query, $bindData);
+    }
+
+    #[\Override]
+    public function init()
+    {
+        
     }
 }
