@@ -3,7 +3,6 @@
 namespace yentu\commands;
 
 use clearice\io\Io;
-use yentu\database\DatabaseItem;
 use yentu\ChangeLogger;
 use yentu\database\ForeignKey;
 use yentu\factories\DatabaseManipulatorFactory;

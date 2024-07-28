@@ -1,29 +1,4 @@
 <?php
-
-/*
- * The MIT License
- *
- * Copyright 2014 ekow.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 namespace yentu\manipulators;
 
 use yentu\Parameters;
@@ -34,6 +9,7 @@ class Mysql extends AbstractDatabaseManipulator
     private $autoIncrementPending;
     private $placeholders = array();
 
+    #[\Override]
     public function convertTypes($type, $direction, $length = null)
     {
         $types = array(
@@ -88,6 +64,7 @@ class Mysql extends AbstractDatabaseManipulator
         return ($schema === false || $schema == '' ? '' : "`{$schema}`.") . "`$name`";
     }
 
+    #[\Override]
     protected function _addAutoPrimaryKey($details)
     {
         $table = $this->getDescription()->getTable($details);
@@ -105,6 +82,7 @@ class Mysql extends AbstractDatabaseManipulator
         }
     }
 
+    #[\Override]
     protected function _addColumn($details)
     {
         $tableName = $this->buildTableName($details['table'], $details['schema']);
@@ -122,6 +100,7 @@ class Mysql extends AbstractDatabaseManipulator
         }
     }
 
+    #[\Override]
     protected function _addForeignKey($details)
     {
         $this->query(
@@ -131,6 +110,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _addIndex($details)
     {
         $this->query(
@@ -140,6 +120,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _addPrimaryKey($details)
     {
         $this->query(
@@ -152,17 +133,20 @@ class Mysql extends AbstractDatabaseManipulator
         }
     }
 
+    #[\Override]
     protected function _addSchema($name)
     {
         $this->query(sprintf('CREATE SCHEMA `%s`', $name));
     }
 
+    #[\Override]
     protected function _addTable($details)
     {
         $this->query(sprintf('CREATE TABLE %s (__yentu_placeholder_col INT)', $this->buildTableName($details['name'], $details['schema'])));
         $this->placeholders[$this->buildTableName($details['name'], $details['schema'])] = true;
     }
 
+    #[\Override]
     protected function _addUniqueKey($details)
     {
         $this->query(
@@ -172,6 +156,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _addView($details)
     {
         if ($details['schema'] != null) {
@@ -195,26 +180,31 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _changeColumnName($details)
     {
         $this->changeColumn($details);
     }
 
+    #[\Override]
     protected function _changeColumnNulls($details)
     {
         $this->changeColumn($details);
     }
 
+    #[\Override]
     protected function _changeColumnDefault($details)
     {
         $this->changeColumn($details);
     }
 
+    #[\Override]
     protected function _changeViewDefinition($details)
     {
         $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $this->buildTableName($details['to']['name'], $details['to']['schema']), $details['to']['definition']));
     }
 
+    #[\Override]
     protected function _changeTableName($details)
     {
         $this->query(
@@ -224,6 +214,7 @@ class Mysql extends AbstractDatabaseManipulator
         ));
     }
 
+    #[\Override]
     protected function _dropAutoPrimaryKey($details)
     {
         $description = $this->getDescription();
@@ -237,6 +228,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropColumn($details)
     {
         $description = $this->getDescription();
@@ -257,6 +249,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropForeignKey($details)
     {
         $this->query(
@@ -266,6 +259,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropIndex($details)
     {
         $this->query(
@@ -275,6 +269,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropPrimaryKey($details)
     {
         try {
@@ -293,16 +288,19 @@ class Mysql extends AbstractDatabaseManipulator
         }
     }
 
+    #[\Override]
     protected function _dropSchema($name)
     {
         $this->query(sprintf('DROP SCHEMA `%s`', $name));
     }
 
+    #[\Override]
     protected function _dropTable($details)
     {
         $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
     }
 
+    #[\Override]
     protected function _dropUniqueKey($details)
     {
         $this->query(
@@ -312,6 +310,7 @@ class Mysql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropView($details)
     {
         $this->query(sprintf('DROP VIEW %s', $this->buildTableName($details['name'], $details['schema'])));
@@ -328,7 +327,8 @@ class Mysql extends AbstractDatabaseManipulator
         return 'mysql';
     }
 
-    protected function quoteIdentifier($identifier)
+    #[\Override]
+    public function quoteIdentifier(string $identifier):string
     {
         return "`$identifier`";
     }

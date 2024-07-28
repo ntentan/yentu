@@ -23,33 +23,40 @@ class Postgresql extends AbstractDatabaseManipulator
         return 'pgsql';
     }
 
+    #[\Override]
     protected function _addSchema($name) {
         $this->query(sprintf('CREATE SCHEMA "%s"', $name));
     }
 
+    #[\Override]
     protected function _dropSchema($name) {
         $this->query(sprintf('DROP SCHEMA "%s"', $name));
     }
 
+    #[\Override]
     protected function _addTable($details) {
         $this->query(sprintf('CREATE TABLE  %s ()', $this->buildTableName($details['name'], $details['schema'])));
     }
 
+    #[\Override]
     protected function _addView($details) {
         $this->setSearchField($details);
         $this->query(sprintf('CREATE VIEW %s AS %s', $this->buildTableName($details['name'], $details['schema']), $details['definition']));
     }
 
+    #[\Override]
     protected function _dropView($details) {
         $this->query(sprintf('DROP VIEW %s', $this->buildTableName($details['name'], $details['schema'])));
     }
 
+    #[\Override]
     protected function _changeViewDefinition($details) {
         $this->setSearchField($details['to']);
         $name = $this->buildTableName($details['to']['name'], $details['to']['schema']);
         $this->query(sprintf("CREATE OR REPLACE VIEW %s AS %s", $name, $details['to']['definition']));
     }
 
+    #[\Override]
     protected function _dropTable($details) {
         $primaryKey = $this->query(
                 "select column_default from 
@@ -80,6 +87,7 @@ class Postgresql extends AbstractDatabaseManipulator
         return $descriptor->describe();
     }
 
+    #[\Override]
     protected function _addColumn($details) {
         $this->query(
         sprintf('ALTER TABLE %s ADD COlUMN "%s" %s', $this->buildTableName($details['table'], $details['schema']), $details['name'], $this->convertTypes(
@@ -91,6 +99,7 @@ class Postgresql extends AbstractDatabaseManipulator
         $this->_changeColumnDefault($details);
     }
 
+    #[\Override]
     protected function _dropColumn($details) {
         $this->query(
             sprintf(
@@ -99,6 +108,7 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _changeColumnDefault($details) {
         $details = Parameters::wrap($details, ['default']);
         $query = 'ALTER TABLE %s ALTER COLUMN "%s" ';
@@ -125,6 +135,7 @@ class Postgresql extends AbstractDatabaseManipulator
      * 
      * @param array $details
      */
+    #[\Override]
     protected function _changeColumnNulls($details) {
         $details = Parameters::wrap($details, ['nulls']);
         $query = 'ALTER TABLE %s ALTER COLUMN "%s" ';
@@ -148,6 +159,7 @@ class Postgresql extends AbstractDatabaseManipulator
         }
     }
 
+    #[\Override]
     protected function _changeColumnName($details) {
         $this->query(
                 sprintf(
@@ -156,6 +168,7 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _addPrimaryKey($details) {
         $this->query(
                 sprintf(
@@ -164,6 +177,7 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropPrimaryKey($details) {
         $this->query(
                 sprintf(
@@ -172,6 +186,7 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _addUniqueKey($details) {
         $this->query(
                 sprintf(
@@ -190,10 +205,12 @@ class Postgresql extends AbstractDatabaseManipulator
         //$this->dropTableItem($details, $type);
     }
 
+    #[\Override]
     protected function _dropUniqueKey($details) {
         $this->dropKeyItem($details, 'unique_keys');
     }
 
+    #[\Override]
     protected function _addAutoPrimaryKey($details) {
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
         $this->query("CREATE SEQUENCE $sequence");
@@ -204,6 +221,7 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropAutoPrimaryKey($details) {
         $sequence = $this->buildTableName("{$details['table']}_{$details['column']}_seq", $details['schema']);
         $this->query(
@@ -214,6 +232,7 @@ class Postgresql extends AbstractDatabaseManipulator
         $this->query("DROP SEQUENCE IF EXISTS $sequence");
     }
 
+    #[\Override]
     protected function _addForeignKey($details) {
         $this->query(
                 sprintf(
@@ -222,10 +241,12 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropForeignKey($details) {
         $this->dropKeyItem($details, 'foreign_keys');
     }
 
+    #[\Override]
     protected function _addIndex($details) {
         $this->query(
                 sprintf(
@@ -234,14 +255,18 @@ class Postgresql extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
     protected function _dropIndex($details) {
         $this->query(sprintf('DROP INDEX %s', $this->buildTableName($details['name'], $details['schema'])));
     }
 
-    protected function quoteIdentifier($identifier) {
+    #[\Override]
+    public function quoteIdentifier(string $identifier): string
+    {
         return "\"$identifier\"";
     }
 
+    #[\Override]
     public function convertTypes($type, $direction, $length = null) {
         $types = array(
             'integer' => 'integer',
@@ -276,11 +301,11 @@ class Postgresql extends AbstractDatabaseManipulator
         return $destinationType;
     }
 
+    #[\Override]
     protected function _changeTableName($details) {
         $this->query(sprintf(
                 "ALTER TABLE %s RENAME TO %s", $this->buildTableName($details['from']['name'], $details['from']['schema']), $this->buildTableName($details['to']['name'], false)
             )
         );
     }
-
 }

@@ -8,8 +8,8 @@ use yentu\manipulators\AbstractDatabaseManipulator;
 class ChangeLogger
 {
 
-    private $driver;
-    private $version;
+    private AbstractDatabaseManipulator $driver;
+    private string $version;
     private $migration;
     private $session;
     private $changes;
@@ -61,7 +61,7 @@ class ChangeLogger
         return new ChangeLogger($item, $migrations, $io);
     }
 
-    public function setVersion($version) : void
+    public function setVersion(string $version) : void
     {
         $this->version = $version;
     }
@@ -104,7 +104,16 @@ class ChangeLogger
         return $return;
     }
 
-    public function __call($method, $arguments)
+    /**
+     * This magic method records and routes calls to the appropriate objects.
+     * 
+     * @method query(string $query)
+     * 
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call(string $method, array $arguments): mixed
     {
         $return = null;
         if (preg_match("/^(?<command>add|drop|change|execute|reverse)(?<item_type>[a-zA-Z]+)/", $method, $matches)) {
@@ -144,11 +153,6 @@ class ChangeLogger
             }
         }
     }
-
-    // public function setDefaultSchema($defaultSchema)
-    // {
-    //     self::$defaultSchema = $defaultSchema;
-    // }
 
     public function getChanges()
     {

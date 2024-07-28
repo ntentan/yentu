@@ -87,7 +87,24 @@ class Table extends DatabaseItem
     public function table($name)
     {
         return $this->factory->create(ItemType::Table, $name, $this->schema);
-    }  
+    }
+    
+    public function insert(array $columns, array $items)
+    {
+        $driver = $this->getDriver();
+        $query = sprintf(
+            "INSERT INTO %s (%s) VALUES (%s)",
+            "{$driver->quoteIdentifier($this->schema->getName())}.{$driver->quoteIdentifier($this->name)}",
+            implode(", ", array_map(fn($x) => $driver->quoteIdentifier($x), $columns)),
+            implode(", ", array_fill(0, count($items[0]), "?"))                             
+        );
+        
+        foreach($items as $row) {
+            $this->getDriver()->query($query, $row);
+        }
+        
+        return $this;
+    }
     
     public function view($name)
     {

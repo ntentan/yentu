@@ -4,7 +4,6 @@ namespace yentu\manipulators;
 
 use clearice\io\Io;
 use ntentan\atiaa\DriverFactory;
-use yentu\Yentu;
 use yentu\DatabaseAssertor;
 use yentu\SchemaDescription;
 use yentu\exceptions\DatabaseManipulatorException;
@@ -101,6 +100,8 @@ use yentu\Parameters;
         }
         return $this->assertor;
     }
+    
+    abstract public function quoteIdentifier(string $identifier): string;
 
     abstract protected function _addSchema($name);
 

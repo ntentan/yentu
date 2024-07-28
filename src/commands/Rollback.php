@@ -3,14 +3,13 @@
 namespace yentu\commands;
 
 use yentu\ChangeReverser;
-use yentu\database\DatabaseItem;
 use yentu\factories\DatabaseManipulatorFactory;
 use clearice\io\Io;
 
 class Rollback extends Command
 {
 
-    private $schemaCondition;
+//    private $schemaCondition;
     private $schemaConditionData = [];
     private $manipulatorFactory;
     private $io;
@@ -40,7 +39,7 @@ class Rollback extends Command
         } else {
             $session = $db->getLastSession();
             $operations = $db->query(
-                "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE $this->schemaCondition session = ? ORDER BY id DESC", $this->schemaConditionData + [$session]
+                "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE session = ? ORDER BY id DESC", $this->schemaConditionData + [$session]
             );
         }
 
@@ -62,11 +61,11 @@ class Rollback extends Command
         $operations = [];
         if (preg_match("/[0-9]{14}/", $set)) {
             $operations = $db->query(
-                "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE $this->schemaCondition version = ? ORDER by id DESC", $this->schemaConditionData + [$set]
+                "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE version = ? ORDER by id DESC", $this->schemaConditionData + [$set]
             );
         } elseif (preg_match("/[a-zA-Z\_\-]+/", $set)) {
             $operations = $db->query(
-                "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE $this->schemaCondition migration = ? ORDER by id DESC", $this->schemaConditionData + [$set]
+                "SELECT id, method, arguments, migration, default_schema FROM yentu_history WHERE migration = ? ORDER by id DESC", $this->schemaConditionData + [$set]
             );
         }
         return $operations;
