@@ -4,11 +4,13 @@ namespace yentu;
 use yentu\factories\DatabaseItemFactory;
 use yentu\database\ItemType;
 use yentu\database\Schema;
+use yentu\database\EncapsulatedStack;
 
 class Yentu
 {
     private static DatabaseItemFactory $factory;
     private static Schema $defaultSchema;
+    private static EncapsulatedStack $stack;
     
     public static function setup(DatabaseItemFactory $factory, string $defaultSchema)
     {
@@ -16,8 +18,13 @@ class Yentu
         self::$factory = $factory;
     }
     
+    public static function setStack(EncapsulatedStack $stack)
+    {
+        self::$stack = $stack;
+    }
+    
     public static function begin() {
-        return self::$factory->create(ItemType::Begin, self::$defaultSchema);
+        return self::$factory->create(ItemType::Begin, self::$defaultSchema, self::$stack);
     }
 
     public static function refschema($name) {

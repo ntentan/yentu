@@ -4,49 +4,44 @@ namespace yentu\database;
 
 use yentu\database\ItemType;
 
-/**
- * Allows the
- */
+
 class Begin extends DatabaseItem
 {
     private Schema $defaultSchema;
+    private EncapsulatedStack $encapsulatedStack;
 
-    public function __construct(Schema $defaultSchema)
+    public function __construct(Schema $defaultSchema, EncapsulatedStack $encapsulatedStack)
     {
         $this->defaultSchema = $defaultSchema;
+        $this->encapsulatedStack = $encapsulatedStack;
     }
 
-    public function table($name)
+    public function table(string $name): Table
     {
         return $this->factory->create(ItemType::Table, $name, $this);
     }
 
-    public function schema($name)
+    public function schema(string $name): Schema
     {
         return $this->create('schema', $name, $this);
     }
 
-    public function view($name)
+    public function view(string $name): View
     {
         return $this->create('view', $name, $this);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->defaultSchema->getName();
     }
 
-    #[\Override]
-    protected function buildDescription()
+    public function end(): void
     {
+        $this->encapsulatedStack->purge();
     }
 
-    public function end()
-    {
-        //DatabaseItem::purge();
-    }
-
-    public function query($query, $bindData = array())
+    public function query(string $query, $bindData = array()): Query
     {
         return $this->create('query', $query, $bindData);
     }

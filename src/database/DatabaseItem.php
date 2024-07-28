@@ -5,6 +5,7 @@ namespace yentu\database;
 use yentu\exceptions\SyntaxErrorException;
 use yentu\factories\DatabaseItemFactory;
 use yentu\ChangeLogger;
+use yentu\Yentu;
 
 
 abstract class DatabaseItem
@@ -62,6 +63,7 @@ abstract class DatabaseItem
     public function setStack(EncapsulatedStack $stack): void
     {
         $this->stack = $stack;
+        Yentu::setStack($stack);
         if ($this->stack->hasItems()) {
             $this->encapsulated = $this->stack->top();            
         }
@@ -109,5 +111,5 @@ abstract class DatabaseItem
         
     abstract public function init();
 //    abstract public function commitNew();
-    abstract protected function buildDescription();
+//    abstract protected function buildDescription();
 }

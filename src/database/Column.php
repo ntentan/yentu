@@ -3,7 +3,7 @@ namespace yentu\database;
 
 use yentu\Parameters;
 
-class Column extends DatabaseItem implements Commitable
+class Column extends DatabaseItem implements Commitable, Changeable
 {
     private $type;
     private $table;
@@ -15,7 +15,7 @@ class Column extends DatabaseItem implements Commitable
     private $default;
     
     #[\Override]
-    protected function buildDescription()
+    public function buildDescription()
     {
         return array(
             'name' => $this->name,

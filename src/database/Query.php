@@ -1,13 +1,16 @@
 <?php
 namespace yentu\database;
 
-class Query extends DatabaseItem
+class Query extends DatabaseItem implements Commitable
 {
-    private $results;
-    private $query;
-    private $bindData;
+    private string $query;
+    private array $bindData;
+    private string $rollbackQuery;
+    private array $rollbackBindData;
+    private array $queryData;
+
     
-    public function __construct($query, $bindData = array()) 
+    public function __construct(string $query, array $bindData = []) 
     {
         $this->query = $query;
         $this->bindData = $bindData;
@@ -16,26 +19,22 @@ class Query extends DatabaseItem
     #[\Override]
     public function init()
     {
-        $this->results = $this->getDriver()->executeQuery(
-            array(
-                'query' => $this->query, 
-                'bind' => $this->bindData
-            )
-        );
+        $this->queryData = [
+            'query' => $this->query,
+            'query_data' => $this->bindData
+        ]; 
     }
     
-    #[\Override]
-    protected function buildDescription() 
+    public function rollback(string $query, array $bindData = []): DatabaseItem
     {
-        return array();
-    }
-    
-    public function reverse($query, $bindData = array())
-    {
-        $this->getDriver()->reverseQuery(array(
-            'query' => $query,
-            'bind_data' => $bindData
-        ));
+        $this->queryData['rollback'] = $query;
+        $this->queryData['rollback_data'] = $bindData;
         return $this;
+    }
+
+    #[\Override]
+    public function commitNew()
+    {
+        $this->getDriver()->executeQuery($this->queryData);        
     }
 }

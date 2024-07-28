@@ -1,7 +1,7 @@
 <?php
 namespace yentu\database;
 
-abstract class BasicKey extends DatabaseItem implements Commitable
+abstract class BasicKey extends DatabaseItem implements Commitable, Changeable
 {
     protected $columns;
     protected $table;
@@ -38,7 +38,7 @@ abstract class BasicKey extends DatabaseItem implements Commitable
     abstract protected function getNamePostfix();
     
     #[\Override]
-    protected function buildDescription()
+    public function buildDescription()
     {
         return array(
             'table' => $this->table->getName(), 

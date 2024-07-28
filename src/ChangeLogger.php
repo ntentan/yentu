@@ -107,7 +107,8 @@ class ChangeLogger
     /**
      * This magic method records and routes calls to the appropriate objects.
      * 
-     * @method query(string $query)
+     * @method sql(string $query, string $rollback)
+     * @method
      * 
      * @param string $method
      * @param array $arguments
@@ -116,7 +117,7 @@ class ChangeLogger
     public function __call(string $method, array $arguments): mixed
     {
         $return = null;
-        if (preg_match("/^(?<command>add|drop|change|execute|reverse)(?<item_type>[a-zA-Z]+)/", $method, $matches)) {
+        if (preg_match("/^(?<command>add|drop|change|execute|reverse|insert)(?<item_type>[a-zA-Z]+)/", $method, $matches)) {
             $this->driver->setDumpQuery($this->dumpQueriesOnly);
             $this->driver->setDisableQuery($this->dryRun);
 
@@ -125,7 +126,8 @@ class ChangeLogger
                 (array_search($matches['item_type'], $this->allowedItemTypes) === false && count($this->allowedItemTypes) > 0)
             ) {
                 $this->io->output("S");
-                $this->io->output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", Io::OUTPUT_LEVEL_2);
+                $this->io->output("kipping " . preg_replace("/([a-z])([A-Z])/", "$1 $2", $matches['item_type']) . " '" 
+                    . (isset($arguments[0]['name']) ? $arguments[0]['name'] : null) . "'\n", Io::OUTPUT_LEVEL_2);
             } else {
                 $return = $this->performOperation($method, $matches, $arguments);
             }

@@ -1,10 +1,10 @@
 <?php
 namespace yentu\database;
 
-/**
- * @todo In future make the view definitions changeable
- */
-class View extends \yentu\database\DatabaseItem
+use yentu\database\DatabaseItem;
+
+
+class View extends DatabaseItem implements Changeable
 {
     private $name;
     private $schema;
@@ -31,11 +31,6 @@ class View extends \yentu\database\DatabaseItem
     {
         $this->getDriver()->dropView($this->buildDescription());
         return $this;
-    }
-    
-    public function commitNew() 
-    {
-        
     }
     
     public function definition($definition)

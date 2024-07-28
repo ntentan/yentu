@@ -4,7 +4,7 @@ namespace yentu\database;
 use yentu\database\ItemType;
 
 
-class Table extends DatabaseItem
+class Table extends DatabaseItem implements Changeable
 {
     private Begin|Schema $schema;
     private array $primaryKeyColumns;
@@ -112,7 +112,7 @@ class Table extends DatabaseItem
     }
 
     #[\Override]
-    protected function buildDescription() {
+    public function buildDescription() {
         return array(
             'name' => $this->name,
             'schema' => $this->schema->getName()

@@ -1,9 +1,8 @@
 <?php
-
 namespace yentu\database;
 
 
-class Schema extends DatabaseItem
+class Schema extends DatabaseItem implements Changeable
 {
     private $name;
     private $isReference;
@@ -53,7 +52,7 @@ class Schema extends DatabaseItem
     }
 
     #[\Override]
-    protected function buildDescription() {
+    public function buildDescription() {
         return array(
             'name' => $this->name
         );
