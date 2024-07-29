@@ -43,9 +43,7 @@ class Begin extends DatabaseItem
 
     public function query(string $query, $bindData = array()): Query
     {
-        $query = $this->factory->create(ItemType::Query, $query, $bindData);
-        $this->encapsulatedStack->push($query);
-        return $query;
+        return $this->factory->create(ItemType::Query, $query, $bindData);
     }
 
     #[\Override]
