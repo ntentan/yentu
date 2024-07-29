@@ -23,12 +23,12 @@ class Begin extends DatabaseItem
 
     public function schema(string $name): Schema
     {
-        return $this->create('schema', $name, $this);
+        return $this->factory->create(ItemType::Schema, $name, $this);
     }
 
     public function view(string $name): View
     {
-        return $this->create('view', $name, $this);
+        return $this->factory->create(ItemType::View, $name, $this);
     }
 
     public function getName(): string
@@ -43,7 +43,9 @@ class Begin extends DatabaseItem
 
     public function query(string $query, $bindData = array()): Query
     {
-        return $this->create('query', $query, $bindData);
+        $query = $this->factory->create(ItemType::Query, $query, $bindData);
+        $this->encapsulatedStack->push($query);
+        return $query;
     }
 
     #[\Override]

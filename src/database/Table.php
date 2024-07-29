@@ -89,20 +89,11 @@ class Table extends DatabaseItem implements Changeable
         return $this->factory->create(ItemType::Table, $name, $this->schema);
     }
     
-    public function insert(array $columns, array $items)
+    public function insert(array $columns, array $rows)
     {
-        $driver = $this->getDriver();
-        $query = sprintf(
-            "INSERT INTO %s (%s) VALUES (%s)",
-            "{$driver->quoteIdentifier($this->schema->getName())}.{$driver->quoteIdentifier($this->name)}",
-            implode(", ", array_map(fn($x) => $driver->quoteIdentifier($x), $columns)),
-            implode(", ", array_fill(0, count($items[0]), "?"))                             
+        $this->getDriver()->insertData(
+            ['columns'=>$columns, 'rows'=>$rows, 'schema'=>$this->schema->getName(), 'table' => $this->name]
         );
-        
-        foreach($items as $row) {
-            $this->getDriver()->query($query, $row);
-        }
-        
         return $this;
     }
     

@@ -20,7 +20,7 @@ class ChangeReverser
     private function reverseMethod($method)
     {
         return preg_replace_callback(
-            "/^(?<action>add|drop|reverse|execute)/", 
+            "/^(?<action>add|drop|reverse|execute|insert)/", 
             function($matches){
                 switch($matches['action'])
                 {
@@ -28,6 +28,8 @@ class ChangeReverser
                     case 'drop': return 'add';
                     case 'reverse': return 'execute';
                     case 'execute': return 'reverse';
+                    case 'insert': return 'delete';
+                    case 'delete': return 'insert';
                 }
             }, $method
         );

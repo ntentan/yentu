@@ -101,7 +101,34 @@ use yentu\Parameters;
         return $this->assertor;
     }
     
-    abstract public function quoteIdentifier(string $identifier): string;
+    public function insertData(array $details)
+    {
+        $query = sprintf(
+            "INSERT INTO %s (%s) VALUES (%s)",
+            "{$this->quoteIdentifier($details['schema'])}.{$this->quoteIdentifier($details['table'])}",
+            implode(", ", array_map(fn($x) => $this->quoteIdentifier($x), $details['columns'])),
+            implode(", ", array_fill(0, count($details['columns']), "?"))                             
+        );
+        
+        foreach($details['rows'] as $row) {
+            $this->query($query, $row);
+        }
+    }
+    
+    public function deleteData(array $details)
+    {
+        $query = sprintf(
+            "DELETE FROM %s WHERE %s",
+            "{$this->quoteIdentifier($details['schema'])}.{$this->quoteIdentifier($details['table'])}",
+            implode(" AND ", array_map(fn($x) => "{$this->quoteIdentifier($x)}=?", $details['columns']))                      
+        );
+        
+        foreach($details['rows'] as $row) {
+            $this->query($query, $row);
+        }
+    }
+    
+    abstract protected function quoteIdentifier(string $identifier): string;
 
     abstract protected function _addSchema($name);
 
@@ -168,7 +195,9 @@ use yentu\Parameters;
 
     protected function _reverseQuery($details)
     {
-        
+        if (isset($details['rollback_query'])) {
+            $this->query($details['rollback_query'], $details['rollback_bind'] ?? []);   
+        }
     }
 
     abstract public function convertTypes($type, $direction, $length);

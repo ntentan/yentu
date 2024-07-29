@@ -133,10 +133,6 @@ function getContainerSettings() {
                     'command' => 'migrate', 'name' => 'dry',
                     'help' => 'perform a dry run. Do not alter the database in anyway'
                 ]);
-//                $argumentParser->addOption([
-//                    'command' => 'migrate', 'name' => 'default-schema',
-//                    'type' => 'string', 'help' => 'use this as the default schema for all migrations'
-//                ]);
                 $argumentParser->addOption([
                     'command' => 'migrate', 'name' => 'default-ondelete',
                     'help' => 'the default cascade action for foreign key deletes', 'type' => 'string'
@@ -146,7 +142,6 @@ function getContainerSettings() {
                     'help' => 'the default cascade action for foreign key updates', 'type' => 'string'
                 
                 ]);
-                
                 $argumentParser->addOption([
                     'short_name' => 'y', 'name' => 'home',
                     'help' => 'specifies where the yentu configurations and migrations are found',
@@ -157,6 +152,7 @@ function getContainerSettings() {
                     'help' => 'set level of verbosity. high, mid, low and none',
                     'type' => 'string'
                 ]);
+                
                 $argumentParser->addOption(['name' => 'details', 'help' => 'show details of all migrations.', 'command' => 'status']);
                 $argumentParser->enableHelp("Yentu database migration tool", "Report bugs on https://github.com/ntentan/yentu");            
 
@@ -170,23 +166,6 @@ function getContainerSettings() {
                 $arguments = $container->get('$arguments:array');
                 if(isset($arguments['__command'])) {
                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
-//                    $defaultHome = $arguments['home'] ?? './yentu';
-//                    $configFile = "{$defaultHome}/config/yentu.ini";
-
-//                    if(file_exists($configFile)) {
-//                        $config = parse_ini_file($configFile, true);
-//
-//                        $migrations = $container->get(
-//                            Migrations::class, [
-//                                'config' => [
-//                                    'variables' => $config['variables'] ?? [],
-//                                    'other_migrations' => $config['other_migrations'] ?? [],
-//                                    'home' => $defaultHome
-//                                ]
-//                            ]
-//                        );
-//                    }
-
                     $command = $container->get($commandClass);
                     $command->setOptions($arguments);
                     return $command;

@@ -5,8 +5,6 @@ class Query extends DatabaseItem implements Commitable
 {
     private string $query;
     private array $bindData;
-    private string $rollbackQuery;
-    private array $rollbackBindData;
     private array $queryData;
 
     
@@ -21,14 +19,16 @@ class Query extends DatabaseItem implements Commitable
     {
         $this->queryData = [
             'query' => $this->query,
-            'query_data' => $this->bindData
+            'bind' => $this->bindData
         ]; 
+        $this->new = true;
     }
     
     public function rollback(string $query, array $bindData = []): DatabaseItem
     {
-        $this->queryData['rollback'] = $query;
-        $this->queryData['rollback_data'] = $bindData;
+        $this->queryData['rollback_query'] = $query;
+        $this->queryData['rollback_bind'] = $bindData;
+        $this->new = true;
         return $this;
     }
 

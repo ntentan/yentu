@@ -118,7 +118,6 @@ class Migrate extends Command implements Reversible
                 $this->driver->setMigration($migration['migration']);
                 $this->io->output("\nApplying '{$migration['migration']}' migration\n");
                 require "{$path['home']}/{$migration['file']}";
-                $this->itemFactory->getEncapsulatedStack()->purge();
                 $this->io->output("\n");
                 $totalOperations += $this->driver->resetOperations();
             }
@@ -149,7 +148,6 @@ class Migrate extends Command implements Reversible
         $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
         $this->itemFactory->setDriver($this->dryDriver);
         require "$migrationFile";
-        $this->itemFactory->getEncapsulatedStack()->purge();
         $this->itemFactory->setDriver($this->driver);
         $this->io->popOutputLevel();
         $this->driver->setExpectedOperations($this->dryDriver->resetOperations());

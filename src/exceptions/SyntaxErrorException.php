@@ -14,7 +14,7 @@ class SyntaxErrorException extends YentuException {
 
         parent::__construct($message);
         foreach ($this->getTrace() as $item) {
-            if (realpath($homePath) === dirname($item['file'])) {
+            if (realpath($homePath) === dirname($item['file'] ?? '')) {
                 $this->message .= " on line {$item['line']} of {$item['file']}";
                 break;
             }

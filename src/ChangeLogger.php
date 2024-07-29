@@ -108,7 +108,8 @@ class ChangeLogger
      * This magic method records and routes calls to the appropriate objects.
      * 
      * @method sql(string $query, string $rollback)
-     * @method
+     * @method quoteIdentifier(string $identifier)
+     * @method query(string $query)
      * 
      * @param string $method
      * @param array $arguments
