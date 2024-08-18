@@ -1,8 +1,6 @@
 <?php
 namespace yentu\database;
 
-use yentu\database\ItemType;
-
 
 class Table extends DatabaseItem implements Changeable
 {
@@ -71,12 +69,12 @@ class Table extends DatabaseItem implements Changeable
     
     public function index()
     {
-        return $this->create('index', func_get_args(), $this);
+        return $this->factory->create(ItemType::Index, func_get_args(), $this);
     }
     
     public function unique()
     {
-        return $this->create('unique_key', func_get_args(), $this);
+        return $this->factory->create(ItemType::UniqueKey, func_get_args(), $this);
     }
         
     public function foreignKey(string ... $args)
@@ -99,7 +97,7 @@ class Table extends DatabaseItem implements Changeable
     
     public function view($name)
     {
-        return $this->create('view', $name, $this->schema);
+        return $this->factory->create(ItemType::View, $name, $this->schema);
     }
 
     #[\Override]
