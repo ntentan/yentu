@@ -87,7 +87,7 @@ class Create extends Command
         $timestamp = gmdate('YmdHis', time());
         $code = new \yentu\CodeWriter();
         $code->add('');
-        $code->add('begin()');
+        $code->add('\yentu\Yentu::begin()');
         $code->add('');
         $code->add('->end();');
         $path = $this->migrations->getPath("migrations/{$timestamp}_{$name}.php");
