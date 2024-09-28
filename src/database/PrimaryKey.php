@@ -6,19 +6,19 @@ class PrimaryKey extends BasicKey
     #[\Override]
     protected function addKey($constraint) 
     {
-        $this->getDriver()->addPrimaryKey($constraint);        
+        $this->getChangeLogger()->addPrimaryKey($constraint);
     }
 
     #[\Override]
     protected function doesKeyExist($constraint) 
     {
-        return $this->getDriver()->doesPrimaryKeyExist($constraint);        
+        return $this->getChangeLogger()->doesPrimaryKeyExist($constraint);
     }
 
     #[\Override]
     protected function dropKey($constraint) 
     {
-        $this->getDriver()->dropPrimaryKey($constraint);        
+        $this->getChangeLogger()->dropPrimaryKey($constraint);
     }
 
     #[\Override]
@@ -34,7 +34,7 @@ class PrimaryKey extends BasicKey
             throw new \Exception("Cannot make an auto incementing composite key.");
         }
         
-        $this->getDriver()->addAutoPrimaryKey(
+        $this->getChangeLogger()->addAutoPrimaryKey(
             \yentu\Parameters::wrap(array(
                     'table' => $this->table->getName(),
                     'schema' => $this->table->getSchema()->getName(),

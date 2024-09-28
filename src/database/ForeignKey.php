@@ -3,19 +3,13 @@ namespace yentu\database;
 
 use yentu\exceptions\SyntaxErrorException;
 
-class ForeignKey extends DatabaseItem implements Commitable, Changeable
+class ForeignKey extends DatabaseItem implements Commitable, Changeable, Initializable
 {
-
-    /**
-     *
-     * @var Table
-     */
     private Table $table;
     private array $columns;
     private Table $foreignTable;
     private array $foreignColumns;
     private string $name = '';
-    private bool $nameSet = false;
     public string $onDelete;
     public string $onUpdate;
     public static string $defaultOnDelete = 'NO ACTION';
@@ -30,9 +24,9 @@ class ForeignKey extends DatabaseItem implements Commitable, Changeable
     }
 
     #[\Override]
-    public function init()
+    public function initialize()
     {
-        $name = $this->getDriver()->doesForeignKeyExist([
+        $name = $this->getChangeLogger()->doesForeignKeyExist([
             'schema' => $this->table->getSchema()->getName(),
             'table' => $this->table->getName(),
             'columns' => $this->columns
@@ -41,7 +35,6 @@ class ForeignKey extends DatabaseItem implements Commitable, Changeable
             $this->new = true;
         } else {
             $this->name = $name;
-            $this->nameSet = true;
         }
     }
 
@@ -72,10 +65,10 @@ class ForeignKey extends DatabaseItem implements Commitable, Changeable
 
     public function drop()
     {
-        $description = $this->getDriver()->getDescription();
+        $description = $this->getChangeLogger()->getDescription();
         $key = $description['schemata'][$this->table->getSchema()->getName()]['tables'][$this->table->getName()]['foreign_keys'][$this->name];
 
-        $this->getDriver()->dropForeignKey(
+        $this->getChangeLogger()->dropForeignKey(
             array(
                 'columns' => $this->columns,
                 'table' => $this->table->getName(),
@@ -112,12 +105,12 @@ class ForeignKey extends DatabaseItem implements Commitable, Changeable
             );
         }
 
-        $this->getDriver()->addForeignKey($this->buildDescription());
+        $this->getChangeLogger()->addForeignKey($this->buildDescription());
     }
 
     public function name($name)
     {
-        if ($this->getDriver()->doesForeignKeyExist([
+        if ($this->getChangeLogger()->doesForeignKeyExist([
                 'schema' => $this->table->getSchema()->getName(),
                 'table' => $this->table->getName(),
                 'name' => $name
@@ -126,13 +119,12 @@ class ForeignKey extends DatabaseItem implements Commitable, Changeable
             $this->new = false;
         }
         $this->name = $name;
-        $this->nameSet = true;
         return $this;
     }
 
     private function setKeyDetails($name)
     {
-        $foreignKey = $this->getDriver()
+        $foreignKey = $this->getChangeLogger()
                 ->getDescription()
                 ->getTable([
                     'table' => $this->table->getName(),

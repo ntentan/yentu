@@ -4,7 +4,7 @@ namespace yentu\database;
 use yentu\database\DatabaseItem;
 
 
-class View extends DatabaseItem implements Changeable
+class View extends DatabaseItem implements Changeable, Initializable
 {
     private $name;
     private $schema;
@@ -18,9 +18,9 @@ class View extends DatabaseItem implements Changeable
     }
     
     #[\Override]
-    public function init()
+    public function initialize(): void
     {
-        $this->definition = $this->getDriver()->doesViewExist($this->buildDescription());
+        $this->definition = $this->getChangeLogger()->doesViewExist($this->buildDescription());
         if($this->definition === false)
         {
             $this->new = true;
@@ -29,7 +29,7 @@ class View extends DatabaseItem implements Changeable
     
     public function drop()
     {
-        $this->getDriver()->dropView($this->buildDescription());
+        $this->getChangeLogger()->dropView($this->buildDescription());
         return $this;
     }
     
@@ -39,7 +39,7 @@ class View extends DatabaseItem implements Changeable
         
         if($this->isNew())
         {
-            $this->getDriver()->addView($this->buildDescription());
+            $this->getChangeLogger()->addView($this->buildDescription());
         }
         return $this;
     }
@@ -57,7 +57,7 @@ class View extends DatabaseItem implements Changeable
     }
     
     #[\Override]
-    protected function buildDescription() {
+    public function buildDescription() {
         return array(
             'name' => $this->name,
             'schema' => $this->schema->getName(),

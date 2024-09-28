@@ -6,7 +6,7 @@ $externalAutoload = __DIR__ . "/../../../../vendor/autoload.php";
 if (file_exists($externalAutoload)) {
     require $externalAutoload;
 } else {
-    require __DIR__ . "/../vendor/autoload.php";    
+    require __DIR__ . "/../vendor/autoload.php";
 }
 
 use clearice\argparser\ArgumentParser;
@@ -27,26 +27,26 @@ $ui->run();
 /**
  * Return the container setup.
  */
-function getContainerSettings() {
+function getContainerSettings()
+{
     return [
         '$dbConfig:array' => [
-            function(Container $container) {
-                $config = [];
+            function (Container $container) {
                 $arguments = $container->get('$arguments:array');
                 $configFile = $arguments['config-path'] ?? "yentu/yentu.ini";
-                
+
                 if (!file_exists($configFile)) {
-                    $container->get(Io::class)->error("Failed to load the configuration file: $configFile\n");  
+                    $container->get(Io::class)->error("Failed to load the configuration file: $configFile\n");
                     exit(100);
                 }
-                
-                $config = parse_ini_file($configFile, true);    
+
+                $config = parse_ini_file($configFile, true);
                 return $config['db'] ?? [];
-            }, 
+            },
             'singleton' => true
         ],
         '$arguments:array' => [
-            function(Container $container) {
+            function (Container $container) {
                 $argumentParser = $container->get(ArgumentParser::class);
                 return $argumentParser->parse();
             },
@@ -67,10 +67,10 @@ function getContainerSettings() {
             'calls' => ['setRollbackCommand']
         ],
         ArgumentParser::class => [
-            function(Container $container) {
+            function (Container $container) {
                 $io = $container->get(Io::class);
                 $argumentParser = new ArgumentParser();
-                
+
                 // Setup commands
                 $argumentParser->addCommand(['name' => 'import', 'help' => 'import the schema of an existing database']);
                 $argumentParser->addCommand(['name' => 'migrate', 'help' => 'run new migrations on the target database']);
@@ -78,7 +78,7 @@ function getContainerSettings() {
                 $argumentParser->addCommand(['name' => 'create', 'help' => 'create a new migration']);
                 $argumentParser->addCommand(['name' => 'rollback', 'help' => 'rollback the previus migration which was run']);
                 $argumentParser->addCommand(['name' => 'status', 'help' => 'display the current status of the migrations']);
-                
+
                 // Setup options
                 $argumentParser->addOption([
                     'command' => 'import', 'short_name' => 'd', 'name' => 'skip-defaults',
@@ -112,7 +112,7 @@ function getContainerSettings() {
                     'command' => 'init', 'short_name' => 'p', 'name' => 'password',
                     'help' => 'the password of the user on the target database', 'type' => 'string'
                 ]);
-                
+
                 $argumentParser->addOption([
                     'command' => 'migrate', 'name' => 'no-foreign-keys',
                     'help' => 'do not apply any database foriegn-key constraints'
@@ -140,7 +140,7 @@ function getContainerSettings() {
                 $argumentParser->addOption([
                     'command' => 'migrate', 'name' => 'default-onupdate',
                     'help' => 'the default cascade action for foreign key updates', 'type' => 'string'
-                
+
                 ]);
                 $argumentParser->addOption([
                     'short_name' => 'y', 'name' => 'home',
@@ -152,19 +152,18 @@ function getContainerSettings() {
                     'help' => 'set level of verbosity. high, mid, low and none',
                     'type' => 'string'
                 ]);
-                
+
                 $argumentParser->addOption(['name' => 'details', 'help' => 'show details of all migrations.', 'command' => 'status']);
-                $argumentParser->enableHelp("Yentu database migration tool", "Report bugs on https://github.com/ntentan/yentu");            
+                $argumentParser->enableHelp("Yentu database migration tool", "Report bugs on https://github.com/ntentan/yentu");
 
                 return $argumentParser;
             },
             'singleton' => true
-        ], 
+        ],
         Command::class => [
-            function($container)
-            {
+            function ($container) {
                 $arguments = $container->get('$arguments:array');
-                if(isset($arguments['__command'])) {
+                if (isset($arguments['__command'])) {
                     $commandClass = "yentu\\commands\\" . ucfirst($arguments['__command']);
                     $command = $container->get($commandClass);
                     $command->setOptions($arguments);

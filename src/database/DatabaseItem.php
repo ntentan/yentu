@@ -5,25 +5,24 @@ namespace yentu\database;
 use yentu\exceptions\SyntaxErrorException;
 use yentu\factories\DatabaseItemFactory;
 use yentu\ChangeLogger;
-use yentu\Yentu;
 
 
-abstract class DatabaseItem
+class DatabaseItem
 {    
     private ?DatabaseItem $encapsulated = null;
-    private ChangeLogger $driver;
-    protected $new = false;
-    private $changes = array();
-    protected $home;
+    private ChangeLogger $changeLogger;
+    protected bool $new = false;
+    private array $changes = [];
+    protected string $home;
     protected DatabaseItemFactory $factory;
     private EncapsulatedStack $stack;   
     
-    public function setFactory(DatabaseItemFactory $factory)
+    public function setFactory(DatabaseItemFactory $factory): void
     {
         $this->factory = $factory;
     }
 
-    protected function addChange($property, $attribute, $value)
+    protected function addChange($property, $attribute, $value): DatabaseItem
     {
         if (!$this->isNew()) {
             $currentDescription = $this->buildDescription();
@@ -42,31 +41,36 @@ abstract class DatabaseItem
         }
 
         (new \ReflectionProperty($this, $property))->setValue($this, $value);
+
         return $this;
     }
 
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->new;
     }
 
-    protected function getDriver()
+    protected function getChangeLogger(): ChangeLogger
     {
-        return $this->driver;
+        return $this->changeLogger;
     }
 
-    public function setDriver($driver)
+    public function setChangeLogger($changeLogger): void
     {
-        $this->driver = $driver;
+        $this->changeLogger = $changeLogger;
     }
     
     public function setStack(EncapsulatedStack $stack): void
     {
         $this->stack = $stack;
-        Yentu::setStack($stack);
         if ($this->stack->hasItems()) {
             $this->encapsulated = $this->stack->top();            
         }
+    }
+
+    public function getStack(): EncapsulatedStack
+    {
+        return $this->stack;
     }
 
     public function __call($method, $arguments)
@@ -85,7 +89,7 @@ abstract class DatabaseItem
         }
     }
 
-    public function commit()
+    public function commit(): DatabaseItem
     {
         if ($this instanceof Commitable && $this->isNew()) {
             $this->commitNew();
@@ -93,13 +97,13 @@ abstract class DatabaseItem
         }
 
         foreach ($this->changes as $change) {
-            $this->driver->{$change['method']}($change['args']);
+            $this->changeLogger->{$change['method']}($change['args']);
         }
 
         return $this;
     }
 
-    public function rename($newName)
+    public function rename($newName): DatabaseItem
     {
         return $this->addChange('name', 'name', $newName);
     }
@@ -108,8 +112,11 @@ abstract class DatabaseItem
     {
         $this->home = $home;
     }
-        
-    abstract public function init();
-//    abstract public function commitNew();
-//    abstract protected function buildDescription();
+
+    public function init(): void
+    {
+        if ($this instanceof Initializable) {
+            $this->initialize();
+        }
+    }
 }

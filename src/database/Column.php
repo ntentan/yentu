@@ -3,7 +3,7 @@ namespace yentu\database;
 
 use yentu\Parameters;
 
-class Column extends DatabaseItem implements Commitable, Changeable
+class Column extends DatabaseItem implements Commitable, Changeable, Initializable
 {
     private $type;
     private $table;
@@ -35,9 +35,9 @@ class Column extends DatabaseItem implements Commitable, Changeable
     }
     
     #[\Override]
-    public function init()
+    public function initialize()
     {
-        $column = Parameters::wrap($this->getDriver()->doesColumnExist(
+        $column = Parameters::wrap($this->getChangeLogger()->doesColumnExist(
                 array(
                     'table' => $this->table->getName(),
                     'schema' => $this->table->getSchema()->getName(),
@@ -80,7 +80,7 @@ class Column extends DatabaseItem implements Commitable, Changeable
     #[\Override]
     public function commitNew() 
     {
-        $this->getDriver()->addColumn($this->buildDescription());        
+        $this->getChangeLogger()->addColumn($this->buildDescription());
     }
     
     public function length($length)
@@ -91,7 +91,7 @@ class Column extends DatabaseItem implements Commitable, Changeable
     
     public function drop()
     {
-        $this->getDriver()->dropColumn($this->buildDescription());
+        $this->getChangeLogger()->dropColumn($this->buildDescription());
         return $this;
     }
 }

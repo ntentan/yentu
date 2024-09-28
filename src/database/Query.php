@@ -1,7 +1,7 @@
 <?php
 namespace yentu\database;
 
-class Query extends DatabaseItem implements Commitable
+class Query extends DatabaseItem implements Commitable, Initializable
 {
     private string $query;
     private array $bindData;
@@ -15,7 +15,7 @@ class Query extends DatabaseItem implements Commitable
     }
     
     #[\Override]
-    public function init()
+    public function initialize(): void
     {
         $this->queryData = [
             'query' => $this->query,
@@ -35,6 +35,6 @@ class Query extends DatabaseItem implements Commitable
     #[\Override]
     public function commitNew()
     {
-        $this->getDriver()->executeQuery($this->queryData);        
+        $this->getChangeLogger()->executeQuery($this->queryData);
     }
 }

@@ -10,23 +10,23 @@ class Begin extends DatabaseItem
     private Schema $defaultSchema;
     private EncapsulatedStack $encapsulatedStack;
 
-    public function __construct(Schema $defaultSchema, EncapsulatedStack $encapsulatedStack)
+    public function __construct(Schema $defaultSchema)
     {
         $this->defaultSchema = $defaultSchema;
-        $this->encapsulatedStack = $encapsulatedStack;
+//        $this->encapsulatedStack = $encapsulatedStack;
     }
 
-    public function table(string $name): Table
+    public function table(string $name): DatabaseItem
     {
         return $this->factory->create(ItemType::Table, $name, $this);
     }
 
-    public function schema(string $name): Schema
+    public function schema(string $name): DatabaseItem
     {
         return $this->factory->create(ItemType::Schema, $name, $this);
     }
 
-    public function view(string $name): View
+    public function view(string $name): DatabaseItem
     {
         return $this->factory->create(ItemType::View, $name, $this);
     }
@@ -38,17 +38,11 @@ class Begin extends DatabaseItem
 
     public function end(): void
     {
-        $this->encapsulatedStack->purge();
+        $this->getStack()->purge();
     }
 
-    public function query(string $query, $bindData = array()): Query
+    public function query(string $query, $bindData = array()): DatabaseItem
     {
         return $this->factory->create(ItemType::Query, $query, $bindData);
-    }
-
-    #[\Override]
-    public function init()
-    {
-        
     }
 }

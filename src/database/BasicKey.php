@@ -1,7 +1,7 @@
 <?php
 namespace yentu\database;
 
-abstract class BasicKey extends DatabaseItem implements Commitable, Changeable
+abstract class BasicKey extends DatabaseItem implements Commitable, Changeable, Initializable
 {
     protected $columns;
     protected $table;
@@ -14,7 +14,7 @@ abstract class BasicKey extends DatabaseItem implements Commitable, Changeable
     }
     
     #[\Override]
-    public function init()
+    public function initialize(): void
     {
         $keyName = $this->doesKeyExist(array(
             'table' => $this->table->getName(),

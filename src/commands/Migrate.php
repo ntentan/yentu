@@ -38,7 +38,7 @@ class Migrate extends Command implements Reversible
         $this->itemFactory = $itemFactory;
     }
 
-    public function setupOptions($options, &$filter)
+    public function setupOptions($options, &$filter): void
     {
         if (isset($options['no-foreign-keys'])) {
             $this->io->output("Ignoring all foreign key constraints ...\n");
@@ -69,7 +69,7 @@ class Migrate extends Command implements Reversible
         }
     }
 
-    private function announceMigration($migrations, $path)
+    private function announceMigration($migrations, $path): void
     {
         $size = count($migrations);
         if ($size > 0) {
@@ -79,7 +79,7 @@ class Migrate extends Command implements Reversible
         }
     }
 
-    private static function fillOptions(&$options)
+    private static function fillOptions(&$options): void
     {
         if (!isset($options['dump-queries'])) {
             $options['dump-queries'] = false;
@@ -89,14 +89,15 @@ class Migrate extends Command implements Reversible
         }
     }
 
-    public function run()
+    #[\Override]
+    public function run(): void
     {
         self::fillOptions($this->options);
 
         $this->driver = ChangeLogger::wrap($this->manipulatorFactory->createManipulator(), $this->migrations, $this->io);
         $this->driver->setDumpQueriesOnly($this->options['dump-queries']);
         $this->driver->setDryRun($this->options['dry']);
-        $this->itemFactory->setDriver($this->driver);
+        $this->itemFactory->setChangeLogger($this->driver);
         Yentu::setup($this->itemFactory, $this->driver->getDefaultSchema());
 
         $totalOperations = 0;
@@ -146,9 +147,9 @@ class Migrate extends Command implements Reversible
             $this->dryDriver->setDryRun(true);
         }
         $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
-        $this->itemFactory->setDriver($this->dryDriver);
+        $this->itemFactory->setChangeLogger($this->dryDriver);
         require "$migrationFile";
-        $this->itemFactory->setDriver($this->driver);
+        $this->itemFactory->setChangeLogger($this->driver);
         $this->io->popOutputLevel();
         $this->driver->setExpectedOperations($this->dryDriver->resetOperations());
     }

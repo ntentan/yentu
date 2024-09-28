@@ -32,7 +32,7 @@ class SchemaDescription implements \ArrayAccess
     {
         $this->description = $description;
         $this->description['tables'] = $this->convertColumnTypes(
-                $this->description['tables'], $manipulator
+            $this->description['tables'] ?? [], $manipulator
         );
         foreach ($this->description['schemata'] as $name => $schema) {
             if (is_array($schema['tables'])) {

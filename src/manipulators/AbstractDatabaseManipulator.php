@@ -250,18 +250,19 @@ use yentu\Parameters;
         try {
             $this->connection->describeTable('yentu_history');
         } catch (\ntentan\atiaa\exceptions\TableNotFoundException $e) {
+            $defaultSchema = $this->connection->getDefaultSchema();
             $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
-            $this->addTable(array('schema' => '', 'name' => 'yentu_history'));
+            $this->addTable(array('schema' => $defaultSchema, 'name' => 'yentu_history'));
 
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => false, 'length' => null, 'table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'migration', 'type' => 'string'));
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string'));
-            $this->addColumn(array('default' => null, 'schema' => '', 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
-            $this->addPrimaryKey(array('schema' => '', 'table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
-            $this->addAutoPrimaryKey(array('schema' => '', 'table' => 'yentu_history', 'column' => 'id'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'session', 'type' => 'string'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => false, 'length' => null, 'table' => 'yentu_history', 'name' => 'version', 'type' => 'string'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'method', 'type' => 'string'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'arguments', 'type' => 'text'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'migration', 'type' => 'string'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'default_schema', 'type' => 'string'));
+            $this->addColumn(array('default' => null, 'schema' => $defaultSchema, 'nulls' => true, 'length' => null, 'table' => 'yentu_history', 'name' => 'id', 'type' => 'integer'));
+            $this->addPrimaryKey(array('schema' => $defaultSchema, 'table' => 'yentu_history', 'name' => 'yentu_history_pk', 'columns' => array('id')));
+            $this->addAutoPrimaryKey(array('schema' => $defaultSchema, 'table' => 'yentu_history', 'column' => 'id'));
             $this->io->popOutputLevel();
         }
     }

@@ -2,35 +2,35 @@
 namespace yentu\database;
 
 
-class Schema extends DatabaseItem implements Changeable
+class Schema extends DatabaseItem implements Changeable, Initializable
 {
-    private $name;
-    private $isReference;
+    private string $name;
+    private bool $isReference;
     
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
     
     #[\Override]
-    public function init()
+    public function initialize(): void
     {
-        if(!$this->getDriver()->doesSchemaExist($this->name)) {        
-            $this->getDriver()->addSchema($this->name);
+        if(!$this->getChangeLogger()->doesSchemaExist($this->name)) {
+            $this->getChangeLogger()->addSchema($this->name);
         }   
     }
     
-    public function isReference()
+    public function isReference(): bool
     {
         return $this->isReference;
     }
     
-    public function setIsReference($isReference)
+    public function setIsReference(bool $isReference): void
     {
         $this->isReference = $isReference;
     }
     
-    public function table($name)
+    public function table($name): Table
     {
         if($this->isReference) {
             $table = new Table($name, $this);

@@ -6,19 +6,19 @@ class UniqueKey extends BasicKey
     #[\Override]
     protected function addKey($constraint) 
     {
-        $this->getDriver()->addUniqueKey($constraint);        
+        $this->getChangeLogger()->addUniqueKey($constraint);
     }
 
     #[\Override]
     protected function doesKeyExist($constraint) 
     {
-        return $this->getDriver()->doesUniqueKeyExist($constraint);        
+        return $this->getChangeLogger()->doesUniqueKeyExist($constraint);
     }
 
     #[\Override]
     protected function dropKey($constraint) 
     {
-        $this->getDriver()->dropUniqueKey($constraint);        
+        $this->getChangeLogger()->dropUniqueKey($constraint);
     }
 
     #[\Override]
