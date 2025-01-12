@@ -76,7 +76,9 @@ class DatabaseItem
     public function __call($method, $arguments)
     {
         if (!is_object($this->encapsulated)) {
-            throw new SyntaxErrorException("Failed to call method '{$method}'", $this->home ?? '');
+            throw new SyntaxErrorException("Failed to call method '{$method}'.", $this->home ?? '');
+        } else if (!$this->stack->hasItems()) {
+            throw new SyntaxErrorException("The method '{$method}' does not exist.", $this->home ?? '');
         } else if (method_exists($this->encapsulated, $method)) {
             $method = new \ReflectionMethod($this->encapsulated, $method);
             $this->commit();
