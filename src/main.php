@@ -85,8 +85,8 @@ function getContainerSettings()
                     'help' => 'do not import the default values of the columns'
                 ]);
                 $argumentParser->addOption([
-                    'command' => 'init', 'short_name' => 'i', 'name' => 'interractive',
-                    'help' => 'initialize yentu interractively'
+                    'command' => 'init', 'short_name' => 'i', 'name' => 'interactive',
+                    'help' => 'initialize yentu interactively'
                 ]);
                 $argumentParser->addOption([
                     'command' => 'init', 'short_name' => 'd', 'name' => 'driver',
