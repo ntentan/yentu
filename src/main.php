@@ -153,9 +153,8 @@ function getContainerSettings()
                     'type' => 'string'
                 ]);
                 $argumentParser->addOption([
-                    'short_name' => 'c', 'name' => 'config-path',
-                    'help' => 'set path to the configuration file',
-                    'command' => ['migrate', 'init']
+                    'short_name' => 'c', 'name' => 'config-path', 'help' => 'set path to the configuration file',
+                    'command' => ['migrate', 'init'], 'type' => 'string'
                 ]);
 
                 $argumentParser->addOption(['name' => 'details', 'help' => 'show details of all migrations.', 'command' => 'status']);
