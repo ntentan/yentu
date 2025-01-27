@@ -22,7 +22,7 @@ use yentu\commands\Command;
 $container = new Container();
 $container->setup(getContainerSettings());
 $ui = $container->get(Cli::class);
-$ui->run();
+exit($ui->run());
 
 /**
  * Return the container setup.
