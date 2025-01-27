@@ -6,7 +6,6 @@ use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
 use yentu\commands\Command;
 use SebastianBergmann\Version;
-use function Symfony\Component\String\u;
 
 class Cli
 {

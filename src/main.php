@@ -152,6 +152,11 @@ function getContainerSettings()
                     'help' => 'set level of verbosity. high, mid, low and none',
                     'type' => 'string'
                 ]);
+                $argumentParser->addOption([
+                    'short_name' => 'c', 'name' => 'config-path',
+                    'help' => 'set path to the configuration file',
+                    'command' => ['migrate', 'init']
+                ]);
 
                 $argumentParser->addOption(['name' => 'details', 'help' => 'show details of all migrations.', 'command' => 'status']);
                 $argumentParser->enableHelp("Yentu database migration tool", "Report bugs on https://github.com/ntentan/yentu");
