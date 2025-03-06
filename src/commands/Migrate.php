@@ -5,6 +5,8 @@ namespace yentu\commands;
 use clearice\io\Io;
 use yentu\ChangeLogger;
 use yentu\database\ForeignKey;
+use yentu\exceptions\SyntaxErrorException;
+use yentu\exceptions\YentuException;
 use yentu\factories\DatabaseManipulatorFactory;
 use yentu\factories\DatabaseItemFactory;
 use yentu\Migrations;
@@ -114,11 +116,14 @@ class Migrate extends Command implements Reversible
             $this->currentPath = $path;
 
             foreach ($migrations as $migration) {
-                //$this->countOperations("{$path['home']}/{$migration['file']}");
                 $this->driver->setVersion($migration['timestamp']);
                 $this->driver->setMigration($migration['migration']);
                 $this->io->output("\nApplying '{$migration['migration']}' migration\n");
-                require "{$path['home']}/{$migration['file']}";
+                try {
+                    require "{$path['home']}/{$migration['file']}";
+                } catch (YentuException $e) {
+                    throw new SyntaxErrorException($e->getMessage(), dirname($path['home']), $e->getTrace());
+                }
                 $this->io->output("\n");
                 $totalOperations += $this->driver->resetOperations();
             }
@@ -197,7 +202,6 @@ class Migrate extends Command implements Reversible
         return $this->driver->getDefaultSchema();
     }
 
-    #[\ntentan\panie\Inject]
     public function setRollbackCommand(Rollback $rollbackCommand)
     {
         $this->rollbackCommand = $rollbackCommand;
