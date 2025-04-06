@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## Unreleased
+## v0.5.0 - 2025-04-06
 ### Changed
 - The exception structure, so exceptions thrown for actions that are reversible are clearly marked.
 - The language in the prompts used during interactive database initialization.
