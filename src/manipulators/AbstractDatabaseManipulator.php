@@ -9,9 +9,8 @@ use yentu\SchemaDescription;
 use yentu\exceptions\DatabaseManipulatorException;
 use yentu\Parameters;
 
-    abstract class AbstractDatabaseManipulator
+abstract class AbstractDatabaseManipulator
 {
-
     const CONVERT_TO_DRIVER = 'driver';
     const CONVERT_TO_YENTU = 'yentu';
 
@@ -27,7 +26,6 @@ use yentu\Parameters;
      * AbstractDatabaseManipulator constructor.
      * @param DriverFactory $driverFactory
      * @param Io $io
-     * @throws \ntentan\atiaa\exceptions\ConnectionException
      */
     public function __construct(DriverFactory $driverFactory, Io $io)
     {
@@ -66,7 +64,7 @@ use yentu\Parameters;
         }
     }
 
-    public function query($query, $bind = false)
+    public function query($query, $bind = [])
     {
         try {
             if ($this->dumpQuery) {

@@ -54,7 +54,7 @@ class TestBase extends TestCase
 
     public function setUp() : void
     {
-        require_once "src/globals.php";
+//        require_once "src/globals.php";
         $this->io = new Io();
         $this->setupStreams();
         $this->io->setOutputLevel(Io::OUTPUT_LEVEL_1);
