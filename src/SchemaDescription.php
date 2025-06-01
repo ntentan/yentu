@@ -14,13 +14,8 @@ class SchemaDescription implements \ArrayAccess
 
     /**
      * Schema description that this class wraps.
-     * @var array
      */
-    private $description = array(
-        'schemata' => array(),
-        'tables' => array(),
-        'views' => array()
-    );
+    private array $description;
 
     /**
      * Create a new instance of the schema description.
@@ -262,28 +257,27 @@ class SchemaDescription implements \ArrayAccess
     {
         foreach ($this->description['schemata'] as $schemaName => $schema) {
             foreach ($schema['tables'] as $tableName => $table) {
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_foreign_keys'] = $this->flattenColumns($table['foreign_keys'], 'columns');
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_unique_keys'] = $this->flattenColumns($table['unique_keys'], 'columns');
-                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_indices'] = $this->flattenColumns($table['indices'], 'columns');
+                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_foreign_keys'] = $this->flattenColumns($table['foreign_keys']);
+                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_unique_keys'] = $this->flattenColumns($table['unique_keys']);
+                $this->description['schemata'][$schemaName]['tables'][$tableName]['flat_indices'] = $this->flattenColumns($table['indices']);
             }
         }
     }
 
     /**
      * Flatten column keys so they can be accessed linearly in an array.
-     * 
-     * @param type $items
-     * @param type $key
-     * @return type
      */
-    private function flattenColumns($items, $key = false)
+    private function flattenColumns($items): array
     {
         $flattened = array();
         if (is_array($items)) {
             foreach ($items as $name => $item) {
-                foreach ($key === false ? $item : $item[$key] as $column) {
-                    $flattened[$column] = $name;
-                }
+                $columns = array_map(fn($x) => $x, $item['columns']);
+                sort($columns);
+                $column = implode(':', $columns);
+//                foreach ($item['columns'] as $column) {
+                $flattened[$column] = $name;
+//                }
             }
         }
         return $flattened;

@@ -40,11 +40,14 @@ class DatabaseAssertor
     private function doesItemExist($details, $type)
     {
         $table = $this->getTableDetails($details['schema'], $details['table']);
-        if (isset($details['columns']) && !empty($details['columns'])) {
-            return isset($table["flat_$type"][$details['columns'][0]]) ? $table["flat_$type"][$details['columns'][0]] : false;
-        } else if (isset($details['name'])) {
-            return isset($table[$type][$details['name']]) ? $table[$type][$details['name']] : false;
+        if (isset($details['name'])) {
+            return $table[$type][$details['name']] ?? false;
+        } else if (!empty($details['columns'])) {
+            $columns = array_map(fn($x) => $x, $details['columns']);
+            sort($columns);
+            return $table["flat_$type"][implode(':', $columns)] ?? false;
         }
+        return false;
     }
 
     public function doesForeignKeyExist($details)

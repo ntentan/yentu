@@ -11,7 +11,7 @@ class DatabaseItem
 {    
     private ?DatabaseItem $encapsulated = null;
     private ChangeLogger $changeLogger;
-    protected bool $new = false;
+    protected ?bool $new = null;
     private array $changes = [];
     protected string $home;
     protected DatabaseItemFactory $factory;
@@ -47,7 +47,7 @@ class DatabaseItem
 
     public function isNew(): bool
     {
-        return $this->new;
+        return $this->new ?? false;
     }
 
     protected function getChangeLogger(): ChangeLogger

@@ -86,7 +86,7 @@ class Postgresql extends AbstractDatabaseManipulator
         $this->query(sprintf('DROP TABLE %s', $this->buildTableName($details['name'], $details['schema'])));
 
         if ($primaryKey) {
-            if (preg_match("/nextval\(\'(?<sequence>.*)\'\:\:regclass\)/i", $primaryKey[0]['column_default'], $matches)) {
+            if (preg_match("/nextval\(\'(?<sequence>.*)\'\:\:regclass\)/i", $primaryKey[0]['column_default'] ?? '', $matches)) {
                 $this->query(sprintf('DROP SEQUENCE IF EXISTS "%s"', $matches['sequence']));
             }
         }

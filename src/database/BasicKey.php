@@ -1,35 +1,25 @@
 <?php
 namespace yentu\database;
 
-abstract class BasicKey extends DatabaseItem implements Commitable, Changeable, Initializable
+abstract class BasicKey extends DatabaseItem implements Commitable, Changeable //, Initializable
 {
-    protected $columns;
-    protected $table;
-    protected $name;
+    protected array $columns = [];
+    protected Table $table;
+    protected ?string $name;
     
     public function __construct($columns, $table)
     {
         $this->columns = $columns;
         $this->table = $table;
     }
-    
+
     #[\Override]
-    public function initialize(): void
+    public function isNew(): bool
     {
-        $keyName = $this->doesKeyExist(array(
-            'table' => $this->table->getName(),
-            'schema' => $this->table->getSchema()->getName(),
-            'columns' => $this->columns)
-        );
-        if($keyName === false)
-        {
-            $this->new = true;
-            $this->name = $this->table->getName() . '_' . implode('_', $this->columns) . '_' . $this->getNamePostfix();
+        if ($this->new === null) {
+            $this->new = !$this->doesKeyExist($this->buildDescription());
         }
-        else
-        {
-            $this->name = $keyName;
-        }        
+        return $this->new;
     }
     
     abstract protected function doesKeyExist($constraint);
@@ -45,6 +35,7 @@ abstract class BasicKey extends DatabaseItem implements Commitable, Changeable, 
             'schema' => $this->table->getSchema()->getName(), 
             'columns' => $this->columns,
             'name' => $this->name
+                ?? $this->table->getName() . '_' . implode('_', $this->columns) . '_' . $this->getNamePostfix()
         );
     }
 
@@ -56,14 +47,17 @@ abstract class BasicKey extends DatabaseItem implements Commitable, Changeable, 
     
     public function drop()
     {
-        $this->dropKey($this->getKeyDescription());
+        if (!$this->isNew()) {
+            $this->dropKey($this->buildDescription());
+        }
         return $this;
     }
     
     public function name($name)
     {
         $this->name = $name;
+        $this->new = !$this->doesKeyExist($this->buildDescription());
         return $this;
-    }    
+    }
 }
 
