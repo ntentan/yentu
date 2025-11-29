@@ -46,14 +46,12 @@ class View extends DatabaseItem implements Changeable, Initializable
     
     public function view($name)
     {
-        DatabaseItem::purge();
-        return $this->create('view', $name, $this->schema);
+        return $this->factory->create(ItemType::View, $name, $this->schema);
     }
     
     public function table($name)
     {
-        DatabaseItem::purge();
-        return $this->create('table', $name, $this->schema);
+        return $this->factory->create(ItemType::Table, $name, $this->schema);
     }
     
     #[\Override]
