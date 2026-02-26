@@ -14,7 +14,11 @@ use yentu\Yentu;
 
 
 /**
- * The migrate class runs the command that creates database items.
+ * Runs database migrations by loading migration files, applying schema changes through the configured
+ * database manipulator, and recording the outcome (including timing and operation counts).
+ *
+ * Supports common migration workflows such as dry runs, query dumping, selective foreign-key handling,
+ * and rolling back changes via {@see Reversible}.
  */
 class Migrate extends Command implements Reversible
 {

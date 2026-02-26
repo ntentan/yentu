@@ -12,13 +12,15 @@ class Cli
     private ?Command $command;
     private Io $io;
     private ArgumentParser $argumentParser;
+    private array $arguments;
     private const string VERSION = "v0.4.0";
 
-    public function __construct(Io $io, ArgumentParser $argumentParser, ?Command $command = null)
+    public function __construct(Io $io, ArgumentParser $argumentParser, array $arguments, ?Command $command = null)
     {
         $this->command = $command;
         $this->io = $io;
         $this->argumentParser = $argumentParser;
+        $this->arguments = $arguments;
     }
 
     /**
@@ -59,26 +61,31 @@ class Cli
             } catch (\yentu\exceptions\NonReversibleCommandException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nError: " . $e->getMessage() . "\n");
+                $this->io->error($e->getTraceAsString());
                 $status = 1;
             } 
             catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nDatabase error: " . $e->getMessage() . "\n");
+                $this->io->error($e->getTraceAsString());
                 $this->command->reverse();
                 $status = 2;
             } 
             catch (\yentu\exceptions\YentuException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nError: " . $e->getMessage() . "\n");
+                $this->io->error($e->getTraceAsString());
                 $this->command->reverse();
                 $status = 3;
             } catch (\PDOException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error("\nFailed to connect to database: {$e->getMessage()}\n");
+                $this->io->error($e->getTraceAsString());
                 $status = 4;
             } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error($e->getMessage() . "\n");
+                $this->io->error($e->getTraceAsString());
                 $status = 5;
             }
         }
