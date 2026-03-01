@@ -174,17 +174,17 @@ class ChangeLogger
         $this->driver = clone $this->driver;
     }
 
-    public function setExpectedOperations($expectedOperations)
+    public function setExpectedOperations($expectedOperations): void
     {
         $this->expectedOperations = $expectedOperations;
     }
 
-    public function setSkipOnErrors($skipOnErrors)
+    public function setSkipOnErrors($skipOnErrors): void
     {
         $this->skipOnErrors = $skipOnErrors;
     }
 
-    public function getDefaultSchema()
+    public function getDefaultSchema(): string
     {
         return $this->driver->getDefaultSchema();
     }

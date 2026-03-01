@@ -172,8 +172,9 @@ class Migrate extends Command implements Reversible
     {
         $output = array();
         foreach ($input as $migration) {
+
             $run = $this->driver->query(
-                "SELECT count(*) as number_run FROM yentu_history WHERE migration = ? and version = ?", 
+                "SELECT count(*) as number_run FROM {$this->driver->getHistoryTable()} WHERE migration = ? and version = ?",
                 array($migration['migration'], $migration['timestamp'])
             );
 

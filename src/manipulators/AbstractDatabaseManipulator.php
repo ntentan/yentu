@@ -20,6 +20,7 @@ abstract class AbstractDatabaseManipulator
     private $dumpQuery;
     private $disableQuery;
     protected $defaultSchema;
+    private $historyTable;
     private $io;
 
     /**
@@ -31,6 +32,10 @@ abstract class AbstractDatabaseManipulator
     {
         $this->connection = $driverFactory->createDriver();
         $this->connection->connect();
+        $defaultSchema = $this->connection->getDefaultSchema();
+        $historyTable = $this->connection->quoteIdentifier('yentu_history');
+        $this->historyTable = $defaultSchema == ''
+            ? $historyTable : "{$this->connection->quoteIdentifier($defaultSchema)}.{$historyTable}";
         $this->io = $io;
     }
 
@@ -270,6 +275,11 @@ abstract class AbstractDatabaseManipulator
         if (is_object($this->schemaDescription)) {
             $this->schemaDescription = clone $this->schemaDescription;
         }
+    }
+
+    public function getHistoryTable(): string
+    {
+        return $this->historyTable;
     }
 
 }
