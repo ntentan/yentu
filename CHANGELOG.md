@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+## v0.6.0 - 2026-03-02
+### Added
+- Exposing the configuration path and adding string for it.
+
+### Changed
+- Improved the approach for managing primary keys.
+- Updated queries in the database manipulator to align with Atiaa.
+- Improved debugging for definition scripts.
+- Updated dependencies.
+
+### Fixed
+- Status reporting after command failures.
+- Handling of missing methods in the database manipulator.
+- Typos and various minor cleanups.
+
+
 ## v0.5.0 - 2025-04-06
 ### Changed
 - The exception structure, so exceptions thrown for actions that are reversible are clearly marked.
