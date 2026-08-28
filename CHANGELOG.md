@@ -1,7 +1,18 @@
-CHANGELOG
-=========
+# Changelog
 
-## v0.6.0 - 2026-03-02
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v0.6.1]
+
+### Changed
+- Updated `DatabaseManipulatorFactory` and `AbstractDatabaseManipulator` to use `DriverFactoryInterface` from Atiaa.
+- Registered `DriverFactoryInterface` in the dependency injection container.
+
+## [v0.6.0] - 2026-03-02
+
 ### Added
 - Exposing the configuration path and adding string for it.
 
@@ -16,8 +27,8 @@ CHANGELOG
 - Handling of missing methods in the database manipulator.
 - Typos and various minor cleanups.
 
+## [v0.5.0] - 2025-04-06
 
-## v0.5.0 - 2025-04-06
 ### Changed
 - The exception structure, so exceptions thrown for actions that are reversible are clearly marked.
 - The language in the prompts used during interactive database initialization.
@@ -26,10 +37,10 @@ CHANGELOG
 - Automatic reversals of commands that fail.
 - The `DatabaseManipulatorFactory` so it generates a friendlier exception when the manipulator class cannot be found.
 
-## v0.4.0 - 2020-02-25
+## [v0.4.0] - 2020-02-25
 
 ### Added
-- A new `Cli` class was added to handle the execution and error reporting
+- A new `Cli` class was added to handle the execution and error reporting.
 
 ### Changed
 - Reorganized the classes so everything resolves properly with a single request of the `Command` class from the DI container.
@@ -38,5 +49,13 @@ CHANGELOG
 ### Fixed
 - `status` and `reverse` commands broken from previous release.
 
-## v0.3.0 - 2018-08-05
-First release with a changelog
+## [v0.3.0] - 2018-08-05
+
+### Added
+- First release with a changelog.
+
+[Unreleased]: https://github.com/ntentan/yentu/compare/v0.6.0...HEAD
+[v0.6.0]: https://github.com/ntentan/yentu/compare/v0.5.0...v0.6.0
+[v0.5.0]: https://github.com/ntentan/yentu/compare/v0.4.0...v0.5.0
+[v0.4.0]: https://github.com/ntentan/yentu/compare/v0.3.0...v0.4.0
+[v0.3.0]: https://github.com/ntentan/yentu/releases/tag/v0.3.0
