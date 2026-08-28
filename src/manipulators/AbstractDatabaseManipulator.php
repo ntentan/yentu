@@ -3,7 +3,7 @@
 namespace yentu\manipulators;
 
 use clearice\io\Io;
-use ntentan\atiaa\DriverFactory;
+use ntentan\atiaa\DriverFactoryInterface;
 use yentu\DatabaseAssertor;
 use yentu\SchemaDescription;
 use yentu\exceptions\DatabaseManipulatorException;
@@ -25,10 +25,10 @@ abstract class AbstractDatabaseManipulator
 
     /**
      * AbstractDatabaseManipulator constructor.
-     * @param DriverFactory $driverFactory
+     * @param DriverFactoryInterface $driverFactory
      * @param Io $io
      */
-    public function __construct(DriverFactory $driverFactory, Io $io)
+    public function __construct(DriverFactoryInterface $driverFactory, Io $io)
     {
         $this->connection = $driverFactory->createDriver();
         $this->connection->connect();

@@ -3,9 +3,9 @@
 namespace yentu\factories;
 
 use clearice\io\Io;
+use ntentan\atiaa\DriverFactoryInterface;
 use yentu\exceptions\DatabaseManipulatorException;
 use yentu\manipulators\AbstractDatabaseManipulator;
-use ntentan\atiaa\DriverFactory;
 
 /**
  * Description of DatabaseManipulatorFactory
@@ -17,7 +17,7 @@ class DatabaseManipulatorFactory
     private $driverFactory;
     private $io;
     
-    public function __construct(DriverFactory $driverFactory, Io $io)
+    public function __construct(DriverFactoryInterface $driverFactory, Io $io)
     {
         $this->driverFactory = $driverFactory;
         $this->io = $io;

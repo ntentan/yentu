@@ -11,6 +11,8 @@ if (file_exists($externalAutoload)) {
 
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;
+use ntentan\atiaa\DefaultDriverFactory;
+use ntentan\atiaa\DriverFactoryInterface;
 use yentu\manipulators\AbstractDatabaseManipulator;
 use yentu\Migrations;
 use ntentan\config\Config;
@@ -54,6 +56,7 @@ function getContainerSettings()
         ],
         Migrations::class => [Migrations::class, 'singleton' => true],
         Io::class => [Io::class, 'singleton' => true],
+        DriverFactoryInterface::class => DefaultDriverFactory::class,
         AbstractDatabaseManipulator::class => [
             function ($container) {
                 $config = $container->get(Config::class)->get('db');
