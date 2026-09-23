@@ -48,6 +48,13 @@ class Cli
         }
     }
 
+    private function printStackTrace(\Exception $e): void
+    {
+        if ($this->arguments['debug'] ?? false) {
+            $this->io->error($e);
+        }
+    }
+
     public function run(): int
     {
         $this->greet();
@@ -60,32 +67,32 @@ class Cli
                 $this->command->run();
             } catch (\yentu\exceptions\NonReversibleCommandException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nError: " . $e->getMessage() . "\n");
-                $this->io->error($e->getTraceAsString());
+                $this->io->error("Error: " . $e->getMessage() . "\n");
+                $this->printStackTrace($e);
                 $status = 1;
             } 
             catch (\ntentan\atiaa\exceptions\DatabaseDriverException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nDatabase error: " . $e->getMessage() . "\n");
-                $this->io->error($e->getTraceAsString());
+                $this->io->error("Database error: " . $e->getMessage() . "\n");
+                $this->printStackTrace($e);
                 $this->command->reverse();
                 $status = 2;
             } 
             catch (\yentu\exceptions\YentuException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nError: " . $e->getMessage() . "\n");
-                $this->io->error($e->getTraceAsString());
+                $this->io->error("Error: " . $e->getMessage() . "\n");
+                $this->printStackTrace($e);
                 $this->command->reverse();
                 $status = 3;
             } catch (\PDOException $e) {
                 $this->io->resetOutputLevel();
-                $this->io->error("\nFailed to connect to database: {$e->getMessage()}\n");
-                $this->io->error($e->getTraceAsString());
+                $this->io->error("Failed to connect to database: {$e->getMessage()}\n");
+                $this->printStackTrace($e);
                 $status = 4;
             } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error($e->getMessage() . "\n");
-                $this->io->error($e->getTraceAsString());
+                $$this->printStackTrace($e);
                 $status = 5;
             }
         }

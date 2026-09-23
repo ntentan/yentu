@@ -35,15 +35,16 @@ function getContainerSettings()
         '$dbConfig:array' => [
             function (Container $container) {
                 $arguments = $container->get('$arguments:array');
-                $configFile = $arguments['config-path'] ?? "yentu/yentu.ini";
+                $configFile = $arguments['config-path'] ?? "yentu/config/yentu.ini";
 
-                if (!file_exists($configFile)) {
+                if (!file_exists($configFile) && ($arguments['__command'] ?? '') != 'init') {
                     $container->get(Io::class)->error("Failed to load the configuration file: $configFile\n");
                     exit(100);
+                } else if (file_exists($configFile)) {
+                    $config = parse_ini_file($configFile, true);
+                    return $config['db'] ?? [];
                 }
-
-                $config = parse_ini_file($configFile, true);
-                return $config['db'] ?? [];
+                return [];
             },
             'singleton' => true
         ],

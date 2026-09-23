@@ -55,7 +55,7 @@ class Init extends Command implements Reversible
      */
     private function getParams() : array
     {
-        if (isset($this->options['interractive'])) {
+        if (isset($this->options['interactive'])) {
             $params['driver'] = $this->io->getResponse(
                 'What type of database are you working with?', 
                 ['required' => true, 'answers' => ['postgresql', 'mysql', 'sqlite']]
@@ -68,7 +68,7 @@ class Init extends Command implements Reversible
                 $params['port'] = $this->io->getResponse('What is the port of your database connection? (Leave blank for default)');
                 $params['user'] = $this->io->getResponse('What username do you connect with?', ['required' => true]);
                 $params['password'] = $this->io->getResponse("What is the password for {$params['user']}?", ['required' => FALSE]);
-                $params['dbname'] = $this->io->getResponse("What is the name database (schema) are you connecting to?",['required' => true]);
+                $params['dbname'] = $this->io->getResponse("What is the name of the database (schema) are you connecting to?",['required' => true]);
             }
         } else {
             $params = [];
@@ -95,16 +95,11 @@ class Init extends Command implements Reversible
         Filesystem::directory($this->migrations->getPath('config'))->create(true);
         Filesystem::directory($this->migrations->getPath('migrations'))->create(true);
         Filesystem::file($this->migrations->getPath('config/yentu.ini'))->putContents(
-            <<<CONFIG
-            [db]
-            driver: {$params['driver']}
-            host: {$params['host']}
-            port: {$params['port']}
-            dbname: {$params['dbname']}
-            user: {$params['user']}
-            password: {$params['password']}
-            file: {$params['file']}
-            CONFIG
+            array_reduce(
+                array_keys($params),
+                fn($carry, $key) => $carry . ($params[$key] ? "$key={$params[$key]}\n" : ""),
+                "[db]\n"
+            )
         );
 
         return $params;
@@ -123,7 +118,7 @@ class Init extends Command implements Reversible
         }
 
         $params = $this->getParams();
-        
+
         if (count($params) == 0 && defined('STDOUT')) {
             throw new NonReversibleCommandException(
                 "You didn't provide any parameters for initialization. Please execute yentu "
@@ -149,5 +144,4 @@ class Init extends Command implements Reversible
     {
         Filesystem::directory($this->migrations->getPath(""))->delete();
     }
-
 }
