@@ -6,6 +6,7 @@ use clearice\io\Io;
 use ntentan\atiaa\DriverFactoryInterface;
 use yentu\exceptions\DatabaseManipulatorException;
 use yentu\manipulators\AbstractDatabaseManipulator;
+use yentu\Parameters;
 
 /**
  * Description of DatabaseManipulatorFactory
@@ -25,7 +26,7 @@ class DatabaseManipulatorFactory
     
     public function createManipulator() : AbstractDatabaseManipulator
     {
-        $config = $this->driverFactory->getConfig();
+        $config = Parameters::parseDsn($this->driverFactory->getConfig());
         $class = "\\yentu\\manipulators\\" . ucfirst($config['driver']);
         if(class_exists($class)) {
             return new $class($this->driverFactory, $this->io);
@@ -36,6 +37,7 @@ class DatabaseManipulatorFactory
 
     public function createManipulatorWithConfig($config) : AbstractDatabaseManipulator
     {
+        $config = Parameters::parseDsn($config);
         $this->driverFactory->setConfig($config);
         return $this->createManipulator();
     }

@@ -20,6 +20,7 @@ use yentu\commands\Migrate;
 use ntentan\panie\Container;
 use yentu\Cli;
 use yentu\commands\Command;
+use yentu\Parameters;
 
 $container = new Container();
 $container->setup(getContainerSettings());
@@ -42,7 +43,7 @@ function getContainerSettings()
                     exit(100);
                 } else if (file_exists($configFile)) {
                     $config = parse_ini_file($configFile, true);
-                    return $config['db'] ?? [];
+                    return Parameters::parseDsn($config['db'] ?? []);
                 }
                 return [];
             },
@@ -115,6 +116,10 @@ function getContainerSettings()
                 $argumentParser->addOption([
                     'command' => 'init', 'short_name' => 'p', 'name' => 'password',
                     'help' => 'the password of the user on the target database', 'type' => 'string'
+                ]);
+                $argumentParser->addOption([
+                    'command' => 'init', 'short_name' => 's', 'name' => 'dsn',
+                    'help' => 'the connection DSN of the target database', 'type' => 'string'
                 ]);
 
                 $argumentParser->addOption([

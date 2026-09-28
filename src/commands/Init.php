@@ -72,7 +72,7 @@ class Init extends Command implements Reversible
             }
         } else {
             $params = [];
-            foreach(['driver', 'file', 'host', 'port', 'dbname', 'user', 'password'] as $key) {
+            foreach(['driver', 'file', 'host', 'port', 'dbname', 'user', 'password', 'dsn'] as $key) {
                 if(isset($this->options[$key])) {
                     $params[$key] = $this->options[$key];
                 }
@@ -90,19 +90,19 @@ class Init extends Command implements Reversible
     public function createConfigFile($params) : array
     {
         $params = Parameters::wrap(
-            $params, ['port', 'file', 'host', 'dbname', 'user', 'password']
+            $params, ['port', 'file', 'host', 'dbname', 'user', 'password', 'dsn']
         );
         Filesystem::directory($this->migrations->getPath('config'))->create(true);
         Filesystem::directory($this->migrations->getPath('migrations'))->create(true);
         Filesystem::file($this->migrations->getPath('config/yentu.ini'))->putContents(
             array_reduce(
                 array_keys($params),
-                fn($carry, $key) => $carry . ($params[$key] ? "$key={$params[$key]}\n" : ""),
+                fn($carry, $key) => $carry . ($params[$key] ? "$key=\"{$params[$key]}\"\n" : ""),
                 "[db]\n"
             )
         );
 
-        return $params;
+        return Parameters::parseDsn($params);
     }
 
     /**
