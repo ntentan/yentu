@@ -8,6 +8,7 @@ if (file_exists($externalAutoload)) {
 } else {
     require __DIR__ . "/../vendor/autoload.php";
 }
+require_once __DIR__ . "/globals.php";
 
 use clearice\argparser\ArgumentParser;
 use clearice\io\Io;

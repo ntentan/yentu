@@ -144,7 +144,7 @@ class Sqlite extends AbstractDatabaseManipulator
     {
         $this->query("PRAGMA foreign_keys=OFF");
         $table = Parameters::wrap(
-            $this->getDescription()->getTable(['table' => $tableName, 'schema' => false]),
+            $this->getDescription()->getTable(['table' => $tableName, 'schema' => $this->getDefaultSchema()]),
             ['auto_increment']
         );
         $dummyTable = "__yentu_{$table['name']}";
@@ -184,13 +184,15 @@ class Sqlite extends AbstractDatabaseManipulator
         $this->query($query);
 
         if (isset($options['new_column'])) {
-            $this->query("INSERT INTO `$dummyTable` SELECT {$fieldList} , ? FROM `{$table['name']}`", $options['new_column']['default']);
+            $this->query("INSERT INTO `$dummyTable` SELECT {$fieldList} , ? FROM `{$table['name']}`", [$options['new_column']['default']]);
         } else if (count($table['columns']) > 0) {
             $this->query("INSERT INTO `$dummyTable` SELECT {$fieldList} FROM `{$table['name']}`");
         }
 
         $this->query("DROP TABLE `{$table['name']}`");
+        $this->query("PRAGMA legacy_alter_table=ON");
         $this->query("ALTER TABLE `$dummyTable` RENAME TO `{$table['name']}`");
+        $this->query("PRAGMA legacy_alter_table=OFF");
         $this->createIndices($table['indices'], $table['name']);
         $this->query("PRAGMA foreign_keys=ON");
     }
@@ -384,5 +386,10 @@ class Sqlite extends AbstractDatabaseManipulator
         );
     }
 
+    #[\Override]
+    public function quoteIdentifier(string $identifier): string
+    {
+        return "`$identifier`";
+    }
 }
 

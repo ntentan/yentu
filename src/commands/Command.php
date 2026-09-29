@@ -4,7 +4,7 @@ namespace yentu\commands;
 
 abstract class Command
 {
-    protected array $options;
+    protected array $options = [];
 
     abstract public function run();
 

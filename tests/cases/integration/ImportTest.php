@@ -24,13 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\cases;
+namespace yentu\tests\cases\integration;
 
+use PHPUnit\Framework\Attributes\Group;
 use org\bovigo\vfs\vfsStream;
 use yentu\commands\Import;
 use yentu\exceptions\CommandException;
+use yentu\exceptions\NonReversibleCommandException;
 use yentu\tests\TestBase;
 
+#[Group('integration')]
 class ImportTest extends TestBase
 {
 
@@ -45,7 +48,7 @@ class ImportTest extends TestBase
     public function testImport()
     {
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/system.sql"));
-        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createStub(\yentu\CodeWriter::class);
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
 
         $import = $this->getCommand('import', [$codeWriter]);
@@ -59,6 +62,9 @@ class ImportTest extends TestBase
         $descriptionArray = $description->getArray();
 
         unset($descriptionArray['tables']['yentu_history']);
+        if (isset($descriptionArray['schemata']['main'])) {
+            unset($descriptionArray['schemata']['main']);
+        }
         $this->assertEquals(
             $expectedDescription, [
             'schemata' => $descriptionArray['schemata'],
@@ -77,7 +83,7 @@ class ImportTest extends TestBase
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_schema.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
 
-        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createStub(\yentu\CodeWriter::class);
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());
@@ -94,7 +100,7 @@ class ImportTest extends TestBase
         $this->initDb($GLOBALS['DB_FULL_DSN'], file_get_contents("tests/sql/{$GLOBALS['DRIVER']}/import_views.sql"));
         $this->connect($GLOBALS['DB_FULL_DSN']);
 
-        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createStub(\yentu\CodeWriter::class);
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());
@@ -109,9 +115,9 @@ class ImportTest extends TestBase
 
     public function testImportNonEmptyMigrations()
     {
-        $this->expectException(CommandException::class);
+        $this->expectException(NonReversibleCommandException::class);
         file_put_contents(vfsStream::url('home/yentu/migrations/1234568901234_existing.php'), 'nothing');
-        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createStub(\yentu\CodeWriter::class);
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());

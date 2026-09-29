@@ -13,7 +13,7 @@ class DatabaseItem
     private ChangeLogger $changeLogger;
     protected ?bool $new = null;
     private array $changes = [];
-    protected string $home;
+    protected string $home = '';
     protected DatabaseItemFactory $factory;
     private EncapsulatedStack $stack;   
     

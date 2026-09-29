@@ -24,13 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\cases;
+namespace yentu\tests\cases\integration;
 
+use PHPUnit\Framework\Attributes\Group;
 use clearice\io\Io;
 use \org\bovigo\vfs\vfsStream;
 use yentu\exceptions\CommandException;
+use yentu\exceptions\NonReversibleCommandException;
 use yentu\tests\TestBase;
 
+#[Group('integration')]
 class InitTest extends TestBase
 {
 
@@ -70,20 +73,28 @@ class InitTest extends TestBase
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu/config")));
         $this->assertEquals(true, file_exists(vfsStream::url("home/yentu/migrations")));
         $this->assertEquals(true, is_dir(vfsStream::url("home/yentu/migrations")));
-        $this->assertEquals(true, is_file(vfsStream::url('home/yentu/config/default.conf.php')));
+        $this->assertEquals(true, is_file(vfsStream::url('home/yentu/config/yentu.ini')));
 
-        // provides $config below
-        $config = require(vfsStream::url('home/yentu/config/default.conf.php'));
+        $config = parse_ini_file(vfsStream::url('home/yentu/config/yentu.ini'), true);
 
-        $this->assertEquals(array(
-            'driver' => $GLOBALS['DRIVER'],
-            'host' => $GLOBALS['DB_HOST'],
-            'port' => '',
-            'dbname' => $GLOBALS['DB_NAME'],
-            'user' => $GLOBALS['DB_USER'],
-            'password' => $GLOBALS['DB_PASSWORD'],
-            'file' => $GLOBALS['DB_FILE']
-            ), $config['db']);
+        $expectedDb = ['driver' => $GLOBALS['DRIVER']];
+        if (!empty($GLOBALS['DB_HOST'])) {
+            $expectedDb['host'] = $GLOBALS['DB_HOST'];
+        }
+        if (!empty($GLOBALS['DB_NAME'])) {
+            $expectedDb['dbname'] = $GLOBALS['DB_NAME'];
+        }
+        if (!empty($GLOBALS['DB_USER'])) {
+            $expectedDb['user'] = $GLOBALS['DB_USER'];
+        }
+        if (!empty($GLOBALS['DB_PASSWORD'])) {
+            $expectedDb['password'] = $GLOBALS['DB_PASSWORD'];
+        }
+        if (!empty($GLOBALS['DB_FILE'])) {
+            $expectedDb['file'] = $GLOBALS['DB_FILE'];
+        }
+
+        $this->assertEquals($expectedDb, $config['db']);
 
         $this->assertTableExists('yentu_history');
         $this->assertColumnExists('session', 'yentu_history');
@@ -100,7 +111,7 @@ class InitTest extends TestBase
         $this->io->setStreamUrl('output', vfsStream::url("home/standard.out"));
         $this->io->setStreamUrl('input', vfsStream::url("home/responses.in"));
 
-        // Write the input for the interractive test
+        // Write the input for the interactive test
         if (getenv('YENTU_HOST') === false) {
             file_put_contents(vfsStream::url("home/responses.in"), "{$GLOBALS['DRIVER']}\n"
                 . "{$GLOBALS['DB_FILE']}\n"
@@ -116,50 +127,49 @@ class InitTest extends TestBase
         }
 
         $initCommand = $this->getCommand('init');
-        //$this->migrations->setDefaultHome(vfsStream::url('home/yentu'));
         ob_start();
-        $initCommand->setOptions(['interractive' => true]);
+        $initCommand->setOptions(['interactive' => true]);
         $initCommand->run();
         $this->runAssertions();
     }
 
     public function testUnwritable()
     {
-        $this->expectException(CommandException::class);
+        $this->expectException(NonReversibleCommandException::class);
         vfsStream::setup('home', 0444);
         $initCommand = $this->getCommand('init');
-        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
         $this->io->setOutputLevel(Io::OUTPUT_LEVEL_0);
-        $initCommand->run( [
+        $initCommand->setOptions([
             'driver' => 'postgresql',
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],
             'user' => $GLOBALS['DB_USER'],
             'password' => $GLOBALS['DB_PASSWORD']
         ]);
+        $initCommand->run();
     }
 
     public function testExistingDir()
     {
-        $this->expectException(CommandException::class);
+        $this->expectException(NonReversibleCommandException::class);
         mkdir(vfsStream::url('home/yentu'));
         $initCommand = $this->getCommand('init');
-        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
-        $initCommand->run([
+        $initCommand->setOptions([
             'driver' => 'postgresql',
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],
             'user' => $GLOBALS['DB_USER'],
             'password' => $GLOBALS['DB_PASSWORD']
         ]);
+        $initCommand->run();
     }
 
     public function testNoParams()
     {
-        $this->expectException(CommandException::class);
+        $this->expectException(NonReversibleCommandException::class);
         $initCommand = $this->getCommand('init');
-        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
-        $initCommand->run([]);
+        $initCommand->setOptions([]);
+        $initCommand->run();
     }
 
     public function testExistingDb()
@@ -167,8 +177,7 @@ class InitTest extends TestBase
         $this->expectException(CommandException::class);
         $this->pdo->query('CREATE TABLE yentu_history(dummy INTEGER)');
         $initCommand = $this->getCommand('init');
-        //$this->migrations->setDefaultHome(vfsStream::url("home/yentu"));
-        $initCommand->run([
+        $initCommand->setOptions([
             'driver' => $GLOBALS['DRIVER'],
             'host' => $GLOBALS['DB_HOST'],
             'dbname' => $GLOBALS['DB_NAME'],
@@ -176,6 +185,7 @@ class InitTest extends TestBase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         ]);
+        $initCommand->run();
     }
 
 }

@@ -66,7 +66,7 @@ class Create extends Command
             throw new CommandException(
                 "Please provide a name for your new migration"
             );
-        } else if (!preg_match("/[a-z][a-z0-9\_]*/", $name)) {
+        } else if (!preg_match("/^[a-z][a-z0-9\_]*$/", $name)) {
             throw new CommandException(
                 "Migration names must always start with a lowercase alphabet and "
                 . "can only consist of lower case alphabets, numbers and underscores."

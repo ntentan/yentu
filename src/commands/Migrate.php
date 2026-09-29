@@ -122,6 +122,7 @@ class Migrate extends Command implements Reversible
             foreach ($migrations as $migration) {
                 $this->driver->setVersion($migration['timestamp']);
                 $this->driver->setMigration($migration['migration']);
+                $this->countOperations($migration, $path);
                 $this->io->output("\nApplying '{$migration['migration']}' migration\n");
                 try {
                     require "{$path['home']}/{$migration['file']}";
@@ -149,15 +150,17 @@ class Migrate extends Command implements Reversible
         return $this->$filterMethod($migrations);
     }
 
-    private function countOperations($migrationFile)
+    private function countOperations($migration, $path)
     {
         if ($this->dryDriver === null) {
             $this->dryDriver = clone $this->driver;
             $this->dryDriver->setDryRun(true);
         }
+        $this->dryDriver->setVersion($migration['timestamp']);
+        $this->dryDriver->setMigration($migration['migration']);
         $this->io->pushOutputLevel(Io::OUTPUT_LEVEL_0);
         $this->itemFactory->setChangeLogger($this->dryDriver);
-        require "$migrationFile";
+        require "{$path['home']}/{$migration['file']}";
         $this->itemFactory->setChangeLogger($this->driver);
         $this->io->popOutputLevel();
         $this->driver->setExpectedOperations($this->dryDriver->resetOperations());

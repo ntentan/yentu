@@ -27,7 +27,7 @@ class EncapsulatedStack
     
     public function purge(): void
     {
-        for ($i = 0; $i < count($this->stack); $i++) {
+        while (!empty($this->stack)) {
             $item = array_pop($this->stack);
             $item->commit();
         }

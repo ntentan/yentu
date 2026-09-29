@@ -9,8 +9,8 @@ class ChangeLogger
 {
 
     private AbstractDatabaseManipulator $driver;
-    private string $version;
-    private $migration;
+    private string $version = '';
+    private string $migration = '';
     private $session;
     private $changes;
     private $expectedOperations = 1;

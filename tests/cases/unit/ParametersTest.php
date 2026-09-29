@@ -1,10 +1,12 @@
 <?php
 
-namespace yentu\tests\cases;
+namespace yentu\tests\cases\unit;
 
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use yentu\Parameters;
 
+#[Group('unit')]
 class ParametersTest extends TestCase
 {
     public function testParseDsnMysql()

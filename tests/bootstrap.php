@@ -28,3 +28,4 @@
 
 chdir(__DIR__ . "/../");
 define('PHING_BUILD_VERSION', 'test');
+require_once __DIR__ . "/../src/globals.php";

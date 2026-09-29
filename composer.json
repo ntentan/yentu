@@ -12,7 +12,10 @@
     "psr-4": {
       "yentu\\tests\\": "tests/lib/",
       "yentu\\": "src/"
-    }
+    },
+    "files": [
+      "src/globals.php"
+    ]
   },
   "require": {
     "ekowabaka/clearice": "^3.0",

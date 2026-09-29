@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Support for parsing database DSNs in database configuration.
+- Comprehensive unit test suite with mock objects for commands and database abstractions.
+- Separate `unit` and `integration` test suites in PHPUnit configuration.
+
+### Changed
+- Classified existing end-to-end tests as integration tests under `tests/cases/integration/` with `#[Group('integration')]`.
+- Updated GitHub Actions workflow matrix to test across supported PHP versions (8.3 and 8.4) with SQLite extensions and PCOV coverage.
+
+### Fixed
+- Fixed uninitialized typed property accesses on PHP 8+ in `DatabaseItem`, `ChangeLogger`, and `Command`.
+- Fixed view referencing error during table recreation in SQLite manipulator by toggling `PRAGMA legacy_alter_table`.
+- Re-enabled migration operation counting in `Migrate` command.
+- Fixed infinite loop in `EncapsulatedStack::purge()`.
+
 ## [v0.6.2] - 2026-09-25
 
 ### Added
@@ -70,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First release with a changelog.
 
-[v0.6.2]: https://github.com/ntentan/yentu/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/ntentan/yentu/compare/v0.6.2...HEAD
+[v0.6.2]: https://github.com/ntentan/yentu/compare/v0.6.1...v0.6.2
 [v0.6.1]: https://github.com/ntentan/yentu/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/ntentan/yentu/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/ntentan/yentu/compare/v0.4.0...v0.5.0

@@ -24,11 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\cases;
+namespace yentu\tests\cases\integration;
 
+use PHPUnit\Framework\Attributes\Group;
 use org\bovigo\vfs\vfsStream;
 use yentu\tests\TestBase;
 
+#[Group('integration')]
 class MigrateOptionsTest extends TestBase
 {
 
@@ -59,8 +61,11 @@ class MigrateOptionsTest extends TestBase
         $migrate = $this->getCommand('migrate');
         $migrate->setOptions(['only-foreign-keys' => true]);
         $migrate->run();
+        $outputFile = file_exists("tests/streams/migrate_options_output_2_{$GLOBALS['DRIVER']}.txt")
+            ? "tests/streams/migrate_options_output_2_{$GLOBALS['DRIVER']}.txt"
+            : "tests/streams/migrate_options_output_2.txt";
         $this->assertEquals(
-            file_get_contents("tests/streams/migrate_options_output_2.txt"), file_get_contents(vfsStream::url('home/output.txt'))
+            file_get_contents($outputFile), file_get_contents(vfsStream::url('home/output.txt'))
         );
 
         foreach ($this->fkeys as $fkey) {

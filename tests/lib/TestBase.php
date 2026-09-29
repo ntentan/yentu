@@ -34,7 +34,6 @@ use yentu\Migrations;
 use yentu\Yentu;
 use PHPUnit\Framework\TestCase;
 use yentu\commands\Init;
-use ntentan\atiaa\DriverFactory;
 use ntentan\atiaa\DefaultDriverFactory;
 use ntentan\config\Config;
 
@@ -82,7 +81,7 @@ class TestBase extends TestCase
         $GLOBALS['DB_PASSWORD'] = (string) getenv('YENTU_PASSWORD');
         $GLOBALS['DB_HOST'] = (string) getenv('YENTU_HOST');
 
-        $timer = $this->getMockBuilder("\\yentu\\Timer")->onlyMethods(array('stopInstance', 'startInstance'))->getMock();
+        $timer = $this->createStub(\yentu\Timer::class);
         $timer->method('stopInstance')->willReturn(10.0000);
         \yentu\Timer::setInstance($timer);
     }
@@ -193,7 +192,6 @@ class TestBase extends TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'file' => $GLOBALS['DB_FILE']
         );
-        return new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
         return new DatabaseManipulatorFactory(new DefaultDriverFactory($dbConfig), $this->io);
     }
 
@@ -202,8 +200,11 @@ class TestBase extends TestCase
         $className = "yentu\\commands\\" . ucfirst($command);
         $class = new \ReflectionClass($className);
         $args = array_merge([$this->migrations, $this->manipulatorFactory, $this->io], $extraArgs);
+        if ($command === 'migrate' && count($args) === 3) {
+            $stack = new \yentu\database\EncapsulatedStack();
+            $args[] = new \yentu\factories\DatabaseItemFactory($stack, ['home' => \org\bovigo\vfs\vfsStream::url('home/yentu')]);
+        }
         return $class->newInstanceArgs($args);
-        //return new $class($this->migrations, $this->manipulatorFactory, $this->io);
     }
 
     protected function initYentu($name, $initDb = true)
@@ -217,7 +218,6 @@ class TestBase extends TestCase
             'file' => $GLOBALS['DB_FILE']
         );
 
-        $this->manipulatorFactory = new DatabaseManipulatorFactory(new DriverFactory($dbConfig), $this->io);
         $this->manipulatorFactory = new DatabaseManipulatorFactory(new DefaultDriverFactory($dbConfig), $this->io);
         $migrationsConfig = ['home' => vfsStream::url('home/yentu'), 'variables' => [], 'other_migrations' => []];
         $this->migrations = new Migrations($this->io, $this->manipulatorFactory, $migrationsConfig);

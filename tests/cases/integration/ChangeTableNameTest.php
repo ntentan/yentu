@@ -24,11 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace yentu\tests\cases;
+namespace yentu\tests\cases\integration;
 
+use PHPUnit\Framework\Attributes\Group;
 use org\bovigo\vfs\vfsStream;
 use yentu\tests\TestBase;
 
+#[Group('integration')]
 class ChangeTableNameTest extends TestBase {
 
     public function setUp() : void

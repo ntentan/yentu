@@ -92,7 +92,7 @@ class Cli
             } catch (\ntentan\utils\exceptions\FileNotFoundException $e) {
                 $this->io->resetOutputLevel();
                 $this->io->error($e->getMessage() . "\n");
-                $$this->printStackTrace($e);
+                $this->printStackTrace($e);
                 $status = 5;
             }
         }
