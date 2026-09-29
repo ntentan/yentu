@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Classified existing end-to-end tests as integration tests under `tests/cases/integration/` with `#[Group('integration')]`.
-- Updated GitHub Actions workflow matrix to test across supported PHP versions (8.3 and 8.4) with SQLite extensions and PCOV coverage.
+- Updated GitHub Actions workflow with separate jobs for unit and integration tests across supported PHP versions (8.3 and 8.4) with SQLite extensions and PCOV coverage.
 
 ### Fixed
 - Fixed uninitialized typed property accesses on PHP 8+ in `DatabaseItem`, `ChangeLogger`, and `Command`.
