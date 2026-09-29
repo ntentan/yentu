@@ -1,4 +1,7 @@
 nbproject
 build
 vendor
-tests/config/*.xml
+tests/config/*.local.xml
+.phpunit.cache
+.phpunit.result.cache
+*.db

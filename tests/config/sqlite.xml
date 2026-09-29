@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="../bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <coverage/>
+  <php>
+    <env name="YENTU_DRIVER" value="sqlite"/>
+    <env name="YENTU_FILE" value="sqlite.db"/>
+    <env name="YENTU_BASE_DSN" value="sqlite:sqlite.db"/>
+    <env name="YENTU_SKIP_SCHEMAS" value="yes"/>
+  </php>
+  <testsuites>
+    <testsuite name="unit">
+      <directory>../cases/unit</directory>
+    </testsuite>
+    <testsuite name="integration">
+      <directory>../cases/integration</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">../../src</directory>
+    </include>
+    <exclude>
+      <file>../../src/Cli.php</file>
+    </exclude>
+  </source>
+</phpunit>

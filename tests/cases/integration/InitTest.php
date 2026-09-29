@@ -120,9 +120,9 @@ class InitTest extends TestBase
             file_put_contents(vfsStream::url("home/responses.in"), "{$GLOBALS['DRIVER']}\n"
                 . "{$GLOBALS['DB_HOST']}\n"
                 . "\n"
-                . "{$GLOBALS['DB_NAME']}\n"
                 . "{$GLOBALS['DB_USER']}\n"
                 . "{$GLOBALS['DB_PASSWORD']}\n"
+                . "{$GLOBALS['DB_NAME']}\n"
             );
         }
 

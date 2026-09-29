@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="../bootstrap.php"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
+  <coverage/>
+  <php>
+    <env name="YENTU_DRIVER" value="mysql"/>
+    <env name="YENTU_USER" value="root"/>
+    <env name="YENTU_PASSWORD" value="root"/>
+    <env name="YENTU_BASE_DSN" value="mysql:host=127.0.0.1;port=3306"/>
+    <env name="YENTU_HOST" value="127.0.0.1"/>
+    <env name="YENTU_SKIP_SCHEMAS" value="yes"/>
+  </php>
+  <testsuites>
+    <testsuite name="unit">
+      <directory>../cases/unit</directory>
+    </testsuite>
+    <testsuite name="integration">
+      <directory>../cases/integration</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">../../src</directory>
+    </include>
+    <exclude>
+      <file>../../src/Cli.php</file>
+    </exclude>
+  </source>
+</phpunit>
