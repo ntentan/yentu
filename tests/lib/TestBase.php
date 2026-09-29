@@ -168,7 +168,11 @@ class TestBase extends TestCase
         } else {
             $pdo = new \PDO($GLOBALS["DB_DSN"], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWORD']);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $pdo->exec("DROP DATABASE IF EXISTS $name");
+            if ($GLOBALS['DRIVER'] === 'postgresql') {
+                $pdo->exec("DROP DATABASE IF EXISTS $name WITH (FORCE)");
+            } else {
+                $pdo->exec("DROP DATABASE IF EXISTS $name");
+            }
             $pdo->exec("CREATE DATABASE $name");
             $pdo = null;
         }

@@ -106,8 +106,8 @@ $expectedDescription = array (
           array (
             0 => 'user_id',
           ),
-          'on_update' => 'RESTRICT',
-          'on_delete' => 'RESTRICT',
+          'on_update' => 'NO ACTION',
+          'on_delete' => 'NO ACTION',
         ),
       ),
       'indices' => 
@@ -126,7 +126,7 @@ $expectedDescription = array (
           'name' => 'audit_date',
           'type' => 'timestamp',
           'nulls' => false,
-          'default' => 'CURRENT_TIMESTAMP',
+          'default' => NULL,
           'length' => NULL,
         ),
         'audit_trail_id' => 
@@ -215,7 +215,7 @@ $expectedDescription = array (
           array (
             0 => 'user_id',
           ),
-          'on_update' => 'RESTRICT',
+          'on_update' => 'NO ACTION',
           'on_delete' => 'CASCADE',
         ),
       ),
@@ -223,7 +223,7 @@ $expectedDescription = array (
       array (
         'audit_trail_item_id_idx' => 
         array (
-          'table_name' => 'audit_trail',
+          'TABLE_NAME' => 'audit_trail',
           'columns' => 
           array (
             0 => 'item_id',
@@ -231,7 +231,7 @@ $expectedDescription = array (
         ),
         'audit_trail_item_type_idx' => 
         array (
-          'table_name' => 'audit_trail',
+          'TABLE_NAME' => 'audit_trail',
           'columns' => 
           array (
             0 => 'item_type',
@@ -427,7 +427,7 @@ $expectedDescription = array (
           array (
             0 => 'role_id',
           ),
-          'on_update' => 'RESTRICT',
+          'on_update' => 'NO ACTION',
           'on_delete' => 'CASCADE',
         ),
       ),
@@ -595,7 +595,7 @@ $expectedDescription = array (
           array (
             0 => 'role_id',
           ),
-          'on_update' => 'RESTRICT',
+          'on_update' => 'NO ACTION',
           'on_delete' => 'SET NULL',
         ),
       ),

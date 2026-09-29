@@ -65,6 +65,12 @@ class ImportTest extends TestBase
         if (isset($descriptionArray['schemata']['main'])) {
             unset($descriptionArray['schemata']['main']);
         }
+        if (isset($descriptionArray['schemata']['public'])) {
+            unset($descriptionArray['schemata']['public']);
+        }
+        if (isset($descriptionArray['schemata'][$GLOBALS['DB_NAME']])) {
+            unset($descriptionArray['schemata'][$GLOBALS['DB_NAME']]);
+        }
         $this->assertEquals(
             $expectedDescription, [
             'schemata' => $descriptionArray['schemata'],
@@ -133,7 +139,7 @@ class ImportTest extends TestBase
         } catch (\PDOException $e) {
             
         }
-        $codeWriter = $this->createMock('\\yentu\\CodeWriter', array('getTimestamp'));
+        $codeWriter = $this->createStub(\yentu\CodeWriter::class);
         $codeWriter->method('getTimestamp')->willReturn('25th August, 2014 14:30:13');
         $import = new Import($this->migrations, $this->getManipulatorFactory(), $this->io, $codeWriter);
         $import->run(array());

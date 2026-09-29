@@ -17,7 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated GitHub Actions workflow with separate parallel jobs for unit tests and database integration tests across SQLite, PostgreSQL, and MySQL for supported PHP versions (8.3 and 8.4).
 
 ### Fixed
-- Fixed uninitialized typed property accesses on PHP 8+ in `DatabaseItem`, `ChangeLogger`, and `Command`.
+- Fixed uninitialized typed property accesses on PHP 8+ in `DatabaseItem`, `ChangeLogger`, `Command`, `Schema`, and `Table`.
+- Fixed legacy `create()` calls in `Schema` to use `DatabaseItemFactory::create()` with `ItemType` enum.
+- Fixed database cleanup in integration tests for PostgreSQL by using `DROP DATABASE ... WITH (FORCE)` to disconnect active sessions.
+- Updated MySQL and PostgreSQL test expectations and stream outputs for modern database server versions (MySQL 8 and PostgreSQL 16).
 - Fixed view referencing error during table recreation in SQLite manipulator by toggling `PRAGMA legacy_alter_table`.
 - Re-enabled migration operation counting in `Migrate` command.
 - Fixed infinite loop in `EncapsulatedStack::purge()`.

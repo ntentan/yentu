@@ -1,0 +1,10 @@
+Applying only foreign keys ...
+Running 1 migration(s) from 'vfs://home/yentu/migrations'
+Applying 'import' migration
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS  33%
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS  67%
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS......................SS
+
+Migration took 10 seconds
+22 operations performed
+196 operations skipped

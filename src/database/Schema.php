@@ -5,7 +5,7 @@ namespace yentu\database;
 class Schema extends DatabaseItem implements Changeable, Initializable
 {
     private string $name;
-    private bool $isReference;
+    private bool $isReference = false;
     
     public function __construct(string $name)
     {
@@ -35,7 +35,7 @@ class Schema extends DatabaseItem implements Changeable, Initializable
         if($this->isReference) {
             $table = new Table($name, $this);
         } else {
-            $table = $this->create('table', $name, $this);
+            $table = $this->factory->create(ItemType::Table, $name, $this);
         }
         $table->setIsReference($this->isReference);
         return $table;
@@ -43,7 +43,7 @@ class Schema extends DatabaseItem implements Changeable, Initializable
     
     public function view($name)
     {
-        return $this->create('view', $name, $this);
+        return $this->factory->create(ItemType::View, $name, $this);
     }
     
     public function getName()

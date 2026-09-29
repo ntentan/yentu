@@ -5,7 +5,7 @@ namespace yentu\database;
 class Table extends DatabaseItem implements Changeable, Initializable
 {
     private Begin|Schema $schema;
-    private bool $isReference;    
+    private bool $isReference = false;    
     public string $name;
     
     public function __construct(string $name,  Begin|Schema $schema)
