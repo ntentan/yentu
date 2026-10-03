@@ -30,7 +30,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction
 
       - name: Build PHAR package
-        run: vendor/bin/phing
+        run: vendor/bin/phing -Dbuild.version=${{ github.event.release.tag_name }}
 
       - name: Test PHAR execution
         run: ./build/yentu.phar --help
