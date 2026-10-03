@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.7.1] - 2026-10-03
+
+### Added
+- GitHub Actions release workflow to build the `yentu.phar` archive and attach it as a release asset.
+
+### Fixed
+- Fixed `Parameters::parseDsn` to exclude the `dsn` key from the returned configuration array, preventing invalid connection option errors with PostgreSQL.
+- Fixed Phing build script (`build.xml`) to properly package executable `yentu.phar` with locked dependencies, valid stub, and executable permissions.
 
 ## [v0.7.0] - 2026-10-03
 
@@ -92,7 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First release with a changelog.
 
-[Unreleased]: https://github.com/ntentan/yentu/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/ntentan/yentu/compare/v0.7.1...HEAD
+[v0.7.1]: https://github.com/ntentan/yentu/compare/v0.7.0...v0.7.1
 [v0.7.0]: https://github.com/ntentan/yentu/compare/v0.6.2...v0.7.0
 [v0.6.2]: https://github.com/ntentan/yentu/compare/v0.6.1...v0.6.2
 [v0.6.1]: https://github.com/ntentan/yentu/compare/v0.6.0...v0.6.1

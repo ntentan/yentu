@@ -2,8 +2,10 @@
 <project name="Yentu Migration Tool" default="package" basedir="." description="Database migration tool">
     
     <property name="build.dir" value="./build"/>
-    <property name="php.path" value="/usr/bin/php" />
-    <property name="php.composer" value="/usr/local/bin/composer" />
+    <property name="php.path" value="${php.interpreter}" override="false" />
+    <exec command="which composer" outputProperty="system.composer" checkreturn="false" />
+    <property name="php.composer" value="${system.composer}" override="false" />
+    <property name="build.version" value="dev" />
     
     <target name="clean">
         <delete dir="${build.dir}" />
@@ -15,12 +17,14 @@
         <copy todir="${build.dir}/src" >
             <fileset dir="./">
                 <include name="composer.json" />
-                <include name="src**" />
+                <include name="composer.lock" />
+                <include name="src/**" />
+                <include name="bin/**" />
             </fileset>
         </copy>
         <resolvepath propertyName = "repo.target" file="${build.dir}/src" />
         <exec command="git describe --tags" outputProperty="build.version" />
-        <echo msg="&lt;?php define('PHING_BUILD_VERSION', '${build.version}'); require('src/cli.php');" file="${repo.target}/stub.php" />
+        <echo msg="#!/usr/bin/env php&#10;&lt;?php&#10;Phar::mapPhar('yentu.phar');&#10;define('PHING_BUILD_VERSION', '${build.version}');&#10;require 'phar://yentu.phar/src/main.php';&#10;__HALT_COMPILER();" file="${repo.target}/stub.php" />
         <composer command="install" php="${php.path}" composer="${php.composer}">
             <arg line="--working-dir ${repo.target}" />
             <arg line="--prefer-dist" />
@@ -28,17 +32,18 @@
             <arg line="--no-dev" />
         </composer>
         <pharpackage 
-            clistub='${repo.target}/stub.php' 
+            stub='${repo.target}/stub.php'
+            alias='yentu.phar'
             destfile='${build.dir}/yentu.phar'  
             compression='bzip2'
             basedir='${repo.target}'>
             <fileset dir='${repo.target}'>
-                <include name="src**" />
-                <include name="bin/yentu" />
-                <include name="vendor**" />
-                <include name="stub.php" />
+                <include name="src/**" />
+                <include name="bin/**" />
+                <include name="vendor/**" />
             </fileset>
         </pharpackage>
+        <chmod file="${build.dir}/yentu.phar" mode="0755" />
         <delete dir="${repo.target}" />
     </target>    
 </project>

@@ -100,8 +100,27 @@ class ParametersTest extends TestCase
             'port' => '3306',
             'dbname' => 'overridden_db',
             'user' => 'custom_user',
-            'dsn' => 'mysql:host=localhost;port=3306;dbname=original_db',
         ], $parsed);
+        $this->assertArrayNotHasKey('dsn', $parsed);
+    }
+
+    public function testParseDsnWithSeparatedPassword()
+    {
+        $config = [
+            'dsn' => 'pgsql:host=127.0.0.1;dbname=wolo;user=kenteprint',
+            'password' => 'ainooson',
+        ];
+
+        $parsed = Parameters::parseDsn($config);
+
+        $this->assertEquals([
+            'driver' => 'postgresql',
+            'host' => '127.0.0.1',
+            'dbname' => 'wolo',
+            'user' => 'kenteprint',
+            'password' => 'ainooson',
+        ], $parsed);
+        $this->assertArrayNotHasKey('dsn', $parsed);
     }
 
     public function testSpecificHostOverridesDsn()

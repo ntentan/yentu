@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and Attach PHAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: phar, bz2, pdo
+          ini-values: phar.readonly=0
+          coverage: none
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Build PHAR package
+        run: vendor/bin/phing
+
+      - name: Test PHAR execution
+        run: ./build/yentu.phar --help
+
+      - name: Attach PHAR to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/yentu.phar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -40,13 +40,14 @@ class Parameters
             $parsedDsn = self::parseDsnString($config['dsn']);
             $result = $parsedDsn;
             foreach ($config as $key => $value) {
-                if ($value !== null && $value !== '') {
+                if ($key !== 'dsn' && $value !== null && $value !== '') {
                     $result[$key] = $value;
                 }
             }
             return $result;
         }
 
+        unset($config['dsn']);
         return $config;
     }
 
