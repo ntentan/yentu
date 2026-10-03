@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.7.0] - 2026-10-03
+
 ### Added
 - Support for parsing database DSNs in database configuration.
 - Comprehensive unit test suite with mock objects for commands and database abstractions.
@@ -91,7 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First release with a changelog.
 
-[Unreleased]: https://github.com/ntentan/yentu/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/ntentan/yentu/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/ntentan/yentu/compare/v0.6.2...v0.7.0
 [v0.6.2]: https://github.com/ntentan/yentu/compare/v0.6.1...v0.6.2
 [v0.6.1]: https://github.com/ntentan/yentu/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/ntentan/yentu/compare/v0.5.0...v0.6.0
