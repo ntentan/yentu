@@ -33,10 +33,17 @@ class Mysql extends AbstractDatabaseManipulator
 
         switch ($direction) {
             case self::CONVERT_TO_YENTU:
-                $destinationType = $types[strtolower($type)];
+                $lower = strtolower($type);
+                if ($lower === 'binary(16)' || ($lower === 'binary' && (int)$length === 16)) {
+                    return 'uuid';
+                }
+                $destinationType = $types[$lower] ?? '';
                 break;
 
             case self::CONVERT_TO_DRIVER:
+                if (strtolower($type) === 'uuid') {
+                    return 'binary(16)';
+                }
                 $destinationType = array_search(strtolower($type), $types);
                 break;
         }
@@ -47,6 +54,12 @@ class Mysql extends AbstractDatabaseManipulator
             $destinationType .= $length === null ? '' : "($length)";
         }
         return $destinationType;
+    }
+
+    #[\Override]
+    public function formatUuid(string $uuid): string
+    {
+        return \yentu\Uuid::toBinary($uuid);
     }
 
     /**

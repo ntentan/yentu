@@ -25,6 +25,16 @@ class DatabaseItemFactory
         $this->changeLogger = $changeLogger;
     }
 
+    public function getChangeLogger(): ?ChangeLogger
+    {
+        return $this->changeLogger ?? null;
+    }
+
+    public function getDriver(): ?\yentu\manipulators\AbstractDatabaseManipulator
+    {
+        return isset($this->changeLogger) ? $this->changeLogger->getDriver() : null;
+    }
+
     public function getDefaultSchema(string $name): Schema
     {
         return new Schema($name);

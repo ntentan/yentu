@@ -314,12 +314,13 @@ class Postgresql extends AbstractDatabaseManipulator
             'boolean' => 'boolean',
             'date' => 'date',
             'bytea' => 'blob',
-            'oid' => 'bigint'
+            'oid' => 'bigint',
+            'uuid' => 'uuid'
         );
 
         switch ($direction) {
             case self::CONVERT_TO_YENTU:
-                $destinationType = $types[strtolower($type)];
+                $destinationType = $types[strtolower($type)] ?? '';
                 break;
 
             case self::CONVERT_TO_DRIVER:
@@ -334,6 +335,12 @@ class Postgresql extends AbstractDatabaseManipulator
         }
 
         return $destinationType;
+    }
+
+    #[\Override]
+    public function formatUuid(string $uuid): string
+    {
+        return \yentu\Uuid::toString($uuid);
     }
 
     #[\Override]

@@ -40,5 +40,15 @@ class Yentu
         $table->setIsReference(true);
         return $table;
     }
+
+    public static function getDriver(): ?\yentu\manipulators\AbstractDatabaseManipulator
+    {
+        return isset(self::$factory) ? self::$factory->getDriver() : null;
+    }
+
+    public static function uuid7(?bool $asBinary = null): string
+    {
+        return Uuid::v7($asBinary);
+    }
 }
 

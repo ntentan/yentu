@@ -51,9 +51,13 @@ class SchemaDescription implements \ArrayAccess
     {
         foreach ($tables as $i => $table) {
             foreach ($table['columns'] as $j => $column) {
-                $tables[$i]['columns'][$j]['type'] = $manipulator->convertTypes(
-                        $column['type'], AbstractDatabaseManipulator::CONVERT_TO_YENTU, $column['length']
+                $type = $manipulator->convertTypes(
+                    $column['type'], AbstractDatabaseManipulator::CONVERT_TO_YENTU, $column['length']
                 );
+                $tables[$i]['columns'][$j]['type'] = $type;
+                if ($type === 'uuid') {
+                    $tables[$i]['columns'][$j]['length'] = null;
+                }
             }
         }
         return $tables;

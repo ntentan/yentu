@@ -353,10 +353,15 @@ class Sqlite extends AbstractDatabaseManipulator
             ['blob', 'blob'],
             ['integer', 'boolean'],
             ['integer', 'bigint'],
-            ['text', 'date']
+            ['text', 'date'],
+            ['blob', 'uuid']
         ];
 
         $type = strtolower($type);
+
+        if ($direction === self::CONVERT_TO_YENTU && $type === 'uuid') {
+            return 'uuid';
+        }
 
         foreach ($types as $testType) {
             if ($direction === self::CONVERT_TO_DRIVER && $testType[1] === $type) {
@@ -374,6 +379,12 @@ class Sqlite extends AbstractDatabaseManipulator
             $destinationType .= $length === null ? '' : "($length)";
         }
         return $destinationType;
+    }
+
+    #[\Override]
+    public function formatUuid(string $uuid): string
+    {
+        return \yentu\Uuid::toBinary($uuid);
     }
 
     protected function _changeTableName($details)

@@ -113,7 +113,26 @@ abstract class AbstractDatabaseManipulator
             implode(", ", array_fill(0, count($details['columns']), "?"))                             
         );
         
+        $uuidColIndices = [];
+        try {
+            $table = $this->getDescription()->getTable(['table' => $details['table'], 'schema' => $details['schema']]);
+            if (isset($table['columns'])) {
+                foreach ($details['columns'] as $idx => $colName) {
+                    if (isset($table['columns'][$colName]) && $table['columns'][$colName]['type'] === 'uuid') {
+                        $uuidColIndices[] = $idx;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ignore if description is not loaded or table not found
+        }
+
         foreach($details['rows'] as $row) {
+            foreach ($uuidColIndices as $idx) {
+                if (isset($row[$idx]) && is_string($row[$idx])) {
+                    $row[$idx] = $this->formatUuid($row[$idx]);
+                }
+            }
             $this->query($query, $row);
         }
     }
@@ -204,6 +223,7 @@ abstract class AbstractDatabaseManipulator
     }
 
     abstract public function convertTypes($type, $direction, $length);
+    abstract public function formatUuid(string $uuid): string;
 
     /**
      * 

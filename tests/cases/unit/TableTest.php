@@ -131,4 +131,39 @@ class TableTest extends TestCase
 
         $table->drop();
     }
+
+    public function testTableUuidCreatesUuidColumn(): void
+    {
+        $column = $this->createMock(Column::class);
+        $column->expects($this->once())
+            ->method('type')
+            ->with('uuid')
+            ->willReturnSelf();
+
+        $factory = $this->createMock(DatabaseItemFactory::class);
+        $factory->expects($this->once())
+            ->method('create')
+            ->with(ItemType::Column, 'id', $this->isInstanceOf(Table::class))
+            ->willReturn($column);
+
+        $schema = $this->createStub(Schema::class);
+        $schema->method('getName')->willReturn('public');
+
+        $table = new Table('users', $schema);
+        $table->setFactory($factory);
+
+        $result = $table->uuid('id');
+        $this->assertSame($column, $result);
+    }
+
+    public function testTableUuid7ReturnsValidUuid(): void
+    {
+        $schema = $this->createStub(Schema::class);
+        $schema->method('getName')->willReturn('public');
+
+        $table = new Table('users', $schema);
+        $uuid = $table->uuid7(false);
+        $this->assertTrue(\yentu\Uuid::isValid($uuid));
+        $this->assertEquals('7', $uuid[14]);
+    }
 }

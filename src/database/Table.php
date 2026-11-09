@@ -37,6 +37,16 @@ class Table extends DatabaseItem implements Changeable, Initializable
     {
         return $this->factory->create(ItemType::Column, $name, $this);
     }
+
+    public function uuid(string $name): Column
+    {
+        return $this->column($name)->type('uuid');
+    }
+
+    public function uuid7(?bool $asBinary = null): string
+    {
+        return \yentu\Uuid::v7($asBinary);
+    }
     
     public function drop(): Table
     {

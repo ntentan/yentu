@@ -61,6 +61,11 @@ class ChangeLogger
         return new ChangeLogger($item, $migrations, $io);
     }
 
+    public function getDriver(): AbstractDatabaseManipulator
+    {
+        return $this->driver;
+    }
+
     public function setVersion(string $version) : void
     {
         $this->version = $version;

@@ -22,3 +22,10 @@ if (!function_exists('reftable')) {
         return Yentu::reftable($name);
     }
 }
+
+if (!function_exists('uuid7')) {
+    function uuid7(?bool $asBinary = null): string
+    {
+        return \yentu\Uuid::v7($asBinary);
+    }
+}
